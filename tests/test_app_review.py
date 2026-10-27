@@ -105,12 +105,12 @@ def html_blocks(app: AppTest) -> list[str]:
 def test_review_screen_shows_counts_table_and_highlighted_text() -> None:
     app = review_app()
     assert metrics(app) == {
-        "Masked occurrences": "17",
+        "Masked occurrences": "18",
         "Rejected occurrences": "0",
-        "Entities": "13",
+        "Entities": "14",
     }
     rows = table_rows(app)
-    assert len(rows) == 13
+    assert len(rows) == 14
     assert list(rows[0]) == [
         "Mask",
         "Text",
@@ -147,12 +147,12 @@ def test_unchecking_a_group_removes_it_from_the_pseudonymization() -> None:
     app = edit_row(app, "Courriel", Mask=False)
     assert app.session_state["group_decisions"][COURRIEL].masked is False
     assert metrics(app)["Rejected occurrences"] == "1"
-    assert type_counts(app)["Organization"] == (0, 1)
+    assert type_counts(app)["Organization"] == (1, 1)
     assert [row["Mask"] for row in table_rows(app)].count(False) == 1
     assert any(">REJECTED</span>" in block for block in html_blocks(app))
     result = pseudonymize(app)
     assert "Courriel" in result.text
-    assert "[SOCIETE_A]" not in result.text
+    assert "[SOCIETE_B]" not in result.text
     assert "Pierre VERNOLAC" not in result.text
 
 
@@ -182,7 +182,7 @@ def test_changing_a_type_changes_the_token() -> None:
     assert [row["Type"] for row in table_rows(app)].count("Custom") == 1
     result = pseudonymize(app)
     assert "[AUTRE_1]" in result.text
-    assert "[SOCIETE_A]" not in result.text
+    assert "[SOCIETE_B]" not in result.text
     assert "Courriel" not in result.text
 
 
@@ -221,8 +221,8 @@ def test_manual_add_masks_the_three_occurrences_of_a_word() -> None:
         (Source.MANUAL, 1.0, EntityType.CUSTOM)
     }
     assert app.text_input(key="review_manual_text").value == ""
-    assert metrics(app)["Masked occurrences"] == "20"
-    assert metrics(app)["Entities"] == "14"
+    assert metrics(app)["Masked occurrences"] == "21"
+    assert metrics(app)["Entities"] == "15"
     assert any(row["Text"] == "Client" and row["Occurrences"] == 3 for row in table_rows(app))
     result = pseudonymize(app)
     assert "client" not in result.text.lower()
@@ -335,7 +335,7 @@ def test_nothing_masked_is_announced() -> None:
     app = review_app()
     assert not [w for w in app.warning if "No value is masked" in w.value]
     app.session_state[f"{TABLE_KEY_PREFIX}0"] = {
-        "edited_rows": {i: {"Mask": False} for i in range(13)},
+        "edited_rows": {i: {"Mask": False} for i in range(14)},
         "added_rows": [],
         "deleted_rows": [],
     }
@@ -354,7 +354,7 @@ def test_filter_shows_only_the_chosen_types() -> None:
     assert metrics(app)["Rejected occurrences"] == "2"
     assert [row["Mask"] for row in table_rows(app)] == [True, True, False]
     app.multiselect(key="review_filter").set_value([]).run()
-    assert len(table_rows(app)) == 13
+    assert len(table_rows(app)) == 14
 
 
 def test_ambiguous_group_carries_a_warning() -> None:

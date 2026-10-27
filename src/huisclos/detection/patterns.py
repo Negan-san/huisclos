@@ -34,6 +34,8 @@ _CITY = (
     r"(?:[ ]{1,3}CEDEX(?:[ ]{1,3}[0-9]{1,2})?)?"
 )
 _POSTAL_CITY = rf"[0-9]{{5}}[ \u00a0\u202f]{{1,3}}{_CITY}"
+# Score d'un numéro au bon format mais à clé fausse, près de son libellé (D-07).
+INVALID_KEY_SCORE = 0.40
 _STREET_TYPE = (
     r"(?:rue|avenue|av\.|boulevard|bd\.?|place|allée|allee|chemin|impasse|quai|cours|"
     r"route|square|villa|passage|voie|sentier|cité|cite|résidence|residence|lieu-dit|"
@@ -95,19 +97,18 @@ class _LocalRecognizer(EntityRecognizer):
                 text[start:end].translate(_NONBREAKING_SPACES), has_context
             )
             if score:
-                results.append(
-                    RecognizerResult(
-                        entity_type=self.entity_type.value,
-                        start=start,
-                        end=end,
-                        score=score,
-                        recognition_metadata={
-                            "recognizer_name": self.name,
-                            "huisclos_source": source.value,
-                        },
-                    )
-                )
+                results.append(self._result(start, end, score, source))
         return results
+
+    def _result(self, start: int, end: int, score: float, source: Source) -> RecognizerResult:
+        """Construit le résultat Presidio de [start, end) avec sa source huisclos."""
+        return RecognizerResult(
+            entity_type=self.entity_type.value,
+            start=start,
+            end=end,
+            score=score,
+            recognition_metadata={"recognizer_name": self.name, "huisclos_source": source.value},
+        )
 
 
 class NirRecognizer(_LocalRecognizer):
@@ -129,7 +130,7 @@ class NirRecognizer(_LocalRecognizer):
 
 
 class SirenRecognizer(_LocalRecognizer):
-    """Repère uniquement les SIREN dont la clé de Luhn est correcte."""
+    """Repère les SIREN à clé de Luhn correcte, et ceux à clé fausse près d'un libellé."""
 
     entity_type = EntityType.SIREN
     expression = (
@@ -137,6 +138,27 @@ class SirenRecognizer(_LocalRecognizer):
         rf"{_SPACE}[0-9]{{3}})(?![0-9])"
     )
     context_expression = r"\b(?:siren|rcs|immatriculee?|registre\s+du\s+commerce)\b"
+    # Libellé exigé, à courte distance, pour un SIREN à clé fausse (D-S35-1).
+    label_expression = r"\b(?:siren|rcs)\b"
+    label_window = 25
+
+    def analyze(
+        self, text: str, entities: list[str], nlp_artifacts: NlpArtifacts | None = None
+    ) -> list[RecognizerResult]:
+        """Ajoute aux SIREN à clé correcte ceux à clé fausse précédés d'un libellé.
+
+        Une clé fausse près de "SIREN" ou "RCS" signale une faute de frappe probable, donc
+        un numéro encore sensible ; sans libellé, neuf chiffres peuvent être un montant.
+        """
+        results = super().analyze(text, entities, nlp_artifacts)
+        if self.entity_type.value not in entities:
+            return results
+        found = {(result.start, result.end) for result in results}
+        for start, end in self._candidates(text):
+            context = _fold(text[max(0, start - self.label_window) : start])
+            if (start, end) not in found and re.search(self.label_expression, context):
+                results.append(self._result(start, end, INVALID_KEY_SCORE, Source.PATTERN))
+        return results
 
     def _evaluate(self, value: str, has_context: bool) -> tuple[float, Source]:
         """Renvoie pour value un score selon la clé et la présence du contexte."""

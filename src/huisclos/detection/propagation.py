@@ -8,6 +8,7 @@ est repéré une fois, "M. Dupont" et "DUPONT" plus loin doivent l'être aussi.
 
 import re
 from collections.abc import Sequence
+from dataclasses import replace
 
 from huisclos.config import DetectionConfig
 from huisclos.detection.exclusions import is_excluded
@@ -112,6 +113,57 @@ def matches_case(occurrence: str, form: str) -> bool:
     )
 
 
+def _long_occurrence(
+    text: str, folded: str, short: Detection, forms: Sequence[str]
+) -> tuple[int, int] | None:
+    """Occurrence d'une forme plus longue de la même société qui contient short.
+
+    Paramètres : forms, les formes de société connues, les plus longues d'abord.
+    Valeur retournée : les bornes de la première occurrence trouvée, ou None.
+    """
+    for form in forms:
+        if len(form) <= short.length or fold(short.text) not in fold(form):
+            continue
+        for match in _pattern(form).finditer(folded):
+            start, end = match.span()
+            if start <= short.start and short.end <= end and matches_case(text[start:end], form):
+                return start, end
+    return None
+
+
+def widen_organizations(text: str, detections: Sequence[Detection]) -> list[Detection]:
+    """Élargit une société repérée sous sa forme courte à la forme longue qui l'entoure.
+
+    Si "Atelier Durandel SARL" est repéré une fois, "Durandel SARL" détecté ailleurs dans
+    "Atelier Durandel SARL" est étendu à la forme longue : aucune occurrence de la forme
+    longue ne reste couverte par la seule forme courte. L'élargissement est refusé s'il
+    toucherait une autre détection.
+    """
+    folded = fold_same_length(text)
+    forms = sorted(
+        {
+            form
+            for d in detections
+            if d.entity_type == EntityType.ORGANIZATION
+            for form in organization_variants(d.text)
+        },
+        key=lambda form: (-len(form), form),
+    )
+    widened: list[Detection] = []
+    for detection in detections:
+        bounds = None
+        if detection.entity_type == EntityType.ORGANIZATION and detection.source != Source.MANUAL:
+            bounds = _long_occurrence(text, folded, detection, forms)
+        if bounds is not None and not any(
+            o is not detection and o.start < bounds[1] and bounds[0] < o.end for o in detections
+        ):
+            detection = replace(
+                detection, start=bounds[0], end=bounds[1], text=text[bounds[0] : bounds[1]]
+            )
+        widened.append(detection)
+    return widened
+
+
 def propagate(
     text: str,
     detections: Sequence[Detection],
@@ -127,12 +179,16 @@ def propagate(
     elle chevauche une détection existante, se trouve dans un passage exclu, franchit
     l'une de ses bornes ou contient une référence juridique (cutting_spans) : dans
     "Tribunal judiciaire de Jean DUPONT", la forme courte "DUPONT" reste trouvée ensuite.
+    Une société repérée sous sa forme courte est d'abord élargie (widen_organizations) ;
+    sa forme courte reste cherchée ailleurs dans le texte.
     """
+    widened = widen_organizations(text, detections)
     folded = fold_same_length(text)
-    occupied = [(d.start, d.end) for d in detections]
+    occupied = [(d.start, d.end) for d in widened]
     added: list[Detection] = []
     # Les formes longues d'abord : "Jean DUPONT" doit être pris en entier avant "DUPONT".
-    variants = sorted(_collect_variants(detections).items(), key=lambda i: (-len(i[0]), i[0]))
+    forms = _collect_variants([*widened, *detections])
+    variants = sorted(forms.items(), key=lambda i: (-len(i[0]), i[0]))
     for _key, (form, origin) in variants:
         for match in _pattern(form).finditer(folded):
             start, end = match.span()
@@ -150,4 +206,4 @@ def propagate(
                 continue
             added.append(candidate)
             occupied.append((start, end))
-    return sorted([*detections, *added], key=lambda d: (d.start, d.end))
+    return sorted([*widened, *added], key=lambda d: (d.start, d.end))

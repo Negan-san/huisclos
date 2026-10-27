@@ -186,3 +186,21 @@ def test_uppercase_compound_court_place_is_not_masked(no_network: None) -> None:
     result = detect(text, PRESETS["hybrid"])
     assert any(d.text == "Paul Denis" for d in result)
     assert not any(d.start < start + len(reference) and start < d.end for d in result)
+
+
+def test_hybrid_bounds_companies_and_civility_names(no_network: None) -> None:
+    """Le pipeline complet borne les sociétés, réunit "M. Prénom NOM" et le SIREN à clé fausse."""
+    text = (
+        "Employeur : Verrerie Halbarde des Ozanes SARL, SIREN 123 456 788.\n"
+        "Le salarié, M. Lorvan QUINTELOR, travaille chez Verrerie Halbarde des Ozanes SARL.\n"
+        "Veuillez agréer nos salutations."
+    )
+    result = detect(text, PRESETS["hybrid"])
+    assert all(d.text == text[d.start : d.end] for d in result)
+    assert all(left.end <= right.start for left, right in zip(result, result[1:], strict=False))
+    by_type = {(d.text, d.entity_type) for d in result}
+    company = "Verrerie Halbarde des Ozanes SARL"
+    assert [d.text for d in result if d.entity_type == EntityType.ORGANIZATION] == [company] * 2
+    assert ("Lorvan QUINTELOR", EntityType.PERSON) in by_type
+    assert ("123 456 788", EntityType.SIREN) in by_type
+    assert not any(d.text == "Veuillez" for d in result)

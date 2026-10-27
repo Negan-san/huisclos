@@ -341,3 +341,14 @@ def test_enclosed_legal_reference_is_not_masked(reference: str) -> None:
         ("Marie Durand", EntityType.PERSON),
     ]
     assert not any(d.start < end and start < d.end for d in result)
+
+
+def test_merge_keeps_two_companies_joined_by_a_conjunction() -> None:
+    """La fusion seule ne réunit jamais "A SARL et B SAS" : ce sont deux sociétés."""
+    text = "Halbarde SARL et Vasquelin SAS"
+    raw = [
+        det(text, "Halbarde SARL", EntityType.ORGANIZATION),
+        det(text, "Vasquelin SAS", EntityType.ORGANIZATION),
+    ]
+    result = merge(text, raw, CONFIG)
+    assert [d.text for d in result] == ["Halbarde SARL", "Vasquelin SAS"]
