@@ -100,3 +100,7 @@ Seuil par défaut : 0,40 jusqu'à la gate 4, puis la valeur de results/threshold
 ## D-S01-3 Test d'interface sans la fixture no_network
 - Choix : l'AppTest de la page d'accueil n'utilise pas no_network, car AppTest ouvre une connexion locale (127.0.0.1) pour son propre fonctionnement.
 - Raison : bloquer toutes les connexions rendrait le test impossible ; le test de bout en bout du pipeline (tests/test_no_network.py) portera sur le code métier.
+
+## D-PIL-1 Délégation des tâches humaines
+- Choix : pendant le développement, l'humain colle les prompts, relit le code et mène ses recherches pour la vidéo. Les fusions (étape 0 de chaque session), la rédaction des lots 2 et 3 du corpus (session C1, Codex) et les recettes de gate (sessions R0 à R5 et RF, Claude Code, Haiku ou Sonnet) sont confiées aux agents. Les recettes R<N> passent dev dans main, posent le tag et poussent.
+- Raison : l'attention de l'humain est la ressource la plus rare ; chaque recette reste tracée dans docs/PROGRESS.md, et le contrôle croisé par une autre famille de modèles est conservé aux gates.

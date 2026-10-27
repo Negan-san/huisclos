@@ -10,3 +10,4 @@ This file records every prompt given to an AI tool while building HuisClos, as t
 | --- | --- | --- | --- | --- |
 | 2026-10-27 11:28 | Plan | Claude (claude.ai), Opus 5.5 | docs/prompts/00_master_prompt.md | Produced docs/MASTER_PLAN.md |
 | 2026-10-27 14:34 | S01 | Claude Code, Sonnet 5.5 High | docs/MASTER_PLAN.md, card S01 | No follow-up prompt. |
+| 2026-10-27 15:10 | PIL | Claude Code, Opus 5.5 | Demande de l'humain : déléguer la piste humaine | AGENTS.md sections 7, 11, 12 amendées. |
