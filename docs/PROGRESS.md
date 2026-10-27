@@ -14,6 +14,15 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 19:33 | G2 recontrôle | Pseudonymisation, restauration et fichiers validés | Codex
+- Fait : dev fusionnée en avance rapide sans conflit, arbre propre au départ. Revue des modules et tests autorisés ; G2-R1 à G2-R4 vérifiés, aucun nouveau défaut de logique constaté. Aucun module métier corrigé ; ajout d'un test des 24 permutations de quatre mentions, avec nom seul et initiale avant leurs deux candidats, jetons distincts et positions stables.
+- Tests : contrôle initial, 676 passed ; contrôle final, 677 passed, aucun xfail ni test ignoré. Ruff check et format : OK ; check_style : 0 erreur, 2 avertissements existants. Cache pytest final hors dépôt après un avertissement de droits au premier passage.
+- Scénarios : les deux CLI sortent avec le code 0, 16 remplacements exacts ; réponse LLM, 8 restaurations dont 6 formes altérées et seul PERSONNE_9 inconnu. Aller-retour exact à 100 % sur 18 documents (12 dev, 6 test), également depuis le JSON relu ; altérations aléatoires restaurées. Corpus lu seulement par les scripts et tests, sans affichage de contenu.
+- Fichiers : DOCX et PDF fabriqués à la volée puis restaurés depuis le JSON ; corps, tableaux, cellules fusionnées et six variantes d'en-têtes et pieds couverts. Neuf codes d'erreur de lecture testés ; JSON relu sans perte ; accès texte explicites en UTF-8, accès binaires sans encodage.
+- Reste à faire et repli : aucun blocage de gate. Conserver les tables positionnées actuelles ; une ancienne table sans positions ne distingue pas les jetons littéraux et ne protège pas contre une liste externe complète mais décalée (limite D-G2fix-2).
+- Décisions : aucune. Risques : limites documentées du mode tolérant (forme canonique), du PDF sans OCR et de la mise en page non conservée ; aucune donnée réelle, aucun réseau, aucune installation, aucun tag ni push.
+- Verdict et suite : GO ; lancer le pilotage G2 --go après le compte rendu, puis suivre ses prompts.
+
 ### 2026-10-27 19:28 | G2-fix | Positions persistées prioritaires en mode exact (G2-R4) | Claude Code, Opus 5.5
 - Fait : lane-b fusionnée en avance rapide. Trois xfails G2-R4 retirés, trois échecs constatés, puis succès. Cause : restore acceptait une liste externe dont l'inventaire (jeton, original) correspondait, sans relier chaque original à sa position. Correction : quand la table porte des positions, elles font foi et la liste externe est ignorée ; la liste ne sert plus qu'aux anciennes tables sans positions. Aucun changement de models.py.
 - Tests : pytest : 676 passed, aucun xfail ; ruff check et format : OK ; check_style : 0 erreur, 2 avertissements existants.

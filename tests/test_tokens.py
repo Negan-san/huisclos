@@ -1,9 +1,12 @@
 """Tests de l'attribution des jetons et de la substitution (pseudonymize.tokens)."""
 
+from itertools import permutations
+
 import pytest
 
 from huisclos.models import Detection, EntityType, Source, TokenStyle
 from huisclos.pseudonymize.mapping import sha256_of
+from huisclos.pseudonymize.reidentify import EXACT, restore
 from huisclos.pseudonymize.tokens import letter_index, make_token, pseudonymize
 
 P = EntityType.PERSON
@@ -150,6 +153,25 @@ def test_determinism() -> None:
     second = pseudonymize(CASE_TEXT, list(reversed(CASE_DETECTIONS)), created_at=FIXED_TIME)
     assert first == second
     assert first.mapping.to_json().encode("utf-8") == second.mapping.to_json().encode("utf-8")
+
+
+def test_all_input_orders_keep_early_ambiguous_mentions_separate() -> None:
+    """Contrôle les jetons et positions lorsque le nom ambigu précède ses candidats."""
+    text = "Dupont ; Jean DUPONT ; J. Dupont ; Jacques DUPONT."
+    detections = mentions(
+        text, ("Dupont", P), ("Jean DUPONT", P), ("J. Dupont", P), ("Jacques DUPONT", P)
+    )
+    expected = pseudonymize(text, detections, created_at=FIXED_TIME)
+    assert expected.text == "[PERSONNE_1] ; [PERSONNE_2] ; [PERSONNE_3] ; [PERSONNE_4]."
+    assert expected.groups[0].ambiguous_with == (2, 4)
+    assert expected.groups[2].ambiguous_with == (2, 4)
+    for order in permutations(detections):
+        result = pseudonymize(text, order, created_at=FIXED_TIME)
+        assert result == expected
+        assert result.mapping.to_json() == expected.mapping.to_json()
+        restored = restore(result.text, result.mapping)
+        assert restored.mode == EXACT
+        assert restored.text == text
 
 
 def test_warning_when_input_already_contains_a_token() -> None:
