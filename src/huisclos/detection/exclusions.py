@@ -34,7 +34,7 @@ _APOSTROPHE = "['\u2019]"
 # Sainte, St ou Ste suivi d'un espace se relie à un seul nom de lieu, pas davantage.
 _PLACE_WORD = rf"[{_UPPER}][^\W\d_]*"
 _PLACE = (
-    rf"(?:(?:Le|La|Les)\s|L{_APOSTROPHE})?(?:(?:Sainte?|Ste?)\s+)?{_PLACE_WORD}"
+    rf"(?:(?:Le|La|Les)\s|L{_APOSTROPHE})?(?:(?i:Sainte?|Ste?)\s+)?{_PLACE_WORD}"
     rf"(?:-(?:(?:de|du|des|la|le|les|sur|sous|en|lès|aux|d{_APOSTROPHE}|l{_APOSTROPHE})-?)?"
     rf"{_PLACE_WORD})*"
 )
@@ -71,9 +71,14 @@ def _literal_to_regex(entry: str) -> str:
 
     Les espaces valent un ou plusieurs blancs, les apostrophes valent l'apostrophe droite ou
     typographique, la casse est ignorée, et le mot isolé X devient un nom de lieu.
+    Devant ce lieu, "de" accepte aussi l'élision "d'" pour couvrir les juridictions.
     """
     pieces: list[str] = []
-    for part in _PLACE_TOKEN.split(entry):
+    parts = _PLACE_TOKEN.split(entry)
+    for index, part in enumerate(parts):
+        elided_place = index < len(parts) - 1 and part.endswith("de ")
+        if elided_place:
+            part = part[:-3]
         body: list[str] = []
         for char in part:
             if char in "'\u2019":
@@ -83,6 +88,8 @@ def _literal_to_regex(entry: str) -> str:
                     body.append(r"\s+")
             else:
                 body.append(re.escape(char))
+        if elided_place:
+            body.append(rf"(?:de\s+|d{_APOSTROPHE})")
         pieces.append(f"(?i:{''.join(body)})" if body else "")
     return r"(?<!\w)" + _PLACE.join(pieces) + r"(?!\w)"
 

@@ -44,8 +44,8 @@ Code de procédure civile
 Code de la sécurité sociale
 RGPD
 règlement (UE) 2016/679
-re:(?<!\w)[Ll]oi\s+n\s?[°º]\s?\d{2,4}-\d+
-re:(?<!\w)[Aa]rticles?\s+(?:[LRD]\s?\.?\s?)?\d+(?:[-‑]\d+)*(?:\s+(?:du|de\s+la|de\s+l['\u2019])\s+[Cc]ode\s+(?:du\s+travail|civil|pénal|de\s+commerce|de\s+procédure\s+civile|de\s+la\s+sécurité\s+sociale))?
+re:(?i:(?<!\w)[Ll]oi\s+n\s?[°º]\s?\d{2,4}-\d+)
+re:(?i:(?<!\w)[Aa]rticles?\s+(?:[LRD]\s?\.?\s?)?\d+(?:[-‑]\d+)*(?:\s+(?:du|de\s+la|de\s+l['\u2019])\s+[Cc]ode\s+(?:du\s+travail|civil|pénal|de\s+commerce|de\s+procédure\s+civile|de\s+la\s+sécurité\s+sociale))?)
 
 [acronymes]
 URSSAF

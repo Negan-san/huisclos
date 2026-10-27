@@ -23,6 +23,11 @@ def make(text: str, fragment: str, entity_type: EntityType) -> Detection:
         "Cour de cassation",
         "article L. 1232-6 du Code du travail",
         "loi n\u00b0 78-17",
+        "Cour d'appel d'Angers",
+        "Cour d\u2019appel d\u2019Aix-en-Provence",
+        "Tribunal judiciaire d'\u00c9vry",
+        "ARTICLE L. 1232-6 DU CODE DU TRAVAIL",
+        "LOI N\u00b0 78-17",
     ],
 )
 def test_whole_reference_is_covered(text: str) -> None:
@@ -60,7 +65,15 @@ def test_detection_overflowing_the_span_is_kept() -> None:
 
 
 @pytest.mark.parametrize(
-    "entity_type", [EntityType.NIR, EntityType.EMAIL, EntityType.PHONE, EntityType.IBAN]
+    "entity_type",
+    [
+        EntityType.NIR,
+        EntityType.EMAIL,
+        EntityType.PHONE,
+        EntityType.IBAN,
+        EntityType.SIREN,
+        EntityType.SIRET,
+    ],
 )
 def test_keyed_identifiers_are_never_excluded(entity_type: EntityType) -> None:
     text = "article 1240"
@@ -93,8 +106,9 @@ def test_invalid_file_is_refused(content: str) -> None:
         parse_exclusions(content)
 
 
-def test_court_with_an_unhyphenated_compound_place_is_fully_excluded() -> None:
+@pytest.mark.parametrize("prefix", ["Saint", "Sainte", "St", "Ste", "SAINT", "SAINTE", "ST", "STE"])
+def test_court_with_an_unhyphenated_compound_place_is_fully_excluded(prefix: str) -> None:
     """Une variante de lieu composée reste exclue sans absorber le nom qui suit."""
-    reference = "Tribunal judiciaire de Saint Denis"
+    reference = f"Tribunal judiciaire de {prefix} Denis"
     text = reference + ", Paul Martin comparaît."
     assert load_exclusions().spans(text) == [(0, len(reference))]

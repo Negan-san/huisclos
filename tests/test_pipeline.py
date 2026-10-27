@@ -153,3 +153,36 @@ def test_court_is_not_masked_when_fully_inside_a_ner_name(no_network: None) -> N
     start = text.index(reference)
     result = detect(text, PRESETS["hybrid"])
     assert not any(d.start < start + len(reference) and start < d.end for d in result)
+
+
+@pytest.mark.parametrize("apostrophe", ["'", "\u2019"])
+@pytest.mark.parametrize("separator", [" ", "\u00a0", "\u202f"])
+def test_elided_court_place_is_not_propagated(
+    apostrophe: str, separator: str, no_network: None
+) -> None:
+    """Un lieu homonyme d'un nom fictif reste lisible dans une juridiction élidée."""
+    reference = "Cour d'appel d'Angers".replace("'", apostrophe).replace(" ", separator)
+    text = f"M. Jean Angers. {reference}."
+    start = text.index(reference)
+    result = detect(text, PRESETS["hybrid"])
+    assert any(d.text == "Jean Angers" for d in result)
+    assert not any(d.start < start + len(reference) and start < d.end for d in result)
+
+
+def test_uppercase_article_inside_a_ner_name_is_not_masked(no_network: None) -> None:
+    """La casse d'un article ne doit pas permettre au NER de le masquer."""
+    reference = "ARTICLE L. 1232-6 DU CODE DU TRAVAIL"
+    text = f"La soci\u00e9t\u00e9 {reference} SARL."
+    start = text.index(reference)
+    result = detect(text, PRESETS["hybrid"])
+    assert not any(d.start < start + len(reference) and start < d.end for d in result)
+
+
+def test_uppercase_compound_court_place_is_not_masked(no_network: None) -> None:
+    """Les capitales d'un lieu composé ne doivent pas laisser le nom dans la propagation."""
+    reference = "TRIBUNAL JUDICIAIRE DE SAINT DENIS"
+    text = f"M. Paul Denis. {reference}."
+    start = text.index(reference)
+    result = detect(text, PRESETS["hybrid"])
+    assert any(d.text == "Paul Denis" for d in result)
+    assert not any(d.start < start + len(reference) and start < d.end for d in result)
