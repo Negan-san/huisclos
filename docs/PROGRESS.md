@@ -14,6 +14,15 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 20:40 | G4-fix | Tests permanents de conservation des résultats | Claude Code, Opus 5.5
+- Fait : lane-b fusionnée dans dev en avance rapide (f400b48), sans conflit. Les trois régressions temporaires de G4 deviennent tests/test_evaluation_reports.py, réécrites sans chargement du code antérieur : deux documents dev et un document test inventés dans tmp_path, detect simulé, fixture no_network, aucun modèle chargé.
+- Couverture : dev puis test (seuil retenu seul, aucune détection dev relancée, octets de threshold.json, threshold_sweep.csv et errors_dev.csv inchangés, lignes dev identiques en JSON et CSV, deux splits dans JSON, CSV et summary.md, balayage, empreintes SHA-256 et effectifs conservés, pas d'errors_test.csv) ; seuil modifié après dev refusé avant detect, dossier de résultats inchangé ; deux tests successifs sans doublon, nouveau dev retirant lignes, empreinte et effectif test.
+- Tests : nouveaux, 3 passed ; suite complète, 742 passed ; ruff check et format : OK ; check_style : 0 erreur, 4 avertissements de longueur préexistants.
+- Reste à faire : aucun point ouvert de G4 sur l'orchestrateur ; objectifs dev indicatifs et fuite test inchangés, hors périmètre.
+- Décisions : aucune.
+- Risques ou blocages : aucun défaut de production révélé. Aucune nouvelle mesure test, corpus/test.jsonl non ouvert ; src/, results/ et le seuil intacts.
+- Prochaine session : recette R4.
+
 ### 2026-10-27 20:23 | G4 | Contrôle indépendant et mesure test unique | Codex
 - Fait : dev fusionnée sans conflit dans lane-b, arbre initial propre. Corpus reconstruit hors dépôt : dev.jsonl, test.jsonl, stats.md et démo identiques octet pour octet ; les trois CSV dev sont identiques à S42 après deux nouvelles exécutions dev.
 - Correction, un cycle : run.py conserve les lignes dev, le balayage, les empreintes et les effectifs lors de test ; refuse un seuil différent du rapport dev. Aucun changement des règles de détection ni des sources. Les tests de régression supplémentaires restent temporaires pour respecter la liste de fichiers autorisés.
