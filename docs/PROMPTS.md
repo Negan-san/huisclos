@@ -8,6 +8,7 @@ This file records every prompt given to an AI tool while building HuisClos, as t
 
 | Date and time (Paris) | Session | Tool and model | Prompt reference | Follow-up prompts (verbatim) or notes |
 | --- | --- | --- | --- | --- |
+| 2026-10-27 20:03 | S43 | Codex | Session request "[HuisClos] Session S43 : onglet Evaluation" | Offline results-only page, partial micro comparison, available splits, labelled Altair charts, threshold rationale, limits, metadata and CSV downloads; document count absent from S42 results is shown as missing; follow-ups (verbatim): "Je ne comprends pas la question"; "Oui, corriger cette seule attente" (authorised replacing only the obsolete Evaluation placeholder expectation in tests/test_app_smoke.py). |
 | 2026-10-27 19:33 | G2 recheck | Codex | Session request "[HuisClos] Gate 2 : contrôle de la pseudonymisation, de la restauration et des fichiers" | Independent offline recheck after G2-R4; reviewed grouping, token positions, JSON, restoration and generated files; added all 24 input permutations of early ambiguous mentions; all checks passed, GO, no production fix. |
 | 2026-10-27 11:28 | Plan | Claude (claude.ai), Opus 5.5 | docs/prompts/00_master_prompt.md | Produced docs/MASTER_PLAN.md |
 | 2026-10-27 14:45 | S11 / H1 batch 1 | Codex (model not exposed) | docs/prompts/corpus_lot_1.md | Generation prompt and follow-up copied verbatim; six fictional dev sources reviewed against A5 and saved as UTF-8. |

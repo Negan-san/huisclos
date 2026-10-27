@@ -94,7 +94,7 @@ def test_app_starts_with_header_and_steps() -> None:
     ("page", "header", "expected"),
     [
         ("app/pages/workflow.py", "Import a document", "Processing happens on this computer."),
-        ("app/pages/evaluation.py", "Evaluation", "Evaluation results will appear here."),
+        ("app/pages/evaluation.py", "Evaluation", "Configuration comparison"),
         ("app/pages/method.py", "Method & limits", "Decision-support tool, not legal advice."),
     ],
 )

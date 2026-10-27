@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 20:10 | S43 | Onglet Evaluation | Codex
+- Fait : dev intégrée en avance rapide sans conflit ; page alimentée uniquement par results/, comparaison partielle micro, splits disponibles, rappel par type et balayage dev en Altair, palette Okabe-Ito, seuil étiqueté, explications, limites, métadonnées et CSV téléchargeables. Avec accord explicite, seule l'attente obsolète Evaluation de tests/test_app_smoke.py a été actualisée.
+- Tests : 15 nouveaux tests AppTest et graphiques ; suite complète : 692 passed. Ruff check et format : OK ; check_style : 0 erreur, 2 avertissements existants. Cache pytest déplacé hors dépôt après un avertissement de droits au premier passage.
+- Reste à faire : enregistrer le nombre de documents dans le producteur de résultats, hors périmètre de cette session ; aucun blocage de test restant.
+- Décisions : aucune ; les nombres de référence sont lus dans les résultats, les entités sont comptées par TP + FN ; aucun recalcul de détection ni ouverture du corpus.
+- Risques : les fichiers S42 n'enregistrent pas le nombre de documents. La page indique cette absence au lieu d'inventer un effectif ; elle accepte metadata.document_counts par split si un producteur le renseigne ensuite.
+- Prochaine session : suivre le pilotage S43 ; enregistrer l'effectif documentaire dans une session autorisant le producteur de résultats.
+
 ### 2026-10-27 19:45 | R2 | Recette de la gate G2 | Claude Code, Sonnet 5.5
 - Fait : lane-b fusionnée dans dev (avance rapide, sans conflit). Verdict G2 : GO (recontrôle de 19:33). Recette sur textes fictifs dans un dossier temporaire hors dépôt, supprimé ensuite.
 - Étape 1 : OK. Texte de cinq lignes, roundtrip_cli.py code 0, mode exact, 13 remplacements ; aucun nom, adresse, e-mail, téléphone, SIREN, numéro de dossier ni IBAN visible dans la sortie pseudonymisée.
