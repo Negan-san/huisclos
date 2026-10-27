@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 21:54 | S33 | Restauration, exports, remise à zéro | Claude Code, Sonnet 5.5
+- Fait : lane-b fusionnée en avance rapide, 756 tests verts avant travail. Étape Restore complète dans app/steps/restore_step.py : texte pseudonymisé (st.code, retour à la ligne), jetons par type, encadré "What leaves your computer", consignes FR et EN ; collage de la réponse, restauration, avertissement des jetons inconnus, information sur les formes altérées ; import facultatif d'une table JSON ; cinq téléchargements avec l'avertissement rouge avant la table ; "Start a new document" avec confirmation ; emplacement Mistral vide. Textes dans app/i18n/workflow.py ; src/ et les autres étapes inchangés.
+- Tests : tests/test_app_restore.py, 21 cas AppTest (parcours complet, aucune valeur détectée dans le texte affiché, aller-retour exact, jetons altérés et inventé, cinq boutons et ordre de l'avertissement, table valide et cinq cas de fichier invalide, remise à zéro, emplacement Mistral) ; pytest : 777 passed ; ruff : OK ; check_style : 0 erreur, 4 avertissements de longueur préexistants.
+- Reste à faire : point d'entrée vers Restore sans pseudonymisation dans la session (bouton sur Import, plus déverrouillage dans state.py) ; connecteur Mistral (S34, optionnel) ; la page n'a pas été vérifiée dans un navigateur, seulement par AppTest.
+- Décisions : D-S33-1.
+- Risques ou blocages : st.code retire les espaces de début et de fin à l'affichage et à la copie (les téléchargements gardent le texte complet) ; une table importée remplace celle du document, une table d'un autre document produit des avertissements de jetons inconnus.
+- Prochaine session : selon le pilotage S33.
+
 ### 2026-10-27 21:01 | S44 | Option NER CamemBERT en local | Codex
 - Fait : dev fusionnée en avance rapide sans conflit. Reconnaisseur Presidio français facultatif, modèle CPU partagé depuis le cache seul, probabilités natives, découpage à 512 jetons avec positions absolues ; dépendances optionnelles figées et script de mesure RSS/temps. Branchement paresseux déjà présent réutilisé, pipeline.py inchangé.
 - Tests : 14 nouveaux cas, dont texte de 3 000 caractères, modèle local réel, chargement sous no_network, cache absent et hybrid sans transformers simulé ; suite complète : 756 passed en 57,82 s. Ruff check et format : OK ; check_style : 0 erreur, 4 avertissements de longueur préexistants ; git diff --check : OK.

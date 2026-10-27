@@ -142,6 +142,107 @@ EN: dict[str, str] = {
     ),
     "review.back": "Back to Import",
     "restore.title": "Restore real values",
-    "restore.empty": "Nothing to restore yet. Complete the Import and Review steps first.",
+    "restore.empty": (
+        "Nothing to restore yet. Complete the Import and Review steps first, or load a saved "
+        "mapping table below."
+    ),
     "restore.back": "Back to Import",
+    "restore.back_review": "Back to Review",
+    "restore.send.heading": "Send to your AI tool",
+    "restore.send.intro": (
+        "Copy this text into the AI tool of your choice. Names and identifiers are replaced "
+        "by tokens such as `[PERSONNE_1]`."
+    ),
+    "restore.send.leaves": (
+        "What leaves your computer: only the text above. The mapping table stays here."
+    ),
+    "restore.send.check": (
+        "Read the text once more before sending it. A value that was not masked leaves your "
+        "computer in clear."
+    ),
+    "restore.send.counts.heading": "Tokens in this text",
+    "restore.send.counts.type": "Type",
+    "restore.send.counts.tokens": "Tokens",
+    "restore.send.counts.occurrences": "Occurrences",
+    "restore.send.instruction.heading": "Recommended instruction",
+    "restore.send.instruction.help": (
+        "Paste one of these lines with the text, so that the AI tool keeps the tokens unchanged."
+    ),
+    "restore.send.instruction.fr.label": "In French",
+    "restore.send.instruction.fr": (
+        "Conserve exactement chaque jeton entre crochets, par exemple [PERSONNE_1], sans le "
+        "modifier ni le traduire, et n'en invente aucun."
+    ),
+    "restore.send.instruction.en.label": "In English",
+    "restore.send.instruction.en": (
+        "Keep every bracketed token exactly as written, for example [PERSON_1]; do not "
+        "change, translate or invent tokens."
+    ),
+    "restore.answer.heading": "Restore the AI answer",
+    "restore.answer.label": "Answer from the AI tool",
+    "restore.answer.placeholder": "Paste the answer of the AI tool here.",
+    "restore.answer.button": "Restore",
+    "restore.answer.empty": "Paste the answer of the AI tool first.",
+    "restore.answer.restored_heading": "Restored text",
+    "restore.mode.exact": (
+        "Exact mode: this is the pseudonymized text itself, so every value comes back as it "
+        "was written."
+    ),
+    "restore.mode.tolerant": (
+        "Tolerant mode: each token is replaced by the main form of its value. A variant "
+        "written differently in the original, such as a name in capitals, comes back in "
+        "the main form."
+    ),
+    "restore.none_found": "No token was found in this answer, so nothing was restored.",
+    "restore.unknown": (
+        "Unknown tokens were left unchanged ({count}): {forms}. The AI tool may have invented "
+        "them, or the mapping table belongs to another document."
+    ),
+    "restore.altered": (
+        "Altered tokens were recognized and restored ({count}): {pairs}. The AI tool wrote "
+        "them differently from the original. Check these places."
+    ),
+    "restore.altered.pair": "{found} read as {token}",
+    "restore.missing": "Tokens of the table not found in the answer: {tokens}.",
+    "restore.table.heading": "Use a saved mapping table (optional)",
+    "restore.table.help": (
+        "To restore an answer received later, upload the .mapping.json file downloaded "
+        "earlier. It is read on this computer and replaces the table of the current document."
+    ),
+    "restore.table.upload": "Mapping table (.json)",
+    "restore.table.in_use_document": "Table in use: the one built from the current document.",
+    "restore.table.in_use_file": "Table in use: the file {name}.",
+    "restore.table.error.encoding": (
+        "This file is not readable text. Upload the .mapping.json file exactly as HuisClos "
+        "saved it."
+    ),
+    "restore.table.error.invalid": (
+        "This file is not a valid HuisClos mapping table. Upload the .mapping.json file "
+        "exactly as HuisClos saved it. Detail: {detail}"
+    ),
+    "restore.download.heading": "Download",
+    "restore.download.pseudonymized_txt": "Pseudonymized text (.txt)",
+    "restore.download.pseudonymized_docx": "Pseudonymized text (.docx)",
+    "restore.download.restored_txt": "Restored text (.txt)",
+    "restore.download.restored_docx": "Restored text (.docx)",
+    "restore.download.restored_wait": "Restore an answer first to download the restored text.",
+    "restore.download.mapping": "Mapping table (.mapping.json)",
+    "restore.download.mapping.warning": (
+        "Sensitive file: it links tokens to real identities. Keep it on this computer. "
+        "Never send it to an AI tool."
+    ),
+    "restore.docx.title.pseudonymized": "Pseudonymized text",
+    "restore.docx.title.restored": "Restored text",
+    "restore.new.button": "Start a new document",
+    "restore.new.note": (
+        "HuisClos does not keep the mapping table. Download it first if you need to restore "
+        "an answer later."
+    ),
+    "restore.new.confirm": (
+        "Start a new document? The text, the detections, the pseudonymized text and the "
+        "restored text are erased from this session. HuisClos does not keep the mapping "
+        "table, so it cannot be recovered afterwards."
+    ),
+    "restore.new.yes": "Yes, start a new document",
+    "restore.new.cancel": "Cancel",
 }
