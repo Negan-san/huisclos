@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 18:59 | S22 | Réidentification tolérante et test aller-retour | Claude Code, Opus 5.5
+- Fait : lane-b fusionnée (lecture et export S23, sans conflit). reidentify.py : restore et RestoreResult (text, mode, replaced, altered, unknown, missing), find_token_forms. Mode exact par les occurrences positionnées, ou par les occurrences de la table si chaque jeton apparaît le nombre de fois attendu ; sinon mode tolérant (libellés FR et EN sans casse ni accents, séparateurs tiret bas, tiret bas échappé, espace, tiret ; paires de crochets échappées ou non ; bornes de fin ; forme sans crochets acceptée seulement en majuscules ou avec un tiret bas). scripts/roundtrip_cli.py, fixture llm_response_altered.txt.
+- Tests : pytest : 600 passed (69 nouveaux, dont 20 textes faits main en mode exact et l'aller-retour sur les 18 documents dev et test : exact à 100 %, puis tolérant après 288 altérations aléatoires à graine fixe, unknown vide) ; ruff check et ruff format --check : OK ; check_style : 0 erreur, 2 avertissements existants (merge.py, grouping.py).
+- Reste à faire : brancher restore sur l'étape Restore de l'interface (chargement de la table, affichage de altered et unknown).
+- Décisions : D-S22-1.
+- Risques ou blocages : le mode tolérant restaure la forme canonique, pas l'écriture exacte de chaque mention ; une forme sans crochets en majuscules ("PERSONNE 1") dans une réponse est restaurée même si le LLM l'employait comme mot ordinaire. Aucun défaut constaté dans tokens.py ni mapping.py.
+- Prochaine session : suivre la sortie du script de pilotage S22.
+
 ### 2026-10-27 18:40 | S23 | Lecture et export des documents | Codex
 - Fait : dev fusionnée en avance rapide sans conflit ; API installées de python-docx, pypdf et fpdf2 consultées. Lecture locale TXT (UTF-8, BOM, repli cp1252 signalé), DOCX (corps, tableaux, cellules fusionnées, variantes des en-têtes et pieds de page sans répétition) et PDF natif ; normalisation NFC et LF, espaces insécables conservés, limites et neuf codes d'erreur. Exports TXT sans BOM et DOCX avec titre, lignes conservées et métadonnées personnelles vidées.
 - Tests : pytest -q : 449 passed, dont 40 nouveaux tests sous no_network ; ruff check et ruff format --check : OK ; check_style : 0 erreur, 1 avertissement existant (merge.py, 361 lignes). Premier passage : erreurs de préparation dues aux identifiants de paramètres trop longs et au cache temporaire inaccessible ; identifiants raccourcis, TEMP/TMP et cache pytest redirigés vers des dossiers accessibles hors dépôt.
