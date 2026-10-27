@@ -21,6 +21,13 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 - Décisions : D-S33-1.
 - Risques ou blocages : st.code retire les espaces de début et de fin à l'affichage et à la copie (les téléchargements gardent le texte complet) ; une table importée remplace celle du document, une table d'un autre document produit des avertissements de jetons inconnus.
 - Prochaine session : selon le pilotage S33.
+### 2026-10-27 21:44 | S44 recontrôle | Option NER CamemBERT locale | Codex
+- Fait : fusion dev déjà à jour, arbre initial propre ; implémentation S44 déjà livrée dans 7aed779, relue sans modification de code. Signatures Presidio et versions installées vérifiées hors ligne.
+- Tests : 756 passed en 64,93 s ; un avertissement de droits sur le cache pytest, sans échec. Ruff check et format : OK ; check_style : 0 erreur et 4 avertissements de longueur préexistants.
+- Évaluation dev : comparaison relancée hors dépôt, seuil 0,30 et chiffres D-S44-1 reproduits ; PERSON 98,80 % inchangé, ORGANIZATION 76,47 % puis 100 %, précision globale 89,42 % puis 90,05 %. Aucun split test exécuté par la commande d'évaluation.
+- Ressources : hybrid, chargement 4,115 s, RSS 712,1 puis 716,9 Mio, détection 0,125 s ; hybrid_camembert, chargement additionnel 0,698 s, RSS 1164,6 puis 1203,5 Mio, détection 0,433 s.
+- Décisions et risques : D-S44-1 confirmée sous son interprétation explicite du rappel micro PERSON et ORGANIZATION réunis (+4 points) ; aucun gain PERSON. Mémoire supplémentaire finale : 486,6 Mio ; RSS instantanées, pas pics.
+- Reste et suite : pilotage S44 ; interface et requirements.txt inchangés, aucun réseau ni installation, aucun résultat G4 remplacé. Seuls les trois journaux sont actualisés lors de ce recontrôle.
 
 ### 2026-10-27 21:01 | S44 | Option NER CamemBERT en local | Codex
 - Fait : dev fusionnée en avance rapide sans conflit. Reconnaisseur Presidio français facultatif, modèle CPU partagé depuis le cache seul, probabilités natives, découpage à 512 jetons avec positions absolues ; dépendances optionnelles figées et script de mesure RSS/temps. Branchement paresseux déjà présent réutilisé, pipeline.py inchangé.
