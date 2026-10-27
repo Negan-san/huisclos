@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 17:50 | R1 | Recette de la gate G1 | Claude Code, Sonnet 5.5
+- Fait : dev fusionné avec lane-b (avance rapide, sans conflit) ; verdict G1 lu : GO. Étape 1 (detect_cli sur mini_case_fr.txt, config hybrid) : OK, 16 détections ; les quatre formes de Dupont (Jean DUPONT, Dupont, DUPONT, Marie DUPONT, soit cinq occurrences) sont masquées ; la juridiction (Conseil de prud'hommes de Nanterre), l'article L. 1232-6 et le mot "petit" restent en clair ; chargement 3,9 s, détection 0,09 s. Étape 2 (paragraphe fictif de six lignes, hors dépôt, supprimé ensuite) : OK, aucune fuite de nom, 15 détections (11 PERSON, 1 ORGANIZATION, 1 ADDRESS, 2 PHONE). Constat sans fuite : "Valmont" seul est typé PERSON (propagation et NER) au lieu d'ORGANIZATION, donc jeton [PERSONNE_n] au lieu de [SOCIETE_x] ; "Lyon" seul dans une phrase reste en clair car LOCATION est désactivé par défaut.
+- Tests : pytest : 409 passed ; ruff check : OK ; ruff format --check : OK ; check_style : 0 erreur, 1 avertissement existant (merge.py, 361 lignes).
+- Reste à faire : requalifier la propagation d'une forme courte de société ; étape 3 de la recette (installation de torch, transformers et du modèle camembert-ner pour S44) exécutée après le tag, résultat dans le compte rendu de session ; aucun fichier requirements modifié.
+- Décisions : aucune.
+- Risques ou blocages : le typage de la forme courte d'une société en PERSON est sans effet sur le secret mais fausse le libellé du jeton.
+- Prochaine session : suite du plan après la gate G1 ; tag gate-1 posé sur main si le push réussit.
+
 ### 2026-10-27 17:25 | G1 | Recontrôle après les corrections ciblées : GO | Codex
 - Fait : arbre initial propre ; dev fusionnée en avance rapide sans conflit (ba1d69c) ; règles, décisions, entrées S11 à S13, moteur, tests correspondants et signatures Presidio installées relus. Les onze cas de régression des deux contrôles précédents sont corrigés et leurs tests passent. Contrat models.py, merge.py et propagation.py inchangés pendant ce contrôle.
 - Corrections : exclusions.py accepte aussi "d'X" et les apostrophes typographiques pour les modèles "de X", ainsi que SAINT, SAINTE, ST et STE devant un lieu ; data/exclusions_fr.txt exclut les articles et lois sans dépendre de leur casse. Deux cycles, chacun avec échecs de régression constatés avant correction : 12 puis 5 cas. test_exclusions.py et test_pipeline.py renforcés ; 22 cas supplémentaires au total, dont SIREN et SIRET préservés par les exclusions.
