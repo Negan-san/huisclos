@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 20:58 | R4 | Recette de la gate G4 | Claude Code, Sonnet 5.5
+- Fait : lane-b fusionnée dans dev en avance rapide (5329b26), sans conflit. Verdict G4 lu : GO, confirmé au recontrôle (742 tests, points ouverts fermés).
+- Étape 1, onglet Evaluation par AppTest : OK. Aucune exception ni erreur ; les splits dev et test sont proposés ; les 8 lignes (4 configurations par split) de la table affichent exactement précision, rappel, F2, fuite et entités exposées de results/summary.md. Détail cosmétique : l'effectif d'entités exposées s'affiche sous forme décimale (5.0) dans la table AppTest.
+- Étape 2, résultat principal, configuration hybrid, split test, seuil 0,30, partiel micro : rappel 95,70 %, précision 94,68 %, F2 95,49 %, fuite 12,02 %, 4 entités exposées. Pour mémoire, dev : rappel 96,88 %, précision 89,42 %, fuite 5,48 %.
+- Tests : 742 passed ; ruff check et format : OK ; check_style : 0 erreur, 4 avertissements de longueur préexistants.
+- Reste et risques : fuite test de 12,02 % et objectifs dev indicatifs manqués (types à clé 96,43 % pour 98 %) à présenter honnêtement dans la vidéo ; CamemBERT indisponible. Décisions : aucune.
+- Verdict : recette passée. Avance rapide de main, tag gate-4 et push sur demande de la recette.
+
 ### 2026-10-27 20:48 | G4 recontrôle | Tests permanents validés | Codex
 - Fait : dev intégrée en avance rapide sans conflit jusqu'à a75b6b1 ; arbre initial propre. Revue des trois tests permanents de tests/test_evaluation_reports.py et de la fixture no_network : corpus inventés dans tmp_path, détection simulée, assertions conformes au prompt G4-fix.
 - Vérifications : conservation des lignes dev et de leurs fichiers, sorties JSON/CSV/Markdown, seuil unique, empreintes et effectifs ; refus du seuil incohérent avant détection sans écriture ; absence de doublons et retrait des traces test après nouveau dev. Aucun défaut constaté, aucune correction supplémentaire.
