@@ -15,6 +15,7 @@ from huisclos.pseudonymize.mapping import (
     MappingOccurrence,
     sha256_of,
 )
+from huisclos.pseudonymize.reidentify import EXACT, restore
 from huisclos.pseudonymize.tokens import pseudonymize
 
 TEXT = "Hélène LEROY a écrit à Atelier Verlaine SAS. Mme Leroy relance."
@@ -62,8 +63,14 @@ def test_schema_fields() -> None:
         "canonical": "Hélène LEROY",
         "variants": ["Hélène LEROY", "Leroy"],
     }
-    assert data["occurrences"][2] == {"token": "[PERSONNE_1]", "original": "Leroy"}
     expected_text = "[PERSONNE_1] a écrit à [SOCIETE_A]. Mme [PERSONNE_1] relance."
+    start = expected_text.rindex("[PERSONNE_1]")
+    assert data["occurrences"][2] == {
+        "token": "[PERSONNE_1]",
+        "original": "Leroy",
+        "start": start,
+        "end": start + len("[PERSONNE_1]"),
+    }
     assert data["pseudonymized_sha256"] == sha256_of(expected_text)
 
 
@@ -78,6 +85,32 @@ def test_round_trip_is_identical() -> None:
     restored = Mapping.from_json(mapping.to_json())
     assert restored == mapping
     assert restored.to_json() == mapping.to_json()
+
+
+def test_legacy_json_without_positions_remains_readable() -> None:
+    """Relit les tables version 1 produites avant la conservation des positions."""
+    data = as_dict()
+    for occurrence in data["occurrences"]:
+        occurrence.pop("start")
+        occurrence.pop("end")
+    mapping = Mapping.from_json(json.dumps(data))
+    assert all(o.start is None and o.end is None for o in mapping.occurrences)
+    assert mapping.to_dict() == data
+    restored = restore("[PERSONNE_1] a écrit à [SOCIETE_A]. Mme [PERSONNE_1] relance.", mapping)
+    assert restored.text == TEXT
+    assert restored.mode == EXACT
+
+
+@pytest.mark.parametrize(
+    ("start", "end"),
+    [(None, 11), (0, None), (-1, 10), (0, 10), (True, 12), (0, "11")],
+)
+def test_invalid_occurrence_positions_are_refused(start: object, end: object) -> None:
+    """Refuse les positions partielles, négatives, mal typées ou de longueur incorrecte."""
+    data = as_dict()
+    data["occurrences"][0].update(start=start, end=end)
+    with pytest.raises(MappingError, match="positions"):
+        Mapping.from_json(json.dumps(data))
 
 
 def test_default_created_at_is_utc() -> None:

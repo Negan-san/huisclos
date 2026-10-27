@@ -40,10 +40,24 @@ class MappingEntry:
 
 @dataclass(frozen=True)
 class MappingOccurrence:
-    """Un remplacement, dans l'ordre du texte pseudonymisé : jeton et texte d'origine."""
+    """Un remplacement et ses positions ; None pour les anciennes tables sans positions."""
 
     token: str
     original: str
+    start: int | None = None
+    end: int | None = None
+
+    def __post_init__(self) -> None:
+        """Refuse une paire de positions incomplète, non entière ou hors ordre."""
+        if self.start is None and self.end is None:
+            return
+        if (
+            type(self.start) is not int
+            or type(self.end) is not int
+            or self.start < 0
+            or self.end - self.start != len(self.token)
+        ):
+            raise MappingError("positions d'occurrence invalides : start et end attendus")
 
 
 def sha256_of(text: str) -> str:
@@ -107,7 +121,9 @@ class Mapping:
             entities=tuple(
                 MappingEntry(g.token, g.entity_type, g.canonical, g.variants) for g in groups
             ),
-            occurrences=tuple(MappingOccurrence(o.token, o.original) for o in occurrences),
+            occurrences=tuple(
+                MappingOccurrence(o.token, o.original, o.start, o.end) for o in occurrences
+            ),
             pseudonymized_sha256=sha256_of(pseudonymized_text),
         )
 
@@ -132,7 +148,14 @@ class Mapping:
                 }
                 for e in self.entities
             ],
-            "occurrences": [{"token": o.token, "original": o.original} for o in self.occurrences],
+            "occurrences": [
+                {
+                    "token": o.token,
+                    "original": o.original,
+                    **({"start": o.start, "end": o.end} if o.start is not None else {}),
+                }
+                for o in self.occurrences
+            ],
             "pseudonymized_sha256": self.pseudonymized_sha256,
         }
 
@@ -166,7 +189,12 @@ class Mapping:
             token_style=_read_style(_field(data, "token_style", dict)),
             entities=tuple(_read_entry(item) for item in _field(data, "entities", list)),
             occurrences=tuple(
-                MappingOccurrence(_field(item, "token", str), _field(item, "original", str))
+                MappingOccurrence(
+                    _field(item, "token", str),
+                    _field(item, "original", str),
+                    item.get("start"),
+                    item.get("end"),
+                )
                 for item in (_as_dict(x, "occurrences") for x in _field(data, "occurrences", list))
             ),
             pseudonymized_sha256=_field(data, "pseudonymized_sha256", str),

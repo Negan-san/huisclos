@@ -7,7 +7,7 @@ import pytest
 from huisclos.config import PRESETS
 from huisclos.detection.pipeline import detect
 from huisclos.models import Detection, EntityType, Occurrence, Source, TokenStyle
-from huisclos.pseudonymize.mapping import Mapping, MappingEntry, sha256_of
+from huisclos.pseudonymize.mapping import Mapping, MappingEntry, MappingOccurrence, sha256_of
 from huisclos.pseudonymize.reidentify import EXACT, TOLERANT, find_token_forms, restore
 from huisclos.pseudonymize.tokens import make_token, pseudonymize
 
@@ -71,7 +71,7 @@ def test_altered_person_forms_are_restored(form: str) -> None:
         "Societe_A",
         "societe_a",
         "[SOCIÉTÉ_A]",
-        "SOCIÉTÉ A",
+        "SOCIÉTÉ-A",
         "[société a]",
         "[COMPANY_A]",
     ],
@@ -100,6 +100,10 @@ def test_multiword_labels_accept_every_separator(form: str) -> None:
         "PERSONNE_1er",
         "PERSONNE A",
         "SOCIETE_1",
+        "SOCIÉTÉ A",
+        "LA SOCIÉTÉ A SIGNÉ LE CONTRAT.",
+        "LA SOCIETE A SIGNE LE CONTRAT.",
+        "COMPANY A SIGNED THE CONTRACT.",
     ],
 )
 def test_ordinary_text_is_left_intact(text: str) -> None:
@@ -220,10 +224,18 @@ def test_exact_mode_keeps_each_written_variant() -> None:
 
 
 def test_literal_token_in_source_needs_positions() -> None:
+    """Les anciennes tables sans positions ne peuvent pas distinguer un jeton littéral."""
     text = "Le modèle [PERSONNE_1] vise Jean DUPONT."
     result = pseudonymize(text, [manual(text, "Jean DUPONT")], created_at=CREATED_AT)
     assert restore(result.text, result.mapping, result.occurrences).text == text
-    without_positions = restore(result.text, result.mapping)
+    legacy_mapping = Mapping(
+        result.mapping.created_at,
+        result.mapping.token_style,
+        result.mapping.entities,
+        tuple(MappingOccurrence(o.token, o.original) for o in result.mapping.occurrences),
+        result.mapping.pseudonymized_sha256,
+    )
+    without_positions = restore(result.text, legacy_mapping)
     assert without_positions.mode == TOLERANT
 
 
@@ -244,7 +256,6 @@ def test_modified_text_uses_tolerant_mode() -> None:
     assert restored.text == "Jean DUPONT écrit. Fin."
 
 
-@pytest.mark.xfail(strict=True, reason="G2-R1 : le JSON perd les positions des jetons littéraux")
 @pytest.mark.parametrize("literal_first", [True, False], ids=["literal-first", "literal-last"])
 def test_json_only_roundtrip_preserves_literal_token(literal_first: bool) -> None:
     """Exige une restauration sans perte après relecture du seul JSON sensible."""
@@ -257,7 +268,6 @@ def test_json_only_roundtrip_preserves_literal_token(literal_first: bool) -> Non
     assert restored.mode == EXACT
 
 
-@pytest.mark.xfail(strict=True, reason="G2-R2 : SOCIETE A dans une phrase devient un nom")
 def test_uppercase_ordinary_company_sentence_is_left_intact() -> None:
     """Protège le verbe A d'une phrase ordinaire écrite en capitales."""
     text = "LA SOCIETE A SIGNE LE CONTRAT."
@@ -266,7 +276,6 @@ def test_uppercase_ordinary_company_sentence_is_left_intact() -> None:
     assert restored.replaced == {}
 
 
-@pytest.mark.xfail(strict=True, reason="G2-R3 : une liste partielle est déclarée exacte")
 @pytest.mark.parametrize("keep", [0, 1], ids=["empty", "partial"])
 def test_incomplete_occurrences_do_not_silently_leave_tokens(keep: int) -> None:
     """Exige le repli sur la table si des occurrences positionnées ont été perdues."""
@@ -275,6 +284,33 @@ def test_incomplete_occurrences_do_not_silently_leave_tokens(keep: int) -> None:
     result = pseudonymize(text, detections, created_at=CREATED_AT)
     restored = restore(result.text, result.mapping, result.occurrences[:keep])
     assert restored.text == text
+    assert sum(restored.replaced.values()) == 2
+    assert restored.mode == EXACT
+    assert restored.missing == []
+
+
+def test_partial_occurrences_keep_literal_tokens_and_written_variants() -> None:
+    """Le repli sur le JSON conserve les jetons littéraux et les mentions abrégées."""
+    text = "[PERSONNE_1] / Jean DUPONT et Dupont signent."
+    result = pseudonymize(
+        text, [manual(text, "Jean DUPONT"), manual(text, "Dupont")], created_at=CREATED_AT
+    )
+    mapping = Mapping.from_json(result.mapping.to_json())
+    restored = restore(result.text, mapping, result.occurrences[:1])
+    assert restored.text == text
+    assert restored.mode == EXACT
+    assert restored.replaced == {"[PERSONNE_1]": 2}
+
+
+def test_duplicate_occurrences_do_not_replace_a_missing_occurrence() -> None:
+    """Un inventaire de même taille avec un doublon reste incomplet."""
+    text = "Jean DUPONT et Marie MARTIN signent."
+    result = pseudonymize(
+        text, [manual(text, "Jean DUPONT"), manual(text, "Marie MARTIN")], created_at=CREATED_AT
+    )
+    restored = restore(result.text, result.mapping, [result.occurrences[0]] * 2)
+    assert restored.text == text
+    assert restored.mode == EXACT
     assert sum(restored.replaced.values()) == 2
 
 

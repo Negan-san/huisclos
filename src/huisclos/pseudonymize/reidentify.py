@@ -13,7 +13,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 
 from huisclos.models import LETTER_INDEXED, TOKEN_LABELS, EntityType, Occurrence
-from huisclos.pseudonymize.mapping import Mapping, sha256_of
+from huisclos.pseudonymize.mapping import Mapping, MappingOccurrence, sha256_of
 
 EXACT = "exact"
 TOLERANT = "tolerant"
@@ -105,14 +105,17 @@ def _bare_form_ok(text: str, match: re.Match[str], entity_type: EntityType) -> b
     """Décide si une forme sans crochets est bien un jeton et non une phrase ordinaire.
 
     Il faut un libellé en majuscules ou un tiret bas, pour laisser intacte la phrase
-    "aucune personne 1" ; l'indice doit avoir la bonne nature (lettres pour les sociétés)
-    et ne pas être le début d'un nombre plus long.
+    "aucune personne 1". Pour les sociétés, un séparateur explicite est nécessaire :
+    "SOCIETE A" peut être le début d'une phrase. Un indice numérique ne doit pas se
+    poursuivre dans le texte.
     """
     core = text[match.start("label") : match.end("index")]
     label = text[match.start("label") : match.end("label")]
     if not (label.isupper() or "_" in core):
         return False
     if match["index"].isdigit() == (entity_type in LETTER_INDEXED):
+        return False
+    if entity_type in LETTER_INDEXED and "_" not in core and "-" not in core:
         return False
     return "_" in core or not _NUMBER_GOES_ON.match(text, match.end("index"))
 
@@ -155,12 +158,18 @@ def _splice(text: str, spans: Sequence[tuple[int, int, str]]) -> str:
 
 
 def _spans_from_occurrences(
-    text: str, occurrences: Sequence[Occurrence]
+    text: str, occurrences: Sequence[Occurrence | MappingOccurrence]
 ) -> list[tuple[int, int, str, str]] | None:
     """Tranches (début, fin, jeton, original) tirées des occurrences, ou None si incohérentes."""
     spans, cursor = [], 0
+    if any(o.start is None or o.end is None for o in occurrences):
+        return None
     for occurrence in sorted(occurrences, key=lambda o: o.start):
-        if occurrence.start < cursor or text[occurrence.start : occurrence.end] != occurrence.token:
+        if (
+            occurrence.start < cursor
+            or occurrence.end > len(text)
+            or text[occurrence.start : occurrence.end] != occurrence.token
+        ):
             return None
         spans.append((occurrence.start, occurrence.end, occurrence.token, occurrence.original))
         cursor = occurrence.end
@@ -170,10 +179,13 @@ def _spans_from_occurrences(
 def _spans_from_mapping(text: str, mapping: Mapping) -> list[tuple[int, int, str, str]] | None:
     """Tranches tirées des occurrences ordonnées de la table, ou None si ambiguës.
 
+    Les positions persistées distinguent les remplacements des jetons littéraux.
     Sans positions, chaque jeton est cherché dans l'ordre. Si le texte d'origine contenait
     déjà une chaîne identique à un jeton, la recherche pourrait se tromper d'endroit : on
     exige donc que chaque jeton apparaisse exactement autant de fois que dans la table.
     """
+    if any(o.start is not None for o in mapping.occurrences):
+        return _spans_from_occurrences(text, mapping.occurrences)
     expected = Counter(o.token for o in mapping.occurrences)
     if any(text.count(token) != count for token, count in expected.items()):
         return None
@@ -235,7 +247,13 @@ def restore(
     Exemple : restore("Vu [PERSONNE_1].", mapping).text == "Vu Jean DUPONT."
     """
     if sha256_of(text) == mapping.pseudonymized_sha256:
-        if occurrences is not None:
+        # Une liste tronquée ne prouve pas une restauration complète : la table conserve
+        # l'inventaire des remplacements et permet de reprendre les occurrences perdues.
+        expected = Counter((o.token, o.original) for o in mapping.occurrences)
+        if (
+            occurrences is not None
+            and Counter((o.token, o.original) for o in occurrences) == expected
+        ):
             spans = _spans_from_occurrences(text, occurrences)
         else:
             spans = _spans_from_mapping(text, mapping)

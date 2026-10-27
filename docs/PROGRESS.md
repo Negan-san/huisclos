@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 19:14 | G2-fix | Positions JSON et restauration complète | Codex
+- Fait : dev synchronisée avec lane-b sans conflit. Cinq xfails retirés, leurs cinq échecs constatés avant correction, puis succès. G2-R1 : positions conservées dans les occurrences JSON ; G2-R2 : sociétés sans crochets reconnues seulement avec tiret bas ou tiret ; G2-R3 : inventaire des occurrences comparé à la table avant le mode exact, repli sur la table si incomplet. Aucun changement de models.py.
+- Tests : ciblés, 115 passed ; copie temporaire du dernier commit avec les seuls changements G2, pytest -q : 640 passed, aucun xfail ; ruff check et format : OK ; check_style : 0 erreur, 2 avertissements existants. Dernier pytest du dossier partagé : 673 passed. Lecture des anciens JSON sans positions, positions invalides, collisions littérales, variantes, listes vides, partielles et avec doublons vérifiées.
+- Reste à faire : rejouer la gate 2 indépendamment ; les travaux d'interface présents en parallèle restent hors périmètre.
+- Décisions : D-G2fix-1 ; extension compatible du JSON version 1 et refus des formes de société ambiguës séparées par une simple espace.
+- Risques ou blocages : dans le dossier partagé, premier contrôle global à 639 passed et 1 échec du test d'accueil, puis 673 passed après évolution parallèle de l'interface ; dernier Ruff partagé : 5 erreurs et 4 fichiers non formatés hors périmètre, laissés intacts. Copie G2 isolée entièrement verte. Les anciens JSON sans positions ne permettent toujours pas de distinguer une collision littérale. Aucun réseau, aucune installation, aucun contenu du split test ouvert par l'agent.
+- Prochaine session : suivre le pilotage G2 et relancer le contrôle croisé ; aucun tag ni push.
+
 ### 2026-10-27 20:05 | G2 | Contrôle de la pseudonymisation et des fichiers | Codex
 - Fait : dev fusionnée sans conflit ; arbre propre au début du contrôle. Revue indépendante des regroupements, jetons, occurrences, JSON, restauration et entrées-sorties. Correction simple en un cycle : la fixture LLM référençait une date de naissance absente de mini_case ; elle utilise maintenant une adresse disponible, avec un test du scénario réel. Aucun module métier modifié.
 - Tests : contrôle initial, 619 passed ; contrôle final, 622 passed et 5 xfailed stricts, aucun test ignoré. Ruff check et format : OK ; check_style : 0 erreur, 2 avertissements existants. Aller-retour exact sur les 18 documents du corpus, également depuis le JSON relu ; scénarios CLI : code 0, 16 remplacements exacts, puis 8 restaurations dont 6 formes altérées et seul PERSONNE_9 inconnu. DOCX et PDF fabriqués puis lus, pseudonymisés et restaurés depuis le JSON : OK ; neuf codes d'erreur de lecture testés, en-têtes et tableaux inclus. Cache pytest redirigé hors dépôt après un avertissement de droits initial.
