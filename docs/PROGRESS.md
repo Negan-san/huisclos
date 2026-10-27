@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 15:35 | R0 | Recette de la gate G0 | Claude Code, Haiku 5.5
+- Fait : dev fusionné avec lane-b sans conflit ; verdict G0 lu : GO. Étape 1 installation à neuf (venv Python 3.12 temporaire, requirements.txt) : OK, 138 s, dossier supprimé. Étape 2 lancement headless sur le port 8599 : OK, HTTP 200 après 20 s, /_stcore/health 200, aucune erreur dans la sortie, processus arrêté et port libéré. Étape 3 AppTest : OK, titre HuisClos, accroche, sous-titres 1. Import, 2. Review, 3. Restore et mention RGPD (art. 4(5), considérant 26) affichés.
+- Tests : pytest : 31 passed ; ruff check : OK ; ruff format --check : OK ; check_style : 0 erreur, 0 avertissement.
+- Reste à faire : centraliser les textes de la page d'accueil dans app/i18n/ ; ajouter au README la distinction pseudonymisation/anonymisation (repris de G0).
+- Décisions : aucune.
+- Risques ou blocages : au démarrage Streamlit affiche une "External URL", donc il interroge sans doute un service d'IP publique ; à vérifier avant le test réseau du pipeline (principe 1 d'AGENTS.md).
+- Prochaine session : suite du plan après la gate G0 ; tag gate-0 posé sur main si le push réussit.
+
 ### 2026-10-27 15:13 | G0 | Contrôle du socle : GO | Codex
 - Fait : conflits PROGRESS/PROMPTS résolus sur demande en conservant les entrées des deux pistes ; diff complet S01 (0b86362) relu ; dépendances, configuration, exclusions Git, attributs union et contrat models.py conformes.
 - Corrections : C5 reconnaît aussi print avec espaces ; C5/C6 appliqués aux fichiers Python externes fournis par --paths ; caractères interdits écrits en échappements dans le script et ses tests ; docstring Detection rectifiée sans changement du contrat ; tests des noms de types et scores non finis renforcés.
