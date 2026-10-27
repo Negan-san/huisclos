@@ -5,10 +5,17 @@ pseudonymisation. Pseudonymisation is not anonymisation. Human review remains
 necessary before sending text to a language model. Sources are authored separately
 from detection rules; character positions are computed by the builder.
 
-The target collection contains 12 development documents, 6 held-out test documents
+The collection contains 20 development documents, 6 held-out test documents
 and one demonstration document. Agents must never inspect test sources or
 `test.jsonl`, or tune detection using their contents. Only evaluation and corpus
 construction scripts may read them.
+
+Development sources doc_01 to doc_12 form lots 1 and 2; doc_19 to doc_26 form
+the difficult lot 4 (commissioner's report, email thread, judgment, insurance
+declaration, CSE meeting, power of attorney, services agreement and PDF extraction).
+Its authoring instructions and coverage are recorded in
+`docs/prompts/corpus_lot_4.md`. Evaluate this lot separately from earlier material
+when comparing changes. It is development material, including its difficult cases.
 
 ## Source format
 
