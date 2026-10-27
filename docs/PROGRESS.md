@@ -21,6 +21,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 - Décisions : D-S12-1 (score NER 0,85 confirmé dans le code installé ; D-07 mis à jour).
 - Risques ou blocages : Presidio télécharge le modèle spaCy s'il manque, d'où le garde-fou de build_nlp_engine ; les nouveaux fichiers ont été vérifiés sans toucher à patterns.py ni à checksums.py ; aucun fichier du split test lu.
 - Prochaine session : suite du plan (fusion et propagation), selon docs/MASTER_PLAN.md.
+### 2026-10-27 15:38 | S11 | Validateurs et reconnaisseurs à motifs | Codex
+- Fait : dev synchronisé sans conflit ; signatures Presidio lues dans le code installé ; validateurs purs, générateurs déterministes et neuf reconnaisseurs français créés dans le périmètre autorisé.
+- Tests : pytest : 191 passed ; 500 valeurs valides et 500 à clé fausse par type comparées à python-stdnum, compactes et groupées ; 500 NIR par département corse et 500 SIRET La Poste ; spans, contexte de 40 caractères, scores D-07 et métadonnées vérifiés ; exécution sans réseau testée.
+- Contrôles : ruff check et ruff format --check : OK ; check_style : 0 erreur, 0 avertissement ; aucun import de tldextract dans src/.
+- Reste à faire : intégration des reconnaisseurs dans le pipeline de détection par les sessions suivantes ; aucun changement à models.py, aux paquets __init__.py, à app/ ni aux modules de la piste A.
+- Décisions : aucune ; application de D-03, D-07, D-09 et D-11. Les oracles demandés sont tous disponibles ; leurs contraintes supplémentaires ne remplacent pas le contrat des validateurs.
+- Risques ou blocages : dossier temporaire Windows standard inaccessible ; pytest -q passe avec TEMP et TMP dirigés vers .pytest_cache/s11-temp ; aucune installation, aucun appel réseau ni lecture du split test.
+- Prochaine session : suivre la sortie du script de pilotage S11 après le commit.
 
 ### 2026-10-27 15:35 | R0 | Recette de la gate G0 | Claude Code, Haiku 5.5
 - Fait : dev fusionné avec lane-b sans conflit ; verdict G0 lu : GO. Étape 1 installation à neuf (venv Python 3.12 temporaire, requirements.txt) : OK, 138 s, dossier supprimé. Étape 2 lancement headless sur le port 8599 : OK, HTTP 200 après 20 s, /_stcore/health 200, aucune erreur dans la sortie, processus arrêté et port libéré. Étape 3 AppTest : OK, titre HuisClos, accroche, sous-titres 1. Import, 2. Review, 3. Restore et mention RGPD (art. 4(5), considérant 26) affichés.
