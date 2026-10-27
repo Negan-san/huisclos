@@ -27,10 +27,9 @@ from app.ui_common import entity_label
 from huisclos.config import PRESETS, DetectionConfig
 from huisclos.models import EntityType
 
-# Langues proposées et langues réellement disponibles : le français s'affiche mais reste
-# inactif tant que les chaînes françaises de app/i18n n'existent pas.
+# L'anglais reste le choix initial ; les deux dictionnaires sont complets.
 LANGUAGES = ("en", "fr")
-AVAILABLE_LANGUAGES = ("en",)
+AVAILABLE_LANGUAGES = LANGUAGES
 TOKEN_STYLES = ("fr", "en")
 
 
@@ -77,12 +76,17 @@ def _render_reset() -> None:
 
 def render_sidebar() -> None:
     """Affiche les réglages : types, seuil, style des jetons, langue et remise à zéro."""
+    # Les libellés restent ceux de cet affichage, même hors du contexte du script
+    # lors de la sérialisation des composants par AppTest.
+    type_labels = {kind: entity_label(kind) for kind in EntityType}
+    token_labels = {style: t(f"sidebar.token_style.{style}") for style in TOKEN_STYLES}
+    language_labels = {language: t(f"sidebar.language.{language}") for language in LANGUAGES}
     with st.sidebar:
         st.subheader(t("sidebar.settings"))
         st.multiselect(
             t("sidebar.types"),
             options=list(EntityType),
-            format_func=entity_label,
+            format_func=type_labels.__getitem__,
             key=KEY_ENABLED_TYPES,
         )
         st.slider(
@@ -97,13 +101,13 @@ def render_sidebar() -> None:
         st.radio(
             t("sidebar.token_style"),
             options=TOKEN_STYLES,
-            format_func=lambda style: t(f"sidebar.token_style.{style}"),
+            format_func=token_labels.__getitem__,
             key=KEY_TOKEN_STYLE,
         )
         st.selectbox(
             t("sidebar.language"),
             options=LANGUAGES,
-            format_func=lambda language: t(f"sidebar.language.{language}"),
+            format_func=language_labels.__getitem__,
             key=KEY_LANGUAGE,
             on_change=_keep_available_language,
         )

@@ -7,6 +7,7 @@ Sorties : restore_result dans l'état, le texte restauré affiché et les cinq t
 Place dans le pipeline : troisième et dernière étape ; appelle pseudonymize.reidentify.restore.
 """
 
+import os
 from collections import Counter
 from dataclasses import dataclass
 
@@ -27,6 +28,7 @@ from app.state import (
 )
 from app.ui_common import entity_label, literal_markdown
 from huisclos.io.writers import to_docx_bytes, to_txt_bytes
+from huisclos.llm.mistral_client import DEFAULT_MODEL, MistralError, send_pseudonymized
 from huisclos.models import EntityType, Occurrence, PseudonymizationResult
 from huisclos.pseudonymize.mapping import Mapping, MappingError, sha256_of
 from huisclos.pseudonymize.reidentify import RestoreResult, restore
@@ -261,11 +263,38 @@ def _render_downloads(
 
 
 def render_mistral_slot(pseudonymized_text: str) -> None:
-    """Emplacement du connecteur Mistral (D-17) : n'affiche rien pour l'instant.
+    """Affiche l'envoi facultatif du seul texte fourni, si une clé est configurée.
 
-    La session optionnelle S34 le complétera. Le connecteur n'enverra que le texte
-    pseudonymisé reçu en paramètre et ne s'affichera qu'avec une clé configurée.
+    La confirmation porte sur ce texte et cette consigne ; une modification la révoque.
+    La réponse remplit la zone de restauration au prochain affichage.
     """
+    try:
+        api_key = st.secrets["MISTRAL_API_KEY"]
+    except (KeyError, FileNotFoundError):
+        api_key = None
+    api_key = api_key or os.environ.get("MISTRAL_API_KEY")
+    if not isinstance(api_key, str) or not api_key.strip():
+        return
+    st.subheader(t("mistral.heading"))
+    st.warning(t("mistral.warning"))
+    instruction = st.text_area(t("mistral.instruction"), key="mistral_instruction")
+    signature = sha256_of(pseudonymized_text + "\0" + instruction)
+    if st.session_state.get("mistral_signature") != signature:
+        st.session_state["mistral_confirm"] = False
+        st.session_state["mistral_signature"] = signature
+    confirmed = st.checkbox(t("mistral.confirm"), value=False, key="mistral_confirm")
+    if st.button(t("mistral.send"), key="mistral_send", disabled=not confirmed) and confirmed:
+        try:
+            with st.spinner(t("mistral.spinner")):
+                answer = send_pseudonymized(pseudonymized_text, instruction, api_key, DEFAULT_MODEL)
+        except MistralError as error:
+            st.error(t(f"mistral.error.{error.code}"))
+        else:
+            st.session_state[KEY_LLM_RESPONSE] = answer
+            # La zone de réponse a déjà été créée plus haut dans cette exécution.
+            st.session_state.pop(KEY_ANSWER_WIDGET, None)
+            st.session_state[KEY_RESTORE_RESULT] = None
+            st.rerun()
 
 
 def _ask_new_document() -> None:
