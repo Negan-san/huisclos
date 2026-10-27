@@ -11,6 +11,7 @@ from collections.abc import Sequence
 
 from huisclos.config import DetectionConfig
 from huisclos.detection.exclusions import is_excluded
+from huisclos.detection.merge import crossing_spans
 from huisclos.models import Detection, EntityType, Source
 from huisclos.text_utils import (
     LEGAL_FORMS,
@@ -123,7 +124,9 @@ def propagate(
     savoir si les exclusions s'appliquent ; exclusion_spans, les passages exclus.
     Valeur retournée : detections et les occurrences ajoutées, triées et sans chevauchement.
     Une occurrence prend le type et le score de son entité d'origine ; elle est ignorée si
-    elle chevauche une détection existante ou se trouve dans un passage exclu.
+    elle chevauche une détection existante, se trouve dans un passage exclu ou franchit
+    l'une de ses bornes : dans "Tribunal judiciaire de Jean DUPONT", la forme courte
+    "DUPONT" reste trouvée ensuite.
     """
     folded = fold_same_length(text)
     occupied = [(d.start, d.end) for d in detections]
@@ -140,7 +143,10 @@ def propagate(
             candidate = Detection(
                 start, end, origin.entity_type, origin.score, Source.PROPAGATION, text[start:end]
             )
-            if config.use_exclusions and is_excluded(candidate, exclusion_spans):
+            if config.use_exclusions and (
+                is_excluded(candidate, exclusion_spans)
+                or crossing_spans(start, end, exclusion_spans)
+            ):
                 continue
             added.append(candidate)
             occupied.append((start, end))

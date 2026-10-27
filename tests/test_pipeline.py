@@ -136,7 +136,6 @@ def test_config_rejects_invalid_threshold() -> None:
         DetectionConfig(threshold=-0.1)
 
 
-@pytest.mark.xfail(strict=True, reason="G1-M4 : le span NER déborde dans une juridiction exclue")
 def test_court_is_not_masked_when_a_name_crosses_its_end() -> None:
     """Une mention NER partiellement exclue ne doit pas masquer la juridiction."""
     text = "M. Paul Martin. Tribunal judiciaire de Paul Martin."

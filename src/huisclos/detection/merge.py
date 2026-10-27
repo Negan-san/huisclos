@@ -11,7 +11,7 @@ from collections.abc import Iterable, Sequence
 from dataclasses import replace
 
 from huisclos.config import DetectionConfig
-from huisclos.detection.exclusions import is_excluded
+from huisclos.detection.exclusions import EXCLUDABLE_TYPES, is_excluded
 from huisclos.models import Detection, EntityType, Source
 from huisclos.text_utils import CIVILITIES, LEGAL_FORMS, fold, fold_same_length
 
@@ -42,6 +42,9 @@ _COMPANY_WORD_BEFORE = re.compile(r"(?<!\w)(?:societe|cabinet|groupe)[^\S\n]+$")
 _LEADING_WORD = re.compile(r"([^\W\d_]+)(?:\.\s*|\s+)")
 _ADDRESS_GAP = re.compile(r"[^\S\n]*,?[^\S\n]*(?:\r?\n[^\S\n]*)?")
 _PERSON_GAPS = frozenset({"", " ", "-", "\u00a0"})
+_POSTAL_CODE = re.compile(r"[0-9]{5}(?!\w)")
+# Score d'une adresse compl\u00e8te, de la voie \u00e0 la ville (D-07).
+FULL_ADDRESS_SCORE = 0.70
 
 
 def priority(detection: Detection) -> tuple[int, int]:
@@ -175,28 +178,30 @@ def _union_same_type(text: str, cluster: list[Detection]) -> list[Detection]:
     return united
 
 
-def _largest_free_part(
-    text: str, detection: Detection, blockers: Iterable[Detection]
-) -> Detection | None:
-    """Plus longue partie de la détection non couverte par blockers.
+def _free_parts(
+    text: str, detection: Detection, blockers: Iterable[tuple[int, int]]
+) -> list[Detection]:
+    """Parties de la détection non couvertes par les passages blockers, dans l'ordre.
 
-    La partie doit compter au moins 2 lettres ou chiffres : le reste d'un IBAN rogné par
-    un ajout manuel est encore sensible, alors qu'une initiale isolée ne l'est plus.
+    Chaque partie doit compter au moins 2 lettres ou chiffres : le reste d'un IBAN rogné par
+    un ajout manuel est encore sensible, alors qu'une initiale isolée ne l'est plus. Toutes
+    les parties sont gardées : "Paul Martin" et "Marie Durand" autour d'un e-mail sont deux
+    noms distincts, et en perdre un laisserait une personne en clair (priorité au rappel).
     """
     parts: list[tuple[int, int]] = []
     cursor = detection.start
-    for blocker in sorted(blockers, key=_sort_key):
-        if blocker.start > cursor:
-            parts.append((cursor, blocker.start))
-        cursor = max(cursor, blocker.end)
+    for blocker_start, blocker_end in sorted(blockers):
+        if blocker_start > cursor:
+            parts.append((cursor, min(blocker_start, detection.end)))
+        cursor = max(cursor, blocker_end)
     if cursor < detection.end:
         parts.append((cursor, min(detection.end, len(text))))
     trimmed = [_strip_borders(text, start, end) for start, end in parts]
-    candidates = [(s, e) for s, e in trimmed if sum(c.isalnum() for c in text[s:e]) >= 2]
-    if not candidates:
-        return None
-    start, end = max(candidates, key=lambda span: (span[1] - span[0], -span[0]))
-    return _with_span(text, detection, start, end)
+    return [
+        _with_span(text, detection, start, end)
+        for start, end in trimmed
+        if sum(c.isalnum() for c in text[start:end]) >= 2
+    ]
 
 
 def _resolve_conflicts(text: str, cluster: list[Detection]) -> list[Detection]:
@@ -204,8 +209,8 @@ def _resolve_conflicts(text: str, cluster: list[Detection]) -> list[Detection]:
 
     Les détections sont examinées de la plus forte à la plus faible (priorité, puis score,
     puis longueur). Une détection contenue dans une plus forte disparaît ; une détection
-    qui en contient une plus forte, ou la chevauche en partie, est rognée à sa plus longue
-    partie libre, pour ne pas laisser un morceau de nom en clair (priorité au rappel).
+    qui en contient une plus forte, ou la chevauche en partie, est réduite à ses parties
+    libres, pour ne pas laisser un morceau de nom en clair (priorité au rappel).
     """
     ordered = sorted(cluster, key=lambda d: (priority(d), -d.score, -d.length, _sort_key(d)))
     accepted: list[Detection] = []
@@ -214,9 +219,7 @@ def _resolve_conflicts(text: str, cluster: list[Detection]) -> list[Detection]:
         if not blockers:
             accepted.append(detection)
         elif not any(a.start <= detection.start and detection.end <= a.end for a in blockers):
-            remainder = _largest_free_part(text, detection, blockers)
-            if remainder is not None:
-                accepted.append(remainder)
+            accepted.extend(_free_parts(text, detection, [(a.start, a.end) for a in blockers]))
     return accepted
 
 
@@ -232,6 +235,21 @@ def _joinable(text: str, left: Detection, right: Detection) -> bool:
     return False
 
 
+def _joined_score(left: Detection, right: Detection) -> float:
+    """Score d'une détection réunie : le plus haut des deux, ou celui d'une adresse complète.
+
+    Une voie (0,55) suivie de son code postal et de sa ville (0,45) forme une adresse
+    complète, qui vaut 0,70 selon D-07.
+    """
+    score = max(left.score, right.score)
+    street_then_postal_code = (
+        left.entity_type == EntityType.ADDRESS
+        and _POSTAL_CODE.match(left.text) is None
+        and _POSTAL_CODE.match(right.text) is not None
+    )
+    return max(score, FULL_ADDRESS_SCORE) if street_then_postal_code else score
+
+
 def join_adjacent(text: str, detections: list[Detection]) -> list[Detection]:
     """Règle 6 : fusionne "Jean" et "DUPONT", ou une voie et la ligne "92000 Nanterre"."""
     joined: list[Detection] = []
@@ -239,7 +257,8 @@ def join_adjacent(text: str, detections: list[Detection]) -> list[Detection]:
         if joined and _joinable(text, joined[-1], detection):
             left = joined[-1]
             best = left if left.score >= detection.score else detection
-            joined[-1] = _with_span(text, best, left.start, detection.end)
+            score = _joined_score(left, detection)
+            joined[-1] = _with_span(text, best, left.start, detection.end, score=score)
         else:
             joined.append(detection)
     return joined
@@ -254,6 +273,34 @@ def _sort_key(detection: Detection) -> tuple[int, int, str, str, float]:
         detection.source.value,
         -detection.score,
     )
+
+
+def crossing_spans(start: int, end: int, spans: Sequence[tuple[int, int]]) -> list[tuple[int, int]]:
+    """Passages qui chevauchent [start, end) en franchissant l'une de ses bornes.
+
+    Un passage entièrement contenu dans [start, end) n'est pas retenu : la forme juridique
+    "SARL", exclue seule, fait partie du nom "Garnier Logistique SARL" (D-09).
+    Exemple : crossing_spans(5, 10, [(0, 7), (6, 8)]) == [(0, 7)].
+    """
+    return [(s, e) for s, e in spans if s < end and start < e and not (start <= s and e <= end)]
+
+
+def _subtract_exclusions(
+    text: str, detection: Detection, exclusion_spans: Sequence[tuple[int, int]]
+) -> list[Detection]:
+    """Retire d'un nom les passages exclus qui franchissent ses bornes ; garde le reste.
+
+    Un nom entièrement exclu disparaît. Un span NER qui déborde dans une juridiction
+    ("Paul Martin" dans "Tribunal judiciaire de Paul Martin") ne doit pas la masquer, mais
+    la partie hors du passage exclu reste signalée (priorité au rappel). Un ajout manuel et
+    les types qu'une exclusion ne vise pas (e-mail, IBAN, adresse) sont gardés tels quels.
+    """
+    if detection.source == Source.MANUAL or detection.entity_type not in EXCLUDABLE_TYPES:
+        return [detection]
+    if is_excluded(detection, exclusion_spans):
+        return []
+    crossing = crossing_spans(detection.start, detection.end, exclusion_spans)
+    return _free_parts(text, detection, crossing) if crossing else [detection]
 
 
 def check_output(text: str, detections: Sequence[Detection]) -> None:
@@ -280,14 +327,13 @@ def merge(
     """
     trimmed = (trim(text, d) for d in sorted(set(raw), key=_sort_key))
     detections = [d for d in trimmed if d is not None]
-    detections = [d for d in detections if d.entity_type in config.enabled_types]
     if config.use_exclusions:
         detections = [
-            d
-            for d in detections
-            if d.source == Source.MANUAL or not is_excluded(d, exclusion_spans)
+            part for d in detections for part in _subtract_exclusions(text, d, exclusion_spans)
         ]
+    # Le filtre suit la requalification : une personne devenue société relève du type société.
     detections = [requalify(text, d) for d in detections]
+    detections = [d for d in detections if d.entity_type in config.enabled_types]
     resolved: list[Detection] = []
     for cluster in _clusters(detections):
         resolved.extend(_resolve_conflicts(text, _union_same_type(text, cluster)))

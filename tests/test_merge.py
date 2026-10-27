@@ -5,7 +5,7 @@ import random
 import pytest
 
 from huisclos.config import DetectionConfig
-from huisclos.detection.merge import check_output, merge, priority
+from huisclos.detection.merge import check_output, crossing_spans, merge, priority
 from huisclos.models import DEFAULT_ENABLED_TYPES, Detection, EntityType, Source
 
 CONFIG = DetectionConfig(threshold=0.40)
@@ -84,7 +84,7 @@ def test_rule3_removes_names_inside_excluded_spans_only() -> None:
     ]
     result = texts(merge(text, raw, CONFIG, [court, email_span]))
     assert ("Nanterre", EntityType.ORGANIZATION) not in result
-    assert ("Nanterre, Paul Martin", EntityType.PERSON) in result
+    assert ("Paul Martin", EntityType.PERSON) in result
     assert ("a@example.com", EntityType.EMAIL) in result
     assert ("Conseil", EntityType.PERSON) in result
     no_exclusion = DetectionConfig(threshold=0.40, use_exclusions=False)
@@ -280,7 +280,6 @@ def test_result_does_not_depend_on_input_order() -> None:
         assert merge(text, shuffled, CONFIG) == reference
 
 
-@pytest.mark.xfail(strict=True, reason="G1-M1 : la plus petite partie libre du nom est perdue")
 def test_all_sensitive_parts_survive_an_inner_identifier() -> None:
     """Les deux parties d'un nom englobant un identifiant restent couvertes."""
     text = "Paul Martin jean@example.test Marie Durand"
@@ -296,7 +295,6 @@ def test_all_sensitive_parts_survive_an_inner_identifier() -> None:
     ]
 
 
-@pytest.mark.xfail(strict=True, reason="G1-M2 : le type requalifié échappe au filtre des types")
 def test_requalified_organization_respects_disabled_types() -> None:
     """Une société reste désactivée même si sa source la classe comme personne."""
     text = "Paul SARL"
@@ -304,7 +302,6 @@ def test_requalified_organization_respects_disabled_types() -> None:
     assert merge(text, [det(text, "Paul", EntityType.PERSON)], config) == []
 
 
-@pytest.mark.xfail(strict=True, reason="G1-M3 : une adresse réunie garde le score de voie seule")
 def test_joined_full_address_gets_d07_score() -> None:
     """Une voie et un code postal réunis valent 0,70 selon D-07."""
     text = "12 rue Haute,\n75001 Paris"
@@ -315,3 +312,14 @@ def test_joined_full_address_gets_d07_score() -> None:
     result = merge(text, raw, CONFIG)
     assert len(result) == 1 and result[0].text == text
     assert result[0].score == 0.70
+
+
+def test_exclusion_inside_a_name_does_not_split_it() -> None:
+    """Une forme juridique exclue seule reste dans le span de sa société (D-09)."""
+    text = "Garnier Logistique SARL paie."
+    sarl = (text.index("SARL"), text.index("SARL") + 4)
+    raw = [det(text, "Garnier Logistique SARL", EntityType.ORGANIZATION)]
+    assert texts(merge(text, raw, CONFIG, [sarl])) == [
+        ("Garnier Logistique SARL", EntityType.ORGANIZATION)
+    ]
+    assert crossing_spans(5, 10, [(0, 7), (6, 8), (10, 12)]) == [(0, 7)]

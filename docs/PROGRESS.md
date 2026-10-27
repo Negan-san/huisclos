@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 16:27 | G1-fix | Correction ciblée après la gate 1 | Claude Code, Opus 5.5
+- Fait : dev avancée sur lane-b (avance rapide, commit G1). Les cinq xfail retirés, échecs constatés puis corrigés. merge.py : toutes les parties libres d'une détection rognée sont gardées (M1) ; filtre des types après la requalification (M2) ; voie suivie d'un code postal réunie à 0,70 (M3) ; un nom qui franchit la borne d'un passage exclu en perd la partie exclue et garde le reste (M4). propagation.py : une occurrence qui franchit la borne d'un passage exclu est ignorée, la forme courte reste cherchée (P1).
+- Tests : pytest : 381 passed, 0 xfail (deux tests ajoutés : exclusion contenue dans un nom, propagation d'une société avec "SARL") ; ruff check et ruff format --check : OK ; check_style : 0 erreur, 1 avertissement (merge.py, 349 lignes, sous le maximum de 400). detect_cli hybrid sur mini_case : 16/16.
+- Reste à faire : rejouer la gate G1 ; mesurer sur dev l'effet des restes de noms laissés par la soustraction des exclusions.
+- Décisions : D-G1fix-1 (complète D-S13-1). test_merge.test_rule3 modifié : il attendait "Nanterre, Paul Martin" entier à travers la juridiction, soit le défaut M4.
+- Risques ou blocages : une exclusion entièrement contenue dans un nom ne le coupe pas ("SARL", "Cabinet"), sinon la forme juridique sortirait du span (D-09) ; un nom NER qui contiendrait toute une juridiction la masquerait encore (non observé). Aucun fichier du split test lu ; models.py inchangé.
+- Prochaine session : suivre la sortie du script de pilotage G1.
+
 ### 2026-10-27 16:16 | G1 | Contrôle du moteur de détection : NO-GO | Codex
 - Fait : dev fusionnée dans lane-b sans conflit ; arbre initial propre ; revue de S11 à S13, des règles, signatures Presidio installées et tests ; aucun changement au contrat models.py ni au code de merge.py et propagation.py ; aucune installation ni lecture du split test.
 - Corrections : patterns.py reconnaît les espaces U+00A0 et U+202F sans décaler les spans ; person_heuristics.py accepte U+202F et consomme les suites en capitales une seule fois ; pipeline.py normalise ces blancs à longueur constante pour spaCy et refuse les sources toutes désactivées avant le repli Presidio. Six fichiers de tests renforcés.

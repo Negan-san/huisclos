@@ -133,3 +133,8 @@ Seuil par défaut : 0,40 jusqu'à la gate 4, puis la valeur de results/threshold
 ## D-S13-4 Propagation : formes en majuscule et particules élidées
 - Choix : une occurrence n'est retenue que si son premier mot, et chaque mot écrit avec une majuscule dans la forme d'origine, commence par une majuscule ; l'initiale se lit après une particule élidée ("d'Aubigné"). Les formes longues sont cherchées d'abord ; pour une forme partagée par des homonymes, l'entité de plus haut score puis la première du texte sert d'origine.
 - Raison : "petit" ne doit jamais être masqué pour le nom Petit ; "DUPONT" isolé reçoit le même type et le même score, quel que soit l'homonyme retenu, et le regroupement des jetons reste revu par l'humain.
+
+## D-G1fix-1 Parties libres et passages exclus qui franchissent un nom
+- Contexte : la gate G1 a relevé un nom perdu autour d'un identifiant (D-S13-1 ne gardait que la plus longue partie libre) et des noms NER ou propagés qui débordaient dans une juridiction exclue sans y être contenus.
+- Choix : une détection rognée garde toutes ses parties libres d'au moins 2 lettres ou chiffres. Un passage exclu qui franchit une borne d'un nom en est retiré à la fusion ; à la propagation, l'occurrence est ignorée et une forme plus courte reste cherchée. Un passage exclu entièrement contenu dans le nom ne le coupe pas. Le filtre des types activés s'applique après la requalification. Une voie suivie de son code postal, réunie à la règle 6, vaut au moins 0,70 (D-07).
+- Raison : priorité au rappel (principe 3) sans jamais masquer une juridiction ; "SARL", exclu seul, appartient au span de sa société (D-09).
