@@ -1,0 +1,8 @@
+* text=auto eol=lf
+*.png binary
+*.pdf binary
+*.docx binary
+docs/PROGRESS.md merge=union
+docs/PROMPTS.md merge=union
+docs/DECISIONS.md merge=union
+docs/CONTRIBUTIONS.md merge=union

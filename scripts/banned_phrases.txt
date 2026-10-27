@@ -1,0 +1,38 @@
+# Expressions interdites dans le code, l'interface et la documentation (une par ligne).
+# Lues par scripts/check_style.py ; insensible à la casse, mots entiers.
+puissant
+puissante
+puissants
+puissantes
+de manière transparente
+de façon transparente
+il convient de noter
+il est important de noter
+plongeons
+révolutionnaire
+révolutionner
+incontournable
+à la pointe
+de pointe
+seamless
+seamlessly
+powerful
+cutting-edge
+state-of-the-art
+game-changer
+game changer
+revolutionary
+revolutionize
+unlock
+unleash
+leverage
+delve
+dive into
+it is worth noting
+worth noting that
+world-class
+best-in-class
+effortless
+effortlessly
+supercharge
+empower

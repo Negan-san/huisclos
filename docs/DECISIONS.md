@@ -23,7 +23,7 @@ Format : contexte, choix, raison. D-01 à D-18 viennent du master plan (27 octob
 ## D-05 Modèle spaCy
 - Choix : fr_core_news_md, installé par URL de wheel dans requirements.txt ; lg écarté.
 - Raison : modèle français pré-entraîné compatible avec la mémoire du cloud (690 Mo à 2,7 Go selon la documentation de Streamlit, chiffres de février 2024).
-- À compléter en S01 : version, taille et licence lues dans le meta.json du modèle installé.
+- Mesuré en S01 (meta.json du modèle installé) : version 3.8.0, compatible avec spaCy 3.8.18 (`spacy validate`) ; licence LGPL-LR (le meta.json ne renseigne pas de champ size) ; 65 163 220 octets sur disque, soit environ 62 Mio ; sources : UD French Sequoia (LGPL-LR), WikiNER (CC BY 4.0), spaCy lookups (MIT), vecteurs fastText (CC0).
 
 ## D-06 CamemBERT
 - Choix : option locale (requirements-transformers.txt), évaluée en S44, jamais déployée, exécutée hors ligne (HF_HUB_OFFLINE=1).
@@ -88,3 +88,15 @@ Seuil par défaut : 0,40 jusqu'à la gate 4, puis la valeur de results/threshold
 ## D-18 Coupes
 - Choix : GLiNER et Faker retirés du périmètre dès le plan.
 - Raison : bénéfice faible pour la note ; Faker complique la réidentification et brouille la démo.
+
+## D-S01-1 Épinglage des dépendances
+- Choix : dépendances directes épinglées en == sur les versions installées en S01 (streamlit 1.66.1, presidio 2.2.366, spaCy 3.8.18, pandas 3.1.0, etc.) ; le modèle fr_core_news_md 3.8.0 est lié par URL de wheel (la version 3.8.1 n'existe pas).
+- Raison : installation reproductible en local et sur le cloud.
+
+## D-S01-2 Énumérations et règle UP042 de ruff
+- Choix : EntityType et Source héritent de (str, Enum), comme l'exige le contrat de models.py, avec `# noqa: UP042` sur la ligne de classe.
+- Raison : le contrat est partagé avec les autres sessions ; StrEnum changerait le rendu de str() et de format().
+
+## D-S01-3 Test d'interface sans la fixture no_network
+- Choix : l'AppTest de la page d'accueil n'utilise pas no_network, car AppTest ouvre une connexion locale (127.0.0.1) pour son propre fonctionnement.
+- Raison : bloquer toutes les connexions rendrait le test impossible ; le test de bout en bout du pipeline (tests/test_no_network.py) portera sur le code métier.

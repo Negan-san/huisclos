@@ -9,3 +9,4 @@ This file records every prompt given to an AI tool while building HuisClos, as t
 | Date and time (Paris) | Session | Tool and model | Prompt reference | Follow-up prompts (verbatim) or notes |
 | --- | --- | --- | --- | --- |
 | 2026-10-27 11:28 | Plan | Claude (claude.ai), Opus 5.5 | docs/prompts/00_master_prompt.md | Produced docs/MASTER_PLAN.md |
+| 2026-10-27 14:34 | S01 | Claude Code, Sonnet 5.5 High | docs/MASTER_PLAN.md, card S01 | No follow-up prompt. |
