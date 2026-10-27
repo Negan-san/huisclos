@@ -14,4 +14,9 @@ Development errors use exact matching and include 30 characters on each side.
 | dev | hybrid_no_propagation | 0.30 | 0.9648 | 1.0000 | 0.9928 | 0.0085 | 0 |
 | dev | hybrid | 0.30 | 0.9648 | 1.0000 | 0.9928 | 0.0085 | 0 |
 | dev | hybrid_camembert | 0.30 | 0.9648 | 1.0000 | 0.9928 | 0.0085 | 0 |
+| test | patterns_only | 0.30 | 1.0000 | 1.0000 | 1.0000 | 0.0529 | 0 |
+| test | ner_only | 0.30 | 0.9091 | 0.4301 | 0.4808 | 0.6993 | 51 |
+| test | hybrid_no_propagation | 0.30 | 0.9789 | 1.0000 | 0.9957 | 0.0529 | 0 |
+| test | hybrid | 0.30 | 0.9789 | 1.0000 | 0.9957 | 0.0529 | 0 |
+| test | hybrid_camembert | 0.30 | 0.9688 | 1.0000 | 0.9936 | 0.0529 | 0 |
 
