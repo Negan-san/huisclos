@@ -14,6 +14,15 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 15:46 | S41 | Format, construction et validation du corpus | Codex
+- Fait : piste B synchronisée avec dev en avance rapide, sans conflit ; format source documenté en anglais ; chargeur JSONL typé et constructeur Markdown déterministe créés avec validation des spans, marqueurs, clés et identifiants uniques.
+- Tests : pytest : 290 passed, dont 43 tests corpus ; fixture et six sources présentes validées par build_corpus.py --check ; déterminisme octet par octet, adresse multiligne, liens SIREN/SIRET, clés fausses, diagnostics fichier:ligne et export demo testés.
+- Contrôles : ruff check et ruff format --check : OK ; check_style : 0 erreur, 0 avertissement ; tests exécutés avec --basetemp .pytest_cache/s41-full pour contourner les permissions du dossier temporaire Windows.
+- Reste à faire : compléter les sources jusqu'aux 12 dev, 6 test et 1 demo prévus ; construire les sorties JSONL et exporter la démo quand les sources seront complètes. Aucune sortie générée ajoutée au dépôt pendant S41.
+- Décisions : aucune ; application de D-12. Les options de chemins permettent la validation isolée de la fixture et les constructions temporaires.
+- Risques ou blocages : aucun appel réseau ni installation ; aucun contenu du split test consulté par l'agent ; les marqueurs répétés partagent une valeur dans chaque document et DIGITS9 reste hors annotation.
+- Prochaine session : suivre le script de pilotage S41 ; les sources existantes restent inchangées.
+
 ### 2026-10-27 15:36 | S12 | NER française, heuristiques de personnes, exclusions | Claude Code, Sonnet 5.5
 - Fait : detection/ner.py (moteur spaCy fr, reconnaisseur marqué ner_spacy, refus de charger un modèle absent), detection/person_heuristics.py (civilité 0,80 ; Prénom NOM et NOM Prénom 0,70 ; gardes : mots de début de phrase, acronymes, chiffres romains), detection/exclusions.py et data/exclusions_fr.txt (cinq sections, X = nom de lieu, entrées re:, spans fusionnés, is_excluded limité à PERSON, ORGANIZATION, LOCATION).
 - Tests : pytest : 87 passed (dont test_ner, test_person_heuristics, test_exclusions, un test NER sous no_network) ; ruff check et ruff format --check : OK ; check_style : 0 erreur, 0 avertissement.
