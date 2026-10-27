@@ -104,3 +104,8 @@ Seuil par défaut : 0,40 jusqu'à la gate 4, puis la valeur de results/threshold
 ## D-PIL-1 Délégation des tâches humaines
 - Choix : pendant le développement, l'humain colle les prompts, relit le code et mène ses recherches pour la vidéo. Les fusions (étape 0 de chaque session), la rédaction des lots 2 et 3 du corpus (session C1, Codex) et les recettes de gate (sessions R0 à R5 et RF, Claude Code, Haiku ou Sonnet) sont confiées aux agents. Les recettes R<N> passent dev dans main, posent le tag et poussent.
 - Raison : l'attention de l'humain est la ressource la plus rare ; chaque recette reste tracée dans docs/PROGRESS.md, et le contrôle croisé par une autre famille de modèles est conservé aux gates.
+
+## D-G0-1 Contrôle des chemins externes
+- Contexte : --paths acceptait un fichier Python hors du dépôt mais ignorait ses appels print et sa docstring de module.
+- Choix : appliquer C5 et C6 aux fichiers Python externes explicitement fournis par --paths ; dans le dépôt, conserver ces règles sur src/ et app/ uniquement.
+- Raison : le contrôle de robustesse de Gate 0 doit signaler le tiret interdit et le print du fichier temporaire, sans soumettre les scripts et les tests du dépôt aux règles métier.

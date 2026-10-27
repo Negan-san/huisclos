@@ -26,7 +26,21 @@ def make_detection(**overrides: object) -> Detection:
 
 
 def test_entity_type_values_equal_names() -> None:
-    assert len(EntityType) == 13
+    assert [member.name for member in EntityType] == [
+        "PERSON",
+        "ORGANIZATION",
+        "ADDRESS",
+        "EMAIL",
+        "PHONE",
+        "IBAN",
+        "NIR",
+        "SIREN",
+        "SIRET",
+        "BIRTH_DATE",
+        "CASE_NUMBER",
+        "LOCATION",
+        "CUSTOM",
+    ]
     assert all(member.value == member.name for member in EntityType)
 
 
@@ -61,6 +75,8 @@ def test_detection_is_frozen() -> None:
         {"end": 2},
         {"score": -0.1},
         {"score": 1.01},
+        {"score": float("nan")},
+        {"score": float("inf")},
         {"text": "Alic"},
         {"text": "Alicia!"},
     ],

@@ -14,12 +14,29 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 15:13 | G0 | Contrôle du socle : GO | Codex
+- Fait : conflits PROGRESS/PROMPTS résolus sur demande en conservant les entrées des deux pistes ; diff complet S01 (0b86362) relu ; dépendances, configuration, exclusions Git, attributs union et contrat models.py conformes.
+- Corrections : C5 reconnaît aussi print avec espaces ; C5/C6 appliqués aux fichiers Python externes fournis par --paths ; caractères interdits écrits en échappements dans le script et ses tests ; docstring Detection rectifiée sans changement du contrat ; tests des noms de types et scores non finis renforcés.
+- Tests : pytest : 31 passed ; ruff check et ruff format --check : OK ; check_style : 0 erreur, 0 avertissement ; fichier fautif temporaire hors dépôt : sortie 1, C1 et C5, puis dossier supprimé ; Python 3.12 et versions installées vérifiés sans réseau.
+- Reste à faire et repli : centraliser les textes dans app/i18n/ (hors périmètre), ajouter au README la distinction pseudonymisation/anonymisation ; conserver jusque-là la mention légale présente dans l'interface ; créer le test réseau du pipeline quand il sera implémenté.
+- Décisions : D-G0-1 ; verdict GO selon les critères de G0, sans changement d'architecture ni du contrat de models.py.
+- Risques ou blocages : pytest standard a rencontré un refus d'accès au dossier temporaire Windows existant ; contourné avec --basetemp .pytest_cache/g0-final ; aucune installation, aucun appel réseau, aucune lecture du split test.
+- Prochaine session : recette R0 par la piste A ; la fusion reprend dev à 62e3362, son état au démarrage ; le nouveau commit de pilotage 7a69f7c sera conservé lors de la synchronisation suivante ; aucun tag ni push dans G0.
+
 ### 2026-10-27 15:10 | PIL | Délégation des tâches humaines aux agents | Claude Code, Opus 5.5
 - Fait : AGENTS.md sections 7, 11 et 12 : synchronisation par les agents (étape 0), sessions de recette R<N> qui fusionnent, taguent et poussent après une gate GO, session C1 qui rédige les lots 2 et 3 du corpus.
 - Tests : check_style vert sur AGENTS.md (128 lignes).
 - Décisions : D-PIL-1.
 - Risques ou blocages : le commit fdd4f3a de lane-b, libellé "S11", contient en réalité le lot 1 du corpus ; S11 reste à faire.
 - Prochaine session : G0 (Codex, huisclos-b).
+
+### 2026-10-27 14:45 | S11 | Corpus fictif H1, lot 1 | Codex
+- Fait : relecture des six documents dev selon A5 ; sources doc_01 à doc_06 enregistrées en UTF-8 sans BOM ; prompt initial et suivi copiés dans docs/prompts/corpus_lot_1.md.
+- Tests : contrôles ciblés sur les six sources OK (299 à 353 mots, 16 à 18 annotations, en-têtes, spans, marqueurs, formes courtes, pièges, domaines réservés) ; copie du prompt comparée au modèle A5 ; ruff check et ruff format --check OK.
+- Reste à faire : validation humaine A5 ; construction du corpus lorsque scripts/build_corpus.py sera disponible.
+- Décisions : aucune.
+- Risques ou blocages : pytest exécuté sans tests collectés ; scripts/check_style.py absent du dépôt initial, contrôle officiel impossible ; aucune installation ni utilisation du réseau.
+- Prochaine session : validation humaine du lot 1, puis préparation du lot 2 dev.
 
 ### 2026-10-27 14:34 | S01 | Socle du dépôt et garde-fous | Claude Code, Sonnet 5.5
 - Fait : requirements (épinglés), pyproject, .gitignore, .gitattributes, .streamlit/config.toml, LICENSE, README, models.py (contrat respecté), paquets vides, streamlit_app.py et style.css, scripts/check_style.py (règles C1 à C7) et banned_phrases.txt, tests.

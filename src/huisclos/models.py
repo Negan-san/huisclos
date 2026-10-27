@@ -44,7 +44,8 @@ class Detection:
     """Une valeur sensible repérée dans un texte.
 
     Les positions suivent la convention Python : start inclus, end exclu. Le champ text
-    doit être exactement texte[start:end], ce que __post_init__ vérifie.
+    doit être exactement texte[start:end]. Sans le texte source, __post_init__ ne peut
+    vérifier que sa longueur ; le pipeline doit vérifier la valeur de la tranche.
     """
 
     start: int

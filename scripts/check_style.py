@@ -21,11 +21,11 @@ OFF_MARKER = "style-check: off"
 BANNED_FILE = Path(__file__).resolve().parent / "banned_phrases.txt"
 
 # Les caractères interdits sont écrits en échappements pour que ce fichier se contrôle lui-même.
-DASH_OR_ELLIPSIS = {"—": "tiret cadratin", "…": "points de suspension typographiques"}
-EMOJI_PATTERN = re.compile("[\U0001f000-\U0001faff☀-➿️]")
-TYPOGRAPHIC_QUOTES = "“”‘’«»"
+DASH_OR_ELLIPSIS = {"\u2014": "tiret cadratin", "\u2026": "points de suspension typographiques"}
+EMOJI_PATTERN = re.compile("[\U0001f000-\U0001faff\u2600-\u27bf\ufe0f]")
+TYPOGRAPHIC_QUOTES = "\u201c\u201d\u2018\u2019\u00ab\u00bb"
 BANNER_PATTERN = re.compile(r"([=\-*#~_])\1{4}")
-DEBUG_PATTERN = re.compile(r"\bprint\(|\b(?:TODO|FIXME|XXX)\b")
+DEBUG_PATTERN = re.compile(r"\bprint\s*\(|\b(?:TODO|FIXME|XXX)\b")
 COMMENT_STARTS = ("#", "/*", "*", "//")
 WARN_LINES = 300
 MAX_LINES = 400
@@ -108,11 +108,16 @@ def check_banned_phrases(path: Path, lines: list[str]) -> list[Problem]:
     return problems
 
 
-def is_app_or_src_python(path: Path) -> bool:
-    """Indique si le fichier est un .py de src/ ou d'app/ (règles C5 et C6)."""
+def needs_python_checks(path: Path) -> bool:
+    """Active C5 et C6 pour src/, app/ et les fichiers Python externes explicitement visés."""
     if path.suffix != ".py":
         return False
-    return relative_name(path).split("/")[0] in {"src", "app"}
+    try:
+        relative = path.resolve().relative_to(ROOT)
+    except ValueError:
+        # Un chemin externe fourni par --paths doit recevoir les mêmes contrôles.
+        return True
+    return relative.parts[0] in {"src", "app"}
 
 
 def check_debug_markers(path: Path, lines: list[str]) -> list[Problem]:
@@ -155,7 +160,7 @@ def check_file(path: Path) -> tuple[list[Problem], list[Problem]]:
     errors = check_characters(path, lines)
     errors += check_banners(path, lines)
     errors += check_banned_phrases(path, lines)
-    if is_app_or_src_python(path):
+    if needs_python_checks(path):
         errors += check_debug_markers(path, lines)
         errors += check_module_docstring(path, source)
     length_errors, warnings = check_length(path, lines)

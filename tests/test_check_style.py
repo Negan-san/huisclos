@@ -27,13 +27,13 @@ def write(path: Path, text: str) -> Path:
 
 
 def test_c1_dash_ellipsis_emoji(repo: Path) -> None:
-    for bad in ("a — b", "a…", "ok \U0001f600", "ok ✅", "ok ️"):
+    for bad in ("a \u2014 b", "a\u2026", "ok \U0001f600", "ok \u2705", "ok \ufe0f"):
         assert codes(write(repo / "docs" / "n.md", bad + "\n")) == ["C1"]
     assert codes(write(repo / "docs" / "n.md", "Texte propre, avec accents é.\n")) == []
 
 
 def test_c2_typographic_quotes_only_in_code(repo: Path) -> None:
-    quotes = "“ ” ‘ ’ « »"
+    quotes = "\u201c \u201d \u2018 \u2019 \u00ab \u00bb"
     assert codes(write(repo / "a.toml", f'key = "{quotes}"\n')) == ["C2"] * 6
     assert codes(write(repo / "a.css", f"/* {quotes} */\n")) == ["C2"] * 6
     assert codes(write(repo / "docs" / "n.md", f"{quotes}\n")) == []
@@ -82,18 +82,18 @@ def test_c7_length(repo: Path) -> None:
 
 
 def test_exclusions(repo: Path) -> None:
-    write(repo / "docs" / "MASTER_PLAN.md", "a — b\n")
-    write(repo / "docs" / "PROMPTS.md", "a — b\n")
+    write(repo / "docs" / "MASTER_PLAN.md", "a \u2014 b\n")
+    write(repo / "docs" / "PROMPTS.md", "a \u2014 b\n")
     (repo / "docs" / "prompts").mkdir()
-    write(repo / "docs" / "prompts" / "s.md", "a — b\n")
-    write(repo / "docs" / "off.md", "<!-- style-check: off -->\na — b\n")
-    write(repo / "docs" / "late.md", "1\n2\n3\n4\n5\nstyle-check: off —\n")
+    write(repo / "docs" / "prompts" / "s.md", "a \u2014 b\n")
+    write(repo / "docs" / "off.md", "<!-- style-check: off -->\na \u2014 b\n")
+    write(repo / "docs" / "late.md", "1\n2\n3\n4\n5\nstyle-check: off \u2014\n")
     names = [p.name for p in check_style.collect_files([repo / "docs"])]
     assert names == ["late.md"]
 
 
 def test_main_exit_codes_and_output(repo: Path, capsys: pytest.CaptureFixture[str]) -> None:
-    write(repo / "docs" / "n.md", "ok\nx — y\n")
+    write(repo / "docs" / "n.md", "ok\nx \u2014 y\n")
     assert check_style.main(["--paths", str(repo / "docs")]) == 1
     out = capsys.readouterr().out
     assert "docs/n.md:2:3: C1 tiret cadratin" in out
@@ -104,3 +104,18 @@ def test_main_exit_codes_and_output(repo: Path, capsys: pytest.CaptureFixture[st
 
 def test_real_repository_is_clean() -> None:
     assert check_style.main([]) == 0
+
+
+def test_external_python_path_is_checked(
+    repo: Path, tmp_path_factory: pytest.TempPathFactory, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Vérifie C1 et C5 pour un fichier externe fourni par --paths, puis son cas valide."""
+    external = tmp_path_factory.mktemp("external")
+    assert not external.is_relative_to(repo)
+    path = write(external / "probe.py", DOCSTRING + "# \u2014\nprint ('x')\n")
+    assert check_style.main(["--paths", str(external)]) == 1
+    output = capsys.readouterr().out
+    assert ": C1 tiret cadratin" in output
+    assert ": C5 interdit : print (" in output
+    write(path, DOCSTRING + "value = 1\n")
+    assert check_style.main(["--paths", str(external)]) == 0
