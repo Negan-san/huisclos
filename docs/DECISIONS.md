@@ -114,3 +114,22 @@ Seuil par défaut : 0,40 jusqu'à la gate 4, puis la valeur de results/threshold
 - Contexte : D-07 annonçait 0,85 pour le NER spaCy, à confirmer. Lecture du code installé (presidio-analyzer 2.2.366) : SpacyNlpEngine._get_scores_for_entities attribue à chaque entité NerModelConfiguration.default_score, soit 0,85 par défaut, et SpacyRecognizer renvoie ce score tel quel. Le modèle spaCy ne fournit aucune probabilité. La même version télécharge le modèle (spacy.cli.download) s'il n'est pas installé.
 - Choix : score NER = 0,85, valeur de D-07 confirmée, fixée explicitement dans la configuration (ner.NER_SCORE). Le moteur refuse de se charger si le modèle manque (RuntimeError) au lieu de le télécharger. Les étiquettes PER, ORG et LOC deviennent PERSON, ORGANIZATION et LOCATION ; MISC est ignoré. Le registre ne contient que des reconnaisseurs de langue "fr".
 - Raison : principe 1 d'AGENTS.md (aucun appel réseau à l'exécution) ; un score identique pour toutes les entités signifie que le NER ne classe pas ses propres détections, seul le seuil de D-13 les départage des heuristiques (0,70 à 0,80).
+
+## D-S13-1 Arbitrage des chevauchements entre types différents
+- Contexte : la règle 5 désigne un gagnant (priorité, puis score, puis longueur) mais laisse ouvert le sort du perdant en cas de chevauchement partiel.
+- Choix : les détections sont examinées de la plus forte à la plus faible. Une détection contenue dans une plus forte disparaît ; une détection qui en contient une plus forte ou la chevauche en partie est rognée à sa plus longue partie libre, gardée si elle compte au moins 2 lettres ou chiffres. La priorité inclut le type : deux types différents ne sont donc jamais à égalité, et le score ne départage que des détections de même type, déjà unies en 5a. Un ajout manuel n'est jamais uni à une détection automatique ni supprimé par les exclusions.
+- Raison : priorité au rappel (principe 3) : "Paul Martin 14" chevauchant une adresse laisse "Paul Martin" masqué ; le reste chiffré d'un IBAN rogné par un ajout manuel reste sensible.
+
+## D-S13-2 Rognage étendu : civilité seule et passage à la ligne
+- Contexte : sur mini_case, spaCy étiquette "Madame" comme personne (ensuite propagé à chaque "Madame") et prolonge "Claire Fontaine" sur la ligne suivante ("Avocate").
+- Choix : à la règle 1, une personne réduite à une civilité est supprimée ; un nom de personne, de société ou de lieu qui passe à la ligne est limité à sa plus longue ligne.
+- Raison : un nom propre ne passe pas à la ligne dans un en-tête ; la civilité reste visible par convention (D-09).
+
+## D-S13-3 Moteur spaCy commun à toutes les configurations
+- Contexte : AnalyzerEngine de Presidio exige un moteur NLP ; sans moteur fourni, il en crée un par défaut (modèle anglais, téléchargement possible).
+- Choix : un seul moteur fr_core_news_md en cache (pipeline.get_nlp_engine), partagé par toutes les configurations ; seuls les reconnaisseurs varient d'une configuration à l'autre. CamemBERT est chargé depuis huisclos.detection.camembert (build_camembert_recognizers), avec une RuntimeError claire si l'option est absente.
+- Raison : un seul chargement de modèle (3,8 s mesurées) et aucun appel réseau (D-11) ; le surcoût de spaCy pour patterns_only est faible (0,09 s pour mini_case en hybride).
+
+## D-S13-4 Propagation : formes en majuscule et particules élidées
+- Choix : une occurrence n'est retenue que si son premier mot, et chaque mot écrit avec une majuscule dans la forme d'origine, commence par une majuscule ; l'initiale se lit après une particule élidée ("d'Aubigné"). Les formes longues sont cherchées d'abord ; pour une forme partagée par des homonymes, l'entité de plus haut score puis la première du texte sert d'origine.
+- Raison : "petit" ne doit jamais être masqué pour le nom Petit ; "DUPONT" isolé reçoit le même type et le même score, quel que soit l'homonyme retenu, et le regroupement des jetons reste revu par l'humain.

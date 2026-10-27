@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 15:54 | S13 | Fusion des détections, propagation, pipeline | Claude Code, Opus 5.5
+- Fait : dev synchronisé avec lane-b sans conflit. config.py (DetectionConfig, 5 PRESETS, seuil lu dans results/threshold.json sinon 0,40), text_utils.py (fold, civilités, formes juridiques), detection/merge.py (règles 1 à 8, ordre d'arrivée sans effet), detection/propagation.py (variantes, recherche sans accents, majuscule obligatoire), detection/pipeline.py (analyseurs Presidio en cache, registre fr), scripts/detect_cli.py, fixture mini_case (216 mots, 16 spans attendus, NIR et SIRET de synthetic_ids avec la graine 18).
+- Tests : pytest : 308 passed (test_merge, test_propagation, test_pipeline, test_no_network ajoutés) ; ruff check et ruff format --check : OK ; check_style : 0 erreur, 0 avertissement. detect_cli sur mini_case : 16 détections sur 16 attendues, détection en 0,09 s après un chargement de 3,8 s.
+- Reste à faire : mesurer sur dev les effets de la propagation d'un nom de famille seul (homonymes, mots en tête de phrase) ; module detection/camembert.py attendu par pipeline (build_camembert_recognizers).
+- Décisions : D-S13-1 à D-S13-4.
+- Risques ou blocages : patterns_only et ner_only passent aussi par spaCy (Presidio l'exige), ce qui les rend plus lents sans changer leurs résultats ; patterns_only ne trouve aucune société sans forme juridique ni NER (constaté sur mini_case). Aucun fichier du split test lu.
+- Prochaine session : suivre la sortie du script de pilotage S13.
+
 ### 2026-10-27 15:36 | S12 | NER française, heuristiques de personnes, exclusions | Claude Code, Sonnet 5.5
 - Fait : detection/ner.py (moteur spaCy fr, reconnaisseur marqué ner_spacy, refus de charger un modèle absent), detection/person_heuristics.py (civilité 0,80 ; Prénom NOM et NOM Prénom 0,70 ; gardes : mots de début de phrase, acronymes, chiffres romains), detection/exclusions.py et data/exclusions_fr.txt (cinq sections, X = nom de lieu, entrées re:, spans fusionnés, is_excluded limité à PERSON, ORGANIZATION, LOCATION).
 - Tests : pytest : 87 passed (dont test_ner, test_person_heuristics, test_exclusions, un test NER sous no_network) ; ruff check et ruff format --check : OK ; check_style : 0 erreur, 0 avertissement.
