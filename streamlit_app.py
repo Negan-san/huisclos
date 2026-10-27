@@ -1,7 +1,8 @@
 """Point d'entrée de l'application HuisClos.
 
-Ajoute src/ au chemin d'import, charge la feuille de style locale et affiche la page
-d'accueil minimale avec les trois étapes du parcours : Import, Review, Restore.
+Ajoute la racine du dépôt et src/ au chemin d'import, charge la feuille de style locale,
+affiche l'en-tête et la barre latérale, puis lance la navigation entre les trois pages :
+Pseudonymize (le parcours Import, Review, Restore), Evaluation et Method & limits.
 """
 
 import sys
@@ -10,31 +11,31 @@ from pathlib import Path
 import streamlit as st
 
 ROOT = Path(__file__).resolve().parent
-sys.path.insert(0, str(ROOT / "src"))
+for path in (ROOT, ROOT / "src"):
+    if str(path) not in sys.path:
+        sys.path.insert(0, str(path))
 
-STYLE_PATH = ROOT / "app" / "assets" / "style.css"
-TAGLINE = "Use generative AI on client files without breaching professional secrecy."
-STEPS = ("Import", "Review", "Restore")
-LEGAL_NOTE = "Pseudonymization is not anonymization (GDPR art. 4(5), recital 26)."
-
-
-def load_style() -> None:
-    """Injecte la feuille de style locale dans la page."""
-    css = STYLE_PATH.read_text(encoding="utf-8")
-    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+from app.i18n import t  # noqa: E402  (le chemin d'import doit être complété avant)
+from app.sidebar import render_sidebar  # noqa: E402
+from app.state import init_state  # noqa: E402
+from app.ui_common import inject_style, render_header  # noqa: E402
 
 
 def main() -> None:
-    """Affiche la page d'accueil : titre, accroche, étapes en attente et mention légale."""
-    st.set_page_config(page_title="HuisClos", layout="wide")
-    load_style()
-    st.title("HuisClos")
-    st.write(TAGLINE)
-    columns = st.columns(len(STEPS))
-    for number, (column, step) in enumerate(zip(columns, STEPS, strict=True), start=1):
-        column.subheader(f"{number}. {step}")
-        column.caption("Waiting for the previous step.")
-    st.caption(LEGAL_NOTE)
+    """Prépare la page puis exécute la page choisie dans la navigation."""
+    st.set_page_config(page_title=t("app.title"), layout="wide")
+    inject_style()
+    init_state()
+    render_header()
+    render_sidebar()
+    navigation = st.navigation(
+        [
+            st.Page("app/pages/workflow.py", title=t("nav.pseudonymize"), default=True),
+            st.Page("app/pages/evaluation.py", title=t("nav.evaluation"), url_path="evaluation"),
+            st.Page("app/pages/method.py", title=t("nav.method"), url_path="method"),
+        ]
+    )
+    navigation.run()
 
 
 main()

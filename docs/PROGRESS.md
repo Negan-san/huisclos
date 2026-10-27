@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 19:20 | S31 | Charte, squelette de l'interface, étape Import | Claude Code, Sonnet 5.5
+- Fait : lane-b déjà intégrée (avance rapide, 619 tests verts avant travail). Navigation st.navigation à trois pages (Pseudonymize, Evaluation, Method & limits), état (state.py), charte (ui_common.py, style.css, ENTITY_STYLES), barre latérale avec remise à zéro confirmée, étape Import complète (collage, fichier, cas d'exemple, détection avec empreinte, un message par code d'erreur), squelettes Review et Restore, page Method avec schéma graphviz, i18n EN avec t(). demo_case_fr.txt régénéré par build_corpus.py : aucun changement.
+- Tests : pytest : 672 passed (36 tests d'interface dans test_app_smoke.py) ; ruff check et format : OK ; check_style : 0 erreur, 2 avertissements existants. Import vers Review sur l'exemple : 4,2 s au premier appel (chargement de spaCy), 0,2 s ensuite.
+- Reste à faire : écrans Review (S32) et Restore (S33), page Evaluation (S43), chaînes FR ; vérification visuelle dans un vrai navigateur (CSS non vu hors AppTest).
+- Décisions : D-S31-1, D-S31-2.
+- Risques ou blocages : le test ancien test_home_page_renders de tests/test_smoke.py (hors liste) a dû être retiré, la page d'accueil minimale n'existant plus. Une session G2 a modifié src/ et tests/ dans le même dossier en parallèle ; un git stash/pop de ma part a brièvement retiré ces modifications (restaurées à l'identique, aucune n'est dans mon commit). Référence au guide du CNB (mars 2026) reprise du prompt, non vérifiée.
+- Prochaine session : suivre la sortie du script de pilotage S31.
+
 ### 2026-10-27 19:14 | G2-fix | Positions JSON et restauration complète | Codex
 - Fait : dev synchronisée avec lane-b sans conflit. Cinq xfails retirés, leurs cinq échecs constatés avant correction, puis succès. G2-R1 : positions conservées dans les occurrences JSON ; G2-R2 : sociétés sans crochets reconnues seulement avec tiret bas ou tiret ; G2-R3 : inventaire des occurrences comparé à la table avant le mode exact, repli sur la table si incomplet. Aucun changement de models.py.
 - Tests : ciblés, 115 passed ; copie temporaire du dernier commit avec les seuls changements G2, pytest -q : 640 passed, aucun xfail ; ruff check et format : OK ; check_style : 0 erreur, 2 avertissements existants. Dernier pytest du dossier partagé : 673 passed. Lecture des anciens JSON sans positions, positions invalides, collisions littérales, variantes, listes vides, partielles et avec doublons vérifiées.

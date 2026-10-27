@@ -1,10 +1,75 @@
-/* Mise en page sobre : contenu limité à 1100 px, polices du système uniquement. */
+/* Charte HuisClos : palette sobre, polices du système, espacements multiples de 8 px.
+   Aucun dégradé, aucune ressource externe. Les couleurs de surlignage par type sont
+   ajoutées par app/ui_common.py à partir de ENTITY_STYLES. */
+:root {
+    --hc-ink: #1B1F24;
+    --hc-primary: #1F3A5F;
+    --hc-surface: #F4F5F7;
+    --hc-success: #2E6B4F;
+    --hc-warning: #8C5A00;
+    --hc-error: #9B2C2C;
+    --hc-muted: #596270;
+    --hc-border: #D5D9DF;
+}
+
+/* Les icônes de Streamlit ont leur propre police : on ne les touche pas. */
 html,
 body,
-[class*="st-"] {
+[class*="st-"]:not([data-testid="stIconMaterial"]) {
     font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 .block-container {
     max-width: 1100px;
+    padding-top: 40px;
+    padding-bottom: 48px;
+}
+
+/* Indicateur des trois étapes : l'étape courante se lit sans la couleur (gras, souligné,
+   mention écrite) ; une étape verrouillée est grisée et explique pourquoi. */
+.hc-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 32px;
+    list-style: none;
+    margin: 16px 0 24px;
+    padding: 0 0 16px;
+    border-bottom: 1px solid var(--hc-border);
+}
+
+.hc-step {
+    color: var(--hc-ink);
+}
+
+.hc-step-current {
+    color: var(--hc-primary);
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 8px;
+}
+
+.hc-step-locked {
+    color: var(--hc-muted);
+}
+
+.hc-step-note {
+    display: inline-block;
+    font-size: 0.875rem;
+    font-weight: 400;
+    text-decoration: none;
+}
+
+/* Pastille de type d'entité : fond de couleur et libellé écrit. */
+.hc-badge {
+    display: inline-block;
+    margin: 0 8px 8px 0;
+    padding: 0 8px;
+    border: 1px solid var(--hc-border);
+    border-radius: 4px;
+    color: var(--hc-ink);
+}
+
+.hc-legend {
+    margin: 8px 0 24px;
 }
