@@ -314,6 +314,44 @@ def test_duplicate_occurrences_do_not_replace_a_missing_occurrence() -> None:
     assert sum(restored.replaced.values()) == 2
 
 
+@pytest.mark.xfail(
+    strict=True,
+    reason="G2-R4 : une occurrence déplacée sur un jeton littéral est acceptée en mode exact",
+)
+@pytest.mark.parametrize("literal_first", [True, False], ids=["literal-first", "literal-last"])
+def test_shifted_occurrence_cannot_replace_a_literal_token(literal_first: bool) -> None:
+    """Exige le repli sur les positions persistées quand une occurrence vise un littéral."""
+    parts = ["[PERSONNE_1]", "Jean DUPONT"]
+    text = " / ".join(parts if literal_first else reversed(parts))
+    result = pseudonymize(text, [manual(text, "Jean DUPONT")], created_at=CREATED_AT)
+    mapping = Mapping.from_json(result.mapping.to_json())
+    literal_start = 0 if literal_first else result.text.rindex("[PERSONNE_1]")
+    shifted = (Occurrence("[PERSONNE_1]", "Jean DUPONT", literal_start, literal_start + 12),)
+    restored = restore(result.text, mapping, shifted)
+    assert restored.text == text
+    assert restored.mode == EXACT
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="G2-R4 : des variantes permutées conservent l'inventaire et trompent le mode exact",
+)
+def test_swapped_variant_positions_use_persisted_occurrences() -> None:
+    """Une permutation des écritures ne doit pas modifier le texte restauré exact."""
+    text = "Jean DUPONT et Dupont signent."
+    result = pseudonymize(
+        text, [manual(text, "Jean DUPONT"), manual(text, "Dupont")], created_at=CREATED_AT
+    )
+    first, second = result.occurrences
+    swapped = (
+        Occurrence(first.token, first.original, second.start, second.end),
+        Occurrence(second.token, second.original, first.start, first.end),
+    )
+    restored = restore(result.text, Mapping.from_json(result.mapping.to_json()), swapped)
+    assert restored.text == text
+    assert restored.mode == EXACT
+
+
 HANDMADE_TEXTS = [
     "Jean DUPONT, salarié de la société Valmont SARL, conteste son licenciement.",
     "Madame Claire LEROUX demeure 12 rue des Lilas, 69003 Lyon.",
