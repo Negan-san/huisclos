@@ -14,6 +14,15 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 15:58 | C1 | Corpus fictif, lots 2 et 3, cas de démonstration | Codex
+- Fait : lane-b déjà synchronisée avec dev ; treize sources fictives rédigées en UTF-8/LF, relues et accompagnées des consignes et listes des lots 2 et 3 ; aucune correction nécessaire aux six sources existantes.
+- Construction : --check valide les 19 sources au premier cycle ; JSONL et statistiques construits, démo exportée ; répartition confirmée : 12 dev (205 entités), 6 test (99 entités), 1 demo (18 entités).
+- Tests : pytest : 290 passed avec --basetemp .pytest_cache/c1-full ; ruff check et ruff format --check : OK ; check_style : 0 erreur, 0 avertissement ; nouvelles sources : 296 à 337 mots, 14 à 19 annotations, UTF-8/LF, marqueurs et domaines réservés vérifiés.
+- Reste à faire : revue humaine du corpus ; aucune source retirée et aucun fichier de src/, app/, scripts/ ou tests/ modifié.
+- Décisions : aucune ; application de l'exception de rédaction C1 pour le split test, sans adaptation des règles de détection.
+- Risques ou blocages : aucun blocage ; aucun réseau ni installation ; les clés valides sont synthétiques et ne prouvent pas l'absence de coïncidence avec un numéro attribué ; le split test redevient réservé aux scripts après C1.
+- Prochaine session : exécuter le pilotage C1 après le commit et suivre sa sortie.
+
 ### 2026-10-27 15:46 | S41 | Format, construction et validation du corpus | Codex
 - Fait : piste B synchronisée avec dev en avance rapide, sans conflit ; format source documenté en anglais ; chargeur JSONL typé et constructeur Markdown déterministe créés avec validation des spans, marqueurs, clés et identifiants uniques.
 - Tests : pytest : 290 passed, dont 43 tests corpus ; fixture et six sources présentes validées par build_corpus.py --check ; déterminisme octet par octet, adresse multiligne, liens SIREN/SIRET, clés fausses, diagnostics fichier:ligne et export demo testés.
