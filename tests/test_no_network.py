@@ -45,4 +45,4 @@ def test_empty_sources_never_load_presidio_defaults() -> None:
     with pytest.raises(ValueError, match="source"):
         analyzer_for(config)
     with pytest.raises(ValueError, match="source"):
-        detect("test@example.test", config)
+        detect("test@example.com", config)

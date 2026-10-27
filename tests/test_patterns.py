@@ -79,9 +79,9 @@ def test_registry_and_offline_contract(no_network: None) -> None:
     for recognizer in recognizers:
         assert recognizer.supported_language == "fr"
         assert not recognizer.context
-        assert recognizer.analyze("test@example.test", [], None) == []
+        assert recognizer.analyze("test@example.com", [], None) == []
         assert _analyze(recognizer, "") == []
-        _analyze(recognizer, "née le 3 avril 1990, tél. 06.12.34.56.78, test@example.test")
+        _analyze(recognizer, "née le 3 avril 1990, tél. 06.12.34.56.78, test@example.com")
 
 
 @pytest.mark.parametrize("corsica", [None, "2A", "2B"])
@@ -161,11 +161,11 @@ def test_iban_stops_before_bank_name(valid: bool, formatted: bool) -> None:
     [
         (
             EmailRecognizer,
-            "<cabinet.fictif+test@example.test>",
-            "cabinet.fictif+test@example.test",
+            "<cabinet.fictif+test@example.com>",
+            "cabinet.fictif+test@example.com",
             0.95,
         ),
-        (EmailRecognizer, "Contact : test@example.test.", "test@example.test", 0.95),
+        (EmailRecognizer, "Contact : test@example.com.", "test@example.com", 0.95),
         (PhoneFrRecognizer, "+33 (0)1 23 45 67 89", "+33 (0)1 23 45 67 89", 0.75),
         (PhoneFrRecognizer, "06.12.34.56.78", "06.12.34.56.78", 0.75),
         (PhoneFrRecognizer, "Téléphone : 0033 (0)6 12 34 56 78", "0033 (0)6 12 34 56 78", 0.90),
@@ -223,7 +223,7 @@ def test_exact_spans_and_scores(
     ("recognizer_class", "text"),
     [
         (EmailRecognizer, "<test@localhost>"),
-        (EmailRecognizer, "test..test@example.test"),
+        (EmailRecognizer, "test..test@example.com"),
         (PhoneFrRecognizer, "0612345678901"),
         (PhoneFrRecognizer, "10612345678"),
         (PhoneFrRecognizer, "+330123456789"),
@@ -247,10 +247,10 @@ def test_rejects_traps(recognizer_class: type[EntityRecognizer], text: str) -> N
 
 def test_repeated_occurrences_have_original_offsets() -> None:
     """Conserve les positions de deux occurrences identiques dans le même texte."""
-    value = "test@example.test"
+    value = "test@example.com"
     text = f"<{value}>, puis {value}."
     results = _analyze(EmailRecognizer(), text)
-    assert [(result.start, result.end) for result in results] == [(1, 18), (26, 43)]
+    assert [(result.start, result.end) for result in results] == [(1, 17), (25, 41)]
     assert all(text[result.start : result.end] == value for result in results)
 
 

@@ -282,15 +282,15 @@ def test_result_does_not_depend_on_input_order() -> None:
 
 def test_all_sensitive_parts_survive_an_inner_identifier() -> None:
     """Les deux parties d'un nom englobant un identifiant restent couvertes."""
-    text = "Paul Martin jean@example.test Marie Durand"
+    text = "Paul Martin jean@example.com Marie Durand"
     raw = [
         det(text, text, EntityType.PERSON),
-        det(text, "jean@example.test", EntityType.EMAIL, 0.95, Source.PATTERN),
+        det(text, "jean@example.com", EntityType.EMAIL, 0.95, Source.PATTERN),
     ]
     result = merge(text, raw, CONFIG)
     assert texts(result) == [
         ("Paul Martin", EntityType.PERSON),
-        ("jean@example.test", EntityType.EMAIL),
+        ("jean@example.com", EntityType.EMAIL),
         ("Marie Durand", EntityType.PERSON),
     ]
 

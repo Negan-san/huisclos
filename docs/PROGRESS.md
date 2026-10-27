@@ -14,6 +14,13 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 00:08 | G5-fix | Courriels de test sur domaines autorisés | Claude Code, Opus 5.5
+- Fait : fusion de lane-b en avance rapide (8cc87ce), sans conflit. Point G5-E1 sans marqueur xfail : échec constaté par un audit en ligne de commande (adresses hors example.com et example.org dans les cinq fichiers cités), 17 occurrences. example.test, example.invalid et exemple.fr remplacés par example.com, cabinet-exemple.fr par example.org ; audit relancé : 0 occurrence. "test@localhost" (cas refusé, sans domaine) laissé tel quel.
+- Seule attente modifiée : positions de test_repeated_occurrences_have_original_offsets, le domaine perdant un caractère ((1, 18), (26, 43) devenu (1, 17), (25, 41)) ; échec constaté avant l'ajustement. Aucun code métier ni contrat de models.py touché.
+- Tests : pytest 865 passed ; ruff check et format : OK ; check_style : 0 erreur, 6 avertissements de longueur préexistants.
+- Reste à faire : relancer G5 ; vérifications humaines du second poste et de l'application en ligne toujours attendues.
+- Décisions : aucune. Risques : aucun nouveau.
+
 ### 2026-10-28 00:03 | G5 | Contrôle de la reproductibilité | Codex
 - Fait : fusion de dev en avance rapide, b9a4e47 vers b9e89c7, sans conflit ; état initial propre. Audit hors ligne, aucune installation, aucune nouvelle évaluation dev ou test. Un cycle de correction documentaire ; six fichiers autorisés modifiés, aucun changement métier.
 - Tests : initialement 860 passed (avertissement de cache pytest non inscriptible) ; après ajout de cinq contrôles documentaires, 865 passed en 67,16 s, cache dans un dossier temporaire hors dépôt, sans avertissement. Ruff check et format : OK ; check_style : 0 erreur, 6 avertissements de longueur préexistants ; git diff --check : OK.

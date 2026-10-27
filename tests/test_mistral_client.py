@@ -21,7 +21,7 @@ from huisclos.llm.mistral_client import (
 
 PSEUDONYMIZED = "[PERSONNE_1] écrit à [EMAIL_1].\n"
 INSTRUCTION = "Résume ce texte en conservant les jetons."
-ORIGINAL_VALUES = ("Alice FICTIVEL", "alice@example.invalid")
+ORIGINAL_VALUES = ("Alice FICTIVEL", "alice@example.com")
 ANSWER = "[PERSONNE_1] demande une réponse."
 
 # La vraie étape est exercée avec une table fictive contenant les valeurs interdites.
@@ -31,10 +31,10 @@ from types import SimpleNamespace
 from app.state import init_state, KEY_PSEUDO_RESULT
 from app.steps.restore_step import render
 init_state()
-st.session_state['source_text'] = 'Alice FICTIVEL écrit à alice@example.invalid.'
+st.session_state['source_text'] = 'Alice FICTIVEL écrit à alice@example.com.'
 mapping = SimpleNamespace(
     pseudonymized_sha256='1234567890',
-    to_json=lambda: '{"original": "Alice FICTIVEL", "email": "alice@example.invalid"}',
+    to_json=lambda: '{"original": "Alice FICTIVEL", "email": "alice@example.com"}',
 )
 st.session_state[KEY_PSEUDO_RESULT] = SimpleNamespace(
     text=st.session_state.get('test_pseudonymized', "[PERSONNE_1] écrit à [EMAIL_1].\\n"),

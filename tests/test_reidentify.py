@@ -359,7 +359,7 @@ def test_swapped_variant_positions_use_persisted_occurrences() -> None:
 HANDMADE_TEXTS = [
     "Jean DUPONT, salarié de la société Valmont SARL, conteste son licenciement.",
     "Madame Claire LEROUX demeure 12 rue des Lilas, 69003 Lyon.",
-    "Contact : claire.leroux@exemple.fr ou 06 12 34 56 78.",
+    "Contact : claire.leroux@example.com ou 06 12 34 56 78.",
     "M. Paul MARCHAND et Mme Sophie MARCHAND sont mariés depuis 2004.",
     "Le dossier RG n\u00b0 24/01234 est renvoyé au 5 novembre.",
     "Pierre GAUTIER a écrit à Pierre GAUTIER, puis M. Gautier a signé.",
@@ -372,7 +372,7 @@ HANDMADE_TEXTS = [
     "Aucune personne 1 n'est concernée par [PERSONNE_1] ni par SOCIETE_A.",
     "Première ligne : Anne ROUSSEL.\nDeuxième ligne : Marc ROUSSEL.\n",
     "Le gérant de Bastide Immobilier SARL, Thomas LEFEBVRE, réside à Bordeaux.",
-    "Joindre Julie MOREAU au 01 23 45 67 89 ou julie.moreau@cabinet-exemple.fr.",
+    "Joindre Julie MOREAU au 01 23 45 67 89 ou julie.moreau@example.org.",
     "Mme Isabelle CHEVALIER (née FONTAINE) a saisi le juge le 3 juin 2025.",
     "IBAN FR76 3000 6000 0112 3456 7890 189 au nom de Nicolas GIRARD.",
     "Antoine MERCIER, Antoine MERCIER et encore A. MERCIER.",
