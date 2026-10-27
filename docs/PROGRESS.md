@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 20:48 | G4 recontrôle | Tests permanents validés | Codex
+- Fait : dev intégrée en avance rapide sans conflit jusqu'à a75b6b1 ; arbre initial propre. Revue des trois tests permanents de tests/test_evaluation_reports.py et de la fixture no_network : corpus inventés dans tmp_path, détection simulée, assertions conformes au prompt G4-fix.
+- Vérifications : conservation des lignes dev et de leurs fichiers, sorties JSON/CSV/Markdown, seuil unique, empreintes et effectifs ; refus du seuil incohérent avant détection sans écriture ; absence de doublons et retrait des traces test après nouveau dev. Aucun défaut constaté, aucune correction supplémentaire.
+- Tests : suite complète relancée, 742 passed en 45,32 s ; ruff check et format : OK ; check_style : 0 erreur, 4 avertissements de longueur préexistants ; git diff --check : OK.
+- Intégrité : diff nul entre f400b48 et a75b6b1 pour results/, corpus/, src/, app/ et scripts/. Aucun recalcul de l'évaluation réelle ni lecture du contenu test ; la mesure unique G4 et son seuil restent inchangés.
+- Reste et risques : point des tests temporaires fermé ; objectifs dev indicatifs, fuite test de 12,02 % et option CamemBERT inchangés. Décisions : aucune.
+- Verdict et suite : GO confirmé ; prêt pour la recette R4 dans huisclos par Claude Code. Journaux mis à jour et commit de recontrôle ; aucun réseau, installation, tag ni push. Lancer le pilotage G4 --go après le compte rendu.
+
 ### 2026-10-27 20:40 | G4-fix | Tests permanents de conservation des résultats | Claude Code, Opus 5.5
 - Fait : lane-b fusionnée dans dev en avance rapide (f400b48), sans conflit. Les trois régressions temporaires de G4 deviennent tests/test_evaluation_reports.py, réécrites sans chargement du code antérieur : deux documents dev et un document test inventés dans tmp_path, detect simulé, fixture no_network, aucun modèle chargé.
 - Couverture : dev puis test (seuil retenu seul, aucune détection dev relancée, octets de threshold.json, threshold_sweep.csv et errors_dev.csv inchangés, lignes dev identiques en JSON et CSV, deux splits dans JSON, CSV et summary.md, balayage, empreintes SHA-256 et effectifs conservés, pas d'errors_test.csv) ; seuil modifié après dev refusé avant detect, dossier de résultats inchangé ; deux tests successifs sans doublon, nouveau dev retirant lignes, empreinte et effectif test.
