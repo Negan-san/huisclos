@@ -12,6 +12,7 @@ from pathlib import Path
 
 import streamlit as st
 
+from app.engine import prepare_engine
 from app.i18n import t
 from app.sidebar import build_config
 from app.state import (
@@ -161,6 +162,7 @@ def _run_detection(config: DetectionConfig) -> None:
     if not unchanged:
         try:
             with st.spinner(t("import.detect.spinner")):
+                prepare_engine(config)
                 detections = detect(text, config)
         except RuntimeError:
             st.error(t("import.error.engine"))

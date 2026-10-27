@@ -14,6 +14,13 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 23:50 | S51 | Préparation du déploiement et mesure de mémoire | Claude Code, Opus 5.5
+- Fait : `git merge lane-b --no-edit` déjà à jour, 819 passed avant travail. Installation à neuf hors dépôt (venv Python 3.12.10 dans le dossier temporaire de session, `pip install --no-cache-dir -r requirements.txt`) : code 0 en 119 s, `pip check` sans conflit ; fumée AppTest avec cet interpréteur (démarrage, Load sample case, détection en 5,7 s, passage à Review) sans exception ; venv supprimé. Aucun épinglage modifié.
+- Cache : nouveau app/engine.py, st.cache_resource autour de build_analyzer, appelé par l'étape Import avant detect() (D-S51-1) ; aucun st.cache_data, aucune écriture disque dans app/. Bandeau de démo déjà conforme (variable ou secret valant "true").
+- Mémoire : scripts/measure_memory.py mesure par défaut la configuration hybrid (démarrage 366,8 Mio, première détection 732,2 Mio, après dix détections 732,2 Mio) ; tableau CamemBERT conservé sous `--camembert`. Pic sous 1 Go, consigné dans D-05.
+- Docs : docs/DEPLOYMENT.md (étapes Community Cloud, Python 3.12, secret HUISCLOS_PUBLIC_DEMO, veille après 12 h, changement de Python par suppression et redéploiement, journaux). Tests : tests/test_deploy.py (9 cas) ; pytest 828 passed ; ruff check et format : OK ; check_style : 0 erreur, 6 avertissements de longueur connus.
+- Reste et risques : déploiement par l'humain depuis main après fusion ; mesure de mémoire faite sous Windows dans un processus Python seul, à confirmer dans les journaux du cloud ; premier visiteur après la veille attend la reconstruction et le chargement du modèle.
+
 ### 2026-10-27 23:11 | R3 | Recette de la gate G3 | Claude Code, Sonnet 5.5
 - Fait : lane-b fusionnée dans dev en avance rapide (524209b), sans conflit. Verdict G3 lu : GO (22:14), G4bis confirmé GO ensuite. Recette exécutée dans un dossier temporaire hors dépôt (venv, Playwright, Chromium installés en 26 s), supprimé à la fin ; Streamlit arrêté, port 8599 libéré, aucune erreur dans sa sortie.
 - Étape 1, lancement headless sur le port 8599 : OK.
