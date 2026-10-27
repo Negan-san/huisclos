@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 20:10 | S32 | Écran de revue | Claude Code, Sonnet 5.5
+- Fait : lane-b déjà intégrée, 677 tests verts avant travail. Écran Review complet : texte surligné (app/components/highlight.py, HTML échappé, libellé écrit après chaque mark, REJECTED en gris barré, légende des seuls types présents), compteurs masqués et rejetés, tableau st.data_editor à une ligne par groupe (Mask, Text, Type, Occurrences, Variants, Confidence, Source, Note), filtre par type, ajout manuel sur toutes les occurrences (source MANUAL, score 1,0), boutons Pseudonymize (style de jetons de la barre latérale, puis Restore) et Back to Import.
+- Tests : pytest : 724 passed (25 dans test_highlight.py, 22 dans test_app_review.py) ; ruff check et format : OK ; check_style : 0 erreur, 3 avertissements (merge.py, grouping.py existants ; review_step.py, 389 lignes, nouveau).
+- Reste à faire : écran Restore (S33), page Evaluation (S43), chaînes FR ; vérification visuelle dans un vrai navigateur (styles en ligne de st.html non vus hors AppTest) ; envisager de scinder review_step.py (logique d'ajout manuel) si l'écran grossit.
+- Décisions : D-S32-1, D-S32-2.
+- Risques ou blocages : les modifications du tableau sont simulées dans AppTest par l'état du composant (edited_rows), pas par un clic réel. Le texte « detections are ready » est repris dans le résumé de l'écran pour que test_app_smoke.py, hors liste, reste vert. Styles du surlignage écrits en ligne dans highlight.py car style.css est hors périmètre ; ils pourraient y migrer. import_step.py, src/ et app/pages/evaluation.py non touchés.
+- Prochaine session : suivre la sortie du pilotage S32.
+
 ### 2026-10-27 19:45 | R2 | Recette de la gate G2 | Claude Code, Sonnet 5.5
 - Fait : lane-b fusionnée dans dev (avance rapide, sans conflit). Verdict G2 : GO (recontrôle de 19:33). Recette sur textes fictifs dans un dossier temporaire hors dépôt, supprimé ensuite.
 - Étape 1 : OK. Texte de cinq lignes, roundtrip_cli.py code 0, mode exact, 13 remplacements ; aucun nom, adresse, e-mail, téléphone, SIREN, numéro de dossier ni IBAN visible dans la sortie pseudonymisée.
