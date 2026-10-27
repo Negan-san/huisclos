@@ -179,3 +179,24 @@ Seuil par défaut : 0,40 jusqu'à la gate 4, puis la valeur de results/threshold
 ## D-S32-2 Tableau de décision relu par comparaison, avec une clé de composant versionnée
 - Choix : st.data_editor reçoit la liste des lignes et renvoie les lignes modifiées ; l'écran compare les deux, reporte les différences dans les décisions, augmente un numéro de version inclus dans la clé du composant, puis relance la page. Aucun rappel on_change n'est utilisé pour le tableau. Une modification efface aussi pseudo_result et restore_result.
 - Raison : Streamlit conserve les modifications en attente par numéro de ligne tant que la clé et la forme du tableau sont inchangées ; après un changement de type, le regroupement peut déplacer des lignes et ces modifications s'appliqueraient à la mauvaise ligne. Un tableau neuf après chaque modification évite cette dérive. Un résultat de pseudonymisation antérieur ne correspond plus aux décisions affichées.
+
+## D-S44-1 Apport et coût de CamemBERT local
+- Méthode : comparaison hors ligne sur dev seulement, 12 documents et 192 entités évaluées, seuil commun 0,30 retenu par le script, appariement partiel de même type. Commande : `PY scripts/run_evaluation.py --split dev --configs hybrid hybrid_camembert --out C:/Users/nasci/AppData/Local/Temp/huisclos-s44-evaluation`. Les sorties temporaires ne remplacent pas results/ ni les résultats G4 ; aucun split test exécuté ou ouvert. Empreinte SHA-256 dev : e3e4d0f02387670ca8d86b1ce4d4f1da51c3ec259909de9a91a72ad85588090b.
+
+| Mesure dev, partiel | hybrid | hybrid_camembert | Évolution en points |
+| --- | ---: | ---: | ---: |
+| Rappel PERSON | 82/83 = 98,80 % | 82/83 = 98,80 % | +0,00 |
+| Précision PERSON | 82/91 = 90,11 % | 82/91 = 90,11 % | +0,00 |
+| Rappel ORGANIZATION | 13/17 = 76,47 % | 17/17 = 100,00 % | +23,53 |
+| Précision ORGANIZATION | 13/26 = 50,00 % | 17/29 = 58,62 % | +8,62 |
+| Rappel PERSON et ORGANIZATION réunis, micro | 95/100 = 95,00 % | 99/100 = 99,00 % | +4,00 |
+| Précision PERSON et ORGANIZATION réunis, micro | 95/117 = 81,20 % | 99/120 = 82,50 % | +1,30 |
+| Rappel global micro | 186/192 = 96,88 % | 190/192 = 98,96 % | +2,08 |
+| Précision globale micro | 186/208 = 89,42 % | 190/211 = 90,05 % | +0,62 |
+| F2 global micro | 95,29 % | 97,04 % | +1,75 |
+| Fuite de caractères | 220/4012 = 5,48 % | 46/4012 = 1,15 % | -4,34 |
+
+- Contrôle en exact : rappel PERSON 81/83 = 97,59 % dans les deux configurations ; ORGANIZATION 7/17 = 41,18 % puis 17/17 = 100,00 %. Précision globale exacte 85,58 % puis 89,10 %. Le gain ne repose donc pas seulement sur un recouvrement partiel des sociétés.
+- Ressources : `PY scripts/measure_memory.py`, CPU, même processus, modèles conservés entre les deux lignes. hybrid : chargement 4,077 s, RSS chargée 711,9 Mio, détection démo 0,135 s, RSS finale 716,6 Mio, 17 détections. hybrid_camembert : chargement additionnel 0,710 s, RSS chargée 1164,4 Mio, détection 0,477 s, RSS finale 1203,9 Mio, 18 détections. Surcoût résident final : 487,3 Mio ; détection environ 3,53 fois plus lente. Ces RSS sont des instantanés après opération, pas des pics ; les durées excluent le démarrage de Python et les imports initiaux.
+- Choix : à la demande de recommandation de l'humain, retenir le rappel micro des deux types réunis comme critère explicite : +4,00 points de rappel et +1,30 point de précision, donc seuil de +2 points atteint et aucune perte supérieure à 5 points. Verdict : CamemBERT admissible comme option de l'appli locale, désactivée par défaut, jamais dans le cloud. L'interface reste inchangée dans cette session, conformément au périmètre ; sa proposition à l'utilisateur relève d'une session autorisant cette modification. Le gain porte sur ORGANIZATION, aucun gain PERSON n'est démontré. Un seuil de +2 points par type serait impossible pour PERSON, déjà à 98,80 % ; sous cette autre lecture, le verdict serait rapport seulement. Cette interprétation du critère est explicitée après la mesure et ne doit pas être présentée comme préenregistrée.
+- Limites : torch 2.14.1+cpu, transformers 5.21.0 et sentencepiece 0.2.2, modèle Jean-Baptiste/camembert-ner en cache uniquement ; HF_HUB_OFFLINE=1, TRANSFORMERS_OFFLINE=1 et local_files_only=True. Chargement partagé, inférence CPU, aucune dépendance ajoutée à requirements.txt, aucun déploiement cloud. Les morceaux sont limités à 512 jetons, jetons spéciaux compris ; une phrase trop longue peut imposer une coupure dans une mention et réduire le rappel. Le branchement paresseux déjà présent dans pipeline.py est réutilisé sans modification.

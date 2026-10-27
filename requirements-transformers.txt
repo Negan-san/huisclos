@@ -1,0 +1,5 @@
+-r requirements-dev.txt
+# Installation CPU : PY -m pip install torch==2.14.1+cpu --index-url https://download.pytorch.org/whl/cpu
+torch==2.14.1+cpu
+transformers==5.21.0
+sentencepiece==0.2.2

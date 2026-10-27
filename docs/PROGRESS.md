@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 21:01 | S44 | Option NER CamemBERT en local | Codex
+- Fait : dev fusionnée en avance rapide sans conflit. Reconnaisseur Presidio français facultatif, modèle CPU partagé depuis le cache seul, probabilités natives, découpage à 512 jetons avec positions absolues ; dépendances optionnelles figées et script de mesure RSS/temps. Branchement paresseux déjà présent réutilisé, pipeline.py inchangé.
+- Tests : 14 nouveaux cas, dont texte de 3 000 caractères, modèle local réel, chargement sous no_network, cache absent et hybrid sans transformers simulé ; suite complète : 756 passed en 57,82 s. Ruff check et format : OK ; check_style : 0 erreur, 4 avertissements de longueur préexistants ; git diff --check : OK.
+- Évaluation dev seulement : PERSON 98,80 % inchangé ; ORGANIZATION 76,47 % puis 100 % ; précision globale 89,42 % puis 90,05 %. Résultats écrits hors dépôt pour préserver G4 ; aucun split test lancé ni ouvert.
+- Décisions : D-S44-1, recommandation demandée par l'humain : critère micro PERSON et ORGANIZATION réunis, rappel 95 % puis 99 %, précision 81,20 % puis 82,50 % ; option locale admissible, désactivée par défaut. Aucun gain PERSON ; interprétation agrégée explicitée après mesure, sans la présenter comme préenregistrée.
+- Risques et ressources : RSS finale 716,6 puis 1203,9 Mio ; détection démo 0,135 puis 0,477 s sur CPU. Coupure possible dans une mention sans frontière de phrase compatible ; aucun réseau, installation, changement d'interface ni de requirements.txt.
+- Reste et suite : suivre le pilotage S44 ; proposer l'option dans une session autorisant l'interface, sans déploiement cloud. requirements.txt, pipeline.py et results/ inchangés ; aucune nouvelle mesure test.
+
 ### 2026-10-27 20:58 | R4 | Recette de la gate G4 | Claude Code, Sonnet 5.5
 - Fait : lane-b fusionnée dans dev en avance rapide (5329b26), sans conflit. Verdict G4 lu : GO, confirmé au recontrôle (742 tests, points ouverts fermés).
 - Étape 1, onglet Evaluation par AppTest : OK. Aucune exception ni erreur ; les splits dev et test sont proposés ; les 8 lignes (4 configurations par split) de la table affichent exactement précision, rappel, F2, fuite et entités exposées de results/summary.md. Détail cosmétique : l'effectif d'entités exposées s'affiche sous forme décimale (5.0) dans la table AppTest.
