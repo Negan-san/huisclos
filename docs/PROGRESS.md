@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 00:45 | PIL | Plan d'approfondissement du 28 octobre | Claude Code, Opus 5.5
+- Fait : à la demande de l'humain (environ 18 h d'avance), nouvel onglet "Approfondissement" dans docs/MASTER_PLAN.md : S36 (recette R5 puis refonte de l'interface, nuit), S14 (détection plus fine et lot 4 dev, nuit), C2 (jeu challenge rédigé à l'aveugle), S45 (intervalles de confiance, split challenge), S24 (mémoire de dossier, contrôle final avant envoi), G7 (contrôle et mesures avant/après), S53 (README et guide) ; cartes S61 et S71 complétées. AGENTS.md : section 7 (commits d'étape des sessions de nuit), section 9 (charte moderne à jetons), section 11 (split challenge réservé aux gates).
+- Tests : aucun code modifié.
+- Reste à faire : recette R5 (phase 0 de S36), puis S36 et S14 en parallèle pendant la nuit.
+- Décisions : aucune décision d'architecture ; calendrier du mercredi révisé, gel du mercredi 23:59 et jeudi inchangés.
+- Risques : quota Claude pendant la nuit (phases committées une à une) ; une demande de permission non désactivée bloquerait une session de nuit.
+- Prochaine session : S36 (piste A) et S14 (piste B).
+
 ### 2026-10-28 00:13 | G5 recheck | Contrôle de la reproductibilité après G5-fix | Codex
 - Fait : état initial propre ; fusion de dev en avance rapide, 8cc87ce vers 035eb02, sans conflit. Recontrôle indépendant hors ligne ; aucune installation, aucune nouvelle évaluation dev ou test, aucun changement métier. Aucun nouvel écart documentaire à corriger ; seuls PROGRESS et PROMPTS sont modifiés.
 - Tests : pytest 865 passed en 71,38 s, cache temporaire hors dépôt ; ruff check : OK ; ruff format : 130 fichiers conformes ; check_style : 0 erreur, 6 avertissements de longueur préexistants ; git diff --check : OK. pip check : aucun conflit ; toutes les versions épinglées correspondent aux paquets installés, Python 3.12.10 et modèle spaCy 3.8.0 présents.

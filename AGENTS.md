@@ -69,7 +69,7 @@ Codex travaille sans réseau : aucune installation de paquet. Si un paquet manqu
 2. Présenter un plan de 10 lignes au plus, puis implémenter sans attendre de validation, sauf ambiguïté bloquante.
 3. Écrire ou mettre à jour les tests ; lancer pytest, ruff check, ruff format --check et scripts/check_style.py ; corriger jusqu'au vert.
 4. Mettre à jour docs/PROGRESS.md (nouvelle entrée en tête de la section Entrées), docs/PROMPTS.md (une ligne), docs/DECISIONS.md si une décision est prise (identifiant D-<session>-<n>, en fin de fichier).
-5. Un commit par session, message en français : "S11 : <résumé>". Fusion, tag et push seulement dans les cas de la section 12.
+5. Un commit par session, message en français : "S11 : <résumé>". Fusion, tag et push seulement dans les cas de la section 12. Exception : une session longue découpée en phases par son prompt (sessions de nuit) committe chaque phase, "S36 (1/4) : <résumé>", tests verts, puis un commit final sans suffixe.
 6. Finir par un compte rendu de 5 lignes au plus : fait, tests, reste à faire, risques, suite.
 
 Contexte presque plein : s'arrêter proprement, consigner l'état dans docs/PROGRESS.md, committer "S11 (partiel) : <état>".
@@ -92,7 +92,7 @@ Contexte presque plein : s'arrêter proprement, consigner l'état dans docs/PROG
 
 - Textes en anglais, centralisés dans app/i18n/ (une clé par texte ; EN obligatoire, FR en option).
 - Parcours en trois étapes visibles : Import, Review, Restore.
-- Esthétique sobre de legaltech : palette retenue, police système lisible, hiérarchie claire, espacements constants, aucun dégradé ni décor gratuit, CSS minimal dans app/assets/style.css.
+- Esthétique de legaltech moderne et sobre (refonte S36, 28 octobre) : système de design à jetons (couleurs, espacements, rayons, ombres légères, échelle typographique) dans app/assets/style.css et thème aligné dans .streamlit/config.toml ; polices système ; icônes Material intégrées à Streamlit seulement ; cartes et bordures fines permises ; aucun dégradé ni décor gratuit ; aucune ressource externe (police, image, CDN).
 - Chaque entité surlignée porte une couleur ET un libellé texte ; jamais d'information portée par la seule couleur ; contrastes suffisants.
 - Tout texte de l'utilisateur injecté en HTML passe par html.escape.
 - États vides et messages d'erreur en langage clair ; indicateur de chargement pour toute opération de plus d'une seconde.
@@ -109,6 +109,7 @@ Contexte presque plein : s'arrêter proprement, consigner l'état dans docs/PROG
 
 - Ne jamais lire en entier corpus/*.jsonl ni data/ : lire une plage de lignes ou passer par un script.
 - corpus/test.jsonl et les sources du split test sont réservés à l'évaluation : ne pas les ouvrir, ne pas ajuster une règle d'après leur contenu ; seuls les scripts les lisent. Seule exception : la session de rédaction du corpus (C1), qui ne touche à aucun code.
+- Même règle pour le split challenge (corpus/challenge.jsonl, sources chl_*.md), rédigé à l'aveugle après le gel des règles de S14 : seule la session qui le rédige (C2) l'ouvre ; seules les gates le mesurent.
 - *.mapping.json, .streamlit/secrets.toml et .env sont ignorés par git.
 
 ## 12. Git

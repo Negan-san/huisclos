@@ -383,7 +383,7 @@ Les deux dossiers partagent l'environnement virtuel de `huisclos` : dans `huiscl
 
 ## 7. Calendrier heure par heure
 
-Le développement tient en deux demi-journées et une journée, jusqu'au gel du mercredi 23h59 ; le jeudi est réservé à la vidéo, à la documentation et au dépôt. Trois dépendances commandent tout le reste : corpus construit mardi à 23h30, captures d'écran mercredi à 16h00, cas de démo répété mercredi à 21h45.
+Révisé le 28 octobre à 00:30 : le mercredi suit le calendrier de l'onglet Approfondissement (fiches S36, S14, C2, S45, S24, G7, S53). Le développement tient en deux demi-journées et une journée, jusqu'au gel du mercredi 23h59 ; le jeudi est réservé à la vidéo, à la documentation et au dépôt. Trois dépendances commandent tout le reste : corpus construit mardi à 23h30, captures d'écran mercredi à 16h00, cas de démo répété mercredi à 21h45.
 
 ### Mardi 27 octobre
 
@@ -1857,6 +1857,353 @@ Rapport final : tableau contrôle, statut (OK, corrigé, KO), commentaire ; corr
 **En cas d'échec** : écart du guide, correction Sonnet ciblée avant 20:15 ; appli en ligne en échec, repli de la fiche S51 ; si l'appli en ligne reste instable à 21:45, la vidéo est tournée sur l'appli locale avec le bandeau de démo forcé et le README le signale, l'URL restant fournie aux correcteurs.
 
 
+<!-- Onglet : Approfondissement -->
+
+# Fiches de l'approfondissement (mercredi 28 octobre)
+
+Révision du 28 octobre à 00:30. Le développement a environ 18 heures d'avance : S01 à S52 sont faites mardi soir et G5 tourne. Le gel du mercredi 23:59 et le jeudi restent inchangés. L'avance sert à rendre le travail plus abouti sur quatre axes, sans sortir de la consigne (mêmes trois étapes, traitement local, aucun nouveau service) :
+
+1. **Détection plus fine (S14)** : sur le corpus actuel, hybrid atteint un rappel de 1,00 en dev et en test ; ce chiffre ne prouve plus rien de neuf. Restent des faux positifs visibles (le libellé "Courriel" pris pour une société dans le cas de démo), des identifiants internes non détectés (matricule) et une fuite de caractères de 5,29 % en test due aux bornes des spans. S14 ajoute un lot 4 de documents dev difficiles et des règles générales.
+2. **Mesure honnête du gain (C2, G7)** : un jeu "challenge" de huit documents est rédigé par Claude à l'aveugle, après le gel des règles de Codex ; la gate G7 le mesure une fois avec le code de gate-5 et une fois avec le code final. Le tableau avant/après nourrit le rapport et la vidéo (concept "mesure").
+3. **Pseudonymisation plus sûre (S24)** : mémoire de dossier (la table d'un document sert au suivant : mêmes jetons, valeurs connues retrouvées même si aucun reconnaisseur ne les voit) et contrôle final avant envoi (aucune valeur d'origine ni nouvelle détection dans le texte pseudonymisé).
+4. **Interface refondue (S36) et évaluation étendue (S45)** : interface moderne et professionnelle ; intervalles de confiance par rééchantillonnage des documents, split challenge à l'écran.
+
+Sessions de nuit : sans surveillance, découpées en phases committées une à une (AGENTS.md section 7, exception de la règle 5). Avant de dormir : Claude Code en mode auto (aucune demande de permission bloquante), Codex en mode Agent avec accès complet (le prompt interdit le réseau), mise en veille du PC désactivée, VS Code ouvert.
+
+### Calendrier révisé
+
+| Jour | Heure | Piste A (Claude, huisclos) | Piste B (Codex, huisclos-b) | Mode |
+| --- | --- | --- | --- | --- |
+| Mercredi | 00:15 | - | G5 (second passage, en cours) | seul |
+| | 00:50 | S36 nuit : recette R5, puis refonte de l'interface (Opus 5.5 High, 4 h) | S14 nuit : détection plus fine (GPT High, 4 h), lancée une minute après S36 | PARALLÈLE |
+| | 08:00 | C2 jeu challenge à l'aveugle (Sonnet 5.5 High, 45 min) | S45 évaluation étendue (GPT High, 90 min) | PARALLÈLE |
+| | 08:45 | S24 mémoire de dossier et contrôle final (Opus 5.5 High, 2 h) | S45 (suite) | PARALLÈLE |
+| | 10:45 | - | G7 contrôle et mesures (GPT High, 90 min) | seul |
+| | 12:15 | R7 recette navigateur, captures, tag gate-7, push (Sonnet 5.5 Medium, 30 min) | - | seul |
+| | 13:30 | S53 README et guide (Sonnet 5.5 Medium, 45 min) | - | seul |
+| | 14:30 | S61 script et storyboard (Sonnet 5.5 High, 45 min) | - | seul |
+| | 15:30-21:45 | Réserve : corrections après la répétition | S6A option (Remotion, avatar) | PARALLÈLE |
+| | 23:59 | Gel : tag v1.0-freeze (Haiku 5.5) | - | seul |
+| Jeudi | 09:00 | S71 rapport de méthode | S72 crédits et prompts | PARALLÈLE |
+| | 17:30 | - | GF gate finale | seul |
+| | 18:30 | RF recette finale, release v1.0 | - | seul |
+
+Dépendances : S36 et S14 ne touchent pas les mêmes fichiers (app/ d'un côté, detection/ et corpus de l'autre) ; C2 attend la fin de S14 (le jeu doit être écrit après le gel des règles) ; S24 travaille sur la base refondue par S36 ; G7 attend S24 et S45 ; la recette R7 pousse main, donc l'application en ligne, seulement après G7.
+
+## S36. Recette R5, puis refonte visuelle de l'interface (nuit)
+
+- **Objectif et livrable** : la recette de la gate 5 (tag `gate-5` et push si GO), puis une interface moderne, plus belle et toujours professionnelle, sur toutes les pages, sans perte de parcours, de tests ni de garanties ; captures régénérées.
+- **Modèle** : Claude Code, Opus 5.5 High : refonte transversale de app/ (3 100 lignes) avec jugement visuel sur captures ; la nuit offre une fenêtre de quota entière. Repli : Sonnet 5.5 High si `/usage` dépasse 30 % de la fenêtre de 5 h au lancement.
+- **Durée cible** : 4 h, nuit du mardi au mercredi, sans surveillance.
+- **Fichiers** : app/, .streamlit/config.toml, streamlit_app.py, tests d'interface, docs/screenshots/ ; README et guide pour les seuls libellés et captures.
+- **Critères d'acceptation** : tests AppTest verts sans affaiblissement ; aucune ressource externe ; contrastes AA ; fichiers sous 400 lignes ; trois cycles de vérification visuelle au moins ; captures finales régénérées.
+- **Risques et repli** : quota épuisé en cours de route, alors les phases déjà committées restent ; au réveil, relancer avec "Reprends S36 à la phase suivante".
+
+```text
+[HuisClos] Session S36 : recette R5, puis refonte visuelle de l'interface (nuit)
+Piste A, Claude Code, Opus 5.5 High. Durée cible : 4 heures, sans surveillance.
+
+Contexte
+HuisClos pseudonymise localement des documents juridiques français. AGENTS.md fait foi (section 9 amendée le 28 octobre pour cette refonte). L'interface (Import, Review, Restore, Evaluation, Method & limits) fonctionne et est testée, mais reste austère : en-tête en texte brut, indicateur d'étapes en liste soulignée, longues colonnes sans hiérarchie, barre latérale chargée. Objectif : une interface moderne, plus belle et toujours professionnelle, digne d'un outil de cabinet d'avocats, sans rien perdre du parcours, des tests ni des garanties. Session de nuit : l'humain dort, tu ne poses aucune question. En cas d'ambiguïté, choisis l'option la plus prudente, consigne-la dans docs/DECISIONS.md (D-S36-n) et continue.
+
+Phase 0 : recette R5 (30 minutes au plus)
+Lis l'entrée G5 la plus récente de docs/PROGRESS.md (après l'étape 0).
+- Tag gate-5 déjà présent : phase 0 terminée.
+- Verdict GO :
+  1. git clone --branch dev du dépôt local dans un dossier temporaire hors dépôt ; suis docs/USER_GUIDE.md à la lettre (venv neuf en Python 3.12, installation, lancement headless, cas d'exemple par AppTest), chronomètre en main ; consigne chaque écart entre le guide et la réalité.
+  2. Dans ce clone : python -m pytest -q.
+  3. Entrée "R5 | Recette de la gate G5" en tête de docs/PROGRESS.md, une ligne dans docs/PROMPTS.md, commit "R5 : recette de la gate G5".
+  4. Si tout passe : git fetch . dev:main (avance rapide seulement ; si dev contient déjà un commit S14, avance main sur le dernier commit G5 de lane-b à la place) ; git tag gate-5 main ; git push origin main dev --tags. Sinon : aucun tag, aucun push, écarts consignés.
+  5. Après le push : application en ligne (URL du README) ; attends le redéploiement, 10 minutes au plus ; réponse HTTP 200 ; avec Playwright (venv temporaire ; Chromium est déjà dans le cache de l'utilisateur, sinon python -m playwright install chromium) : bandeau de démo visible, détection du cas d'exemple aboutie, temps jusqu'à la première détection. Complète l'entrée R5 (commit séparé, sans nouveau push).
+  Seule modification permise dans le dépôt pendant cette phase, hors PROGRESS et PROMPTS : l'URL du README si elle est fausse. Supprime les dossiers temporaires.
+- Verdict NO-GO : aucun tag, aucun push. Traite les points ouverts du rapport comme la correction ciblée (retire le xfail, constate l'échec, corrige la cause, constate le succès), commit "G5-fix : <résumé>". La gate G7 recontrôlera ces points. Passe ensuite à la phase 1.
+
+Lis ensuite : AGENTS.md (sections 2, 9, 10) ; docs/DECISIONS.md (D-S32-*, D-S33-1, D-S51-1) ; .streamlit/config.toml ; streamlit_app.py ; tous les fichiers de app/ (c'est ton périmètre) ; tests/test_app_*.py, tests/test_highlight.py, tests/test_i18n.py ; les six images de docs/screenshots/ (état de départ, regarde-les).
+
+À modifier : app/ ; .streamlit/config.toml ; streamlit_app.py ; tests/test_app_*.py, tests/test_highlight.py, tests/test_i18n.py et de nouveaux tests d'interface ; docs/screenshots/*.png ; README.md et docs/USER_GUIDE.md seulement pour garder libellés et captures exacts ; docs/DECISIONS.md. À ne pas toucher : src/, corpus/, results/, scripts/, data/.
+
+Direction artistique
+- Ton : confiance et confidentialité, legaltech sobre. Palette fondée sur le bleu marine actuel (#1F3A5F), un neutre assumé, une seule couleur d'accent, des états succès, alerte et erreur ; contrastes AA (4,5:1 pour le texte, 3:1 pour les composants).
+- Système de design en jetons CSS (couleurs, espacements multiples de 4, rayons, ombres légères, échelle typographique) dans app/assets/style.css ; thème Streamlit aligné dans .streamlit/config.toml. Avant d'utiliser une option de thème ou une API (st.navigation, st.container, st.badge, st.pills, st.segmented_control, column_config), vérifie qu'elle existe dans la version installée (PY -m streamlit config show, signatures dans le code installé) : jamais de mémoire.
+- Polices système uniquement, chiffres tabulaires pour les nombres. Icônes : uniquement les icônes Material intégrées à Streamlit (paramètre icon=":material/<nom>:"), jamais d'emoji, jamais d'image distante. Aucun dégradé décoratif, aucune animation gratuite.
+
+Chantiers
+1. Cadre : en-tête de marque compact (mot-symbole HuisClos, accroche, pastille "Local processing" avec icône de cadenas, mention RGPD discrète) ; navigation claire avec icônes (évalue la navigation en haut de page si la version installée la propose) ; barre latérale réorganisée (réglages groupés, aide courte, Reset session en action secondaire) ; largeur et grille cohérentes sur toutes les pages.
+2. Indicateur d'étapes : stepper horizontal (pastilles numérotées ; états fait avec coche, courant, verrouillé), lisible sans la couleur (mention écrite, aria-current="step"), raison du verrouillage conservée.
+3. Import : deux colonnes sur grand écran (saisie dans une carte ; panneau "What HuisClos detects" et garantie de confidentialité), action principale évidente, Load sample case en action secondaire, état vide soigné, chargement détaillé (st.status ou st.spinner).
+4. Review : rangée d'indicateurs en cartes (entités, occurrences, types, détections à faible confiance) ; texte surligné présenté comme une page de document (carte, marges, interligne confortable) ; pastilles d'entité modernisées (fond doux, contour ou bordure gauche, libellé de type en petites capitales) ; légende compacte ; tableau soigné par column_config (cases, listes, confiance en barre ou nombre formaté, largeurs) ; actions regroupées dans une barre claire.
+5. Restore : deux colonnes "Send to your AI tool" et "Paste the answer" ; copie en un clic ; résultat restauré dans une carte, valeurs restaurées mises en évidence (couleur et libellé) ; téléchargements regroupés dans une carte avec icônes ; avertissement sur la table de correspondance visible et sobre.
+6. Evaluation et Method & limits : en-têtes de section, cartes d'indicateurs clés, graphiques Altair aux couleurs de la charte, tableaux formatés ; page Method lisible (largeur de ligne limitée, encadrés).
+7. Responsive et accessibilité : rendu correct à 1366 x 768, 1920 x 1080 et 390 px de large ; focus visible ; ordre de tabulation logique ; html.escape sur tout texte de l'utilisateur ; couleur toujours doublée d'un libellé.
+
+Invariants
+- Parcours en trois étapes ; libellés des boutons principaux inchangés (Load sample case, Detect sensitive data, Pseudonymize, Restore, Start a new document et les autres cités par README.md et docs/USER_GUIDE.md) : documents, vidéo et recettes s'y réfèrent. Si un libellé doit changer, mets à jour README, guide et tests dans la même phase et consigne-le.
+- Toute nouvelle chaîne passe par app/i18n/, en anglais et en français.
+- Aucune ressource externe : aucun http:// ni https:// dans le CSS ni dans le HTML injecté (nouveau test) ; tests/test_no_network.py vert.
+- Fichiers de 300 lignes environ, 400 au plus : app/steps/review_step.py en compte 393, découpe-le en composants (app/components/).
+- Le test de contraste couvre les nouvelles couleurs.
+
+Vérification visuelle (obligatoire)
+- Dossier temporaire hors dépôt : venv, pip install playwright. Script de captures : Streamlit en headless sur le port 8599 ; Load sample case, Detect, Review, Pseudonymize, réponse de LLM simulée, Restore, puis Evaluation et Method & limits ; chaque écran à 1440 x 900 et 1920 x 1080, Import et Review aussi à 390 px de large.
+- Une série "avant" avant toute modification ; une série "après" à chaque phase. Ouvre réellement chaque image, note les défauts (alignements, débordements, hiérarchie, contrastes, éléments coupés, cohérence entre pages) et corrige ; trois cycles regarder-corriger au moins sur la session.
+- Arrête Streamlit après chaque série ; aucun processus actif en fin de session ; dossier temporaire supprimé à la fin.
+
+Phases et commits (tests verts avant chaque commit)
+1. Système de design, thème, en-tête, navigation, barre latérale, stepper : commit "S36 (1/4) : système de design et cadre".
+2. Import et Review : commit "S36 (2/4) : Import et Review".
+3. Restore, Evaluation, Method & limits : commit "S36 (3/4) : Restore, Evaluation et Method".
+4. Finitions : responsive, accessibilité, version française relue à l'écran ; docs/screenshots/ régénérées avec les mêmes six noms et le même déroulé que la recette R3 (exemple, rejet du groupe faux positif s'il existe, ajout manuel du matricule "4471-B" s'il n'est pas détecté) ; README et guide vérifiés ; D-S36-n (palette, navigation, découpage) ; commit "S36 : refonte visuelle de l'interface".
+
+Tests : tous les tests AppTest existants restent verts ; adapte un sélecteur si la structure change, jamais en affaiblissant ce qu'il vérifie. Nouveaux tests : absence de ressource externe, contraste des nouvelles couleurs, états et texte du stepper, cartes d'indicateurs de Review.
+
+Déroulé imposé
+a. Phase 0, puis lis les fichiers listés.
+b. Présente un plan de 10 lignes au plus, puis enchaîne sans attendre, phase après phase.
+c. À chaque phase : implémente, vérifie à l'image, lance PY -m pytest -q, PY -m ruff check ., PY -m ruff format --check . et PY scripts/check_style.py, puis commit.
+d. Quota ou contexte proche de la limite : finis la phase en cours, entrée "S36 (partiel)" dans docs/PROGRESS.md, commit, arrêt.
+e. Mets à jour docs/PROGRESS.md (entrée S36 ; l'entrée R5 est déjà faite) et docs/PROMPTS.md avec le commit final.
+f. Aucun push hors de la phase 0.
+g. Termine par un compte rendu de 5 lignes au plus : fait, tests, reste à faire, risques, suite.
+```
+
+## S14. Détection plus fine : cas difficiles et identifiants libellés (nuit)
+
+- **Objectif et livrable** : un lot 4 de huit documents dev difficiles, des règles générales qui les traitent, l'outillage du split challenge, un bilan dev avant/après.
+- **Modèle** : Codex, GPT 6.1 Sol High : règles à motifs, corpus et évaluation, domaine déjà tenu par la piste B (S11, S41, S42) ; sans réseau.
+- **Durée cible** : 4 h, nuit du mardi au mercredi, sans surveillance.
+- **Fichiers** : src/huisclos/detection/, text_utils.py, data/exclusions_fr.txt, corpus/source/doc_19 à doc_26, outillage du split challenge, tests.
+- **Critères d'acceptation** : rappel dev non dégradé sur les lots 1 et 2 ; lot 4 nettement amélioré ; aucune règle tirée d'un nom du corpus ; lignes test de results/ intactes.
+- **Risques et repli** : une règle qui coûte du rappel dev est retirée ; la phase 3 (split challenge) passe avant la phase 4 si le temps manque, car C2 en dépend.
+
+```text
+[HuisClos] Session S14 : détection plus fine, cas difficiles et identifiants libellés (nuit)
+Piste B, Codex, GPT 6.1 Sol High. Durée cible : 4 heures, sans surveillance.
+
+Contexte
+HuisClos pseudonymise localement des documents juridiques français. AGENTS.md fait foi. Sur le corpus actuel, la configuration hybrid atteint un rappel de 1,00 en dev et en test ; ce corpus est petit et ses pièges sont connus. Restent des faux positifs visibles (dans le cas de démo, le libellé "Courriel" est pris pour une société), des identifiants internes non détectés (matricule) et une fuite de caractères de 5,29 % en test, qui vient des bornes des spans. Cette session rend la détection plus fine et plus robuste, par des règles générales, à partir d'un lot 4 de documents dev difficiles. Le gain sera mesuré par la gate G7 sur un jeu "challenge" qu'une autre session rédigera à l'aveugle après toi : tu ne le verras jamais. Session de nuit : l'humain dort, tu ne poses aucune question ; en cas d'ambiguïté, choisis l'option la plus prudente, consigne-la (D-S14-n) et continue. Tu travailles sans réseau : aucune installation, aucun accès en ligne.
+
+Lis : AGENTS.md ; docs/PROGRESS.md (3 dernières entrées) ; docs/DECISIONS.md (D-07, D-09, D-12, D-13, D-S35-*, D-G4bisfix-1) ; corpus/README.md ; corpus/source/doc_01.md (format) ; l'annexe A5 de docs/MASTER_PLAN.md (règles d'annotation) ; tous les fichiers de src/huisclos/detection/ ; src/huisclos/text_utils.py ; src/huisclos/config.py ; data/exclusions_fr.txt (par plages de lignes) ; results/errors_dev.csv ; scripts/build_corpus.py ; scripts/run_evaluation.py ; src/huisclos/evaluation/run.py ; les tests des modules que tu modifies.
+
+À modifier : src/huisclos/detection/*.py ; src/huisclos/text_utils.py ; data/exclusions_fr.txt ; corpus/source/doc_19.md à doc_26.md (nouveaux, split dev) ; docs/prompts/corpus_lot_4.md ; corpus/dev.jsonl et corpus/stats.md (par build_corpus.py) ; scripts/build_corpus.py, scripts/run_evaluation.py et src/huisclos/evaluation/run.py (split challenge seulement) ; corpus/README.md ; tests/ ; docs/DECISIONS.md. À ne pas toucher : app/ ; src/huisclos/models.py (aucun nouveau type ni nouvelle source : un identifiant interne reste CUSTOM) ; src/huisclos/pseudonymize/ ; les sources et le fichier du split test ; data/samples/ ; results/.
+
+Interdits méthodologiques (contrôlés par G7)
+- N'ouvre jamais corpus/test.jsonl ni les sources doc_13 à doc_18 ; ne lance aucune évaluation test ou all.
+- Aucune règle tirée d'un nom, d'un numéro ou d'une formulation du corpus : règles générales (morphologie, libellés, contexte) ; valeurs de test inventées pour l'occasion ; courriels en example.com ou example.org.
+- results/ reste inchangé : PY scripts/run_evaluation.py --split dev réécrit results/ sans les lignes test ; toutes tes mesures vont donc dans un dossier temporaire hors dépôt (--out). G7 remesurera dev, test et challenge.
+
+Phase 1 : diagnostic et lot 4 (dev)
+- Diagnostic : mesure dev "avant" dans un dossier temporaire ; lis les erreurs ; PY scripts/detect_cli.py data/samples/demo_case_fr.txt --config hybrid ; liste les familles d'erreurs.
+- Rédige huit sources dev, doc_19 à doc_26, en appliquant l'annexe A5 à la lettre (écrites directement dans leur fichier, UTF-8, fins de ligne LF, 250 à 500 mots, 12 à 30 annotations). Types : procès-verbal de constat d'un commissaire de justice ; échange de courriels à plusieurs participants avec signatures ; extrait de jugement de tribunal judiciaire ; déclaration de sinistre à un assureur ; compte rendu de réunion du CSE ; procuration ; contrat de prestation entre sociétés ; texte extrait d'un PDF (sauts de ligne au milieu des noms et des adresses, mots coupés par un trait d'union en fin de ligne).
+- Le lot couvre chaque famille ci-dessous au moins deux fois :
+  a. personnes : NOM avant le prénom, prénoms composés, particules (de, du, de La, Le, van der), apostrophes (N'Diaye, O'Neil), initiales ("J.-P. MARTIN"), titres (Me, Maître, Dr, Pr, Mme, Mlle, MM.), noms qui sont des mots courants, nom en minuscules dans un courriel informel, signature de courriel ;
+  b. libellés de champ en tête de ligne qui ne sont pas des entités ("Courriel :", "Objet :", "Réf. :", "Tél. :", "Pièce jointe :") ;
+  c. identifiants internes libellés, annotés CUSTOM : matricule, numéro de salarié, de contrat, de police d'assurance, de client, d'adhérent, immatriculation de véhicule (AA-123-AA et 1234 AB 56), numéro de passeport, de carte d'identité, numéro fiscal ; et des pièges à laisser en clair (numéro de facture ou de commande avec {{DIGITS9}}, montants, articles) ;
+  d. numéros de procédure : RG, numéro Portalis, numéro de pourvoi d'une affaire non publiée, numéro de parquet ;
+  e. adresses : bis, ter, BP, CS, Cedex, lieu-dit, résidence, bâtiment et appartement, code postal et ville sur une autre ligne, outre-mer (971 à 976) ;
+  f. téléphones : +33 (0)6, 0033, points, tirets, sans séparateur, poste ; courriels en majuscules ou masqués ("prenom.nom [at] example.com") ;
+  g. dates de naissance : "né(e) le 3/4/1985", "née le 1er mars 1980", "date de naissance : 03.04.1985".
+- Consignes et liste du lot dans docs/prompts/corpus_lot_4.md ; PY scripts/build_corpus.py --check (trois cycles au plus), puis PY scripts/build_corpus.py ; corpus/stats.md compte 20 documents dev. Mesure dev "avant" sur les 20 documents (dossier temporaire), conservée pour le bilan.
+- Commit "S14 (1/4) : lot 4 de développement, cas difficiles".
+
+Phase 2 : règles
+- Pour chaque famille en échec : une règle générale ; des tests (cas valides, invalides, pièges) avec des valeurs inventées ; un score conforme au barème D-07 ; des bornes conformes à D-09 (civilités et libellés hors du span, adresse entière, forme juridique dedans).
+- Identifiants libellés : reconnaisseur à motifs (CUSTOM, source pattern) déclenché par le libellé dans une fenêtre courte ; jamais sur un numéro sans libellé.
+- Libellés de champ : exclusion ciblée (mot à majuscule suivi de deux-points en tête de ligne ou après un saut de ligne), sans masquer la vraie entité qui suit.
+- Propagation : une forme connue retrouvée en majuscules, en minuscules ou sans accents, et à travers un saut de ligne.
+- Après chaque famille : PY -m pytest -q et mesure dev (dossier temporaire) ; une règle qui fait baisser le rappel dev est retirée.
+- Commit "S14 (2/4) : règles de détection plus fines".
+
+Phase 3 : outillage du split challenge (C2 en dépend : passe-la avant la phase 4 si le temps manque)
+- scripts/build_corpus.py accepte split: challenge et écrit corpus/challenge.jsonl (aucun fichier tant qu'aucune source n'existe) ; PY scripts/run_evaluation.py --split challenge utilise le seuil de threshold.json, comme --split test, et conserve les lignes dev et test existantes ; tests avec une source challenge fictive créée dans un dossier temporaire.
+- corpus/README.md : le split challenge est réservé, comme test, aux gates.
+- Commit "S14 (3/4) : outillage du split challenge".
+
+Phase 4 : bilan
+- docs/DECISIONS.md : D-S14-1 et suivantes, une par famille de règles (choix, raison, limite connue) ; tableau dev avant/après (lots 1 et 2, lot 4, ensemble) : précision, rappel, F2, fuite ; rappel CUSTOM à part (CUSTOM reste hors des moyennes, pour la comparabilité avec G4 et G4bis).
+- Cas de démo : détections avant/après ; liste les éléments encore non détectés (la vidéo montre un ajout manuel) ; s'il n'en reste aucun, propose dans le compte rendu, sans l'appliquer, un élément fictif à ajouter au cas de démo.
+- docs/PROGRESS.md et docs/PROMPTS.md ; commit "S14 : détection plus fine et cas difficiles".
+
+Déroulé imposé
+a. Lis les fichiers listés, rien d'autre.
+b. Présente un plan de 10 lignes au plus, puis enchaîne sans attendre, phase après phase.
+c. À chaque phase : PY -m pytest -q, PY -m ruff check ., PY -m ruff format --check ., PY scripts/check_style.py, puis commit.
+d. Contexte ou quota proche de la limite : finis la phase en cours, entrée "S14 (partiel)" dans docs/PROGRESS.md, commit, arrêt.
+e. Aucun tag, aucun push.
+f. Termine par un compte rendu de 5 lignes au plus : fait, tests, reste à faire, risques, suite.
+```
+
+## C2. Jeu challenge rédigé à l'aveugle (lot 5)
+
+- **Objectif et livrable** : huit sources `chl_01` à `chl_08` (split challenge), construites dans `corpus/challenge.jsonl`.
+- **Modèle** : Claude Code, Sonnet 5.5 High : rédaction juridique française soignée, par un autre modèle que l'auteur des règles (Codex), après leur gel.
+- **Durée cible** : 45 min, mercredi 08:00, après S14.
+- **Critères d'acceptation** : règles A5 respectées ; chaque difficulté présente deux fois au moins ; aucun fichier de code lu ; build sans erreur.
+- **Risques et repli** : S14 n'a pas fait sa phase 3, alors C2 ajoute le seul split challenge à `scripts/build_corpus.py`, avec un test.
+
+```text
+[HuisClos] Session C2 : jeu challenge rédigé à l'aveugle (lot 5)
+Piste A, Claude Code, Sonnet 5.5 High. Durée cible : 45 minutes.
+
+Contexte
+HuisClos pseudonymise localement des documents juridiques français. AGENTS.md fait foi. La session S14 (Codex) a rendu la détection plus fine à partir de documents dev difficiles. Pour mesurer honnêtement ce gain, tu rédiges un jeu "challenge" de huit documents nouveaux, après le gel de ces règles et sans les connaître : c'est l'exception prévue par AGENTS.md section 11. Tu ne lis aucun fichier de src/, tests/, results/, ni les sources doc_07 à doc_26, ni les décisions D-S14 ; tu ne modifies aucun code, sauf le repli ci-dessous. La gate G7 mesurera ce jeu avec le code d'avant (gate-5) et le code actuel.
+
+Lis : AGENTS.md ; docs/PROGRESS.md (2 dernières entrées) ; corpus/README.md ; corpus/source/doc_01.md (format) ; l'annexe A5 de docs/MASTER_PLAN.md (règles d'annotation, prompt de génération, relecture).
+
+À créer : corpus/source/chl_01.md à chl_08.md (split: challenge), docs/prompts/corpus_lot_5.md, puis corpus/challenge.jsonl et corpus/stats.md par build_corpus.py. À ne pas toucher : tout le reste.
+
+Documents (types absents du corpus actuel) : chl_01 assignation devant le tribunal judiciaire ; chl_02 échange de SMS retranscrit dans une attestation ; chl_03 extrait de rapport d'expertise après un accident (sans détail médical) ; chl_04 compte rendu d'enquête interne pour harcèlement ; chl_05 mise en demeure adressée par un assureur ; chl_06 fiche de renseignements client d'un cabinet (formulaire à champs) ; chl_07 courriel transféré avec historique et signatures ; chl_08 texte extrait d'un PDF scanné de qualité moyenne (coupures, espaces manquants).
+
+Difficultés, chacune au moins deux fois sur le lot, jamais signalées dans le texte : personnes nommées dans un ordre inhabituel ; prénoms composés ; particules ; initiales ; noms qui sont des mots courants ; noms en minuscules ou en majuscules ; libellés de champ en tête de ligne ; identifiants internes libellés (CUSTOM) ; numéros de procédure variés ; adresses complexes (bis, BP, Cedex, lieu-dit, outre-mer) ; téléphones et courriels de formats variés ; dates de naissance de formats variés ; coupures de ligne au milieu d'une entité ; pièges A5 à laisser en clair (juridictions, articles, dates d'audience, montants, {{DIGITS9}}). Ajoute au moins deux difficultés de ton invention, réalistes pour un cabinet, et décris-les dans docs/prompts/corpus_lot_5.md.
+
+Relecture de chaque source avec la liste de l'annexe A5 : chaque valeur annotée à chacune de ses occurrences ; aucune civilité ni libellé dans une annotation ; aucun nom connu ; aucun numéro inventé à la place d'un marqueur ; en-tête complet.
+
+Repli : si PY scripts/build_corpus.py refuse split: challenge, ajoute ce seul split (valeur admise, sortie corpus/challenge.jsonl, test) dans scripts/build_corpus.py et tests/test_corpus.py ; c'est la seule modification de code permise, signalée dans le compte rendu.
+
+Déroulé imposé
+a. Lis les fichiers listés, rien d'autre.
+b. Présente un plan de 10 lignes au plus, puis enchaîne sans attendre.
+c. Rédige les huit sources, relis-les ; PY scripts/build_corpus.py --check (trois cycles au plus), puis PY scripts/build_corpus.py ; corpus/stats.md compte 8 documents challenge.
+d. PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py.
+e. Mets à jour docs/PROGRESS.md et docs/PROMPTS.md, puis commit "C2 : jeu challenge rédigé à l'aveugle".
+f. Termine par un compte rendu de 5 lignes au plus, sans aucun extrait des documents : fait, tests, reste à faire, risques, suite.
+```
+
+## S45. Évaluation étendue : intervalles de confiance et split challenge
+
+- **Objectif et livrable** : intervalles de confiance à 95 % par rééchantillonnage des documents, split challenge dans les rapports et l'onglet Evaluation, script de comparaison avant/après utilisé par G7.
+- **Modèle** : Codex, GPT 6.1 Sol High, propriétaire de l'évaluation (S42, S43).
+- **Durée cible** : 90 min, mercredi 08:00.
+- **Critères d'acceptation** : intervalles déterministes (graine fixe) ; tableau principal de summary.md inchangé dans sa forme ; page Evaluation correcte avec et sans données challenge ; aucune mesure test ni challenge.
+- **Risques et repli** : temps court, alors l'analyse des erreurs par catégorie est abandonnée en premier.
+
+```text
+[HuisClos] Session S45 : évaluation étendue, intervalles de confiance et split challenge
+Piste B, Codex, GPT 6.1 Sol High. Durée cible : 90 minutes.
+
+Contexte
+HuisClos pseudonymise localement des documents juridiques français. AGENTS.md fait foi. Le jeu test compte 6 documents : un chiffre ponctuel y cache une forte incertitude. Cette session ajoute des intervalles de confiance, affiche le nouveau split challenge (rédigé à l'aveugle, mesuré par la gate G7) et fournit le script de comparaison avant/après que G7 utilisera. Tu ne lances aucune évaluation test, challenge ou all, et tu n'ouvres ni corpus/test.jsonl, ni corpus/challenge.jsonl, ni leurs sources. Tu travailles sans réseau.
+
+Lis : AGENTS.md ; docs/PROGRESS.md (3 dernières entrées) ; docs/DECISIONS.md (D-12, D-13, D-S36-*) ; src/huisclos/evaluation/ ; scripts/run_evaluation.py ; app/pages/evaluation.py ; app/i18n/evaluation.py ; app/ui_common.py et app/components/ (charte refondue par S36, à réutiliser) ; results/summary.md ; les 40 premières lignes de results/results.json ; tests/test_metrics.py, tests/test_evaluation_reports.py, tests/test_app_evaluation.py.
+
+À modifier : src/huisclos/evaluation/ ; scripts/run_evaluation.py ; scripts/compare_results.py (nouveau) ; app/pages/evaluation.py ; app/i18n/evaluation.py (anglais et français) ; les tests listés et de nouveaux tests ; docs/DECISIONS.md. À ne pas toucher : results/ (G7 le régénère), corpus/, src/huisclos/detection/, le reste de app/ (S24 y travaille en parallèle).
+
+1. Intervalles : rééchantillonnage avec remise des documents (2 000 tirages, graine fixe, random.Random), percentiles 2,5 et 97,5 pour la précision, le rappel, le F2 et le taux de fuite, en appariement partiel micro, par split et par configuration ; stockés dans results.json ; dans summary.md, un second tableau "95% bootstrap intervals" sous le tableau principal, dont la forme ne change pas (README et vidéo le citent).
+2. Split challenge : rapports et page Evaluation l'affichent quand il existe, sinon rien ne change ; sélecteur de split, intervalles visibles (texte et barres d'erreur), note expliquant que le jeu a été écrit à l'aveugle après le gel des règles.
+3. scripts/compare_results.py : deux dossiers de résultats (référence, actuel) et un split ; écrit results/<split>_comparison.md et .json (précision, rappel, F2, fuite, entités exposées, intervalles, écarts) ; la page Evaluation affiche le tableau avant/après s'il existe.
+4. Si le temps le permet : catégorie de chaque erreur dev (manquée, en trop, bornes, confusion de type) dans errors_dev.csv et un décompte par catégorie dans summary.md.
+5. Contrôle sur données réelles : une évaluation dev dans un dossier temporaire hors dépôt seulement.
+
+Tests : intervalles reproductibles et encadrant la valeur ponctuelle ; cas dégénérés (un document, aucune entité) ; comparaison sur deux petits dossiers fictifs ; AppTest de la page avec et sans challenge, en anglais et en français.
+
+Déroulé imposé
+a. Lis les fichiers listés, rien d'autre.
+b. Présente un plan de 10 lignes au plus, puis enchaîne sans attendre.
+c. Implémente ; lance PY -m pytest -q, PY -m ruff check ., PY -m ruff format --check . et PY scripts/check_style.py.
+d. D-S45-1 (méthode des intervalles) dans docs/DECISIONS.md ; mets à jour docs/PROGRESS.md et docs/PROMPTS.md, puis commit "S45 : évaluation étendue et split challenge".
+e. Termine par un compte rendu de 5 lignes au plus : fait, tests, reste à faire, risques, suite.
+```
+
+## S24. Mémoire de dossier et contrôle final avant envoi
+
+- **Objectif et livrable** : la table d'un document sert au suivant (mêmes jetons, valeurs connues retrouvées) ; un contrôle final signale toute valeur d'origine ou nouvelle détection dans le texte pseudonymisé avant l'envoi.
+- **Modèle** : Claude Code, Opus 5.5 High : logique transversale des jetons et de la table (même famille que S21 et S22).
+- **Durée cible** : 2 h, mercredi 08:45.
+- **Critères d'acceptation** : aller-retour sur deux documents d'un même dossier ; table jamais écrite côté serveur ni envoyée ; reste planté signalé ; aucune fausse alerte sur le cas de démo.
+- **Risques et repli** : temps court, alors le contrôle final passe avant la mémoire de dossier.
+
+```text
+[HuisClos] Session S24 : mémoire de dossier et contrôle final avant envoi
+Piste A, Claude Code, Opus 5.5 High. Durée cible : 2 heures.
+
+Contexte
+HuisClos pseudonymise localement des documents juridiques français. AGENTS.md fait foi. Aujourd'hui, chaque document repart de zéro : le deuxième document d'un même dossier renumérote ses jetons, refait ses détections et peut oublier un nom que le premier connaissait ; rien ne revérifie le texte pseudonymisé avant son envoi. Deux ajouts, au service des principes 3 (priorité au rappel) et 5 (table sensible) :
+1. Mémoire de dossier. À l'étape Import, l'utilisateur peut charger la table de correspondance d'un document précédent du même dossier (fichier mapping.json exporté par Restore). (a) Chaque valeur de la table et ses variantes enregistrées sont recherchées dans le nouveau texte (casse, accents et espaces tolérés, frontières de mots respectées) et proposées comme détections, même si aucun reconnaisseur ne les voit ; (b) une entité connue garde son jeton, une entité nouvelle prend le premier numéro libre ; (c) Restore exporte la table fusionnée, qui sert au document suivant et restaure une réponse qui mêle plusieurs documents.
+2. Contrôle final. Après Pseudonymize, un panneau "Final check" vérifie le texte pseudonymisé : (a) aucune valeur d'origine de la table, ni une partie significative (nom de famille seul, trois lettres au moins, hors mots de data/exclusions_fr.txt), ne subsiste, à la casse et aux accents près ; (b) une nouvelle détection sur ce texte, jetons neutralisés, à un seuil plus bas que le seuil courant, ne trouve rien. Les valeurs rejetées volontairement en Review ne déclenchent pas d'alerte. Chaque alerte montre l'extrait et propose "Mask everywhere", qui l'ajoute comme entité manuelle et relance la pseudonymisation. Sans alerte : "No residual identifier found", sans jamais promettre l'anonymat.
+
+Lis : AGENTS.md ; docs/PROGRESS.md (3 dernières entrées) ; docs/DECISIONS.md (D-04, D-08, D-10, D-S33-1, D-S36-*) ; src/huisclos/models.py ; src/huisclos/pseudonymize/ ; src/huisclos/detection/pipeline.py et propagation.py ; src/huisclos/text_utils.py ; app/state.py ; app/steps/ ; app/components/ ; app/ui_common.py ; app/i18n/workflow_import.py, workflow_review.py, workflow_restore.py ; les tests de ces modules.
+
+À modifier : src/huisclos/pseudonymize/ ; src/huisclos/detection/pipeline.py (entrée des valeurs connues, si nécessaire) ; src/huisclos/models.py (ajout compatible seulement, consigné) ; app/state.py, app/steps/, app/components/, app/i18n/ (anglais et français) ; tests ; docs/DECISIONS.md. À ne pas toucher : le reste de detection/, evaluation/, corpus/, results/, app/pages/evaluation.py et app/i18n/evaluation.py (S45 y travaille en parallèle).
+
+Contraintes
+- La table chargée reste en mémoire de session : jamais écrite sur disque côté serveur, jamais incluse dans le texte à envoyer. Validation stricte du JSON (format exporté par Restore, taille limitée, erreurs en langage clair) ; une table invalide n'altère pas la session.
+- Jetons stables (D-08) ; restauration tolérante inchangée (D-10) ; noms de fichiers selon D-S33-1.
+- Interface cohérente avec la charte de S36 (réutilise ses composants) ; textes en anglais et en français.
+
+Tests : deux documents fictifs d'un même dossier (personne commune : même jeton ; nouvelle personne : numéro libre ; réponse mêlant les deux restaurée avec la table fusionnée) ; valeur connue retrouvée en minuscules et sans accents ; table invalide refusée ; reste planté signalé et masqué par "Mask everywhere" ; aucune alerte sur le cas de démo traité normalement ; valeur rejetée sans alerte ; AppTest des deux parcours ; tests/test_no_network.py vert.
+
+Déroulé imposé
+a. Lis les fichiers listés, rien d'autre.
+b. Présente un plan de 10 lignes au plus, puis enchaîne sans attendre.
+c. Implémente le contrôle final, puis la mémoire de dossier ; lance PY -m pytest -q.
+d. Lance PY -m ruff check ., PY -m ruff format --check . et PY scripts/check_style.py.
+e. D-S24-n dans docs/DECISIONS.md ; mets à jour docs/PROGRESS.md et docs/PROMPTS.md, puis commit "S24 : mémoire de dossier et contrôle final avant envoi".
+f. Termine par un compte rendu de 5 lignes au plus : fait, tests, reste à faire, risques, suite.
+```
+
+## G7. Gate 7 : contrôle de l'approfondissement et mesures
+
+- **Contrôleur** : Codex, GPT 6.1 Sol High, 90 min, mercredi 10:45, après S24 et S45 ; recette R7 par Claude Code ensuite (navigateur, captures, tag `gate-7`, push).
+
+```text
+[HuisClos] Gate 7 : contrôle de l'approfondissement et mesures
+Piste B, Codex, GPT 6.1 Sol High. Durée cible : 90 minutes.
+
+Rôle : contrôleur indépendant. Tu vérifies, tu corriges les écarts simples, tu mesures, tu rends un verdict.
+Contexte : HuisClos pseudonymise localement des documents juridiques français. AGENTS.md fait foi. Depuis la gate 5 : refonte de l'interface (S36), détection plus fine (S14), jeu challenge rédigé à l'aveugle (C2), évaluation étendue (S45), mémoire de dossier et contrôle final (S24). Tu travailles sans réseau.
+
+Lis : AGENTS.md ; docs/PROGRESS.md (entrées depuis G5) ; docs/DECISIONS.md (D-S36-*, D-S14-*, D-S45-*, D-S24-*, D-G4bisfix-1) ; git diff --stat gate-5..HEAD (à défaut, depuis le dernier commit G5) ; puis les seuls fichiers que tes contrôles exigent. N'ouvre ni corpus/test.jsonl, ni corpus/challenge.jsonl, ni leurs sources : seuls les scripts les lisent, et tes audits n'affichent que des comptes.
+
+1. Contrôles automatiques : git status propre ; PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py ; git diff --check.
+2. Points de G5 : si G5 a rendu NO-GO, vérifie que ses points ouverts sont corrigés.
+3. Surajustement (méthode D-G4bisfix-1, comptes seulement) : valeurs littérales ajoutées par S14 dans src/ et data/ ; aucune correspondance spécifique dans les spans annotés de test et de challenge. Ordre : le commit C2 est postérieur au dernier commit S14 et ne touche ni src/ ni tests/, hors le repli prévu dans scripts/build_corpus.py.
+4. Interface (S36, S24, S45) : AppTest de chaque page en anglais et en français ; aucun http:// ni https:// dans app/ (CSS et HTML injecté) ; html.escape sur tout texte de l'utilisateur ; couleur doublée d'un libellé ; contrastes testés ; fichiers sous 400 lignes ; libellés de boutons cités par README.md et docs/USER_GUIDE.md présents dans app/i18n/.
+5. Mémoire de dossier et contrôle final : aller-retour sur deux documents fictifs que tu écris hors dépôt (jetons stables, numéros libres, réponse mêlant les deux restaurée) ; table jamais écrite côté serveur ni présente dans le texte envoyé ; un reste planté est signalé.
+6. Mesures, une seule fois chacune, hors ligne, dans cet ordre :
+   a. PY scripts/run_evaluation.py --split all : dev choisit le seuil, puis test (troisième mesure test du projet, consignée en D-G7-1 à côté des deux précédentes, sans les remplacer) ;
+   b. PY scripts/run_evaluation.py --split challenge : code actuel ;
+   c. référence : code du tag gate-5 (à défaut, le dernier commit G5) dans un worktree temporaire hors dépôt, sur une copie de corpus/challenge.jsonl dont seul le champ split est adapté, avec le seuil de ce code ; sorties hors dépôt ;
+   d. PY scripts/compare_results.py pour écrire la comparaison avant/après du split challenge dans results/.
+   Recopie dans le rapport les tableaux dev, test et challenge (avant et après), avec les intervalles.
+7. Corrige les écarts simples (documentation, tests, libellés), trois cycles au plus ; un défaut de logique reste ouvert avec un test xfail strict.
+
+Critères go / no-go
+- GO si : contrôles verts ; aucun surajustement établi ; parcours et nouvelles fonctions sans erreur ; rappel test et challenge du code actuel au moins égal à celui de la référence ; aucune donnée réelle ni ressource externe.
+- NO-GO sinon, avec les points ouverts et leurs tests xfail stricts.
+
+Rapport final : tableau contrôle, statut (OK, corrigé, KO), commentaire ; mesures ; corrections ; points ouverts et repli ; verdict GO ou NO-GO. Mets à jour docs/PROGRESS.md, docs/PROMPTS.md et docs/DECISIONS.md (D-G7-1), puis commit "G7 : contrôle de l'approfondissement". Ne tague pas, ne pousse pas.
+```
+
+## S53. README et guide après l'approfondissement
+
+- **Objectif et livrable** : `README.md` et `docs/USER_GUIDE.md` à jour : nouvelle interface, contrôle final, mémoire de dossier, résultats dev, test et challenge avec intervalles.
+- **Modèle** : Claude Code, Sonnet 5.5 Medium : mise à jour de textes existants à partir de fichiers du dépôt.
+- **Durée cible** : 45 min, mercredi 13:30, après R7 (captures finales).
+
+```text
+[HuisClos] Session S53 : README et guide après l'approfondissement
+Piste A, Claude Code, Sonnet 5.5 Medium. Durée cible : 45 minutes.
+
+Contexte
+HuisClos pseudonymise localement des documents juridiques français. AGENTS.md fait foi. Depuis S52, l'interface a été refondue (S36), la détection affinée (S14), un jeu challenge rédigé à l'aveugle et mesuré avant/après (C2, G7), des intervalles de confiance ajoutés (S45), la mémoire de dossier et le contrôle final créés (S24). La recette R7 a régénéré les captures. README.md et docs/USER_GUIDE.md doivent le refléter exactement.
+
+Lis : AGENTS.md (sections 1, 2, 10) ; docs/PROGRESS.md (6 dernières entrées) ; docs/DECISIONS.md (D-S14-*, D-S24-*, D-S36-*, D-S45-1, D-G7-1) ; README.md ; docs/USER_GUIDE.md ; results/summary.md ; results/challenge_comparison.md ; app/i18n/ (libellés exacts) ; la liste des fichiers de docs/screenshots/.
+
+À modifier : README.md, docs/USER_GUIDE.md. À ne pas toucher : le reste.
+
+README.md : capture principale à jour ; liste des fonctions avec le contrôle final et la mémoire de dossier ; résultats : tableau principal recopié de results/summary.md, puis le tableau avant/après du challenge et ses intervalles, avec une phrase sur la méthode (jeu écrit à l'aveugle après le gel des règles, par un autre modèle) ; limites mises à jour. docs/USER_GUIDE.md : parcours illustré par les nouvelles captures ; section "Working on a case with several documents" (exporter la table, la charger pour le document suivant, règles de sécurité) ; section "Final check" ; libellés exacts.
+
+Contraintes : phrases courtes ; aucune formule creuse ; interdits de check_style ; aucun chiffre qui ne vienne de results/ ; liens internes valides.
+
+Déroulé imposé
+a. Lis les fichiers listés, rien d'autre.
+b. Présente un plan de 10 lignes au plus, puis enchaîne sans attendre.
+c. Rédige ; vérifie chaque chiffre et chaque lien ; lance PY -m pytest -q.
+d. Lance PY scripts/check_style.py.
+e. Mets à jour docs/PROGRESS.md et docs/PROMPTS.md, puis commit "S53 : README et guide après l'approfondissement".
+f. Termine par un compte rendu de 5 lignes au plus : fait, tests, reste à faire, risques, suite.
+```
+
+
 <!-- Onglet : Fiches 6-7 -->
 
 # Fiches des phases 6 et 7
@@ -1879,7 +2226,7 @@ Piste A, Claude Code, Sonnet 5.5 High. Durée cible : 45 minutes.
 Contexte
 HuisClos est terminé et en ligne. Il reste la vidéo de démonstration : 5 minutes au plus, plus ou moins 10 % (fenêtre de 4:30 à 5:30), cible 4:45, narration en anglais par une voix humaine. Elle est notée sur 30 points : clarté 10, concision 5, délivrance 5, qualité de production 5, respect de la durée 5. Elle doit expliquer le but de l'application, justifier son nom et montrer la valeur créée si son usage se généralisait.
 
-Lis : AGENTS.md (sections 1, 2, 10) ; README.md ; results/summary.md ; docs/RESEARCH.md ; app/i18n/workflow.py (libellés exacts des boutons) ; les 40 premières lignes de data/samples/demo_case_fr.txt.
+Lis : AGENTS.md (sections 1, 2, 10) ; README.md ; results/summary.md ; results/challenge_comparison.md ; l'entrée S14 de docs/PROGRESS.md ; docs/RESEARCH.md ; app/i18n/ (libellés exacts des boutons) ; les 40 premières lignes de data/samples/demo_case_fr.txt.
 
 À créer : docs/video/SCRIPT.md et docs/video/STORYBOARD.md, en anglais. À ne pas toucher : le reste.
 
@@ -1888,8 +2235,8 @@ SCRIPT.md
   0:00-0:20 Hook : un avocat, une échéance, un dossier de licenciement qui contient le nom, le NIR et l'adresse du client.
   0:20-0:50 Problem and rules : secret professionnel (loi du 31 décembre 1971, art. 66-5 ; Code pénal, art. 226-13), RGPD, guide du CNB de mars 2026 qui recommande de pseudonymiser avant l'IA générative.
   0:50-1:05 Name and promise : "huis clos", l'audience à portes fermées ; les données du client restent dans la pièce.
-  1:05-3:00 Live demo : Load sample case, détection, revue (juridiction laissée en clair d'office, matricule ajouté à la main), pseudonymisation, passage dans ChatGPT, retour, restauration, export et avertissement sur la table.
-  3:00-3:45 Under the hood : pipeline hybride (clés de contrôle, heuristiques, NER pré-entraînée), jetons cohérents, test sans réseau, résultats repris de results/summary.md, seuil choisi par F2 parce qu'un nom oublié coûte plus qu'un masquage en trop.
+  1:05-3:00 Live demo : Load sample case, détection, revue (juridiction laissée en clair d'office, ajout manuel d'un élément non détecté : le matricule, ou l'élément indiqué par le compte rendu de S14), pseudonymisation, contrôle final (Final check), passage dans ChatGPT, retour, restauration, export et avertissement sur la table ; une phrase sur la mémoire de dossier.
+  3:00-3:45 Under the hood : pipeline hybride (clés de contrôle, heuristiques, NER pré-entraînée), jetons cohérents, test sans réseau, résultats repris de results/summary.md, seuil choisi par F2 parce qu'un nom oublié coûte plus qu'un masquage en trop ; jeu challenge écrit à l'aveugle après le gel des règles, avant/après repris de results/challenge_comparison.md.
   3:45-4:20 Value and competition : valeur si l'usage se généralise (chiffres seulement s'ils figurent avec une source dans docs/RESEARCH.md) ; positionnement face à Docuflair, Nymiz, Sentinel et PseudoShield.
   4:20-4:45 Limits and close : réidentification par le contexte, pseudonymisation n'est pas anonymisation, l'humain reste responsable ; liens vers l'appli et le dépôt.
 - Budget : 600 à 680 mots ; pour chaque bloc, nombre de mots et durée calculée à 140 mots par minute ; total en tête du fichier.
@@ -2047,9 +2394,9 @@ METHOD_REPORT.md (2 500 à 3 500 mots, sections numérotées)
 2. Legal and ethical framework : secret professionnel (loi n° 71-1130 du 31 décembre 1971, art. 66-5 ; Code pénal, art. 226-13) ; RGPD (art. 4(5), considérant 26, art. 5(1)(c), art. 32) ; guide du CNB de mars 2026 ; CJEU, 4 September 2025, EDPS v SRB, C-413/23 P (pseudonymised data are not personal data in every case and for every person ; the controller's information duty is assessed at collection, before transfer ; General Court judgment set aside and case referred back) ; EDPB Guidelines 01/2025 on pseudonymisation. Uniquement ce que docs/RESEARCH.md source.
 3. Market and competitors : tableau tiré de docs/RESEARCH.md ; angle de HuisClos (identifiants juridiques français, rappel mesuré et publié, code ouvert, traitement local, revue humaine).
 4. Solution and pipeline : schéma Mermaid, six étapes, choix techniques avec renvoi aux décisions D-xx.
-5. Evaluation : corpus (taille, types, split dev et test, génération puis relecture), appariements exact et partiel, F2, taux de fuite, comparaison des configurations, choix du seuil, résultats dev et test copiés de results/summary.md avec leur date ; si deux mesures test existent, les deux.
+5. Evaluation : corpus (taille, types, split dev et test, génération puis relecture), appariements exact et partiel, F2, taux de fuite, comparaison des configurations, choix du seuil, résultats dev et test copiés de results/summary.md avec leur date ; toutes les mesures test (G4, G4bis, G7), sans en cacher aucune ; intervalles de confiance (D-S45-1) ; jeu challenge écrit à l'aveugle et comparaison avant/après (results/challenge_comparison.md, D-G7-1).
 6. Course concepts applied : coût asymétrique et seuil, humain dans la boucle, IA hybride, apprentissage par transfert, mesure de la performance ; pour chacun, l'endroit précis de l'appli où il se voit.
-7. Beyond the course : NER par transformeurs (résultat de D-S44-1, ou option non mesurée), regroupement des mentions, réidentification tolérante, comparaison chiffrée de configurations.
+7. Beyond the course : NER par transformeurs (résultat de D-S44-1, ou option non mesurée), regroupement des mentions, réidentification tolérante, comparaison chiffrée de configurations, mémoire de dossier et contrôle final (D-S24-*), intervalles par rééchantillonnage, évaluation à l'aveugle.
 8. Limits and ethics : réidentification par le contexte, erreurs de détection, jetons altérés, démo en ligne et données fictives, biais du corpus, responsabilité humaine, outil d'aide et non conseil juridique.
 9. Value if widely used : chiffres sourcés de docs/RESEARCH.md seulement, sinon raisonnement qualitatif annoncé comme tel.
 10. Reproducibility : commandes exactes d'installation, de test, de construction du corpus et d'évaluation.
