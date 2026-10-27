@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 18:40 | S23 | Lecture et export des documents | Codex
+- Fait : dev fusionnée en avance rapide sans conflit ; API installées de python-docx, pypdf et fpdf2 consultées. Lecture locale TXT (UTF-8, BOM, repli cp1252 signalé), DOCX (corps, tableaux, cellules fusionnées, variantes des en-têtes et pieds de page sans répétition) et PDF natif ; normalisation NFC et LF, espaces insécables conservés, limites et neuf codes d'erreur. Exports TXT sans BOM et DOCX avec titre, lignes conservées et métadonnées personnelles vidées.
+- Tests : pytest -q : 449 passed, dont 40 nouveaux tests sous no_network ; ruff check et ruff format --check : OK ; check_style : 0 erreur, 1 avertissement existant (merge.py, 361 lignes). Premier passage : erreurs de préparation dues aux identifiants de paramètres trop longs et au cache temporaire inaccessible ; identifiants raccourcis, TEMP/TMP et cache pytest redirigés vers des dossiers accessibles hors dépôt.
+- Reste à faire : raccorder ces fonctions aux étapes Import et Restore de l'interface.
+- Décisions : aucune ; application de D-15 et D-16, avertissement cp1252 fourni sous forme de code pour traduction par l'interface.
+- Risques ou blocages : aucun blocage ; PDF sans texte exploitable et PDF chiffrés refusés, sans OCR ; la mise en page source n'est pas conservée. Aucune installation, aucun appel réseau ni lecture du split test.
+- Prochaine session : suivre la sortie du script de pilotage S23 ; commit limité aux deux modules, à leurs tests et aux deux journaux.
+
 ### 2026-10-27 17:50 | R1 | Recette de la gate G1 | Claude Code, Sonnet 5.5
 - Fait : dev fusionné avec lane-b (avance rapide, sans conflit) ; verdict G1 lu : GO. Étape 1 (detect_cli sur mini_case_fr.txt, config hybrid) : OK, 16 détections ; les quatre formes de Dupont (Jean DUPONT, Dupont, DUPONT, Marie DUPONT, soit cinq occurrences) sont masquées ; la juridiction (Conseil de prud'hommes de Nanterre), l'article L. 1232-6 et le mot "petit" restent en clair ; chargement 3,9 s, détection 0,09 s. Étape 2 (paragraphe fictif de six lignes, hors dépôt, supprimé ensuite) : OK, aucune fuite de nom, 15 détections (11 PERSON, 1 ORGANIZATION, 1 ADDRESS, 2 PHONE). Constat sans fuite : "Valmont" seul est typé PERSON (propagation et NER) au lieu d'ORGANIZATION, donc jeton [PERSONNE_n] au lieu de [SOCIETE_x] ; "Lyon" seul dans une phrase reste en clair car LOCATION est désactivé par défaut.
 - Tests : pytest : 409 passed ; ruff check : OK ; ruff format --check : OK ; check_style : 0 erreur, 1 avertissement existant (merge.py, 361 lignes).
