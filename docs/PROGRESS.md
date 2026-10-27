@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 23:58 | S52 | README et guide utilisateur | Claude Code, Opus 5.5
+- Fait : fusion de lane-b (S34) sans conflit, 860 passed avant travail. README.md réécrit (accroche, problème, démarrage Windows et macOS, pipeline en six étapes avec schéma Mermaid, tableau repris tel quel de results/summary.md, confidentialité, limites, documentation, cours, licence MIT). docs/USER_GUIDE.md créé en neuf sections, libellés recopiés de app/i18n (workflow_import, workflow_review, workflow_restore, mistral, common).
+- Commandes testées sous Windows : clone GitHub, `python -m venv .venv`, `pip install -r requirements.txt` (code 0, 109 s), import du modèle spaCy, lancement headless sur 8501 (santé ok), seconde instance, `--server.port 8502`, `py -3.12 -m venv`, `Set-ExecutionPolicy -Scope Process` puis Activate.ps1, netstat, `$env:MISTRAL_API_KEY`. Dossiers de test supprimés, aucun Streamlit restant. Commandes macOS non testées (pas de poste macOS).
+- Constats : un dépôt installé dans un chemin trop long échoue au chargement de spaCy ("DLL load failed", limite de longueur des chemins Windows), ajouté au dépannage. Streamlit 1.66 passe seul au port suivant si 8501 est occupé. Premier lancement local : invite d'adresse électronique de Streamlit (server.showEmailPrompt non désactivé dans .streamlit/config.toml). Le serveur écoute toutes les interfaces (Network URL et External URL affichées).
+- Tests : pytest 860 passed ; ruff check et format : OK ; check_style : 0 erreur, 6 avertissements de longueur connus ; 16 liens internes vérifiés, tous présents.
+- Reste à faire : coller l'URL de l'appli en ligne (non fournie dans le prompt) et le lien de la vidéo dans README.md ; créer METHOD_REPORT, ARCHITECTURE et CREDITS, cités sans lien en attendant.
+- Décisions : aucune. Risques : écoute sur toutes les interfaces en usage local ; à trancher hors de cette session (server.address = "localhost", showEmailPrompt = false dans .streamlit/config.toml).
+
 ### 2026-10-27 23:50 | S51 | Préparation du déploiement et mesure de mémoire | Claude Code, Opus 5.5
 - Fait : `git merge lane-b --no-edit` déjà à jour, 819 passed avant travail. Installation à neuf hors dépôt (venv Python 3.12.10 dans le dossier temporaire de session, `pip install --no-cache-dir -r requirements.txt`) : code 0 en 119 s, `pip check` sans conflit ; fumée AppTest avec cet interpréteur (démarrage, Load sample case, détection en 5,7 s, passage à Review) sans exception ; venv supprimé. Aucun épinglage modifié.
 - Cache : nouveau app/engine.py, st.cache_resource autour de build_analyzer, appelé par l'étape Import avant detect() (D-S51-1) ; aucun st.cache_data, aucune écriture disque dans app/. Bandeau de démo déjà conforme (variable ou secret valant "true").
