@@ -166,3 +166,8 @@ Seuil par défaut : 0,40 jusqu'à la gate 4, puis la valeur de results/threshold
 ## D-S31-2 État de l'étape Import
 - Choix : le texte à traiter vit dans source_text ; la zone de saisie est réalimentée depuis cette clé à chaque affichage (Streamlit oublie l'état d'un composant absent de la page), et chaque chargement (collage, fichier, exemple) passe par des rappels on_change ou on_click qui écrivent les deux. La clé du sélecteur de fichier porte un compteur qui augmente à chaque remise à zéro. La détection n'est refaite que si l'empreinte du texte normalisé et de la configuration change ; elle efface alors les décisions et résultats en aval.
 - Raison : seuls les rappels peuvent modifier la valeur d'un composant déjà connu ; supprimer l'état d'un sélecteur de fichier ne vide pas le fichier affiché, alors qu'une remise à zéro doit effacer les documents du client ; des décisions de revue calculées sur d'anciennes positions seraient fausses.
+
+## D-G2fix-2 Les positions de la table font foi en mode exact
+- Contexte : G2-R4 a montré qu'une liste d'occurrences complète, mais décalée sur un jeton littéral ou aux écritures permutées, passait le contrôle d'inventaire de D-G2fix-1 et produisait un faux mode exact.
+- Choix : quand la table porte des positions, restore les utilise seules et ignore la liste fournie ; la liste fournie, contrôlée par son inventaire, ne sert qu'avec une ancienne table sans positions. Signature de restore et models.py inchangés.
+- Raison : la table est produite en même temps que le texte pseudonymisé et vérifiée par son empreinte ; une liste externe n'apporte rien de plus et peut avoir été altérée. Limite connue : une ancienne table sans positions ne peut pas détecter une liste complète mais décalée.

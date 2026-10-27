@@ -239,12 +239,24 @@ def test_literal_token_in_source_needs_positions() -> None:
     assert without_positions.mode == TOLERANT
 
 
-def test_inconsistent_occurrences_fall_back_to_tolerant() -> None:
+@pytest.mark.parametrize("persisted", [True, False], ids=["persisted", "legacy"])
+def test_inconsistent_occurrences_never_give_a_wrong_text(persisted: bool) -> None:
+    """Les positions de la table priment ; une ancienne table se replie sur le mode tolérant."""
     text = "Jean DUPONT écrit."
     result = pseudonymize(text, [manual(text, "Jean DUPONT")], created_at=CREATED_AT)
+    mapping = result.mapping
+    if not persisted:
+        legacy = tuple(MappingOccurrence(o.token, o.original) for o in mapping.occurrences)
+        mapping = Mapping(
+            mapping.created_at,
+            mapping.token_style,
+            mapping.entities,
+            legacy,
+            mapping.pseudonymized_sha256,
+        )
     shifted = (Occurrence("[PERSONNE_1]", "Jean DUPONT", 1, 13),)
-    restored = restore(result.text, result.mapping, shifted)
-    assert restored.mode == TOLERANT
+    restored = restore(result.text, mapping, shifted)
+    assert restored.mode == (EXACT if persisted else TOLERANT)
     assert restored.text == text
 
 
@@ -314,10 +326,6 @@ def test_duplicate_occurrences_do_not_replace_a_missing_occurrence() -> None:
     assert sum(restored.replaced.values()) == 2
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="G2-R4 : une occurrence déplacée sur un jeton littéral est acceptée en mode exact",
-)
 @pytest.mark.parametrize("literal_first", [True, False], ids=["literal-first", "literal-last"])
 def test_shifted_occurrence_cannot_replace_a_literal_token(literal_first: bool) -> None:
     """Exige le repli sur les positions persistées quand une occurrence vise un littéral."""
@@ -332,10 +340,6 @@ def test_shifted_occurrence_cannot_replace_a_literal_token(literal_first: bool) 
     assert restored.mode == EXACT
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="G2-R4 : des variantes permutées conservent l'inventaire et trompent le mode exact",
-)
 def test_swapped_variant_positions_use_persisted_occurrences() -> None:
     """Une permutation des écritures ne doit pas modifier le texte restauré exact."""
     text = "Jean DUPONT et Dupont signent."

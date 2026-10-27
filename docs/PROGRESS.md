@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 19:28 | G2-fix | Positions persistées prioritaires en mode exact (G2-R4) | Claude Code, Opus 5.5
+- Fait : lane-b fusionnée en avance rapide. Trois xfails G2-R4 retirés, trois échecs constatés, puis succès. Cause : restore acceptait une liste externe dont l'inventaire (jeton, original) correspondait, sans relier chaque original à sa position. Correction : quand la table porte des positions, elles font foi et la liste externe est ignorée ; la liste ne sert plus qu'aux anciennes tables sans positions. Aucun changement de models.py.
+- Tests : pytest : 676 passed, aucun xfail ; ruff check et format : OK ; check_style : 0 erreur, 2 avertissements existants.
+- Reste à faire : rejouer la gate 2.
+- Décisions : D-G2fix-2.
+- Risques ou blocages : test_inconsistent_occurrences_fall_back_to_tolerant, hors des points ouverts, contredisait la correction (table positionnée, liste décalée : mode exact désormais) ; renommé en test_inconsistent_occurrences_never_give_a_wrong_text, avec un cas positionné (exact) et un cas ancien JSON (tolérant). Une ancienne table sans positions reste exposée à une liste complète mais décalée.
+- Prochaine session : suivre la sortie du pilotage G2.
+
 ### 2026-10-27 19:22 | G2 recontrôle | Positions des occurrences et contrôle des fichiers | Codex
 - Fait : dev intégrée en avance rapide sans conflit ; arbre propre au départ. Relecture des modules et tests autorisés, sans ouvrir le corpus. G2-R1, G2-R2 et G2-R3 corrigés auparavant et vérifiés. Aucun module métier corrigé dans ce recontrôle ; trois tests xfail stricts ajoutés pour G2-R4.
 - Tests : contrôle initial, 672 passed ; contrôle final, 672 passed et 3 xfailed stricts, aucun test ignoré. Ruff check et format : OK ; check_style : 0 erreur, 2 avertissements existants. Les trois nouveaux cas échouent aussi avec --runxfail, sur des valeurs fictives seulement.

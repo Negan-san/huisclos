@@ -240,18 +240,23 @@ def restore(
 
     Paramètres : text, le texte reçu (texte pseudonymisé ou réponse du LLM) ; mapping, la
     table de correspondance ; occurrences, les occurrences positionnées produites par
-    pseudonymize, si on les a encore.
+    pseudonymize, si on les a encore ; elles ne servent qu'avec une ancienne table sans
+    positions, car les positions persistées dans la table font foi.
     Valeur retournée : un RestoreResult. Le mode exact s'applique quand le texte reçu est
     exactement le texte pseudonymisé (même empreinte SHA-256) : chaque occurrence retrouve
     alors son écriture d'origine. Sinon, le mode tolérant restaure la forme canonique.
     Exemple : restore("Vu [PERSONNE_1].", mapping).text == "Vu Jean DUPONT."
     """
     if sha256_of(text) == mapping.pseudonymized_sha256:
-        # Une liste tronquée ne prouve pas une restauration complète : la table conserve
-        # l'inventaire des remplacements et permet de reprendre les occurrences perdues.
+        # Une liste externe complète peut être décalée sur un jeton littéral ou permuter les
+        # écritures d'un nom : seules les positions de la table relient chaque original à
+        # son emplacement. Une liste tronquée ne prouve pas non plus une restauration
+        # complète : la table conserve l'inventaire des remplacements.
+        persisted = any(o.start is not None for o in mapping.occurrences)
         expected = Counter((o.token, o.original) for o in mapping.occurrences)
         if (
-            occurrences is not None
+            not persisted
+            and occurrences is not None
             and Counter((o.token, o.original) for o in occurrences) == expected
         ):
             spans = _spans_from_occurrences(text, occurrences)
