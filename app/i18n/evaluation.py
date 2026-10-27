@@ -40,9 +40,10 @@ EN: dict[str, str] = {
     "evaluation.threshold": "Threshold",
     "evaluation.selected": "Selected threshold: {threshold}",
     "evaluation.recall_chart": "Recall by entity type",
+    "evaluation.recall_label": "{config}: {recall}",
     "evaluation.recall_alt": (
         "Grouped bars show partial recall by entity type and configuration. "
-        "Each bar has a percentage label; the legend identifies configurations."
+        "Each bar has a configuration name and percentage label."
     ),
     "evaluation.sweep_chart": "Threshold sweep on dev (hybrid)",
     "evaluation.sweep_alt": (

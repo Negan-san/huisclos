@@ -153,6 +153,10 @@ EN: dict[str, str] = {
         "Copy this text into the AI tool of your choice. Names and identifiers are replaced "
         "by tokens such as `[PERSONNE_1]`."
     ),
+    "restore.send.literal_tokens": (
+        "The input text already contains token-like strings. Check the restored text: "
+        "they may be confused with the tokens created by HuisClos."
+    ),
     "restore.send.leaves": (
         "What leaves your computer: only the text above. The mapping table stays here."
     ),
@@ -218,7 +222,7 @@ EN: dict[str, str] = {
     ),
     "restore.table.error.invalid": (
         "This file is not a valid HuisClos mapping table. Upload the .mapping.json file "
-        "exactly as HuisClos saved it. Detail: {detail}"
+        "exactly as HuisClos saved it."
     ),
     "restore.download.heading": "Download",
     "restore.download.pseudonymized_txt": "Pseudonymized text (.txt)",

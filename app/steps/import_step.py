@@ -27,6 +27,7 @@ from app.state import (
     clear_results,
     go_to,
 )
+from app.ui_common import literal_markdown
 from huisclos.config import DetectionConfig
 from huisclos.detection.pipeline import detect
 from huisclos.io.readers import DocumentReadError, read_document, read_pasted_text
@@ -138,7 +139,7 @@ def _render_source_feedback() -> None:
     name = st.session_state[KEY_SOURCE_NAME]
     if name == SAMPLE_PATH.name:
         st.info(t("import.sample.notice"))
-    st.caption(t("import.source.summary", name=name, count=f"{len(text):,}"))
+    st.caption(t("import.source.summary", name=literal_markdown(name), count=f"{len(text):,}"))
 
 
 def _run_detection(config: DetectionConfig) -> None:

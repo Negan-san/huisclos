@@ -8,6 +8,7 @@ Place dans le pipeline : couche d'affichage partagée par les trois étapes.
 
 import html
 import os
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -19,6 +20,11 @@ from huisclos.models import EntityType
 
 STYLE_PATH = Path(__file__).resolve().parent / "assets" / "style.css"
 DEMO_VARIABLE = "HUISCLOS_PUBLIC_DEMO"
+
+
+def literal_markdown(value: str) -> str:
+    """Échappe une valeur utilisateur affichée dans un message Markdown, sans lien ni image."""
+    return re.sub(r"([\\`*_{}\[\]()#+.!|])", r"\\\1", html.escape(value))
 
 
 @dataclass(frozen=True)

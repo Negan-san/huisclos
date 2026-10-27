@@ -178,6 +178,9 @@ def test_charts_preserve_metrics_and_threshold(saved_results: dict[str, Any]) ->
     colors = bars["layer"][0]["encoding"]["color"]["scale"]["range"]
     assert colors == list(evaluation.OKABE_ITO[:2])
     assert bars["layer"][1]["mark"]["type"] == "text"
+    assert bars["layer"][1]["encoding"]["text"]["field"] == "label"
+    labels = next(iter(bars["datasets"].values()))
+    assert {row["label"] for row in labels} == {"hybrid: 80%", "patterns_only: 80%"}
     chart = evaluation.threshold_chart(sweep, threshold).to_dict()
     assert chart["layer"][1]["mark"]["type"] == "rule"
     assert chart["layer"][2]["mark"]["text"] == t("evaluation.selected", threshold="0.37")

@@ -268,7 +268,7 @@ def test_a_valid_table_is_imported_and_used_to_restore(
     assert not app.text_area
     app = upload_table(app, result.mapping.to_json().encode("utf-8"))
     assert [message.value for message in app.error] == []
-    assert any("dossier.mapping.json" in caption.value for caption in app.caption)
+    assert any(r"dossier\.mapping\.json" in caption.value for caption in app.caption)
     person, person_name = token_of(result, EntityType.PERSON)
     app = restore_answer(app, f"Réponse reçue plus tard : {person}.")
     assert restored_text(app) == f"Réponse reçue plus tard : {person_name}."
@@ -299,6 +299,11 @@ def test_an_imported_table_replaces_the_one_of_the_document(
         (b'{"schema": "autre", "version": 1}', "not a valid HuisClos mapping table"),
         (b"[1, 2, 3]", "not a valid HuisClos mapping table"),
         (b"[" * 5000, "not a valid HuisClos mapping table"),
+        pytest.param(
+            b'{"version":' + b"1" * 5000 + b"}",
+            "not a valid HuisClos mapping table",
+            id="large-integer",
+        ),
         (b"\xff\xfe\x00\x01", "not readable text"),
     ],
 )

@@ -27,6 +27,8 @@ KEY_MANUAL_ENTITIES = "manual_entities"
 KEY_PSEUDO_RESULT = "pseudo_result"
 KEY_LLM_RESPONSE = "llm_response"
 KEY_RESTORE_RESULT = "restore_result"
+KEY_UPLOADED_TABLE = "restore_uploaded_table"
+KEY_TABLE_ERROR = "restore_table_error"
 KEY_LANGUAGE = "language"
 KEY_TOKEN_STYLE = "token_style"
 
@@ -67,6 +69,8 @@ def _defaults() -> dict[str, object]:
         KEY_PSEUDO_RESULT: None,
         KEY_LLM_RESPONSE: "",
         KEY_RESTORE_RESULT: None,
+        KEY_UPLOADED_TABLE: None,
+        KEY_TABLE_ERROR: None,
         KEY_LANGUAGE: "en",
         KEY_TOKEN_STYLE: "fr",
         KEY_ENABLED_TYPES: ordered_types,
@@ -106,6 +110,8 @@ def clear_results() -> None:
     st.session_state[KEY_PSEUDO_RESULT] = None
     st.session_state[KEY_LLM_RESPONSE] = ""
     st.session_state[KEY_RESTORE_RESULT] = None
+    st.session_state[KEY_UPLOADED_TABLE] = None
+    st.session_state[KEY_TABLE_ERROR] = None
 
 
 def go_to(step: str) -> None:

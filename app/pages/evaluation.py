@@ -45,6 +45,12 @@ def recall_chart(rows: pd.DataFrame) -> alt.LayerChart:
     """Construit les barres groupées et étiquetées depuis les mesures par type."""
     data = rows.copy()
     data["entity"] = data["type"].map(lambda kind: t(f"entity.{kind}"))
+    data["label"] = data.apply(
+        lambda row: t(
+            "evaluation.recall_label", config=row["config"], recall=f"{row['recall']:.0%}"
+        ),
+        axis=1,
+    )
     configurations = data["config"].drop_duplicates().tolist()
     base = alt.Chart(data).encode(
         x=alt.X(
@@ -70,9 +76,7 @@ def recall_chart(rows: pd.DataFrame) -> alt.LayerChart:
         )
     )
     # Les étiquettes hors des barres gardent le même contraste pour chaque couleur.
-    labels = base.mark_text(align="left", dx=4, color="#1B1F24").encode(
-        text=alt.Text("recall:Q", format=".0%")
-    )
+    labels = base.mark_text(align="left", dx=4, color="#1B1F24").encode(text=alt.Text("label:N"))
     return alt.layer(bars, labels).properties(height=alt.Step(72))
 
 

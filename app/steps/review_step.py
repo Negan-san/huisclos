@@ -23,7 +23,9 @@ from app.state import (
     KEY_RESTORE_RESULT,
     KEY_SIGNATURE,
     KEY_SOURCE_TEXT,
+    KEY_TABLE_ERROR,
     KEY_TOKEN_STYLE,
+    KEY_UPLOADED_TABLE,
     STEP_IMPORT,
     STEP_RESTORE,
     go_to,
@@ -356,6 +358,8 @@ def _pseudonymize(text: str, detections: list[Detection]) -> None:
     st.session_state[KEY_PSEUDO_RESULT] = result
     st.session_state[KEY_RESTORE_RESULT] = None
     go_to(STEP_RESTORE)
+    st.session_state[KEY_UPLOADED_TABLE] = None
+    st.session_state[KEY_TABLE_ERROR] = None
     st.rerun()
 
 

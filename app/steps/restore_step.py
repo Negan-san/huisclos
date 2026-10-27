@@ -17,13 +17,15 @@ from app.state import (
     KEY_LLM_RESPONSE,
     KEY_PSEUDO_RESULT,
     KEY_RESTORE_RESULT,
+    KEY_TABLE_ERROR,
     KEY_UPLOAD_NONCE,
+    KEY_UPLOADED_TABLE,
     STEP_IMPORT,
     STEP_REVIEW,
     go_to,
     reset_state,
 )
-from app.ui_common import entity_label
+from app.ui_common import entity_label, literal_markdown
 from huisclos.io.writers import to_docx_bytes, to_txt_bytes
 from huisclos.models import EntityType, Occurrence, PseudonymizationResult
 from huisclos.pseudonymize.mapping import Mapping, MappingError, sha256_of
@@ -83,8 +85,8 @@ def _render_send(result: PseudonymizationResult) -> None:
     """Bloc 1 : texte pseudonymisé à copier, jetons par type, consignes à coller avec lui."""
     st.subheader(t("restore.send.heading"))
     st.markdown(t("restore.send.intro"))
-    for message in result.warnings:
-        st.warning(message)
+    if result.warnings:
+        st.warning(t("restore.send.literal_tokens"))
     _show_text(result.text)
     st.info(t("restore.send.leaves"))
     st.caption(t("restore.send.check"))
@@ -97,6 +99,24 @@ def _render_send(result: PseudonymizationResult) -> None:
         st.code(t(f"restore.send.instruction.{language}"), language=None, wrap_lines=True)
 
 
+def _keep_uploaded_table() -> None:
+    """Conserve la table et son erreur en mémoire quand le téléverseur disparaît d'une page."""
+    key = f"restore_table_upload_{st.session_state[KEY_UPLOAD_NONCE]}"
+    uploaded = st.session_state.get(key)
+    st.session_state[KEY_UPLOADED_TABLE] = None
+    st.session_state[KEY_TABLE_ERROR] = None
+    if uploaded is None:
+        return
+    try:
+        mapping = Mapping.from_json(uploaded.getvalue().decode("utf-8-sig"))
+    except UnicodeDecodeError:
+        st.session_state[KEY_TABLE_ERROR] = "encoding"
+    except (MappingError, ValueError, RecursionError):
+        st.session_state[KEY_TABLE_ERROR] = "invalid"
+    else:
+        st.session_state[KEY_UPLOADED_TABLE] = ActiveTable(mapping, None, uploaded.name)
+
+
 def _render_table_upload(result: PseudonymizationResult | None) -> ActiveTable | None:
     """Propose l'import facultatif d'une table JSON et renvoie la table à utiliser.
 
@@ -105,21 +125,19 @@ def _render_table_upload(result: PseudonymizationResult | None) -> ActiveTable |
     """
     st.markdown(f"**{t('restore.table.heading')}**")
     st.caption(t("restore.table.help"))
-    uploaded = st.file_uploader(
+    st.file_uploader(
         t("restore.table.upload"),
         type=["json"],
         key=f"restore_table_upload_{st.session_state[KEY_UPLOAD_NONCE]}",
+        on_change=_keep_uploaded_table,
     )
-    if uploaded is not None:
-        try:
-            mapping = Mapping.from_json(uploaded.getvalue().decode("utf-8-sig"))
-        except UnicodeDecodeError:
-            st.error(t("restore.table.error.encoding"))
-        except (MappingError, RecursionError) as error:
-            st.error(t("restore.table.error.invalid", detail=str(error)))
-        else:
-            st.caption(t("restore.table.in_use_file", name=uploaded.name))
-            return ActiveTable(mapping, None, uploaded.name)
+    error = st.session_state.get(KEY_TABLE_ERROR)
+    if error is not None:
+        st.error(t(f"restore.table.error.{error}"))
+    uploaded_table = st.session_state.get(KEY_UPLOADED_TABLE)
+    if uploaded_table is not None:
+        st.caption(t("restore.table.in_use_file", name=literal_markdown(uploaded_table.file_name)))
+        return uploaded_table
     if result is None:
         return None
     st.caption(t("restore.table.in_use_document"))
