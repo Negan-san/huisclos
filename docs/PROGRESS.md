@@ -14,6 +14,26 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 21:26 | S35 | Bornes des sociétés et réduction de la fuite | Claude Code, Opus 5.5
+- Fait : lane-b fusionnée sans conflit (777 passed avant travail). Nouveau detection/organization_bounds.py branché entre merge et propagate : civilité + Prénom NOM réunis en un PERSON, extension des sociétés à partir de leur forme juridique, société créée sur une forme juridique libre (heuristique 0,70), fusion de fragments séparés par une liaison. Propagation : forme courte élargie à la forme longue. SIREN à clé fausse près de "SIREN" ou "RCS" (pattern 0,40). Intitulés de lettre exclus en tête de ligne.
+- Tests : tests/test_organization_bounds.py (24 cas) et cas ajoutés dans test_patterns, test_propagation, test_merge, test_pipeline ; pytest : 814 passed ; ruff : OK ; check_style : 0 erreur, 5 avertissements de longueur (patterns.py passe à 318 lignes).
+- Évaluation dev seulement, seuil 0,30 (D-13, inchangé), hybrid, partiel micro :
+
+| Mesure dev | G4 | S35 |
+| --- | ---: | ---: |
+| Fuite de caractères | 5,48 % | 0,85 % |
+| Rappel ORGANIZATION | 13/17 = 76,47 % | 17/17 = 100 % |
+| SIREN | 9/10 | 10/10 |
+| Rappel PERSON | 82/83 = 98,80 % | 83/83 = 100 % |
+| Précision micro | 186/208 = 0,894 | 192/199 = 0,965 |
+| Rappel micro | 96,88 % | 100 % |
+
+- Autres configurations dev : patterns_only rappel 98,44 %, fuite 1,42 % ; hybrid_camembert identique à hybrid. Erreurs restantes : adresse sur deux lignes avec un type de voie non reconnu, codes alphanumériques pris pour des noms, "IBAN" et "affaire RG" pris pour des sociétés.
+- Hors liste, avec l'accord de l'humain : tests/test_app_review.py, comptes de la démo mis à jour (13 à 14 entités) parce que la société de la démo, jusque-là en clair, est maintenant masquée.
+- Décisions : D-S35-1, D-S35-2, D-S35-3.
+- Risques ou blocages : results/ ne contient plus que dev (le script réécrit le dossier) ; les chiffres test de G4 restent dans l'historique git (tag gate-4) et dans D-S35-3. Gains mesurés sur dev seulement : le jeu test n'a pas été remesuré. Une ligne qui commence par un mot à majuscule devant une forme juridique peut être absorbée dans le nom.
+- Prochaine session : G4bis dans huisclos-b (Codex), dès que G3 est rendue.
+
 ### 2026-10-27 21:54 | S33 | Restauration, exports, remise à zéro | Claude Code, Sonnet 5.5
 - Fait : lane-b fusionnée en avance rapide, 756 tests verts avant travail. Étape Restore complète dans app/steps/restore_step.py : texte pseudonymisé (st.code, retour à la ligne), jetons par type, encadré "What leaves your computer", consignes FR et EN ; collage de la réponse, restauration, avertissement des jetons inconnus, information sur les formes altérées ; import facultatif d'une table JSON ; cinq téléchargements avec l'avertissement rouge avant la table ; "Start a new document" avec confirmation ; emplacement Mistral vide. Textes dans app/i18n/workflow.py ; src/ et les autres étapes inchangés.
 - Tests : tests/test_app_restore.py, 21 cas AppTest (parcours complet, aucune valeur détectée dans le texte affiché, aller-retour exact, jetons altérés et inventé, cinq boutons et ordre de l'avertissement, table valide et cinq cas de fichier invalide, remise à zéro, emplacement Mistral) ; pytest : 777 passed ; ruff : OK ; check_style : 0 erreur, 4 avertissements de longueur préexistants.

@@ -9,13 +9,9 @@ Development errors use exact matching and include 30 characters on each side.
 
 | Split | Configuration | Threshold | Precision | Recall | F2 | Leak rate | Exposed entities |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| dev | patterns_only | 0.30 | 1.0000 | 0.8906 | 0.9105 | 0.1426 | 21 |
-| dev | ner_only | 0.30 | 0.7838 | 0.4531 | 0.4949 | 0.7124 | 101 |
-| dev | hybrid_no_propagation | 0.30 | 0.8942 | 0.9688 | 0.9529 | 0.0548 | 5 |
-| dev | hybrid | 0.30 | 0.8942 | 0.9688 | 0.9529 | 0.0548 | 5 |
-| test | patterns_only | 0.30 | 1.0000 | 0.9032 | 0.9211 | 0.1964 | 9 |
-| test | ner_only | 0.30 | 0.8511 | 0.4301 | 0.4773 | 0.7099 | 51 |
-| test | hybrid_no_propagation | 0.30 | 0.9462 | 0.9462 | 0.9462 | 0.1392 | 5 |
-| test | hybrid | 0.30 | 0.9468 | 0.9570 | 0.9549 | 0.1202 | 4 |
+| dev | patterns_only | 0.30 | 1.0000 | 0.9844 | 0.9875 | 0.0142 | 3 |
+| dev | ner_only | 0.30 | 0.9072 | 0.4583 | 0.5087 | 0.6937 | 101 |
+| dev | hybrid_no_propagation | 0.30 | 0.9648 | 1.0000 | 0.9928 | 0.0085 | 0 |
+| dev | hybrid | 0.30 | 0.9648 | 1.0000 | 0.9928 | 0.0085 | 0 |
+| dev | hybrid_camembert | 0.30 | 0.9648 | 1.0000 | 0.9928 | 0.0085 | 0 |
 
-hybrid_camembert omitted: local recognizer or transformers is unavailable.

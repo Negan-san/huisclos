@@ -1,4 +1,4 @@
-"""Moteur de détection : assemble les reconnaisseurs, la fusion et la propagation.
+"""Moteur de détection : assemble les reconnaisseurs, la fusion, les bornes et la propagation.
 
 Entrées : un texte français et une DetectionConfig (config.PRESETS["hybrid"] par défaut).
 Sorties : la liste triée des Detection retenues, sans chevauchement.
@@ -16,6 +16,7 @@ from huisclos.config import PRESETS, DetectionConfig
 from huisclos.detection.exclusions import load_exclusions
 from huisclos.detection.merge import merge
 from huisclos.detection.ner import LANGUAGE, build_ner_recognizers, build_nlp_engine
+from huisclos.detection.organization_bounds import adjust_organizations
 from huisclos.detection.patterns import build_pattern_recognizers
 from huisclos.detection.person_heuristics import build_person_recognizers
 from huisclos.detection.propagation import propagate
@@ -116,8 +117,8 @@ def detect(text: str, config: DetectionConfig | None = None) -> list[Detection]:
     """Détecte les données personnelles d'un texte.
 
     Paramètres : text, le texte brut ; config, la configuration (hybrid par défaut).
-    Valeur retournée : les détections triées, sans chevauchement, après fusion et, si
-    elle est activée, propagation.
+    Valeur retournée : les détections triées, sans chevauchement, après fusion, bornes
+    des sociétés et, si elle est activée, propagation.
     Exemple : detect("Écrire à jean.martin@example.com") renvoie une détection EMAIL.
     """
     config = config or PRESETS["hybrid"]
@@ -130,6 +131,7 @@ def detect(text: str, config: DetectionConfig | None = None) -> list[Detection]:
     raw = [d for d in (to_detection(text, r) for r in results) if d is not None]
     exclusion_spans = load_exclusions().spans(text) if config.use_exclusions else []
     detections = merge(text, raw, config, exclusion_spans)
+    detections = adjust_organizations(text, detections, config, exclusion_spans)
     if config.use_propagation:
         detections = propagate(text, detections, config, exclusion_spans)
     return detections

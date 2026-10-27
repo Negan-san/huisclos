@@ -323,3 +323,21 @@ def test_address_handles_long_lines_without_backtracking(text: str) -> None:
         assert [text[r.start : r.end] for r in results] == ["12 rue " + "Abcd " * 5 + "Abcd"]
     else:
         assert results == []
+
+
+@pytest.mark.parametrize("formatted", [False, True])
+@pytest.mark.parametrize("label", ["SIREN ", "n° SIREN : ", "RCS Morvane ", "siren erroné "])
+def test_invalid_siren_key_needs_a_close_label(formatted: bool, label: str) -> None:
+    """Un SIREN à clé fausse n'est signalé, sous la source pattern, que près d'un libellé."""
+    value = make_siren(random.Random(35), valid=False)
+    if formatted:
+        value = format_siren(value)
+    _assert_detection(SirenRecognizer(), label + value, value, 0.40)
+    assert _analyze(SirenRecognizer(), "Quantité " + value) == []
+    assert _analyze(SirenRecognizer(), "SIREN" + " " * 25 + value) == []
+
+
+def test_nine_digit_amount_is_ignored_without_label() -> None:
+    """Un montant de neuf chiffres à clé fausse, sans libellé, n'est pas un SIREN."""
+    assert _analyze(SirenRecognizer(), "un montant de 123456789 euros") == []
+    assert _analyze(SirenRecognizer(), "SIRET 123 456 789 euros") == []

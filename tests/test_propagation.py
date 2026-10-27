@@ -141,3 +141,46 @@ def test_propagation_skips_an_enclosed_legal_reference(reference: str) -> None:
     origin = det(text, name, EntityType.ORGANIZATION)
     result = propagate(text, [origin], CONFIG, [(start, start + len(reference))])
     assert result == [origin]
+
+
+def test_short_company_form_is_widened_to_the_long_form() -> None:
+    """Aucune occurrence de la forme longue ne reste couverte par la seule forme courte."""
+    text = "Verrerie Halbarde SARL signe. Puis la Verrerie Halbarde SARL paie Halbarde SARL."
+    short_start = text.index("Halbarde SARL", text.index("Puis"))
+    short = Detection(
+        short_start,
+        short_start + 13,
+        EntityType.ORGANIZATION,
+        0.70,
+        Source.HEURISTIC,
+        "Halbarde SARL",
+    )
+    result = propagate(
+        text, [det(text, "Verrerie Halbarde SARL", EntityType.ORGANIZATION), short], CONFIG
+    )
+    assert found(text, result) == [
+        "Verrerie Halbarde SARL",
+        "Verrerie Halbarde SARL",
+        "Halbarde SARL",
+    ]
+    assert result[1].start == text.index("Verrerie", short_start - 10)
+    assert result[1].source == Source.HEURISTIC and result[1].score == 0.70
+    assert all(d.text == text[d.start : d.end] for d in result)
+
+
+def test_widening_never_overlaps_another_detection() -> None:
+    """La forme courte reste courte si la forme longue toucherait une autre détection."""
+    text = "Verrerie Halbarde SARL. Verrerie Halbarde SARL"
+    second = text.rindex("Verrerie")
+    detections = [
+        det(text, "Verrerie Halbarde SARL", EntityType.ORGANIZATION),
+        Detection(second, second + 8, EntityType.PERSON, 1.0, Source.MANUAL, "Verrerie"),
+        Detection(
+            second + 9, len(text), EntityType.ORGANIZATION, 0.70, Source.HEURISTIC, "Halbarde SARL"
+        ),
+    ]
+    assert found(text, propagate(text, detections, CONFIG)) == [
+        "Verrerie Halbarde SARL",
+        "Verrerie",
+        "Halbarde SARL",
+    ]

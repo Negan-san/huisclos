@@ -45,6 +45,9 @@ Code de la sécurité sociale
 RGPD
 règlement (UE) 2016/679
 re:(?i:(?<!\w)[Ll]oi\s+n\s?[°º]\s?\d{2,4}-\d+)
+# Formules et intitulés de lettre, seulement en tête de ligne : ailleurs, ces mots peuvent
+# appartenir au nom d'une société (D-S35-2).
+re:(?<![^\n])(?:Veuillez|Lettre|Courriel|Téléphone|Section|Audience|Copie|Lecture)(?!\w)
 re:(?i:(?<!\w)[Aa]rticles?\s+(?:[LRD]\s?\.?\s?)?\d+(?:[-‑]\d+)*(?:\s+(?:du|de\s+la|de\s+l['\u2019])\s+[Cc]ode\s+(?:du\s+travail|civil|pénal|de\s+commerce|de\s+procédure\s+civile|de\s+la\s+sécurité\s+sociale))?)
 
 [acronymes]
