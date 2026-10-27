@@ -64,6 +64,21 @@ def choose_threshold(sweep: Sequence[dict[str, Any]]) -> float:
     return float(min(sweep, key=lambda row: (-row["f2"], row["threshold"]))["threshold"])
 
 
+def saved_dev_report(out: Path, threshold: float) -> dict[str, Any]:
+    """Relit le rapport dev à conserver avant test, au même seuil uniquement.
+
+    Aucun document n'est relu. Un rapport d'un autre seuil est refusé pour éviter
+    de présenter comme comparables des mesures obtenues avec des réglages différents.
+    """
+    path = out / "results.json"
+    if not path.is_file():
+        return {}
+    report = json.loads(path.read_text(encoding="utf-8"))
+    if report["selected_threshold"]["threshold"] != threshold:
+        raise ValueError("Le rapport dev et threshold.json utilisent des seuils différents.")
+    return report
+
+
 def micro_partial(rows: Sequence[dict[str, Any]]) -> dict[str, Any]:
     """Extrait la ligne micro en mode partiel d'une évaluation."""
     return next(row for row in rows if row["mode"] == "partial" and row["type"] == "micro")
@@ -225,7 +240,7 @@ def run_evaluation(
 ) -> dict[str, Any]:
     """Évalue le split demandé ; seul dev choisit un seuil et exporte les erreurs.
 
-    En mode test, threshold.json doit déjà exister et aucun balayage n'est lancé.
+    En mode test, le seuil et les mesures dev sont conservés sans nouveau balayage.
     En mode all, dev choisit d'abord le seuil, puis test l'utilise sans l'ajuster.
     """
     if split not in {"dev", "test", "all"}:
@@ -242,13 +257,23 @@ def run_evaluation(
     out.mkdir(parents=True, exist_ok=True)
     splits = ("dev", "test") if split == "all" else (split,)
     paths = [corpus_dir / f"{name}.jsonl" for name in splits]
-    sweep: list[dict[str, Any]] = []
-    rows: list[dict[str, Any]] = []
     threshold = default_threshold(threshold_path) if split == "test" else THRESHOLDS[0]
+    previous = saved_dev_report(out, threshold) if split == "test" else {}
+    sweep: list[dict[str, Any]] = previous.get("threshold_sweep", [])
+    rows: list[dict[str, Any]] = [
+        row for row in previous.get("metrics_by_type", []) if row["split"] == "dev"
+    ]
+    previous_metadata = previous.get("metadata", {})
+    document_counts = {
+        name: count
+        for name, count in previous_metadata.get("document_counts", {}).items()
+        if name == "dev"
+    }
     for split_name, path in zip(splits, paths, strict=True):
         documents = load_corpus(path)
         if not documents or any(document.split != split_name for document in documents):
             raise ValueError(f"Corpus vide ou split incohérent : {path.name}")
+        document_counts[split_name] = len(documents)
         hybrid_cache = {}
         if split_name == "dev":
             for candidate in THRESHOLDS:
@@ -286,8 +311,16 @@ def run_evaluation(
     if not (out / "threshold_sweep.csv").exists():
         write_csv(out / "threshold_sweep.csv", SWEEP_COLUMNS, [])
     write_csv(out / "metrics_by_type.csv", METRIC_COLUMNS, rows)
+    run_metadata = metadata(paths, names, threshold)
+    run_metadata["corpus_sha256"] = {
+        name: digest
+        for name, digest in previous_metadata.get("corpus_sha256", {}).items()
+        if name == "dev.jsonl"
+    } | run_metadata["corpus_sha256"]
+    run_metadata["document_counts"] = document_counts
+    notes = list(dict.fromkeys([*previous.get("notes", []), *notes]))
     report = {
-        "metadata": metadata(paths, names, threshold),
+        "metadata": run_metadata,
         "notes": notes,
         "metrics_by_type": rows,
         "threshold_sweep": sweep,
