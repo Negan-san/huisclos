@@ -116,7 +116,7 @@ Contexte presque plein : s'arrêter proprement, consigner l'état dans docs/PROG
 - Branches : main (déployée ; reçoit dev après une gate GO), dev (piste A, dossier huisclos), lane-b (piste B, worktree huisclos-b).
 - Un commit par session. L'humain colle les prompts et relit le code ; les agents font le reste, dans ces seules limites :
   - étape 0 de chaque session, synchronisation : piste A, `git merge lane-b --no-edit` ; piste B, `git merge dev --no-edit` ; en cas de conflit, s'arrêter et le signaler ;
-  - session de recette R<N> après une gate GO : `git merge --ff-only dev` sur main, tag `gate-N`, `git push origin main dev --tags` ;
+  - session de recette R<N> après une gate GO, sans quitter dev : `git fetch . dev:main` (avance rapide seulement), `git tag gate-N main`, `git push origin main dev --tags` ;
   - jamais de push --force, de rebase de branche partagée, ni de suppression de branche ou de tag.
 - Ne modifier que les fichiers listés par le prompt ; tout autre besoin va dans le compte rendu.
 
