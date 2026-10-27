@@ -1,0 +1,98 @@
+[
+  {
+    "start": 7,
+    "end": 22,
+    "type": "PERSON",
+    "text": "Claire Fontaine"
+  },
+  {
+    "start": 109,
+    "end": 120,
+    "type": "PERSON",
+    "text": "Jean DUPONT"
+  },
+  {
+    "start": 144,
+    "end": 167,
+    "type": "ORGANIZATION",
+    "text": "Garnier Logistique SARL"
+  },
+  {
+    "start": 184,
+    "end": 190,
+    "type": "PERSON",
+    "text": "Dupont"
+  },
+  {
+    "start": 303,
+    "end": 311,
+    "type": "CASE_NUMBER",
+    "text": "26/00421"
+  },
+  {
+    "start": 432,
+    "end": 438,
+    "type": "PERSON",
+    "text": "DUPONT"
+  },
+  {
+    "start": 526,
+    "end": 538,
+    "type": "PERSON",
+    "text": "Marie DUPONT"
+  },
+  {
+    "start": 761,
+    "end": 784,
+    "type": "ORGANIZATION",
+    "text": "Garnier Logistique SARL"
+  },
+  {
+    "start": 800,
+    "end": 834,
+    "type": "ADDRESS",
+    "text": "14 rue des Tanneurs\n92000 Nanterre"
+  },
+  {
+    "start": 871,
+    "end": 888,
+    "type": "SIRET",
+    "text": "477 274 740 34157"
+  },
+  {
+    "start": 923,
+    "end": 935,
+    "type": "PERSON",
+    "text": "Sophie Petit"
+  },
+  {
+    "start": 970,
+    "end": 976,
+    "type": "PERSON",
+    "text": "Dupont"
+  },
+  {
+    "start": 1074,
+    "end": 1088,
+    "type": "PHONE",
+    "text": "06 12 34 56 78"
+  },
+  {
+    "start": 1107,
+    "end": 1134,
+    "type": "EMAIL",
+    "text": "claire.fontaine@example.com"
+  },
+  {
+    "start": 1219,
+    "end": 1240,
+    "type": "NIR",
+    "text": "1 84 08 24 343 246 07"
+  },
+  {
+    "start": 1320,
+    "end": 1335,
+    "type": "PERSON",
+    "text": "Claire Fontaine"
+  }
+]
