@@ -14,6 +14,16 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 23:11 | R3 | Recette de la gate G3 | Claude Code, Sonnet 5.5
+- Fait : lane-b fusionnée dans dev en avance rapide (524209b), sans conflit. Verdict G3 lu : GO (22:14), G4bis confirmé GO ensuite. Recette exécutée dans un dossier temporaire hors dépôt (venv, Playwright, Chromium installés en 26 s), supprimé à la fin ; Streamlit arrêté, port 8599 libéré, aucune erreur dans sa sortie.
+- Étape 1, lancement headless sur le port 8599 : OK.
+- Étape 2, parcours Playwright (1920 x 1080, thème clair), sans exception Streamlit : OK, 26,7 s. Exemple chargé ; détection en 1,2 s, 18 détections, 14 entités, 18 surlignages avec libellés (PERSON, COMPANY, ADDRESS, EMAIL, PHONE, IBAN, NIR, CASE) et légende complète. Rejet du groupe "Courriel" (faux positif ORGANIZATION) : 1 occurrence rejetée, marquée REJECTED. Ajout manuel de "4471-B" (non détecté) : 1 occurrence, 15 entités. Texte pseudonymisé sans fuite des noms, du courriel ni du matricule ; "Courriel" laissé en clair. Réponse simulée (texte pseudonymisé et une phrase avec [PERSONNE_1] et [AUTRE_1]) restaurée en mode tolérant, sans jeton restant ; la phrase ajoutée revient avec Pierre VERNOLAC et 4471-B. Cinq fichiers téléchargés et non vides (txt, docx valides, mapping.json lisible) ; Start a new document ramène à Import vide.
+- Étape 3, clavier : OK. Tab atteint dans l'ordre : Import, Load sample case puis Detect sensitive data ; Review, Add and mask everywhere, Pseudonymize, Back to Import ; Restore, Restore, les cinq boutons de téléchargement, Back to Review, Start a new document.
+- Étape 4, captures : OK, six PNG dans docs/screenshots/ (01_import à 06_evaluation), seuls fichiers ajoutés au dépôt.
+- Tests : pytest 819 passed ; ruff check : OK ; ruff format --check : OK ; check_style : 0 erreur, 6 avertissements de longueur déjà connus.
+- Décisions : aucune. Risques : Chromium de Playwright reste dans le cache utilisateur (AppData/Local/ms-playwright), hors dépôt ; la case Mask de la grille se coche au centre de la case, un clic décalé sélectionne la cellule sans la cocher.
+- Suite : avance rapide de main, tag gate-3, push de main, dev et des tags ; puis sortie de suite.py R3.
+
 ### 2026-10-27 22:55 | G4bis recontrôle | Mesure test conservée et contrôles confirmés : GO | Codex
 - Fait : arbre initial propre sur lane-b, HEAD 386dd7953d6c0a972f172b05172191fb65f237a6 ; `git merge dev --no-edit` déjà à jour. L'humain a précisé : "Recontrôler en conservant la mesure test existante". Diff nul avec le HEAD mesuré 9a18fddd7e0af3062661775ea6c37ae7dcc82fb0 pour src/, app/, data/, tests/, corpus/ et scripts/ ; results/ identique au commit G4bis 8e4e501. Aucune règle corrigée, aucune nouvelle décision, aucune installation ni connexion externe.
 - Tests : pytest -q avec cache et fichiers temporaires hors dépôt, 819 passed en 67,64 s, sans xfail ; ruff check et ruff format --check : OK, 119 fichiers ; check_style : 0 erreur, 6 avertissements de longueur préexistants ; git diff --check : OK. Aucun test permanent ajouté ou modifié pour ce recontrôle sans changement de code.
