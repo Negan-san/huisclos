@@ -1,12 +1,17 @@
 """Modèles de données partagés : types d'entités, sources de détection et Detection.
 
-Entrées : aucune. Sorties : énumérations, dataclass Detection et constantes de jetons.
+Entrées : aucune. Sorties : énumérations, dataclasses (Detection, groupes, occurrences,
+résultat de pseudonymisation) et constantes de jetons.
 Place dans le pipeline : contrat commun à la détection, à la revue, à la pseudonymisation
 et à l'évaluation.
 """
 
 from dataclasses import dataclass
 from enum import Enum
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from huisclos.pseudonymize.mapping import Mapping
 
 
 class EntityType(str, Enum):  # noqa: UP042 (contrat exigé : str + Enum)
@@ -95,3 +100,69 @@ LETTER_INDEXED: frozenset[EntityType] = frozenset({EntityType.ORGANIZATION})
 
 # LOCATION est désactivé par défaut : les villes seules gênent plus qu'elles ne protègent.
 DEFAULT_ENABLED_TYPES: frozenset[EntityType] = frozenset(EntityType) - {EntityType.LOCATION}
+
+
+@dataclass(frozen=True)
+class TokenStyle:
+    """Forme des jetons : langue des libellés et crochets qui les entourent.
+
+    Exemple : TokenStyle() produit [PERSONNE_1] ; TokenStyle(language="en") produit
+    [PERSON_1].
+    """
+
+    language: str = "fr"
+    open_bracket: str = "["
+    close_bracket: str = "]"
+
+    def __post_init__(self) -> None:
+        """Refuse une langue inconnue et des crochets vides."""
+        if self.language not in ("fr", "en"):
+            raise ValueError(f"language doit valoir fr ou en, reçu {self.language!r}")
+        if not self.open_bracket or not self.close_bracket:
+            raise ValueError("les crochets d'un jeton ne peuvent pas être vides")
+
+
+@dataclass(frozen=True)
+class EntityGroup:
+    """Ensemble des mentions d'une même entité, remplacées par un même jeton.
+
+    group_id suit l'ordre de première apparition dans le texte. variants contient les
+    écritures exactes rencontrées, triées. mention_spans donne les positions (début, fin)
+    de chaque mention dans le texte d'origine. ambiguous_with liste les groupes auxquels
+    la mention aurait pu être rattachée quand le choix n'était pas sûr. token est vide
+    tant que la numérotation n'a pas eu lieu.
+    """
+
+    group_id: int
+    entity_type: EntityType
+    canonical: str
+    variants: tuple[str, ...]
+    token: str
+    mention_spans: tuple[tuple[int, int], ...]
+    ambiguous_with: tuple[int, ...] = ()
+
+
+@dataclass(frozen=True)
+class Occurrence:
+    """Un remplacement : le jeton, le texte exact remplacé, sa place dans le texte produit."""
+
+    token: str
+    original: str
+    start: int
+    end: int
+
+
+@dataclass(frozen=True)
+class PseudonymizationResult:
+    """Résultat de la pseudonymisation d'un texte.
+
+    text est le texte à jetons ; occurrences suit l'ordre de ce texte ; mapping est la
+    table de correspondance (huisclos.pseudonymize.mapping.Mapping), sensible, à ne jamais
+    envoyer au LLM ; warnings contient des messages destinés à l'utilisateur.
+    """
+
+    text: str
+    groups: tuple[EntityGroup, ...]
+    occurrences: tuple[Occurrence, ...]
+    mapping: "Mapping"
+    warnings: tuple[str, ...]
