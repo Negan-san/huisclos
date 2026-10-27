@@ -233,11 +233,12 @@ def test_sidebar_defaults() -> None:
     assert app.sidebar.selectbox(key="language").value == "en"
 
 
-def test_french_interface_is_not_available_yet() -> None:
+def test_french_interface_is_available() -> None:
+    """Le choix français est conservé et traduit les réglages de l'application."""
     app = start()
     app.sidebar.selectbox(key="language").select("fr").run()
-    assert app.session_state["language"] == "en"
-    assert any("not available yet" in caption.value for caption in app.sidebar.caption)
+    assert app.session_state["language"] == "fr"
+    assert app.sidebar.subheader[0].value == "Réglages"
 
 
 @pytest.mark.parametrize(
@@ -357,7 +358,7 @@ def test_dynamic_i18n_keys_are_complete() -> None:
         assert f"sidebar.token_style.{style}" in i18n.EN
     for language in LANGUAGES:
         assert f"sidebar.language.{language}" in i18n.EN
-    assert set(AVAILABLE_LANGUAGES) == {"en"}
+    assert set(AVAILABLE_LANGUAGES) == {"en", "fr"}
 
 
 def test_missing_key_raises_in_tests_and_shows_the_key_in_production(

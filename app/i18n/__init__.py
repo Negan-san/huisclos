@@ -10,14 +10,14 @@ import os
 import streamlit as st
 from streamlit.runtime.scriptrunner import get_script_run_ctx
 
-from app.i18n import common, evaluation, method, workflow
+from app.i18n import common, evaluation, method, mistral, workflow
 
 # Variable d'environnement qui rend une clé absente fatale. Les tests la définissent pour
 # qu'une faute de frappe dans une clé échoue au lieu de s'afficher à l'écran.
 STRICT_ENV = "HUISCLOS_I18N_STRICT"
 DEFAULT_LANGUAGE = "en"
 LANGUAGE_KEY = "language"
-_MODULES = (common, workflow, method, evaluation)
+_MODULES = (common, workflow, method, evaluation, mistral)
 
 
 def _merge(attribute: str) -> dict[str, str]:
