@@ -91,3 +91,14 @@ def test_custom_file_is_read_as_utf8(tmp_path: Path) -> None:
 def test_invalid_file_is_refused(content: str) -> None:
     with pytest.raises(ValueError):
         parse_exclusions(content)
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="G1-E1 : un lieu composé sans trait d'union n'est exclu qu'en partie",
+)
+def test_court_with_an_unhyphenated_compound_place_is_fully_excluded() -> None:
+    """Une variante de lieu composée reste exclue sans absorber le nom qui suit."""
+    reference = "Tribunal judiciaire de Saint Denis"
+    text = reference + ", Paul Martin comparaît."
+    assert load_exclusions().spans(text) == [(0, len(reference))]

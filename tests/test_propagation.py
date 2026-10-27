@@ -127,3 +127,21 @@ def test_propagation_keeps_a_name_containing_an_exclusion() -> None:
     origin = det(text, "Garnier Logistique SARL", EntityType.ORGANIZATION)
     result = propagate(text, [origin], CONFIG, [sarl])
     assert found(text, result) == ["Garnier Logistique SARL"] * 2
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="G1-P2 : une référence juridique incluse dans une occurrence est propagée",
+)
+@pytest.mark.parametrize(
+    "reference",
+    ["Cour de cassation", "article L. 1232-6 du Code du travail"],
+)
+def test_propagation_skips_an_enclosed_legal_reference(reference: str) -> None:
+    """Une exclusion forte interne empêche l'ajout, même si les deux bornes sont dépassées."""
+    name = f"Atelier {reference} Conseil"
+    text = f"{name}. {name}."
+    start = text.rindex(reference)
+    origin = det(text, name, EntityType.ORGANIZATION)
+    result = propagate(text, [origin], CONFIG, [(start, start + len(reference))])
+    assert result == [origin]

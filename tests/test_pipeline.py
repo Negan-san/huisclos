@@ -144,3 +144,16 @@ def test_court_is_not_masked_when_a_name_crosses_its_end() -> None:
     result = detect(text, PRESETS["hybrid_no_propagation"])
     assert any(d.text == "Paul Martin" and d.start == 3 for d in result)
     assert not [d for d in result if d.start < court_end and court_start < d.end]
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="G1-M5 : le NER peut englober toute une juridiction dans un nom de société",
+)
+def test_court_is_not_masked_when_fully_inside_a_ner_name(no_network: None) -> None:
+    """Reproduit le défaut de fusion avec le modèle français installé et sans réseau."""
+    text = "La société Tribunal judiciaire de Nanterre SARL."
+    reference = "Tribunal judiciaire de Nanterre"
+    start = text.index(reference)
+    result = detect(text, PRESETS["hybrid"])
+    assert not any(d.start < start + len(reference) and start < d.end for d in result)

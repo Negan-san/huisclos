@@ -323,3 +323,25 @@ def test_exclusion_inside_a_name_does_not_split_it() -> None:
         ("Garnier Logistique SARL", EntityType.ORGANIZATION)
     ]
     assert crossing_spans(5, 10, [(0, 7), (6, 8), (10, 12)]) == [(0, 7)]
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="G1-M5 : une juridiction ou un article inclus dans un nom reste masqué",
+)
+@pytest.mark.parametrize(
+    "reference",
+    ["Cour de cassation", "article L. 1232-6 du Code du travail"],
+)
+def test_enclosed_legal_reference_is_not_masked(reference: str) -> None:
+    """Une référence juridique incluse dans un span NER reste lisible, sans perdre les noms."""
+    text = f"Paul Martin {reference} Marie Durand"
+    start = text.index(reference)
+    end = start + len(reference)
+    raw = [det(text, text, EntityType.PERSON)]
+    result = merge(text, raw, CONFIG, [(start, end)])
+    assert texts(result) == [
+        ("Paul Martin", EntityType.PERSON),
+        ("Marie Durand", EntityType.PERSON),
+    ]
+    assert not any(d.start < end and start < d.end for d in result)
