@@ -13,6 +13,7 @@ from huisclos.config import PRESETS
 from huisclos.detection.pipeline import detect
 from huisclos.evaluation.corpus import CORPUS_DIR, CorpusDocument, load_corpus
 from huisclos.models import PseudonymizationResult
+from huisclos.pseudonymize.mapping import Mapping
 from huisclos.pseudonymize.reidentify import EXACT, find_token_forms, restore
 from huisclos.pseudonymize.tokens import pseudonymize
 
@@ -84,6 +85,11 @@ def test_exact_roundtrip_on_whole_corpus(
         if restored.mode != EXACT or restored.text != document.text:
             position = first_difference(restored.text, document.text)
             failures.append(f"{document.id} (mode {restored.mode}, écart en {position})")
+        loaded = Mapping.from_json(result.mapping.to_json())
+        from_json = restore(result.text, loaded)
+        if loaded != result.mapping or from_json.mode != EXACT or from_json.text != document.text:
+            position = first_difference(from_json.text, document.text)
+            failures.append(f"{document.id} (JSON, mode {from_json.mode}, écart en {position})")
     assert not failures, "aller-retour exact en échec : " + ", ".join(failures)
 
 

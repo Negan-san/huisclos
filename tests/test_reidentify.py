@@ -110,13 +110,19 @@ def test_ordinary_text_is_left_intact(text: str) -> None:
 
 def test_fixture_response_is_restored() -> None:
     raw = (FIXTURES / "llm_response_altered.txt").read_text(encoding="utf-8")
-    result = restore(raw, MAPPING)
+    mapping = build_mapping(
+        (PERSON, 1, "Jean DUPONT"),
+        (PERSON, 2, "Marie MARTIN"),
+        (COMPANY, 1, "Valmont SARL"),
+        (EntityType.ADDRESS, 1, "12 rue des Lilas, 69003 Lyon"),
+    )
+    result = restore(raw, mapping)
     assert result.mode == TOLERANT
     assert result.replaced == {
         "[PERSONNE_1]": 4,
         "[PERSONNE_2]": 1,
         "[SOCIETE_A]": 2,
-        "[DATE_NAISSANCE_1]": 1,
+        "[ADRESSE_1]": 1,
     }
     assert ("personne_1", "[PERSONNE_1]") in result.altered
     assert ("PERSONNE 1", "[PERSONNE_1]") in result.altered
@@ -130,6 +136,19 @@ def test_fixture_response_is_restored() -> None:
     assert "avec Valmont SARL le 3 mars" in result.text
     assert "Le temoin Jean DUPONT confirme" in result.text
     assert result.missing == []
+
+
+def test_cli_fixture_has_only_the_intentionally_unknown_token() -> None:
+    """Vérifie que la fixture altérée utilise les jetons réellement produits par le CLI."""
+    text = (FIXTURES / "mini_case_fr.txt").read_text(encoding="utf-8")
+    result = pseudonymize(text, detect(text, PRESETS["hybrid"]), created_at=CREATED_AT)
+    raw = (FIXTURES / "llm_response_altered.txt").read_text(encoding="utf-8")
+    restored = restore(raw, Mapping.from_json(result.mapping.to_json()))
+    assert restored.unknown == [("[PERSONNE_9]", raw.index("[PERSONNE_9]"))]
+    assert [form.text for form in find_token_forms(restored.text)] == ["[PERSONNE_9]"]
+    assert sum(restored.replaced.values()) == 8
+    assert len(restored.altered) == 6
+    assert "aucune personne 1 n'est concernée" in restored.text
 
 
 def test_bounds_keep_longer_indexes_apart() -> None:
@@ -223,6 +242,40 @@ def test_modified_text_uses_tolerant_mode() -> None:
     restored = restore(result.text + " Fin.", result.mapping, result.occurrences)
     assert restored.mode == TOLERANT
     assert restored.text == "Jean DUPONT écrit. Fin."
+
+
+@pytest.mark.xfail(strict=True, reason="G2-R1 : le JSON perd les positions des jetons littéraux")
+@pytest.mark.parametrize("literal_first", [True, False], ids=["literal-first", "literal-last"])
+def test_json_only_roundtrip_preserves_literal_token(literal_first: bool) -> None:
+    """Exige une restauration sans perte après relecture du seul JSON sensible."""
+    parts = ["[PERSONNE_1]", "Jean DUPONT"]
+    text = " / ".join(parts if literal_first else reversed(parts))
+    result = pseudonymize(text, [manual(text, "Jean DUPONT")], created_at=CREATED_AT)
+    mapping = Mapping.from_json(result.mapping.to_json())
+    restored = restore(result.text, mapping)
+    assert restored.text == text
+    assert restored.mode == EXACT
+
+
+@pytest.mark.xfail(strict=True, reason="G2-R2 : SOCIETE A dans une phrase devient un nom")
+def test_uppercase_ordinary_company_sentence_is_left_intact() -> None:
+    """Protège le verbe A d'une phrase ordinaire écrite en capitales."""
+    text = "LA SOCIETE A SIGNE LE CONTRAT."
+    restored = restore(text, MAPPING)
+    assert restored.text == text
+    assert restored.replaced == {}
+
+
+@pytest.mark.xfail(strict=True, reason="G2-R3 : une liste partielle est déclarée exacte")
+@pytest.mark.parametrize("keep", [0, 1], ids=["empty", "partial"])
+def test_incomplete_occurrences_do_not_silently_leave_tokens(keep: int) -> None:
+    """Exige le repli sur la table si des occurrences positionnées ont été perdues."""
+    text = "Jean DUPONT et Marie MARTIN signent."
+    detections = [manual(text, "Jean DUPONT"), manual(text, "Marie MARTIN")]
+    result = pseudonymize(text, detections, created_at=CREATED_AT)
+    restored = restore(result.text, result.mapping, result.occurrences[:keep])
+    assert restored.text == text
+    assert sum(restored.replaced.values()) == 2
 
 
 HANDMADE_TEXTS = [

@@ -15,6 +15,10 @@ from pypdf import PdfReader, PdfWriter
 
 from huisclos.io.readers import DocumentReadError, read_document, read_pasted_text
 from huisclos.io.writers import to_docx_bytes, to_txt_bytes
+from huisclos.models import Detection, EntityType, Source
+from huisclos.pseudonymize.mapping import Mapping
+from huisclos.pseudonymize.reidentify import EXACT, restore
+from huisclos.pseudonymize.tokens import pseudonymize
 
 pytestmark = pytest.mark.usefixtures("no_network")
 
@@ -295,3 +299,31 @@ def test_docx_roundtrip_and_metadata(tmp_path: Path, text: str) -> None:
     assert properties.last_modified_by == ""
     assert properties.comments == ""
     assert properties.title == ""
+
+
+@pytest.mark.parametrize("source", ["docx", "pdf"])
+def test_generated_document_pseudonymization_json_and_restore(tmp_path: Path, source: str) -> None:
+    """Relie la lecture d'un fichier fabriqué à la restauration depuis son JSON."""
+    values = ("Jean DUPONT", "Marie MARTIN", "Paul DURAND")
+    if source == "pdf":
+        path = _pdf_file(tmp_path, ("Dossier fictif : " + ", ".join(values),))
+    else:
+        document = Document()
+        document.add_paragraph("Dossier fictif : " + values[0])
+        document.add_table(rows=1, cols=1).cell(0, 0).text = values[1]
+        document.sections[0].header.paragraphs[0].text = values[2]
+        path = tmp_path / "controle.docx"
+        document.save(path)
+    text = read_document(path.name, path.read_bytes()).text
+    detections = []
+    for value in values:
+        assert text.count(value) == 1
+        start = text.index(value)
+        detections.append(
+            Detection(start, start + len(value), EntityType.PERSON, 1.0, Source.MANUAL, value)
+        )
+    result = pseudonymize(text, detections)
+    assert all(value not in result.text for value in values)
+    restored = restore(result.text, Mapping.from_json(result.mapping.to_json()))
+    assert restored.mode == EXACT
+    assert restored.text == text
