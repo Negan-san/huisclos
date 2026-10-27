@@ -14,6 +14,16 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 19:45 | R2 | Recette de la gate G2 | Claude Code, Sonnet 5.5
+- Fait : lane-b fusionnée dans dev (avance rapide, sans conflit). Verdict G2 : GO (recontrôle de 19:33). Recette sur textes fictifs dans un dossier temporaire hors dépôt, supprimé ensuite.
+- Étape 1 : OK. Texte de cinq lignes, roundtrip_cli.py code 0, mode exact, 13 remplacements ; aucun nom, adresse, e-mail, téléphone, SIREN, numéro de dossier ni IBAN visible dans la sortie pseudonymisée.
+- Étape 2 : OK. Réponse altérée (crochets retirés, minuscules, PERSONNE_9 inventé) avec --llm : mode tolérant, 7 formes altérées restaurées, valeurs correctes, 1 forme inconnue signalée (PERSONNE_9, position 257).
+- Étape 3 : KO. lettre.docx (python-docx, en-tête de cabinet) et lettre.pdf (fpdf2) : roundtrip_cli.py échoue avec UnicodeDecodeError, car le script ne lit que du texte UTF-8 (read_text). Diagnostic hors script avec io.readers.read_document : DOCX et PDF lus (377 caractères chacun, en-tête inclus), aucune valeur identifiante visible, aller-retour exact. Le moteur est sain ; la CLI ne prend pas en charge DOCX ni PDF.
+- Tests : pytest 677 passed ; ruff check et format : OK ; check_style : 0 erreur, 2 avertissements existants (merge.py, grouping.py).
+- Constats mineurs : le mot Objet est masqué comme société (gêne, pas une fuite) ; un en-tête de cabinet est masqué comme personne ou adresse, ce qui est le comportement voulu.
+- Verdict de recette : non conforme à l'étape 3 telle qu'écrite. Aucun fast-forward de main, aucun tag gate-2, aucun push.
+- Reste à faire : faire lire DOCX et PDF à scripts/roundtrip_cli.py via read_document (une session à planifier), ou valider par l'humain que le diagnostic io.readers suffit pour poser gate-2.
+
 ### 2026-10-27 19:33 | G2 recontrôle | Pseudonymisation, restauration et fichiers validés | Codex
 - Fait : dev fusionnée en avance rapide sans conflit, arbre propre au départ. Revue des modules et tests autorisés ; G2-R1 à G2-R4 vérifiés, aucun nouveau défaut de logique constaté. Aucun module métier corrigé ; ajout d'un test des 24 permutations de quatre mentions, avec nom seul et initiale avant leurs deux candidats, jetons distincts et positions stables.
 - Tests : contrôle initial, 676 passed ; contrôle final, 677 passed, aucun xfail ni test ignoré. Ruff check et format : OK ; check_style : 0 erreur, 2 avertissements existants. Cache pytest final hors dépôt après un avertissement de droits au premier passage.
