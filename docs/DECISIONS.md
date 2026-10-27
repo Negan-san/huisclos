@@ -37,7 +37,7 @@ Format : contexte, choix, raison. D-01 à D-18 viennent du master plan (27 octob
 | E-mail | 0,95 |
 | Numéro de dossier après "RG" ou "Portalis" ; date après un contexte de naissance | 0,90 |
 | SIRET à clé valide sans contexte | 0,85 |
-| NER spaCy (score fixe attribué par Presidio, à confirmer dans le code installé) | 0,85 |
+| NER spaCy (score fixe attribué par Presidio, confirmé en S12 : D-S12-1) | 0,85 |
 | Civilité suivie d'un nom | 0,80 |
 | Téléphone français (0,90 avec "tél.", "téléphone", "portable" ou "mobile" à proximité) | 0,75 |
 | SIREN à clé valide sans contexte ; Prénom NOM ; NOM Prénom ; adresse complète | 0,70 |
@@ -109,3 +109,8 @@ Seuil par défaut : 0,40 jusqu'à la gate 4, puis la valeur de results/threshold
 - Contexte : --paths acceptait un fichier Python hors du dépôt mais ignorait ses appels print et sa docstring de module.
 - Choix : appliquer C5 et C6 aux fichiers Python externes explicitement fournis par --paths ; dans le dépôt, conserver ces règles sur src/ et app/ uniquement.
 - Raison : le contrôle de robustesse de Gate 0 doit signaler le tiret interdit et le print du fichier temporaire, sans soumettre les scripts et les tests du dépôt aux règles métier.
+
+## D-S12-1 Score des entités spaCy et chargement du modèle
+- Contexte : D-07 annonçait 0,85 pour le NER spaCy, à confirmer. Lecture du code installé (presidio-analyzer 2.2.366) : SpacyNlpEngine._get_scores_for_entities attribue à chaque entité NerModelConfiguration.default_score, soit 0,85 par défaut, et SpacyRecognizer renvoie ce score tel quel. Le modèle spaCy ne fournit aucune probabilité. La même version télécharge le modèle (spacy.cli.download) s'il n'est pas installé.
+- Choix : score NER = 0,85, valeur de D-07 confirmée, fixée explicitement dans la configuration (ner.NER_SCORE). Le moteur refuse de se charger si le modèle manque (RuntimeError) au lieu de le télécharger. Les étiquettes PER, ORG et LOC deviennent PERSON, ORGANIZATION et LOCATION ; MISC est ignoré. Le registre ne contient que des reconnaisseurs de langue "fr".
+- Raison : principe 1 d'AGENTS.md (aucun appel réseau à l'exécution) ; un score identique pour toutes les entités signifie que le NER ne classe pas ses propres détections, seul le seuil de D-13 les départage des heuristiques (0,70 à 0,80).

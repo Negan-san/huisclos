@@ -1,0 +1,134 @@
+# Exclusions de la détection : noms que le NER ou les heuristiques confondent avec des personnes.
+#
+# Format : une entrée par ligne, sections entre crochets.
+#   - Entrée simple : texte cherché sans tenir compte de la casse, apostrophes droites ou
+#     typographiques acceptées. Le mot isolé X remplace un nom de lieu (Lyon, Aix-en-Provence).
+#   - "re:" en tête : expression régulière Python, appliquée telle quelle.
+#   - "#" en début de ligne : commentaire.
+# Un nom détecté n'est écarté que s'il est entièrement contenu dans une entrée trouvée.
+
+[juridictions]
+Conseil de prud'hommes de X
+Tribunal judiciaire de X
+Tribunal de commerce de X
+Tribunal des activités économiques de X
+Tribunal administratif de X
+Cour d'appel de X
+Cour administrative d'appel de X
+Tribunal de proximité de X
+Cour de cassation
+Conseil d'État
+Conseil constitutionnel
+Cour de justice de l'Union européenne
+
+[institutions]
+France Travail
+Pôle emploi
+URSSAF
+CPAM
+CNIL
+inspection du travail
+Défenseur des droits
+Conseil national des barreaux
+barreau de X
+ordre des avocats
+ministère de X
+re:(?i:ministère)\s+(?:de\s+la|de\s+l['\u2019]|du|des)\s+[A-ZÀ-ÖØ-Þ][^\W\d_]+(?:\s+(?:et\s+)?(?:de\s+la\s+|de\s+l['\u2019]|du\s+|des\s+)?[a-zà-öø-ÿ]{4,})*
+
+[textes]
+Code du travail
+Code civil
+Code pénal
+Code de commerce
+Code de procédure civile
+Code de la sécurité sociale
+RGPD
+règlement (UE) 2016/679
+re:(?<!\w)[Ll]oi\s+n\s?[°º]\s?\d{2,4}-\d+
+re:(?<!\w)[Aa]rticles?\s+(?:[LRD]\s?\.?\s?)?\d+(?:[-‑]\d+)*(?:\s+(?:du|de\s+la|de\s+l['\u2019])\s+[Cc]ode\s+(?:du\s+travail|civil|pénal|de\s+commerce|de\s+procédure\s+civile|de\s+la\s+sécurité\s+sociale))?
+
+[acronymes]
+URSSAF
+CPAM
+CAF
+MSA
+SAS
+SASU
+SARL
+EURL
+SCI
+SA
+SNC
+SCP
+SELARL
+SELAS
+RGPD
+CNIL
+DPO
+CPH
+RCS
+RG
+TJ
+TGI
+CA
+SIREN
+SIRET
+IBAN
+BIC
+RIB
+NIR
+TVA
+HT
+TTC
+EUR
+CDI
+CDD
+DRH
+PDG
+DG
+CSE
+CCN
+RTT
+SMIC
+LRAR
+CEDEX
+BP
+UE
+PME
+PV
+AG
+CGV
+CGU
+
+[mots]
+Employeur
+Salarié
+Salariée
+Demandeur
+Demanderesse
+Défendeur
+Défenderesse
+Appelant
+Appelante
+Intimé
+Intimée
+Requérant
+Requérante
+Partie
+Parties
+Client
+Cliente
+Cabinet
+Tribunal
+Cour
+Conseil
+Président
+Présidente
+Juge
+Greffier
+Greffe
+Avocat
+Avocate
+Huissier
+Notaire
+Stage

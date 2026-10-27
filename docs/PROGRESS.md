@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 15:36 | S12 | NER française, heuristiques de personnes, exclusions | Claude Code, Sonnet 5.5
+- Fait : detection/ner.py (moteur spaCy fr, reconnaisseur marqué ner_spacy, refus de charger un modèle absent), detection/person_heuristics.py (civilité 0,80 ; Prénom NOM et NOM Prénom 0,70 ; gardes : mots de début de phrase, acronymes, chiffres romains), detection/exclusions.py et data/exclusions_fr.txt (cinq sections, X = nom de lieu, entrées re:, spans fusionnés, is_excluded limité à PERSON, ORGANIZATION, LOCATION).
+- Tests : pytest : 87 passed (dont test_ner, test_person_heuristics, test_exclusions, un test NER sous no_network) ; ruff check et ruff format --check : OK ; check_style : 0 erreur, 0 avertissement.
+- Reste à faire : brancher les trois modules dans le pipeline (fusion, propagation) ; enrichir la liste de mots courants et [mots] d'après les erreurs mesurées sur dev ; "Jean DUPONT SARL" garde l'acronyme dans le span.
+- Décisions : D-S12-1 (score NER 0,85 confirmé dans le code installé ; D-07 mis à jour).
+- Risques ou blocages : Presidio télécharge le modèle spaCy s'il manque, d'où le garde-fou de build_nlp_engine ; les nouveaux fichiers ont été vérifiés sans toucher à patterns.py ni à checksums.py ; aucun fichier du split test lu.
+- Prochaine session : suite du plan (fusion et propagation), selon docs/MASTER_PLAN.md.
+
 ### 2026-10-27 15:35 | R0 | Recette de la gate G0 | Claude Code, Haiku 5.5
 - Fait : dev fusionné avec lane-b sans conflit ; verdict G0 lu : GO. Étape 1 installation à neuf (venv Python 3.12 temporaire, requirements.txt) : OK, 138 s, dossier supprimé. Étape 2 lancement headless sur le port 8599 : OK, HTTP 200 après 20 s, /_stcore/health 200, aucune erreur dans la sortie, processus arrêté et port libéré. Étape 3 AppTest : OK, titre HuisClos, accroche, sous-titres 1. Import, 2. Review, 3. Restore et mention RGPD (art. 4(5), considérant 26) affichés.
 - Tests : pytest : 31 passed ; ruff check : OK ; ruff format --check : OK ; check_style : 0 erreur, 0 avertissement.
