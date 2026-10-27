@@ -29,10 +29,12 @@ _APOSTROPHE = "['\u2019]"
 
 # Nom de lieu qui remplace le mot isolé X : un article facultatif, puis des mots à initiale
 # majuscule reliés par des traits d'union (Aix-en-Provence, La Roche-sur-Yon). Les espaces ne
-# relient pas deux majuscules, pour ne pas absorber le mot suivant d'une phrase.
+# relient pas deux majuscules, pour ne pas absorber le mot suivant d'une phrase. Seule
+# exception, pour les lieux souvent écrits sans trait d'union comme Saint Denis : Saint,
+# Sainte, St ou Ste suivi d'un espace se relie à un seul nom de lieu, pas davantage.
 _PLACE_WORD = rf"[{_UPPER}][^\W\d_]*"
 _PLACE = (
-    rf"(?:(?:Le|La|Les)\s|L{_APOSTROPHE})?{_PLACE_WORD}"
+    rf"(?:(?:Le|La|Les)\s|L{_APOSTROPHE})?(?:(?:Sainte?|Ste?)\s+)?{_PLACE_WORD}"
     rf"(?:-(?:(?:de|du|des|la|le|les|sur|sous|en|lès|aux|d{_APOSTROPHE}|l{_APOSTROPHE})-?)?"
     rf"{_PLACE_WORD})*"
 )
@@ -142,6 +144,16 @@ def load_exclusions(path: Path | str | None = None) -> ExclusionList:
     """
     target = DEFAULT_PATH if path is None else Path(path)
     return _load(str(target.resolve()))
+
+
+def is_legal_reference(passage: str) -> bool:
+    """Dit si un passage exclu est une référence juridique plutôt qu'un mot isolé.
+
+    Une juridiction, un article ou un code compte plusieurs mots ("Cour de cassation") ;
+    une forme juridique ou un mot courant ("SARL", "Cabinet") n'en compte qu'un et peut
+    appartenir au nom d'une société (D-09). Exemple : is_legal_reference("SARL") est faux.
+    """
+    return len(passage.split()) > 1
 
 
 def is_excluded(detection: Detection, spans: Sequence[tuple[int, int]]) -> bool:

@@ -129,10 +129,6 @@ def test_propagation_keeps_a_name_containing_an_exclusion() -> None:
     assert found(text, result) == ["Garnier Logistique SARL"] * 2
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="G1-P2 : une référence juridique incluse dans une occurrence est propagée",
-)
 @pytest.mark.parametrize(
     "reference",
     ["Cour de cassation", "article L. 1232-6 du Code du travail"],

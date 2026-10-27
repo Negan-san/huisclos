@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 16:46 | G1-fix | Correction ciblée après la gate 1 rejouée | Claude Code, Opus 5.5
+- Fait : dev avancée sur lane-b (avance rapide, commit G1 rejoué). Les six xfail stricts retirés, six échecs constatés puis corrigés. exclusions.py : is_legal_reference (passage de plusieurs mots) ; "Saint", "Sainte", "St", "Ste" suivi d'un espace relié à un seul nom de lieu (E1). merge.py : cutting_spans ajoute aux passages franchissant une borne les références juridiques contenues ; les restes eux-mêmes exclus sont écartés (M5). propagation.py : une occurrence qui contient une référence juridique est ignorée (P2).
+- Tests : pytest : 387 passed, 0 xfail (avec --basetemp .pytest_cache/g1fix2) ; ruff check et ruff format --check : OK ; check_style : 0 erreur, 1 avertissement (merge.py, 361 lignes, sous le maximum de 400). detect_cli hybrid sur mini_case : 16 détections, comme avant. "La société Tribunal judiciaire de Nanterre SARL." : aucune détection ; "Tribunal judiciaire de Saint Denis, Paul Martin" : seul Paul Martin.
+- Reste à faire : rejouer la gate G1 ; mesurer sur dev l'effet de la soustraction des références contenues.
+- Décisions : D-G1fix-2 (complète D-G1fix-1).
+- Risques ou blocages : une référence d'un seul mot (URSSAF, RGPD) contenue dans un nom reste masquée ; "Saint" suivi d'un prénom peut l'absorber, le nom restant signalé par soustraction. Aucun fichier du split test lu ; models.py inchangé.
+- Prochaine session : suivre la sortie du script de pilotage G1.
+
 ### 2026-10-27 16:36 | G1 | Recontrôle après G1-fix : NO-GO | Codex
 - Fait : arbre initial propre ; dev fusionnée en avance rapide, sans conflit (4a2f8da) ; règles, entrées S11 à S13, G1-fix, moteur, signatures Presidio installées et tests correspondants relus. Les cinq défauts du premier G1 sont corrigés et leurs tests passent. Aucun code métier modifié pendant ce recontrôle.
 - Tests : pytest standard : 327 passed, 54 erreurs de permissions dans le dossier temporaire Windows ; avec --basetemp .pytest_cache/g1-recheck-initial : 381 passed. Validation finale avec un dossier temporaire local : 381 passed, 6 xfailed ; les six nouveaux cas échouent avec --runxfail. Ruff check, ruff format --check, git diff --check : OK ; check_style : 0 erreur, 1 avertissement existant (merge.py, 343 lignes). Assertions, helpers et contextes pytest.raises relus ; le test d'identité de load_exclusions vérifie réellement son cache.

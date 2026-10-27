@@ -325,10 +325,6 @@ def test_exclusion_inside_a_name_does_not_split_it() -> None:
     assert crossing_spans(5, 10, [(0, 7), (6, 8), (10, 12)]) == [(0, 7)]
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="G1-M5 : une juridiction ou un article inclus dans un nom reste masqué",
-)
 @pytest.mark.parametrize(
     "reference",
     ["Cour de cassation", "article L. 1232-6 du Code du travail"],

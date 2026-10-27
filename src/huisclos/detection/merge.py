@@ -11,7 +11,7 @@ from collections.abc import Iterable, Sequence
 from dataclasses import replace
 
 from huisclos.config import DetectionConfig
-from huisclos.detection.exclusions import EXCLUDABLE_TYPES, is_excluded
+from huisclos.detection.exclusions import EXCLUDABLE_TYPES, is_excluded, is_legal_reference
 from huisclos.models import Detection, EntityType, Source
 from huisclos.text_utils import CIVILITIES, LEGAL_FORMS, fold, fold_same_length
 
@@ -285,22 +285,40 @@ def crossing_spans(start: int, end: int, spans: Sequence[tuple[int, int]]) -> li
     return [(s, e) for s, e in spans if s < end and start < e and not (start <= s and e <= end)]
 
 
+def cutting_spans(
+    text: str, start: int, end: int, spans: Sequence[tuple[int, int]]
+) -> list[tuple[int, int]]:
+    """Passages exclus à retirer de [start, end) : ceux qui franchissent une borne, et les
+    références juridiques entièrement contenues.
+
+    Une juridiction ou un article ne doit jamais être masqué, même quand le NER l'englobe
+    dans un nom ("La société Tribunal judiciaire de Nanterre SARL") ; une forme juridique
+    contenue ("SARL") reste au contraire dans le span de sa société (D-09).
+    """
+    inside = [(s, e) for s, e in spans if start <= s and e <= end and is_legal_reference(text[s:e])]
+    return sorted([*crossing_spans(start, end, spans), *inside])
+
+
 def _subtract_exclusions(
     text: str, detection: Detection, exclusion_spans: Sequence[tuple[int, int]]
 ) -> list[Detection]:
-    """Retire d'un nom les passages exclus qui franchissent ses bornes ; garde le reste.
+    """Retire d'un nom les passages exclus qui le coupent (cutting_spans) ; garde le reste.
 
     Un nom entièrement exclu disparaît. Un span NER qui déborde dans une juridiction
-    ("Paul Martin" dans "Tribunal judiciaire de Paul Martin") ne doit pas la masquer, mais
-    la partie hors du passage exclu reste signalée (priorité au rappel). Un ajout manuel et
-    les types qu'une exclusion ne vise pas (e-mail, IBAN, adresse) sont gardés tels quels.
+    ("Paul Martin" dans "Tribunal judiciaire de Paul Martin") ou qui en contient une ne doit
+    pas la masquer, mais les parties hors du passage exclu restent signalées (priorité au
+    rappel), sauf celles qui sont elles-mêmes exclues. Un ajout manuel et les types qu'une
+    exclusion ne vise pas (e-mail, IBAN, adresse) sont gardés tels quels.
     """
     if detection.source == Source.MANUAL or detection.entity_type not in EXCLUDABLE_TYPES:
         return [detection]
     if is_excluded(detection, exclusion_spans):
         return []
-    crossing = crossing_spans(detection.start, detection.end, exclusion_spans)
-    return _free_parts(text, detection, crossing) if crossing else [detection]
+    cutting = cutting_spans(text, detection.start, detection.end, exclusion_spans)
+    if not cutting:
+        return [detection]
+    parts = _free_parts(text, detection, cutting)
+    return [part for part in parts if not is_excluded(part, exclusion_spans)]
 
 
 def check_output(text: str, detections: Sequence[Detection]) -> None:
