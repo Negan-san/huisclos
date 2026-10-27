@@ -110,3 +110,12 @@ def test_organization_name_without_legal_form_is_propagated() -> None:
 def test_other_types_are_not_propagated(entity_type: EntityType) -> None:
     text = "Paris Nord, puis Paris Nord."
     assert len(propagate(text, [det(text, "Paris Nord", entity_type)], CONFIG)) == 1
+
+
+@pytest.mark.xfail(strict=True, reason="G1-P1 : la propagation déborde dans une exclusion")
+def test_propagation_does_not_partially_overlap_an_exclusion() -> None:
+    """Un nom propagé qui traverse la fin d'une juridiction ne doit pas la masquer."""
+    text = "Jean DUPONT. Tribunal judiciaire de Jean DUPONT statue."
+    court = (text.index("Tribunal"), text.rindex("Jean") + len("Jean"))
+    result = propagate(text, [det(text, "Jean DUPONT", EntityType.PERSON)], CONFIG, [court])
+    assert not [d for d in result if d.start < court[1] and court[0] < d.end]

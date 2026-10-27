@@ -23,9 +23,9 @@ NAME_PATTERN_SCORE: Final = 0.70
 _UPPER = "A-ZÀ-ÖØ-ÞŒ"
 _LOWER = "a-zà-öø-ÿœ"
 _APOSTROPHE = "['\u2019]"
-# Seuls l'espace et l'espace insécable relient les mots d'un nom : un retour à la ligne
+# Seuls l'espace et les espaces insécables relient les mots d'un nom : un retour à la ligne
 # sépare presque toujours deux informations distinctes.
-_SPACE = "[ \u00a0]+"
+_SPACE = "[ \u00a0\u202f]+"
 
 # Un mot à initiale majuscule (Dupont) ou tout en majuscules (DUPONT), avec traits d'union et
 # apostrophes (Jean-Pierre, O'Brien).
@@ -38,7 +38,7 @@ _UPPER_WORD = rf"{_UPPER_PIECE}(?:-{_UPPER_PIECE})*(?!\w)"
 
 _CIVILITY = re.compile(
     r"(?<![\w.])(?:M\.|MM\.|(?:Mmes?|Mlle|Me|Dr|Pr)\.?|[Mm]onsieur|[Mm]adame|[Mm]ademoiselle"
-    r"|[Mm]aître|[Dd]octeur|[Pp]rofesseur)[ \u00a0]+"
+    r"|[Mm]aître|[Dd]octeur|[Pp]rofesseur)[ \u00a0\u202f]+"
 )
 _NAME_WORD_RE = re.compile(_NAME_WORD)
 _PARTICLE_RE = re.compile(rf"(?:(?:de|du|des|van|von|der|den){_SPACE}|d{_APOSTROPHE})")
@@ -47,10 +47,8 @@ _SPACE_RE = re.compile(_SPACE)
 _FIRST_UPPER = re.compile(
     rf"(?<![\w'\u2019-])(?P<first>{_TITLE_WORD})(?P<upper>(?:{_SPACE}{_UPPER_WORD})+)"
 )
-_UPPER_FIRST = re.compile(
-    rf"(?<![\w'\u2019-])(?P<upper>{_UPPER_WORD}(?:{_SPACE}{_UPPER_WORD})*){_SPACE}"
-    rf"(?P<first>{_TITLE_WORD})"
-)
+_UPPER_RUN = re.compile(rf"(?<![\w'\u2019-])(?P<upper>{_UPPER_WORD}(?:{_SPACE}{_UPPER_WORD})*)")
+_TITLE_WORD_RE = re.compile(_TITLE_WORD)
 _ROMAN = re.compile(r"[IVXLCDM]+")
 
 # Mots courants qui ouvrent une phrase ou introduisent un texte juridique : ils ne sont pas des
@@ -208,13 +206,19 @@ class UpperSurnameFirstNameRecognizer(_PersonHeuristic):
     """Nom en majuscules puis prénom à initiale majuscule : "DUPONT Jean" (0,70)."""
 
     def _spans(self, text: str) -> Iterator[tuple[int, int]]:
-        for match in _UPPER_FIRST.finditer(text):
+        # Consommer la suite une seule fois évite de réessayer tous ses suffixes quand
+        # aucun prénom ne suit, ce qui coûtait un temps quadratique sur les actes en capitales.
+        for match in _UPPER_RUN.finditer(text):
+            spaces = _SPACE_RE.match(text, match.end())
+            first = _TITLE_WORD_RE.match(text, spaces.end()) if spaces else None
+            if first is None:
+                continue
             upper_words = match.group("upper").split()
             # Les particules ("DE LA FONTAINE Jean") ne comptent pas comme premier mot.
             lead = next((w for w in upper_words if w.lower() not in SURNAME_PARTICLES), "")
-            if lead and match.group("first").lower() not in COMMON_STARTERS:
+            if lead and first.group().lower() not in COMMON_STARTERS:
                 if not _is_rejected(lead, upper_words, self.acronyms):
-                    yield match.start(), match.end()
+                    yield match.start(), first.end()
 
 
 def build_person_recognizers(acronyms: frozenset[str] | None = None) -> list[LocalRecognizer]:

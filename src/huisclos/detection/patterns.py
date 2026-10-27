@@ -24,6 +24,8 @@ from huisclos.detection.checksums import (
 from huisclos.models import EntityType, Source
 
 _SPACE = r"[ \u00a0\u202f]"
+# Chaque remplacement garde un caractère : les positions restent celles du texte original.
+_NONBREAKING_SPACES = str.maketrans("\u00a0\u202f", "  ")
 _SEPARATOR = r"[ .\u00a0\u202f]?"
 _WORD = r"[^\W\d_]{1,40}(?:['\u2019-][^\W\d_]{1,40}){0,4}"
 _CAPITAL_WORD = r"(?!CEDEX\b)[A-ZÀ-ÖØ-Þ][^\W\d_]{0,39}(?:['\u2019-][^\W\d_]{1,40}){0,4}"
@@ -71,7 +73,7 @@ class _LocalRecognizer(EntityRecognizer):
 
     def _candidates(self, text: str) -> Iterator[tuple[int, int]]:
         """Renvoie dans text les positions utiles, sans les éventuels libellés."""
-        for match in self._regex.finditer(text):
+        for match in self._regex.finditer(text.translate(_NONBREAKING_SPACES)):
             yield match.span("value") if "value" in match.re.groupindex else match.span()
 
     def _evaluate(self, value: str, has_context: bool) -> tuple[float, Source]:
@@ -89,7 +91,9 @@ class _LocalRecognizer(EntityRecognizer):
             # La fenêtre porte sur le texte original pour rester exactement à 40 caractères.
             context = _fold(text[max(0, start - 40) : start])
             has_context = re.search(self.context_expression, context) is not None
-            score, source = self._evaluate(text[start:end], has_context)
+            score, source = self._evaluate(
+                text[start:end].translate(_NONBREAKING_SPACES), has_context
+            )
             if score:
                 results.append(
                     RecognizerResult(

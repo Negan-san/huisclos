@@ -1,3 +1,5 @@
+import time
+
 import pytest
 
 from huisclos.detection.person_heuristics import (
@@ -87,3 +89,36 @@ def test_not_asked_for_person_returns_nothing() -> None:
 
 def test_name_does_not_cross_a_line_break() -> None:
     assert found("Madame Martin\nLe tribunal") == [("CivilityPersonRecognizer", "Martin", 0.80)]
+
+
+@pytest.mark.parametrize("separator", ["\u00a0", "\u202f"])
+@pytest.mark.parametrize(
+    ("original", "expected"),
+    [("Mme Jean DUPONT", "Jean DUPONT"), ("DUPONT Jean", "DUPONT Jean")],
+)
+def test_nonbreaking_spaces_preserve_name_spans(
+    separator: str, original: str, expected: str
+) -> None:
+    """Conserve les espaces du texte source entre civilité, prénom et nom."""
+    text = original.replace(" ", separator)
+    rows = found(text)
+    assert rows
+    assert {row[1] for row in rows} == {expected.replace(" ", separator)}
+
+
+@pytest.mark.parametrize(
+    "text",
+    ["A" * 5000, "Dupont " * 715, "DUPONT " * 7143],
+    ids=["sans-espace", "initiales-majuscules", "capitales"],
+)
+def test_long_lines_do_not_trigger_excessive_backtracking(text: str) -> None:
+    """Refuse les suites sans prénom en temps borné, même sur 50 000 caractères."""
+    started = time.perf_counter()
+    assert found(text) == []
+    assert time.perf_counter() - started < 1.0
+
+
+def test_uppercase_run_before_valid_name_is_not_lost() -> None:
+    """Une suite sans prénom ne doit pas cacher le nom valide qui la suit."""
+    text = "DUPONT DURAND. MARTIN Jean"
+    assert found(text) == [("UpperSurnameFirstNameRecognizer", "MARTIN Jean", 0.70)]

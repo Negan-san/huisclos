@@ -68,6 +68,24 @@ def test_hybrid_output_is_clean(hybrid_result: list[Detection]) -> None:
     assert_clean(hybrid_result)
 
 
+@pytest.mark.parametrize("separator", ["\u00a0", "\u202f"])
+def test_hybrid_covers_typographic_variant_with_original_offsets(separator: str) -> None:
+    """Les blancs et apostrophes typographiques gardent le rappel et les positions."""
+    text = TEXT.replace(" ", separator).replace("'", "\u2019")
+    result = detect(text, PRESETS["hybrid"])
+    for item in EXPECTED:
+        assert any(
+            d.start <= item["start"] and item["end"] <= d.end and d.entity_type == item["type"]
+            for d in result
+        ), item
+    assert all(d.text == text[d.start : d.end] for d in result)
+    assert all(left.end <= right.start for left, right in zip(result, result[1:], strict=False))
+    for phrase in (COURT, ARTICLE):
+        variant = phrase.replace(" ", separator).replace("'", "\u2019")
+        start = text.index(variant)
+        assert not [d for d in result if d.start < start + len(variant) and start < d.end]
+
+
 @pytest.mark.parametrize("name", ["patterns_only", "ner_only", "hybrid_no_propagation"])
 def test_other_presets_run(name: str) -> None:
     result = detect(TEXT, PRESETS[name])
@@ -116,3 +134,14 @@ def test_default_threshold_reads_file_or_falls_back(tmp_path: Path) -> None:
 def test_config_rejects_invalid_threshold() -> None:
     with pytest.raises(ValueError):
         DetectionConfig(threshold=-0.1)
+
+
+@pytest.mark.xfail(strict=True, reason="G1-M4 : le span NER déborde dans une juridiction exclue")
+def test_court_is_not_masked_when_a_name_crosses_its_end() -> None:
+    """Une mention NER partiellement exclue ne doit pas masquer la juridiction."""
+    text = "M. Paul Martin. Tribunal judiciaire de Paul Martin."
+    court_start = text.index("Tribunal")
+    court_end = text.rindex("Paul") + len("Paul")
+    result = detect(text, PRESETS["hybrid_no_propagation"])
+    assert any(d.text == "Paul Martin" and d.start == 3 for d in result)
+    assert not [d for d in result if d.start < court_end and court_start < d.end]

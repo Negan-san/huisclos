@@ -278,3 +278,40 @@ def test_result_does_not_depend_on_input_order() -> None:
         shuffled = list(raw)
         rng.shuffle(shuffled)
         assert merge(text, shuffled, CONFIG) == reference
+
+
+@pytest.mark.xfail(strict=True, reason="G1-M1 : la plus petite partie libre du nom est perdue")
+def test_all_sensitive_parts_survive_an_inner_identifier() -> None:
+    """Les deux parties d'un nom englobant un identifiant restent couvertes."""
+    text = "Paul Martin jean@example.test Marie Durand"
+    raw = [
+        det(text, text, EntityType.PERSON),
+        det(text, "jean@example.test", EntityType.EMAIL, 0.95, Source.PATTERN),
+    ]
+    result = merge(text, raw, CONFIG)
+    assert texts(result) == [
+        ("Paul Martin", EntityType.PERSON),
+        ("jean@example.test", EntityType.EMAIL),
+        ("Marie Durand", EntityType.PERSON),
+    ]
+
+
+@pytest.mark.xfail(strict=True, reason="G1-M2 : le type requalifié échappe au filtre des types")
+def test_requalified_organization_respects_disabled_types() -> None:
+    """Une société reste désactivée même si sa source la classe comme personne."""
+    text = "Paul SARL"
+    config = DetectionConfig(enabled_types=frozenset({EntityType.PERSON}), threshold=0.40)
+    assert merge(text, [det(text, "Paul", EntityType.PERSON)], config) == []
+
+
+@pytest.mark.xfail(strict=True, reason="G1-M3 : une adresse réunie garde le score de voie seule")
+def test_joined_full_address_gets_d07_score() -> None:
+    """Une voie et un code postal réunis valent 0,70 selon D-07."""
+    text = "12 rue Haute,\n75001 Paris"
+    raw = [
+        det(text, "12 rue Haute", EntityType.ADDRESS, 0.55, Source.PATTERN),
+        det(text, "75001 Paris", EntityType.ADDRESS, 0.45, Source.PATTERN),
+    ]
+    result = merge(text, raw, CONFIG)
+    assert len(result) == 1 and result[0].text == text
+    assert result[0].score == 0.70

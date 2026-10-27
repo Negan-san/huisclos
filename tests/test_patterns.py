@@ -6,6 +6,7 @@ Ces tests vérifient le contrat avant toute fusion ou revue humaine.
 """
 
 import random
+import time
 
 import pytest
 from presidio_analyzer import EntityRecognizer, RecognizerResult
@@ -279,3 +280,46 @@ def test_generated_compact_identifiers(no_network: None) -> None:
         ):
             value = generator(rng)
             _assert_detection(recognizer, "[" + value + "]", value, score, "checksum")
+
+
+@pytest.mark.parametrize("separator", ["\u00a0", "\u202f"])
+@pytest.mark.parametrize(
+    ("recognizer_class", "text", "expected", "score"),
+    [
+        (
+            AddressRecognizer,
+            "12 rue de l\u2019\u00c9glise, 75011 Paris",
+            "12 rue de l\u2019\u00c9glise, 75011 Paris",
+            0.70,
+        ),
+        (BirthDateRecognizer, "n\u00e9e le 3 avril 1990", "3 avril 1990", 0.90),
+        (CaseNumberRecognizer, "RG n\u00b0 24/01873", "24/01873", 0.90),
+    ],
+)
+def test_nonbreaking_spaces_preserve_spans_and_scores(
+    separator: str,
+    recognizer_class: type[EntityRecognizer],
+    text: str,
+    expected: str,
+    score: float,
+) -> None:
+    """Reconnaît les blancs typographiques sans normaliser les positions du texte."""
+    _assert_detection(
+        recognizer_class(), text.replace(" ", separator), expected.replace(" ", separator), score
+    )
+
+
+@pytest.mark.parametrize(
+    "text",
+    ["A" * 5000, "Dupont " * 715, "12 rue " + "Abcd " * 1000],
+    ids=["sans-espace", "initiales-majuscules", "voie-longue"],
+)
+def test_address_handles_long_lines_without_backtracking(text: str) -> None:
+    """Vérifie les bornes exactes et le temps sur des lignes adverses synthétiques."""
+    started = time.perf_counter()
+    results = _analyze(AddressRecognizer(), text)
+    assert time.perf_counter() - started < 1.0
+    if text.startswith("12 rue "):
+        assert [text[r.start : r.end] for r in results] == ["12 rue " + "Abcd " * 5 + "Abcd"]
+    else:
+        assert results == []

@@ -69,6 +69,10 @@ def build_analyzer(
         recognizers.extend(build_ner_recognizers())
     if use_camembert:
         recognizers.extend(_camembert_recognizers())
+    # Presidio remplit un registre vide avec ses reconnaisseurs prédéfinis, dont celui
+    # des e-mails qui peut accéder au réseau. Refuser ce cas préserve le traitement local.
+    if not recognizers:
+        raise ValueError("Aucune source de détection n'est activée.")
     registry = RecognizerRegistry(recognizers=recognizers, supported_languages=[LANGUAGE])
     return AnalyzerEngine(
         registry=registry,
@@ -119,7 +123,10 @@ def detect(text: str, config: DetectionConfig | None = None) -> list[Detection]:
     config = config or PRESETS["hybrid"]
     if not text.strip():
         return []
-    results = analyzer_for(config).analyze(text=text, language=LANGUAGE)
+    # spaCy traite mal certains blancs typographiques. Le remplacement garde la longueur ;
+    # la conversion ci-dessous reprend toujours les valeurs et positions du texte original.
+    analysis_text = text.replace("\u00a0", " ").replace("\u202f", " ")
+    results = analyzer_for(config).analyze(text=analysis_text, language=LANGUAGE)
     raw = [d for d in (to_detection(text, r) for r in results) if d is not None]
     exclusion_spans = load_exclusions().spans(text) if config.use_exclusions else []
     detections = merge(text, raw, config, exclusion_spans)
