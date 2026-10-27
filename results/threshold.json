@@ -1,0 +1,4 @@
+{
+  "criterion": "max F2 (partial, micro) on dev",
+  "threshold": 0.3
+}

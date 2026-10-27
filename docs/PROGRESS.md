@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-27 18:55 | S42 | Métriques, configurations et choix du seuil | Codex
+- Fait : dev fusionnée sans conflit ; métriques exactes et partielles par type, micro et macro, appariement unique par recouvrement décroissant, fuite par union des caractères et entités exposées. Comparaison des quatre configurations locales, balayage hybride de 0,30 à 0,95 et six sorties dans results/ ; seuil retenu 0,30 selon D-13. Erreurs exactes exportées pour dev seulement.
+- Tests : pytest -q : 550 passed, dont 19 nouveaux tests sans modèle sous no_network ; ruff check et ruff format --check : OK ; check_style : 0 erreur, 2 avertissements existants (merge.py et grouping.py). Évaluation dev complète en 32,3 s ; seconde exécution : les trois CSV identiques octet pour octet. Les branches test et all sont vérifiées uniquement sur des fichiers fictifs temporaires, avec detect simulé.
+- Reste à faire : évaluation du véritable split test à la gate 4 ; configuration CamemBERT à reprendre après implémentation de son reconnaisseur local en S44.
+- Décisions : aucune ; application de D-07, D-12 et D-13. Les conventions d'appariement, de macro sur onze types et de divisions nulles sont explicitées dans results/summary.md ; les empreintes concernent seulement les splits évalués.
+- Risques ou blocages : aucun blocage ; hybride sur dev, partiel micro : précision 0,8942, rappel 0,9688, F2 0,9529, fuite 0,0548 et 5 entités entièrement exposées. transformers est installé mais huisclos.detection.camembert est absent : ligne omise et note dans les rapports. Aucun réseau, aucune installation, aucune règle de détection modifiée, aucune lecture du vrai split test.
+- Prochaine session : suivre la sortie du script de pilotage S42 ; conserver le test pour la gate 4 et relire les erreurs dev lors d'une session autorisant les règles.
+
 ### 2026-10-27 18:40 | S23 | Lecture et export des documents | Codex
 - Fait : dev fusionnée en avance rapide sans conflit ; API installées de python-docx, pypdf et fpdf2 consultées. Lecture locale TXT (UTF-8, BOM, repli cp1252 signalé), DOCX (corps, tableaux, cellules fusionnées, variantes des en-têtes et pieds de page sans répétition) et PDF natif ; normalisation NFC et LF, espaces insécables conservés, limites et neuf codes d'erreur. Exports TXT sans BOM et DOCX avec titre, lignes conservées et métadonnées personnelles vidées.
 - Tests : pytest -q : 449 passed, dont 40 nouveaux tests sous no_network ; ruff check et ruff format --check : OK ; check_style : 0 erreur, 1 avertissement existant (merge.py, 361 lignes). Premier passage : erreurs de préparation dues aux identifiants de paramètres trop longs et au cache temporaire inaccessible ; identifiants raccourcis, TEMP/TMP et cache pytest redirigés vers des dossiers accessibles hors dépôt.
