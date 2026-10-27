@@ -7,7 +7,7 @@ Sending that file as it is discloses names, addresses and identifiers to a third
 professional secrecy forbids. HuisClos replaces these values with tokens on your computer,
 lets you send only the tokenized text, and puts the real values back into the answer.
 
-- Live demo (fictitious data only): URL added on submission day
+- [Live demo](https://huisclos.streamlit.app) (fictitious data only)
 - Video: link added on submission day
 
 ![Review step: detected values highlighted with a colour and a text label](docs/screenshots/02_review_highlight.png)
@@ -34,7 +34,7 @@ git clone https://github.com/Negan-san/huisclos.git
 cd huisclos
 python -m venv .venv
 .venv\Scripts\python.exe -m pip install -r requirements.txt
-.venv\Scripts\python.exe -m streamlit run streamlit_app.py
+.venv\Scripts\python.exe -m streamlit run streamlit_app.py --server.address localhost
 ```
 
 macOS (Terminal):
@@ -44,11 +44,11 @@ git clone https://github.com/Negan-san/huisclos.git
 cd huisclos
 python3.12 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
-.venv/bin/python -m streamlit run streamlit_app.py
+.venv/bin/python -m streamlit run streamlit_app.py --server.address localhost
 ```
 
 The application opens in your browser at http://localhost:8501. Press Ctrl+C in the terminal
-to stop it.
+to stop it. The address option limits access to this computer.
 
 ## How it works
 

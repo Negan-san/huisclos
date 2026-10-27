@@ -8,7 +8,7 @@ The hosted app at <https://huisclos.streamlit.app> is a public demonstration on 
 - `requirements.txt` pins every dependency (`==` or the spaCy model wheel URL) and excludes PyTorch and transformers; `tests/test_deploy.py` checks this.
 - `.streamlit/config.toml` sets `gatherUsageStats = false`. No web font, CDN or telemetry is used.
 - A clean install of `requirements.txt` on Python 3.12 takes a few minutes; the measured duration is recorded in docs/PROGRESS.md (session S51).
-- Memory: `python scripts/measure_memory.py` reports the resident memory after startup, after the first detection and after ten more. The S51 measurement is in D-05; it stays below 1 GB.
+- Memory: `python scripts/measure_memory.py` reports the resident memory after startup, after the first detection and after ten more. The S51 measurement is in D-05; its sampled values stay below 1 GB. The script's "Peak RSS" is the maximum of these three snapshots, not a continuously measured peak; cloud memory remains to be checked in the hosting logs.
 
 ## Deployment steps
 
@@ -37,4 +37,4 @@ The hosted app at <https://huisclos.streamlit.app> is a public demonstration on 
 - **Updates**: each push to `main` redeploys the app automatically. A change to `requirements.txt` triggers a full reinstall.
 - **Secrets**: they can be edited later from the app menu (**Settings**, then **Secrets**) without redeploying. The app reads `HUISCLOS_PUBLIC_DEMO` from the environment or from the secrets; only the value `"true"` shows the banner.
 - **Logs**: open the app, then **Manage app** in the bottom right corner; the panel shows the build and runtime logs. From the workspace, the app menu also offers **Logs** and **Reboot app**.
-- **Data**: no function writes to the server disk, including the mapping table; downloads are built in memory and the session state is lost when the visitor leaves. User text is never cached between sessions (`tests/test_deploy.py`).
+- **Data**: application code does not write user documents or mapping tables to the server disk; downloads are built in memory. User text is never cached between sessions (`tests/test_deploy.py`). These static checks cover the interface code, not all framework internals or hosting infrastructure. Closing a tab does not guarantee immediate removal of disconnected session state from server memory. Use **Reset session** and confirm to clear the active session explicitly. Use fictitious data only on the hosted demo.

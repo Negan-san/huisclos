@@ -3,7 +3,8 @@
 This guide is written for lawyers and legal staff. It assumes no programming knowledge.
 HuisClos replaces names and identifiers in a French legal document with tokens such as
 `[PERSONNE_1]`, so that you can send the text to an AI tool. It then puts the real values
-back into the answer. Everything runs on your computer.
+back into the answer. With a local installation, everything runs on your computer. The
+online demo runs on the host's server and must only receive fictitious data.
 
 Important: pseudonymization is not anonymization (GDPR, art. 4(5) and recital 26). The
 pseudonymized text remains personal data. Read it before you send it.
@@ -46,7 +47,7 @@ about ten minutes. After that, HuisClos works without internet.
 6. **Start HuisClos.**
 
    ```powershell
-   .venv\Scripts\python.exe -m streamlit run streamlit_app.py
+   .venv\Scripts\python.exe -m streamlit run streamlit_app.py --server.address localhost
    ```
 
    The first time, Streamlit may ask for an email address in the window. Leave it empty and
@@ -67,17 +68,19 @@ about ten minutes. After that, HuisClos works without internet.
    ```bash
    python3.12 -m venv .venv
    .venv/bin/python -m pip install -r requirements.txt
-   .venv/bin/python -m streamlit run streamlit_app.py
+   .venv/bin/python -m streamlit run streamlit_app.py --server.address localhost
    ```
 
 ## 2. Starting and stopping
 
 - **Start**: open PowerShell (or Terminal) in the HuisClos folder, as in step 3 above, and run
   the start command only:
-  - Windows: `.venv\Scripts\python.exe -m streamlit run streamlit_app.py`
-  - macOS: `.venv/bin/python -m streamlit run streamlit_app.py`
+  - Windows: `.venv\Scripts\python.exe -m streamlit run streamlit_app.py --server.address localhost`
+  - macOS: `.venv/bin/python -m streamlit run streamlit_app.py --server.address localhost`
 - The browser opens http://localhost:8501. "localhost" means your own computer: the page is
   not on the internet. If the browser does not open, copy this address into it.
+- Keep `--server.address localhost`: it limits access to your own computer. Without it,
+  the default server also accepts connections through your network interfaces.
 - **Stop**: go back to the PowerShell or Terminal window and press **Ctrl+C**, then close the
   window. Closing the browser tab does not stop HuisClos.
 - The first detection after a start takes longer, because the French language model is
@@ -228,7 +231,12 @@ Rules for the mapping table:
 - Never send it to an AI tool, and never send it by email or chat.
 - Store it with the client file, where only authorized people can read it.
 - HuisClos does not keep it. Download it if you will receive the answer later; to restore
-  that answer, upload it under **Use a saved mapping table (optional)**.
+  that answer, upload it under **Use a saved mapping table (optional)**. In a new session,
+  Restore is locked until Import and Review are complete. Click **Load sample case**, then
+  **Detect sensitive data**, then **Pseudonymize** to open Restore. Upload your saved table
+  there, paste the answer for your original document, and click **Restore**. Download only
+  the restored answer: the sample's pseudonymized text and mapping table do not belong to
+  your original document.
 - Delete it when you no longer need it.
 
 The browser saves the files in your usual downloads folder.
@@ -259,7 +267,7 @@ and start again. To find which program uses port 8501, or to choose the port you
 
 ```powershell
 netstat -ano | findstr :8501
-.venv\Scripts\python.exe -m streamlit run streamlit_app.py --server.port 8502
+.venv\Scripts\python.exe -m streamlit run streamlit_app.py --server.address localhost --server.port 8502
 ```
 
 **"The detection engine could not start".** The French language model is missing. Check it:
@@ -290,9 +298,10 @@ restart HuisClos.
 
 ## 8. Frequently asked questions
 
-**Does my document leave my computer?** No. HuisClos only shows the pseudonymized text; you
-decide to copy it. The only exception is the optional Mistral connector, after an explicit
-confirmation.
+**Does my document leave my computer?** With a local installation, processing stays on your
+computer. You decide whether to copy the pseudonymized text to an AI tool. The optional
+Mistral connector sends that text and your instruction after an explicit confirmation.
+On the online demo, the original text passes through the host's server.
 
 **Is the pseudonymized text anonymous?** No. The facts of the case can still identify a
 person. Pseudonymized data remain personal data under the GDPR.
@@ -300,23 +309,27 @@ person. Pseudonymized data remain personal data under the GDPR.
 **Can I use the online demo with a real file?** No. Online, the text passes through the
 server of the host. Install HuisClos on your computer for real files.
 
-**Does HuisClos keep my documents?** No. The text, the detections and the mapping table exist
-only during the session. Closing the tab, **Reset session** or **Start a new document** erases
-them.
+**Does HuisClos keep my documents?** HuisClos does not save them to disk. The text, the
+detections and the mapping table are held in session memory. Closing a tab does not
+guarantee immediate removal from server memory. To clear the current session explicitly, use
+**Reset session** or
+**Start a new document** and confirm; stop the local server with Ctrl+C when finished.
 
 **Why is a word masked when it should not be?** The detection prefers masking too much to
 missing a name. Uncheck **Mask** for that row in the Review step.
 
 **Can I restore an answer received days later?** Yes, if you downloaded the mapping table.
-Upload it under **Use a saved mapping table (optional)** in the Restore step.
+Follow the new-session workaround in section 6, then upload it under
+**Use a saved mapping table (optional)** in the Restore step.
 
 **Which files are accepted?** .txt, .docx and .pdf with selectable text, in French.
 
 ## 9. Uninstalling
 
 1. Stop HuisClos (Ctrl+C in its window).
-2. Delete the HuisClos folder. It contains the program and its environment (`.venv`); nothing
-   else is installed elsewhere.
+2. Delete the HuisClos folder. It contains the program and its environment (`.venv`). Python,
+   browser downloads, and caches or settings created by pip and Streamlit outside that folder
+   are separate and may remain.
 3. Before deleting, move any mapping table or restored text you want to keep out of your
    downloads folder into the client file, or delete them.
 4. To remove Python as well: on Windows, open Settings, Apps, Installed apps, and uninstall

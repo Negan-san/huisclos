@@ -10,7 +10,10 @@ import re
 import tomllib
 from pathlib import Path
 
+import pytest
+
 from app.engine import prepare_engine
+from app.i18n import EN
 from huisclos.config import PRESETS
 from huisclos.detection.pipeline import analyzer_for
 
@@ -107,3 +110,31 @@ def test_interface_never_writes_to_the_server_disk() -> None:
         elif name == "open" and any(WRITE_MODE.match(value) for value in string_arguments(call)):
             writes.append(f"{path.name}:{call.lineno}")
     assert writes == []
+
+
+@pytest.mark.parametrize("name", ["README.md", "docs/USER_GUIDE.md", "docs/DEPLOYMENT.md"])
+def test_documentation_internal_links_exist(name: str) -> None:
+    """Vérifie les liens locaux et les captures des trois documents de démarrage."""
+    document = ROOT / name
+    links = re.findall(r"!?\[[^\]]*\]\(([^)]+)\)", document.read_text(encoding="utf-8"))
+    local_links = [link for link in links if "://" not in link and not link.startswith("#")]
+    assert all((document.parent / link.split("#")[0]).is_file() for link in local_links)
+
+
+def test_readme_results_match_saved_summary() -> None:
+    """Compare les lignes de résultats publiées aux mesures enregistrées, sans les recalculer."""
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    summary = (ROOT / "results/summary.md").read_text(encoding="utf-8")
+    rows = [line for line in readme.splitlines() if line.startswith(("| dev |", "| test |"))]
+    assert rows
+    assert all(row in summary.splitlines() for row in rows)
+
+
+def test_user_guide_workflow_actions_exist_in_english_interface() -> None:
+    """Relie les boutons des instructions de travail aux textes anglais de l'interface."""
+    guide = (ROOT / "docs/USER_GUIDE.md").read_text(encoding="utf-8")
+    workflow = guide.split("## 3. ", 1)[1].split("## 7. ", 1)[0]
+    workflow = re.sub(r"\s+", " ", workflow)
+    labels = re.findall(r"(?:click|confirmation\s*\()\s*\*\*([^*]+)\*\*", workflow, re.I)
+    assert labels
+    assert all(label in EN.values() for label in labels)
