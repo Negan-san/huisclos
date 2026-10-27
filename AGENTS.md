@@ -69,7 +69,7 @@ Codex travaille sans réseau : aucune installation de paquet. Si un paquet manqu
 2. Présenter un plan de 10 lignes au plus, puis implémenter sans attendre de validation, sauf ambiguïté bloquante.
 3. Écrire ou mettre à jour les tests ; lancer pytest, ruff check, ruff format --check et scripts/check_style.py ; corriger jusqu'au vert.
 4. Mettre à jour docs/PROGRESS.md (nouvelle entrée en tête de la section Entrées), docs/PROMPTS.md (une ligne), docs/DECISIONS.md si une décision est prise (identifiant D-<session>-<n>, en fin de fichier).
-5. Un commit par session, message en français : "S11 : <résumé>". Ne jamais pousser, fusionner une branche ni poser de tag.
+5. Un commit par session, message en français : "S11 : <résumé>". Fusion, tag et push seulement dans les cas de la section 12.
 6. Finir par un compte rendu de 5 lignes au plus : fait, tests, reste à faire, risques, suite.
 
 Contexte presque plein : s'arrêter proprement, consigner l'état dans docs/PROGRESS.md, committer "S11 (partiel) : <état>".
@@ -108,13 +108,16 @@ Contexte presque plein : s'arrêter proprement, consigner l'état dans docs/PROG
 ## 11. Données et confidentialité
 
 - Ne jamais lire en entier corpus/*.jsonl ni data/ : lire une plage de lignes ou passer par un script.
-- corpus/test.jsonl et les sources du split test sont réservés à l'évaluation : ne pas les ouvrir, ne pas ajuster une règle d'après leur contenu ; seuls les scripts les lisent.
+- corpus/test.jsonl et les sources du split test sont réservés à l'évaluation : ne pas les ouvrir, ne pas ajuster une règle d'après leur contenu ; seuls les scripts les lisent. Seule exception : la session de rédaction du corpus (C1), qui ne touche à aucun code.
 - *.mapping.json, .streamlit/secrets.toml et .env sont ignorés par git.
 
 ## 12. Git
 
 - Branches : main (déployée ; reçoit dev après une gate GO), dev (piste A, dossier huisclos), lane-b (piste B, worktree huisclos-b).
-- Un commit par session. L'agent ne pousse pas, ne fusionne pas, ne tague pas : l'humain s'en charge.
+- Un commit par session. L'humain colle les prompts et relit le code ; les agents font le reste, dans ces seules limites :
+  - étape 0 de chaque session, synchronisation : piste A, `git merge lane-b --no-edit` ; piste B, `git merge dev --no-edit` ; en cas de conflit, s'arrêter et le signaler ;
+  - session de recette R<N> après une gate GO : `git merge --ff-only dev` sur main, tag `gate-N`, `git push origin main dev --tags` ;
+  - jamais de push --force, de rebase de branche partagée, ni de suppression de branche ou de tag.
 - Ne modifier que les fichiers listés par le prompt ; tout autre besoin va dans le compte rendu.
 
 ## 13. Définition de "terminé"

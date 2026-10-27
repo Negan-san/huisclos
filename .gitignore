@@ -1,1 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
 .venv/
+.pytest_cache/
+.ruff_cache/
+
+# Données sensibles et secrets
+*.mapping.json
+.streamlit/secrets.toml
+.env
+
+# Sorties locales
+*.mp4
+results/tmp/
