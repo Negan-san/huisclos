@@ -19,7 +19,7 @@ from huisclos.evaluation.run import run_evaluation  # noqa: E402
 def main() -> None:
     """Lit les options, exécute l'évaluation locale et indique le dossier produit."""
     parser = argparse.ArgumentParser(description="Evaluate local detection on fictional corpora.")
-    parser.add_argument("--split", choices=("dev", "test", "all"), default="dev")
+    parser.add_argument("--split", choices=("dev", "test", "challenge", "all"), default="dev")
     parser.add_argument("--configs", nargs="+", choices=tuple(PRESETS))
     parser.add_argument("--out", type=Path, default=ROOT / "results")
     arguments = parser.parse_args()

@@ -22,12 +22,15 @@ from huisclos.detection import checksums  # noqa: E402
 from huisclos.evaluation import synthetic_ids as ids  # noqa: E402
 from huisclos.evaluation.corpus import (  # noqa: E402
     CORPUS_TYPES,
-    SPLITS,
     CorpusDocument,
     GoldEntity,
 )
+from huisclos.evaluation.corpus import (  # noqa: E402
+    SPLITS as BASE_SPLITS,
+)
 
 HEADER_KEYS = frozenset({"id", "doc_type", "split", "title"})
+SPLITS = BASE_SPLITS | {"challenge"}
 MARKERS = re.compile(r"\{\{([^{}]*?)\}\}|(\{\{|\}\})")
 ANNOTATIONS = re.compile(r"\[\[|\]\]")
 
@@ -175,23 +178,39 @@ def parse_source(path: str | Path) -> CorpusDocument:
     if opening is not None:
         raise _fail(path, expanded, body_start + opening - 2, "Annotation non fermée.")
     pieces.append(body[cursor:])
-    return CorpusDocument(**metadata, text="".join(pieces), entities=entities)
+    document_class = CorpusDocument
+    if metadata["split"] == "challenge":
+        from huisclos.evaluation.run import ChallengeDocument
+
+        document_class = ChallengeDocument
+    return document_class(**metadata, text="".join(pieces), entities=entities)
 
 
 def _statistics(documents: list[CorpusDocument]) -> str:
     """Renvoie les effectifs de documents et d'entités par split et par type."""
     lines = ["# Corpus statistics", "", "| Split | Documents | Entities |", "| --- | ---: | ---: |"]
     counts = Counter((doc.split, entity.type) for doc in documents for entity in doc.entities)
-    for split in sorted(SPLITS):
+    splits = sorted(
+        split
+        for split in SPLITS
+        if split != "challenge" or any(doc.split == "challenge" for doc in documents)
+    )
+    for split in splits:
         selected = [doc for doc in documents if doc.split == split]
         lines.append(
             f"| {split} | {len(selected)} | {sum(len(doc.entities) for doc in selected)} |"
         )
-    lines.extend(["", "| Entity type | dev | test | demo |", "| --- | ---: | ---: | ---: |"])
+    columns = ["dev", "test", "demo"] + (["challenge"] if "challenge" in splits else [])
+    lines.extend(
+        [
+            "",
+            "| Entity type | " + " | ".join(columns) + " |",
+            "| --- | " + " | ".join("---:" for _ in columns) + " |",
+        ]
+    )
     for kind in sorted(CORPUS_TYPES):
         lines.append(
-            f"| {kind.value} | {counts['dev', kind]} | {counts['test', kind]} "
-            f"| {counts['demo', kind]} |"
+            f"| {kind.value} | " + " | ".join(str(counts[split, kind]) for split in columns) + " |"
         )
     return "\n".join(lines) + "\n"
 
@@ -217,7 +236,9 @@ def build_corpus(
     if check:
         return documents
     output_dir.mkdir(parents=True, exist_ok=True)
-    for split in ("dev", "test"):
+    for split in ("dev", "test", "challenge"):
+        if split == "challenge" and not any(doc.split == split for doc in documents):
+            continue
         content = "".join(
             json.dumps(asdict(document), ensure_ascii=False) + "\n"
             for document in documents

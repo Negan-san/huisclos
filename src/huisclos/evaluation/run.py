@@ -21,7 +21,7 @@ from typing import Any
 
 from huisclos.config import PRESETS, default_threshold
 from huisclos.detection.pipeline import detect
-from huisclos.evaluation.corpus import CorpusDocument, load_corpus
+from huisclos.evaluation.corpus import CorpusDocument, GoldEntity, load_corpus
 from huisclos.evaluation.metrics import (
     Evaluation,
     evaluated_predictions,
@@ -38,6 +38,39 @@ METRIC_COLUMNS = tuple(
 )
 SWEEP_COLUMNS = ("threshold", "precision", "recall", "f1", "f2", "leak_rate", "exposed_entities")
 ERROR_COLUMNS = ("document_id", "type", "text", "context_before", "context_after", "nature")
+
+
+class ChallengeDocument(CorpusDocument):
+    """Adapte le split réservé sans changer le validateur commun hors périmètre.
+
+    Le constructeur commun vérifie les autres invariants sur une copie de validation.
+    L'objet retourné conserve toujours son vrai split challenge, jamais exporté en dev.
+    """
+
+    def __post_init__(self) -> None:
+        """Exige challenge puis valide tous les champs avec les invariants communs."""
+        if self.split != "challenge":
+            raise ValueError("Split challenge attendu.")
+        CorpusDocument(self.id, self.doc_type, "dev", self.title, self.text, self.entities)
+
+
+def load_challenge_corpus(path: Path) -> list[CorpusDocument]:
+    """Charge seulement le corpus réservé demandé, avec validation et identifiants uniques."""
+    documents: list[CorpusDocument] = []
+    identifiers: set[str] = set()
+    with path.open(encoding="utf-8") as stream:
+        for number, line in enumerate(stream, 1):
+            try:
+                record = json.loads(line)
+                record["entities"] = [GoldEntity(**entity) for entity in record["entities"]]
+                document = ChallengeDocument(**record)
+                if document.id in identifiers:
+                    raise ValueError("Identifiant dupliqué.")
+            except (ValueError, TypeError, KeyError) as error:
+                raise ValueError(f"{path}:{number}: document challenge invalide.") from error
+            identifiers.add(document.id)
+            documents.append(document)
+    return documents
 
 
 def write_csv(path: Path, columns: Sequence[str], rows: Iterable[dict[str, Any]]) -> None:
@@ -240,11 +273,11 @@ def run_evaluation(
 ) -> dict[str, Any]:
     """Évalue le split demandé ; seul dev choisit un seuil et exporte les erreurs.
 
-    En mode test, le seuil et les mesures dev sont conservés sans nouveau balayage.
+    Challenge conserve le seuil et les mesures dev et test sans nouveau balayage.
     En mode all, dev choisit d'abord le seuil, puis test l'utilise sans l'ajuster.
     """
-    if split not in {"dev", "test", "all"}:
-        raise ValueError("Split attendu : dev, test ou all.")
+    if split not in {"dev", "test", "challenge", "all"}:
+        raise ValueError("Split attendu : dev, test, challenge ou all.")
     os.environ["HF_HUB_OFFLINE"] = "1"
     os.environ["TRANSFORMERS_OFFLINE"] = "1"
     names, notes = available_configs(list(PRESETS) if configs is None else configs)
@@ -252,25 +285,27 @@ def run_evaluation(
         raise ValueError("Aucune configuration disponible.")
     out = Path(out)
     threshold_path = out / "threshold.json"
-    if split == "test" and not threshold_path.is_file():
+    reserved = split in {"test", "challenge"}
+    if reserved and not threshold_path.is_file():
         raise ValueError("Évaluer dev avant test : threshold.json est absent.")
     out.mkdir(parents=True, exist_ok=True)
     splits = ("dev", "test") if split == "all" else (split,)
     paths = [corpus_dir / f"{name}.jsonl" for name in splits]
-    threshold = default_threshold(threshold_path) if split == "test" else THRESHOLDS[0]
-    previous = saved_dev_report(out, threshold) if split == "test" else {}
+    threshold = default_threshold(threshold_path) if reserved else THRESHOLDS[0]
+    previous = saved_dev_report(out, threshold) if reserved else {}
+    preserved_splits = {"dev", "test"} if split == "challenge" else {"dev"}
     sweep: list[dict[str, Any]] = previous.get("threshold_sweep", [])
     rows: list[dict[str, Any]] = [
-        row for row in previous.get("metrics_by_type", []) if row["split"] == "dev"
+        row for row in previous.get("metrics_by_type", []) if row["split"] in preserved_splits
     ]
     previous_metadata = previous.get("metadata", {})
     document_counts = {
         name: count
         for name, count in previous_metadata.get("document_counts", {}).items()
-        if name == "dev"
+        if name in preserved_splits
     }
     for split_name, path in zip(splits, paths, strict=True):
-        documents = load_corpus(path)
+        documents = load_challenge_corpus(path) if split_name == "challenge" else load_corpus(path)
         if not documents or any(document.split != split_name for document in documents):
             raise ValueError(f"Corpus vide ou split incohérent : {path.name}")
         document_counts[split_name] = len(documents)
@@ -302,7 +337,11 @@ def run_evaluation(
                 notes.append(
                     f"hybrid_camembert omitted: local model unavailable ({type(error).__name__})."
                 )
-                rows = [row for row in rows if row["config"] != name]
+                rows = [
+                    row
+                    for row in rows
+                    if row["config"] != name or (split == "challenge" and row["split"] != split)
+                ]
                 continue
             rows.extend(
                 {"split": split_name, "config": name, "threshold": threshold, **row}
@@ -315,8 +354,12 @@ def run_evaluation(
     run_metadata["corpus_sha256"] = {
         name: digest
         for name, digest in previous_metadata.get("corpus_sha256", {}).items()
-        if name == "dev.jsonl"
+        if name.removesuffix(".jsonl") in preserved_splits
     } | run_metadata["corpus_sha256"]
+    if split == "challenge":
+        run_metadata["configurations"] = (
+            previous_metadata.get("configurations", {}) | run_metadata["configurations"]
+        )
     run_metadata["document_counts"] = document_counts
     notes = list(dict.fromkeys([*previous.get("notes", []), *notes]))
     report = {
