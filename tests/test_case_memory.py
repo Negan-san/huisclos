@@ -6,6 +6,7 @@ qui mêle les deux documents.
 """
 
 import json
+from dataclasses import replace
 
 import pytest
 
@@ -157,6 +158,30 @@ def test_two_groups_of_the_same_known_entity_share_one_token() -> None:
     assert result.text == "M. [PERSONNE_1] a écrit, signé [PERSONNE_1]."
     assert len(result.groups) == 1
     assert result.groups[0].mention_spans == ((3, 11), (27, 38))
+
+
+def test_name_also_in_a_file_name_loses_token_continuity_when_the_surname_returns() -> None:
+    # D-FIX3-2 : le nom de fichier garde son jeton (D-AF-A2-7), donc la table porte deux
+    # entrées pour "FALVERAC". Le nom seul a alors deux candidats et reçoit un jeton neuf :
+    # continuité perdue, mais ni fuite ni confusion entre deux personnes.
+    first = "M. Lucien FALVERAC conteste. M. FALVERAC signe. Pièce : conclusions_FALVERAC.pdf."
+    detections = mentions(first, ("Lucien FALVERAC", P), ("FALVERAC", P), ("FALVERAC", P))
+    detections[2] = replace(detections[2], source=Source.PROPAGATION)
+    table = pseudonymize(first, detections, created_at=FIXED_TIME).mapping
+    assert [(e.token, e.canonical) for e in table.entities] == [
+        ("[PERSONNE_1]", "Lucien FALVERAC"),
+        ("[PERSONNE_2]", "FALVERAC"),
+    ]
+    full = "Lucien FALVERAC signe."
+    alone = pseudonymize(full, mentions(full, ("Lucien FALVERAC", P)), known=table)
+    assert alone.text == "[PERSONNE_1] signe."
+    both = "M. FALVERAC répond. Lucien FALVERAC signe."
+    result = pseudonymize(
+        both, mentions(both, ("FALVERAC", P), ("Lucien FALVERAC", P)), known=table
+    )
+    assert result.text == "M. [PERSONNE_3] répond. [PERSONNE_3] signe."
+    assert "FALVERAC" not in result.text
+    assert restore(result.text, result.mapping).text == both
 
 
 def test_new_organization_takes_next_free_letter() -> None:

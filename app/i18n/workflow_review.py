@@ -92,6 +92,11 @@ EN: dict[str, str] = {
         "The text could not be pseudonymized because two detections overlap. Go back to Import"
         " and run the detection again."
     ),
+    "review.error.substitution": (
+        "The text could not be pseudonymized: a value was not replaced by the expected token."
+        " Nothing was produced and nothing was sent. Go back to Import and run the detection"
+        " again."
+    ),
     "review.back": "Back to Import",
 }
 
@@ -190,6 +195,11 @@ FR: dict[str, str] = {
     "review.error.pseudonymize": (
         "Le texte n'a pas pu être pseudonymisé car deux détections se chevauchent. Revenez à "
         "Importer et relancez la détection."
+    ),
+    "review.error.substitution": (
+        "Le texte n'a pas pu être pseudonymisé : une valeur n'a pas été remplacée par le jeton "
+        "attendu. Aucun texte n'a été produit ni envoyé. Revenez à Importer et relancez la "
+        "détection."
     ),
     "review.back": "Retour à Importer",
 }

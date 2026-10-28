@@ -1,8 +1,8 @@
 """FIX2 : défaut de substitution du challenge et diagnostic situé du harnais.
 
 Entrées : valeurs entièrement fictives, détections fournies à la main, aucun modèle.
-Sorties : preuve du défaut (xfail strict tant que pseudonymize n'est pas corrigé) et
-contrats du lieu d'erreur exporté par le worker G8 et par le diagnostic FIX2.
+Sorties : non-régression du défaut FIX2-01 (corrigé en FIX3, D-FIX3-1), message de Review
+en cas d'erreur de substitution, contrats du lieu d'erreur du worker G8 et du diagnostic FIX2.
 Aucun corpus réservé n'est lu ; le défaut a été reproduit d'après sa seule structure.
 """
 
@@ -66,12 +66,6 @@ def file_name_cases() -> list[tuple[str, list[Detection]]]:
     ]
 
 
-@pytest.mark.xfail(
-    strict=True,
-    raises=RuntimeError,
-    reason="FIX2-01 : grouping.py met la mention du nom de fichier dans un groupe distinct, "
-    "tokens._token_tables refuse deux jetons pour un même texte ; correctif hors périmètre FIX2",
-)
 @pytest.mark.parametrize("case", range(3))
 def test_same_value_in_text_and_file_name_is_pseudonymized(case: int) -> None:
     """Chaque mention est remplacée et la restauration exacte rend le texte d'origine."""
@@ -204,11 +198,6 @@ def test_enhanced_status_is_visible_per_document_language(
     assert not app.sidebar.warning
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="FIX2-01 : la RuntimeError de tokens._token_tables interrompt Review ; "
-    "correctif de pseudonymize hors périmètre FIX2",
-)
 def test_review_pseudonymizes_a_name_repeated_in_a_file_name(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -228,3 +217,34 @@ def test_review_pseudonymizes_a_name_repeated_in_a_file_name(
     app.button(key="review_pseudonymize").click().run()
     assert not app.exception
     assert app.session_state["step"] == "restore"
+
+
+@pytest.mark.parametrize("ui", ("fr", "en"))
+def test_review_shows_a_plain_message_when_substitution_fails(
+    ui: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Une erreur de substitution laisse Review ouverte avec un message sans la mention."""
+    from streamlit.testing.v1 import AppTest
+
+    from app import i18n
+    from huisclos.pseudonymize import tokens
+
+    def failing_substitute(*_: object) -> tuple[str, tuple[()]]:
+        raise RuntimeError("jeton inattendu pour la mention 'FALVERAC'")
+
+    monkeypatch.setenv(i18n.STRICT_ENV, "1")
+    monkeypatch.delenv("HUISCLOS_PUBLIC_DEMO", raising=False)
+    monkeypatch.setattr(tokens, "_substitute", failing_substitute)
+    app = AppTest.from_file(ROOT / "streamlit_app.py", default_timeout=120).run()
+    app.selectbox(key="language").select(ui).run()
+    # Même repli que tests/test_gate8.py : AppTest sérialise les sélecteurs hors session.
+    monkeypatch.setattr(i18n, "DEFAULT_LANGUAGE", ui)
+    app.radio(key="document_language").set_value("fr").run()
+    app.text_area(key="paste_widget").set_value(file_name_cases()[0][0]).run()
+    app.button(key="detect").click().run()
+    app.button(key="review_pseudonymize").click().run()
+    texts = i18n.FR if ui == "fr" else i18n.EN
+    assert not app.exception
+    assert app.session_state["step"] == "review"
+    assert [item.value for item in app.error] == [texts["review.error.substitution"]]
+    assert all("FALVERAC" not in item.value for item in app.error)

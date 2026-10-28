@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 19:35 | FIX3 | Correction de FIX2-01 et message de Review | Claude Code, Opus 5.5
+- Fait : lane-b (FIX2R ae5dfe9) fusionné en avance rapide. results/fix2/proposed_fix2_01.patch appliqué sans retouche dans pseudonymize/tokens.py : jeton retrouvé par la position de la mention, une clé presidio par groupe. Quatre xfail stricts retirés de tests/test_fix2.py ; nouveaux tests : deux jetons pour une même écriture (test_tokens), effet sur la mémoire de dossier (test_case_memory), message de Review en cas d'erreur de substitution, AppTest FR et EN. Les six tests de non-régression échouent sur le code antérieur.
+- Tests : pytest 1720 passed, aucun xfail ; Ruff check et format OK ; check_style 0 erreur, 15 avertissements connus ; diff --check OK.
+- Reste à faire : recontrôle indépendant FIX3R en piste B, puis mesure challenge par une session indépendante autorisée. NO-GO global maintenu jusque-là.
+- Décisions : D-FIX3-1 (amende D-S21-1), D-FIX3-2 (perte de continuité du jeton acceptée), D-FIX3-3.
+- Risques ou blocages : une personne nommée aussi dans un nom de fichier peut recevoir un jeton neuf dans les documents suivants du dossier (prudent, sans fuite). L'exemple de docstring de scripts/gate8_measure.py cite encore _token_tables, hors périmètre. Aucune mesure réservée, aucun réglage de détection, tag ni push.
+- Prochaine session : FIX3R en piste B sur le SHA de FIX3 ; aucun R8.
+
 ### 2026-10-28 20:10 | FIX2R | Recontrôle indépendant de FIX2 | Claude Code, Opus 5.5
 - Fait : SHA figé FIX2 a29532c fusionné en avance rapide sur lane-b. Quatre xfail stricts rejoués (rouges avec --runxfail, tokens.py:140) ; reproductions fictives nouvelles, dont pipeline Standard réel FR et EN, et trois témoins : cause FIX2-01 établie. Harnais diagnostique relu sans relance : registre avant reçu, trois empreintes égales aux blobs, export sans contenu. Patch appliqué dans un worktree temporaire hors dépôt, xfail retirés : 1716 réussis ; worktree supprimé. Lieu du worker testé sur 20 sorties falsifiées ; statut Enhanced EN conforme en AppTest FR et EN. Périmètre FIX2 conforme. Preuves dans results/fix2-recheck/.
 - Tests : pytest 1712 passed, 4 xfailed stricts FIX2-01 (arbre patché hors dépôt : 1716 passed) ; Ruff check et format OK ; check_style 0 erreur, 15 avertissements connus ; diff --check OK. Script de recontrôle results/fix2-recheck/recheck_fix2.py, sortie JSON archivée.

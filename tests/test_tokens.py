@@ -1,5 +1,6 @@
 """Tests de l'attribution des jetons et de la substitution (pseudonymize.tokens)."""
 
+from dataclasses import replace
 from itertools import permutations
 
 import pytest
@@ -146,6 +147,23 @@ def test_adjacent_mentions_of_same_type_stay_separate() -> None:
     result = pseudonymize(text, mentions(text, ("Jean DUPONT", P), ("Paul MARTIN", P)))
     assert result.text == "Signé : [PERSONNE_1] [PERSONNE_2]"
     assert len(result.occurrences) == 2
+
+
+def test_same_text_in_two_groups_takes_the_token_of_its_position() -> None:
+    # D-FIX3-1 : le nom de fichier forme son propre groupe (D-AF-A2-7) ; le jeton est
+    # retrouvé par la position de la mention, pas par son texte.
+    # Une mention manuelle est validée et rejoindrait le groupe courant : source repérée.
+    text = "M. DUPONT signe la pièce conclusions_DUPONT.pdf, puis M. DUPONT relit."
+    detections = mentions(text, ("DUPONT", P), ("DUPONT", P), ("DUPONT", P))
+    detections[1] = replace(detections[1], source=Source.PROPAGATION)
+    result = pseudonymize(text, detections, created_at=FIXED_TIME)
+    assert result.text == (
+        "M. [PERSONNE_1] signe la pièce conclusions_[PERSONNE_2].pdf, puis M. [PERSONNE_1] relit."
+    )
+    assert [o.token for o in result.occurrences] == ["[PERSONNE_1]", "[PERSONNE_2]", "[PERSONNE_1]"]
+    assert restore(result.text, result.mapping).text == text
+    second = pseudonymize(text, list(reversed(detections)), created_at=FIXED_TIME)
+    assert second == result
 
 
 def test_determinism() -> None:

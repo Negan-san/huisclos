@@ -237,6 +237,10 @@ def _pseudonymize() -> None:
     except ValueError:
         st.error(t("review.error.pseudonymize"))
         return
+    except RuntimeError:
+        # Le message de tokens.py peut citer la mention : il n'est jamais affiché (D-FIX3-3).
+        st.error(t("review.error.substitution"))
+        return
     st.session_state[KEY_PSEUDO_RESULT] = result
     st.session_state[KEY_RESTORE_RESULT] = None
     go_to(STEP_RESTORE)
