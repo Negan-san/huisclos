@@ -1,24 +1,26 @@
 # HuisClos demonstration script
 
-Target runtime: **4:45 (285 seconds)**. Spoken budget: **pending count** at 140 words per minute.
+Target runtime: **4:45 (285 seconds)**. Spoken budget: **618 words**, **4:24.86 of speech**
+at 140 words per minute, plus **20.14 seconds of reading/action holds**.
 Seven blocks include narration and short reading or action holds; their allocated durations total 4:45.
 Record an English human voice. Pronounce HuisClos **wee-kloh**. Read only the blockquotes.
 Sources in square brackets, headings, tables and production cues are silent.
 
 | Block | Timeline | Allocated duration | Spoken words | Speech at 140 wpm | Reading/action hold |
 | --- | --- | ---: | ---: | ---: | ---: |
-| 1. Hook | 0:00-0:20 | 20 s | pending | pending | pending |
-| 2. Problem and rules | 0:20-0:50 | 30 s | pending | pending | pending |
-| 3. Name and promise | 0:50-1:05 | 15 s | pending | pending | pending |
-| 4. Live demo | 1:05-3:00 | 115 s | pending | pending | pending |
-| 5. Under the hood | 3:00-3:45 | 45 s | pending | pending | pending |
-| 6. Value and competition | 3:45-4:20 | 35 s | pending | pending | pending |
-| 7. Limits and close | 4:20-4:45 | 25 s | pending | pending | pending |
-| Total | 0:00-4:45 | 285 s | pending | pending | pending |
+| 1. Hook | 0:00-0:20 | 20 s | 43 | 18.43 s | 1.57 s |
+| 2. Problem and rules | 0:20-0:50 | 30 s | 66 | 28.29 s | 1.71 s |
+| 3. Name and promise | 0:50-1:05 | 15 s | 32 | 13.71 s | 1.29 s |
+| 4. Live demo | 1:05-3:00 | 115 s | 238 | 102.00 s | 13.00 s |
+| 5. Under the hood | 3:00-3:45 | 45 s | 103 | 44.14 s | 0.86 s |
+| 6. Value and competition | 3:45-4:20 | 35 s | 81 | 34.71 s | 0.29 s |
+| 7. Limits and close | 4:20-4:45 | 25 s | 55 | 23.57 s | 1.43 s |
+| Total | 0:00-4:45 | 285 s | 618 | 264.86 s | 20.14 s |
 
 Timing convention: count whitespace-separated spoken words after removing source annotations.
 Hyphenated words count once. Say numbers as written in the narration; numeric result tables are visual only.
 Speech time is words multiplied by 60/140; the remaining time in each block is a planned hold.
+Displayed values are rounded; totals use the unrounded values.
 Rehearse against the allocated block boundaries, then export exactly 4:45; the permitted window is 4:30-5:30.
 
 ## 1. Hook | 0:00-0:20
@@ -32,7 +34,7 @@ Keep the public demo warning visible. Do not read the identifiers aloud.
 ## 2. Problem and rules | 0:20-0:50
 
 > French professional secrecy covers the case file. The nineteen seventy one law and the Penal Code set the legal duties and penalties shown here. [source: app/i18n/method.py, method.legal.secrecy.]
-> Under the GDPR, pseudonymization replaces identifying values, while keeping the information needed to restore them separately. The result remains personal data. It still needs protection. Replacing a name does not remove every clue about the person. [source: app/i18n/method.py, method.legal.gdpr; README.md, Confidentiality and Limits.]
+> Under the GDPR, pseudonymization replaces identifying values, while keeping the information needed to restore them separately. The result remains personal data. It still needs protection. The mapping table must stay separate. Replacing a name does not remove every clue about the person. [source: app/i18n/method.py, method.legal.gdpr; README.md, Confidentiality and Limits.]
 
 Silent legal card: **Law of 31 December 1971, art. 66-5; Penal Code, art. 226-13;
 GDPR, art. 4(5) and recital 26**. Use these references as displayed in `app/i18n/method.py`.
@@ -53,7 +55,7 @@ Return to the matching Import header. The tagline is an aim, qualified by the li
 > I append an invented collection code, then detect sensitive data. In Review, coloured labels show each proposed value and its type. I read the whole document, including unmarked passages. [source: docs/PROGRESS.md, S14 demonstration note; app/i18n/workflow_review.py, review.intro and review.tag.*.]
 > For this fictional example, I uncheck the employer. Keeping a real employer visible could identify the client. Next, I add the collection code as Other identifier and choose Add and mask everywhere. [source: data/samples/demo_case_fr.txt, employer; app/i18n/workflow_review.py, review.column.mask.help and review.manual.*; README.md, Limits.]
 > Pseudonymize replaces accepted values with consistent labels. The same person keeps the same token within this document. [source: README.md, What HuisClos does and How it works.]
-> I check the document together with my instruction. I deliberately put the fictional client's name in the instruction. The final check flags it. I remove it and read the complete message again. An alert protects nothing until someone acts. [source: results/recette8/report.md, local acceptance checks; app/i18n/workflow_check.py, check.intro and check.found.]
+> I check the document together with my instruction. I deliberately put the fictional client's name in the instruction. The final check flags it. I remove it and read the complete message again. Edits require a new check before copying. An alert protects nothing until someone acts. [source: results/recette8/report.md, local acceptance checks; app/i18n/workflow_check.py, check.intro and check.found.]
 > Only the checked message goes into ChatGPT by copy and paste. I request a short summary with unchanged tokens. The optional Mistral connector stays off by default. [source: README.md, Confidentiality; app/i18n/workflow_restore.py, restore.send.instruction.en; S61 session brief, Live demo.]
 > I bring the answer back and choose Restore. The table replaces tokens with their values. I read the restored answer and export it. [source: app/i18n/workflow_restore.py, restore.answer.* and restore.download.*.]
 > That table links tokens to identities. Never send it to an AI tool. A saved case table helps reuse tokens across documents; continuity still needs checking. [source: README.md, What HuisClos does, Confidentiality and Limits.]
@@ -93,7 +95,7 @@ Silent preparation and actions:
 ## 5. Under the hood | 3:00-3:45
 
 > Detection combines check digits, text patterns, name clues and pretrained entity recognition: a model that labels names. A network blocking test checks local processing. Consistent tokens preserve references. [source: README.md, How it works; AGENTS.md, sections 2 and 3.]
-> We chose the threshold using F two, a score favouring fewer missed identifiers over fewer false alarms. Challenge documents were written blind after the rules froze; G8R2 reused that known set. [source: app/i18n/evaluation.py, evaluation.choice; results/summary.md; results/gate8-resume/report.md, Registre et méthode.]
+> We chose the threshold, the cutoff for accepting proposed detections, using F two, a score favouring fewer missed identifiers over fewer false alarms. Challenge documents were written blind after the rules froze; G8R2 reused that known set. [source: app/i18n/evaluation.py, evaluation.choice; results/summary.md; results/gate8-resume/report.md, Registre et méthode.]
 > Its French results are on screen. The coverage gain is not statistically significant. French Enhanced is a local option. G8 results describe historical code. [source: README.md, G8R2 and Historical G8 blind results.]
 > English Standard remains experimental with strong reservations; English Enhanced is experimental and not recommended. [source: docs/DECISIONS.md, D-G8R2-1 and D-R8-1.]
 
@@ -131,7 +133,7 @@ Do not run or show Enhanced English as a recommended demonstration.
 
 > The value case is qualitative. If this review became routine, legal teams could prepare AI requests without rebuilding every replacement by hand. Consistent tokens could make a file easier to follow across drafts. [source: qualitative proposal based on README.md, What HuisClos does; no productivity measurement.]
 > The tradeoff is time spent reviewing detections, context and the final answer. Wider use could make careful preparation more consistent, while leaving responsibility with the professional. [source: qualitative proposal based on README.md, How it works and Limits.]
-> Testing time savings and comparing competing products would require separate evidence. That work remains to be done. [source: S61 evidence boundary; docs/RESEARCH.md is absent.]
+> Testing time savings and comparing competing products would require separate evidence. That work remains to be done. Its usefulness needs independent assessment. [source: S61 evidence boundary; docs/RESEARCH.md is absent.]
 
 Silent card: **Proposed benefit: consistent preparation. Cost: human review.
 Evidence needed: time study and sourced product comparison.**

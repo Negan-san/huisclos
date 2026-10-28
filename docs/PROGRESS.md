@@ -14,6 +14,15 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 22:32 | S61 | Script et storyboard de la vidéo | Codex, GPT-6
+- Fait : docs/video/SCRIPT.md et STORYBOARD.md en anglais, sept blocs de 4:45, 618 mots, 264,86 s de voix à 140 mots/minute et 20,14 s de pauses ; 41 plans continus, actions et libellés exacts, liste de tournage et grille sur 30 points. Démo Standard fictive, contrôle de la consigne, aller-retour ChatGPT prévu, restauration et avertissement sur la table ; aucun tournage ni envoi effectué.
+- Tests : comptage Python ponctuel hors dépôt, budgets par bloc, continuité des 41 plans et libellés EN vérifiés ; pytest sous garde FIX3R : 1747 passed, zéro ouverture réservée refusée, 200,09 s ; après les retouches FIX8 concurrentes, 110 tests ciblés d'interface et de gate passent en 42,19 s sous la même garde. Ruff check/format conformes, style 0 erreur et 15 avertissements connus. Garde conservée pour limiter le roundtrip à dev au lieu de lire un corpus réservé ; aucune évaluation ni aucun pilote.
+- Publication FIX5, selon le contexte fourni : publié après son commit, main a33b05a, démo vérifiée ; gate-8 inchangé sur 7e0b899. Ce rappel historique ne décrit pas la branche main courante après les publications FIX6 à FIX8 ; aucune vérification publique ni publication par S61.
+- Décisions : aucune ; D-G8R2-1, D-R8-1 et D-FIX5-1 respectées. Chiffres G8R2 FR sourcés, gain de couverture non significatif, G8 historique sur e3d13bd, réserves EN explicites. docs/RESEARCH.md absent : CNB, chiffres de marché et concurrents nommés omis ; valeur qualitative annoncée.
+- Reste et risques : répétition humaine, vérification du code fictif non détecté, tournage du vrai copier-coller et montage de 4:45 à réaliser ; aucun résultat vidéo ni absence de fuite promis. Données fictives seulement en ligne, table jamais envoyée, revue complète requise.
+- Périmètre : fusion lane-b déjà à jour ; seuls les quatre documents S61 modifiés par cette session. Retouches et commits FIX7/FIX8 concurrents préservés ; un premier brouillon de SCRIPT.md a été inclus par le commit FIX7 425bf62, sans réécriture de cet historique.
+- Suite : commit S61 sans push, tag ni modification applicative ; filmer après répétition. Aucune S71 engagée.
+
 ### 2026-10-28 22:55 | FIX8 | Description de l'accueil sur toute la largeur | Claude Code, Opus 5.5
 - Fait : la limite de 68 caractères de .hc-description est retirée ; la description de l'en-tête d'accueil occupe toute la largeur libérée par FIX7. Commentaire de l'en-tête corrigé (plus de pastille à droite).
 - Tests : test_app_design, test_app_smoke, test_gate7 et test_method_page verts (changement de CSS seul) ; Ruff check/format et style conformes. Capture Edge headless, serveur arrêté.
