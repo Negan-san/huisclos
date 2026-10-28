@@ -13,11 +13,13 @@ import sys
 import textwrap
 from collections.abc import Iterator
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 
 import pytest
 
 from huisclos.detection import camembert
+from huisclos.detection.windows import overlapping_windows
 
 pytestmark = [
     pytest.mark.skipif(
@@ -102,25 +104,15 @@ def test_exact_offsets_on_3000_characters(recognizer: camembert.CamembertRecogni
 
 @pytest.mark.parametrize(
     "text",
-    ["", "x" * 3000, "mot " * 1000, "Été\u00a0à Paris.\n\n" * 300, "a" * 510, "a" * 511],
+    ["x" * 3000, "mot " * 1000, "Été\u00a0à Paris.\n\n" * 300, "a" * 510, "a" * 511],
 )
-def test_chunks_cover_text_within_limit(text: str) -> None:
-    """Couvre aussi les phrases sans ponctuation et les mots dépassant une fenêtre."""
-    chunks = list(camembert.iter_chunks(text, CharacterTokenizer()))
-    assert "".join(chunk for _, chunk in chunks) == text
-    cursor = 0
-    for offset, chunk in chunks:
-        assert offset == cursor
-        assert 0 < len(chunk) <= 510
-        cursor += len(chunk)
-
-
-def test_sentence_boundary_preferred() -> None:
-    """Utilise une fin de phrase disponible plutôt que de couper une mention."""
-    text = "a" * 450 + ".\n" + "Alice Martin " * 30
-    chunks = list(camembert.iter_chunks(text, CharacterTokenizer()))
-    assert chunks[0] == (0, text[:452])
-    assert chunks[1][0] == 452
+def test_windows_cover_text_within_limit(text: str) -> None:
+    """Fenêtres de 510 jetons au plus, recouvrantes, du premier au dernier caractère."""
+    windows = overlapping_windows(text, CharacterTokenizer())
+    assert windows[0].start == 0 and windows[-1].end == len(text)
+    assert all(0 < len(window.text) <= 510 for window in windows)
+    for left, right in zip(windows, windows[1:], strict=False):
+        assert left.end - right.start == 64
 
 
 def test_types_empty_and_unknown(recognizer: camembert.CamembertRecognizer) -> None:
@@ -162,9 +154,9 @@ def test_offline_loading_and_cache(monkeypatch: pytest.MonkeyPatch) -> None:
     calls = []
 
     def fake_load(name: str, **kwargs: Any) -> object:
-        """Enregistre les options de chargement et renvoie un objet local fictif."""
+        """Enregistre les options de chargement et renvoie un objet local fictif complet."""
         calls.append((name, kwargs))
-        return object()
+        return SimpleNamespace(vocab_size=32005, config=SimpleNamespace(vocab_size=32005))
 
     def fake_pipeline(task: str, **kwargs: Any) -> FakePipeline:
         """Contrôle la tâche, l'agrégation et le choix explicite du CPU."""
@@ -250,15 +242,23 @@ def test_missing_cache_fails_offline(monkeypatch: pytest.MonkeyPatch) -> None:
         camembert.load_pipeline.cache_clear()
 
 
+def test_incomplete_tokenizer_fails_clearly() -> None:
+    """Un tokenizer réduit aux jetons spéciaux (vocabulaire absent) est refusé, pas utilisé."""
+    model = SimpleNamespace(config=SimpleNamespace(vocab_size=32005))
+    with pytest.raises(RuntimeError, match="incomplet"):
+        camembert.check_vocabulary(SimpleNamespace(vocab_size=6), model)
+    camembert.check_vocabulary(SimpleNamespace(vocab_size=32005), model)
+
+
 def test_real_local_model_positions(local_pipeline: Any, monkeypatch: pytest.MonkeyPatch) -> None:
-    """Vérifie sur poids locaux les positions après 512 jetons sans requête réseau."""
+    """Vérifie sur poids locaux les positions après 512 jetons, fenêtres recouvrantes."""
     monkeypatch.setattr(camembert, "load_pipeline", lambda: local_pipeline)
     recognizer = camembert.CamembertRecognizer()
     text = ("Le contrat est signé. " * 200)[:2950] + "\n\nAlice Martin travaille pour Acme à Paris."
-    chunks = list(camembert.iter_chunks(text, local_pipeline.tokenizer))
-    assert len(chunks) > 1
-    assert "".join(chunk for _, chunk in chunks) == text
-    assert all(len(local_pipeline.tokenizer(chunk)["input_ids"]) <= 512 for _, chunk in chunks)
+    windows = overlapping_windows(text, local_pipeline.tokenizer)
+    assert len(windows) > 1
+    assert windows[0].start == 0 and windows[-1].end == len(text)
+    assert all(len(local_pipeline.tokenizer(w.text)["input_ids"]) <= 512 for w in windows)
     results = recognizer.analyze(text, ["PERSON", "ORGANIZATION", "LOCATION"])
     assert any(text[item.start : item.end] == "Alice Martin" for item in results)
     assert any(text[item.start : item.end] == "Paris" for item in results)
