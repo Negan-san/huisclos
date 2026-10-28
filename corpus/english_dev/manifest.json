@@ -1,0 +1,141 @@
+{
+  "conventions": {
+    "addresses": "Whole address, including unit, locality, postcode/state and line breaks.",
+    "case_numbers": "Private case references annotated; labels outside spans.",
+    "dates": "Birth dates only; ordinary event dates and public legal references excluded.",
+    "email": "Only example.com and example.org.",
+    "foreign_identifiers": "No SSN, UK NIN or invented foreign social-security entity type.",
+    "occurrences": "Every sensitive occurrence; no nested or overlapping annotations.",
+    "offsets": "Python Unicode characters, start inclusive, end exclusive; exact text slice.",
+    "organizations": "Attached legal form inside the span; public institutions excluded.",
+    "persons": "Titles outside spans; full names, initials and shortened repeats included."
+  },
+  "dataset_id": "english_dev_v1",
+  "document_count": 8,
+  "documents": [
+    {
+      "doc_type": "employment_correspondence",
+      "entity_count": 16,
+      "id": "en_dev_01",
+      "sha256": "dd21d632ba8f5fe23d975dd3a14ce7a712c1d8fbe2a7f45253f33002bd945f8f",
+      "source": "source/en_dev_01.md",
+      "word_count": 282
+    },
+    {
+      "doc_type": "employment_correspondence",
+      "entity_count": 16,
+      "id": "en_dev_02",
+      "sha256": "58bba7cfb555f13ce9a7fa6b83d7275851c4e2130d170b8874945d2e82b351f4",
+      "source": "source/en_dev_02.md",
+      "word_count": 303
+    },
+    {
+      "doc_type": "commercial_agreement",
+      "entity_count": 16,
+      "id": "en_dev_03",
+      "sha256": "c0edc90ff63d1c7869d66d5fd4304e9c8d273badc357f038db65734ed55a13f7",
+      "source": "source/en_dev_03.md",
+      "word_count": 292
+    },
+    {
+      "doc_type": "commercial_agreement",
+      "entity_count": 17,
+      "id": "en_dev_04",
+      "sha256": "d2c9a7ff19b4333fa899443dbbb8ecab686045184475209bf20148cce88642e4",
+      "source": "source/en_dev_04.md",
+      "word_count": 288
+    },
+    {
+      "doc_type": "case_memorandum",
+      "entity_count": 16,
+      "id": "en_dev_05",
+      "sha256": "75b7ec3e58de137f896a5c8a73040af5b8dfea35ff5dcb7e0fe3da210b576487",
+      "source": "source/en_dev_05.md",
+      "word_count": 301
+    },
+    {
+      "doc_type": "case_memorandum",
+      "entity_count": 17,
+      "id": "en_dev_06",
+      "sha256": "adf7748adb39eb9a127f844142c9602b2404b822dcbb5c5bed84217cf0f1c6ad",
+      "source": "source/en_dev_06.md",
+      "word_count": 292
+    },
+    {
+      "doc_type": "management_minutes",
+      "entity_count": 18,
+      "id": "en_dev_07",
+      "sha256": "8a51183763c70d56118c33f8739165e0ca9a297f7aa0e34b66ac3435e1b1c3bf",
+      "source": "source/en_dev_07.md",
+      "word_count": 299
+    },
+    {
+      "doc_type": "management_minutes",
+      "entity_count": 22,
+      "id": "en_dev_08",
+      "sha256": "2699e89087726058ab78635bdbfc2341823c81f7a1cc820438fcf5747a87295e",
+      "source": "source/en_dev_08.md",
+      "word_count": 300
+    }
+  ],
+  "entity_count": 138,
+  "entity_counts": {
+    "ADDRESS": 15,
+    "BIRTH_DATE": 5,
+    "CASE_NUMBER": 8,
+    "CUSTOM": 2,
+    "EMAIL": 21,
+    "IBAN": 1,
+    "NIR": 1,
+    "ORGANIZATION": 24,
+    "PERSON": 44,
+    "PHONE": 15,
+    "SIREN": 1,
+    "SIRET": 1
+  },
+  "fictional": true,
+  "formats_present": {
+    "addresses": [
+      "US street/unit/city/state/ZIP",
+      "UK street/city/postcode",
+      "French street/postcode/city"
+    ],
+    "birth_dates": [
+      "DD Month YYYY",
+      "Month DD, YYYY",
+      "DD/MM/YYYY",
+      "YYYY-MM-DD"
+    ],
+    "custom": [
+      "Labelled internal employee and supplier identifiers"
+    ],
+    "french_identifiers": [
+      "IBAN FR",
+      "NIR",
+      "SIREN",
+      "SIRET"
+    ],
+    "phones": [
+      "US +1 and domestic",
+      "UK +44 and domestic",
+      "French +33"
+    ],
+    "private_cases": [
+      "US civil docket style",
+      "UK alphanumeric case reference",
+      "French RG"
+    ]
+  },
+  "jsonl_sha256": "e8958f8ca5018d0f43935e34611985e5c56b00ca3a4a4dd495974ec8aeb34990",
+  "jurisdiction": "Language does not determine country: US, UK and French case contexts.",
+  "language": "en",
+  "licence": "CC-BY-4.0",
+  "limits": [
+    "One author; small fictional development set; no independent validation claim.",
+    "Builder validates syntax, offsets and known repeats, not semantic annotation exhaustiveness.",
+    "Formats present describe annotations, not a claim of detector support.",
+    "Synthetic identifiers and addresses may coincide accidentally; never contact or transact."
+  ],
+  "purpose": "Development and tuning before freeze; not blind validation.",
+  "split": "dev"
+}

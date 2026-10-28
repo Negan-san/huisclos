@@ -22,7 +22,7 @@ EN: dict[str, str] = {
     "import.paste.label": "Text to process",
     "import.paste.placeholder": "Paste the text of a document here.",
     "import.upload.label": "Choose a file (.txt, .docx or .pdf)",
-    "import.upload.note": "Text PDFs only, no scanned documents.",
+    "import.upload.note": "PDF text extraction only, without OCR. Check the extracted text.",
     "import.upload.loaded": "Loaded {name}.",
     "import.source.pasted": "Pasted text",
     "import.source.summary": "Source: {name}. {count} characters.",
@@ -85,6 +85,7 @@ EN: dict[str, str] = {
         "This text is too long (over 200,000 characters). Split it into parts."
     ),
     "import.error.empty": "There is no text to process. Paste a text or choose another file.",
+    "import.error.previous_kept": "This file was not loaded. The previous text is still shown.",
     "import.error.encoding": "The text could not be decoded. Save the file as UTF-8 and try again.",
     "import.error.docx_invalid": (
         "This Word file cannot be read. Open it in Word and save it again as .docx."
@@ -93,8 +94,8 @@ EN: dict[str, str] = {
         "This PDF is protected by a password. Remove the protection and upload it again."
     ),
     "import.error.pdf_no_text": (
-        "This PDF has no selectable text, so it is probably a scan. Scanned documents are not "
-        "supported."
+        "No usable text was extracted from any page of this PDF. It may be blank or contain "
+        "images only. OCR is not available. Use a text version or paste verified text."
     ),
     "import.error.pdf_invalid": "This PDF cannot be read. Export it again from its source.",
     "import.error.sample_missing": "The sample case file is missing from this installation.",
@@ -104,6 +105,42 @@ EN: dict[str, str] = {
     ),
     "import.warning.encoding_cp1252": (
         "This file is not in UTF-8. It was read as Windows-1252, so check the accented letters."
+    ),
+    "import.warning.pdf_empty_pages": (
+        "Document completeness is unknown. No text was extracted from PDF pages: {pages}. "
+        "They may be blank or contain content that this reader cannot extract. Check them "
+        "against the original; OCR is not available."
+    ),
+    "import.warning.pdf_short_pages": (
+        "Document completeness is unknown. Very little text was extracted from PDF pages: "
+        "{pages}. A short page can be legitimate; this does not prove it is a scan. "
+        "Check these pages against the original."
+    ),
+    "import.warning.docx_notes": (
+        "Partial Word extraction: footnotes or endnotes were found and are not extracted. "
+        "Copy any relevant text into the text to process."
+    ),
+    "import.warning.docx_comments": (
+        "Partial Word extraction: comments were found and are not extracted. Check them in "
+        "the original and copy any relevant text into the text to process."
+    ),
+    "import.warning.docx_text_boxes": (
+        "Partial Word extraction: text boxes were found and are not extracted. "
+        "Copy any relevant text into the text to process."
+    ),
+    "import.warning.docx_revisions": (
+        "Partial Word extraction: tracked changes were found. Revised passages are not "
+        "reliably extracted. Review the changes in a copy of the original, accept or reject "
+        "them, then import it again."
+    ),
+    "import.warning.docx_embedded_content": (
+        "Partial Word extraction: embedded content or content controls were found. Their "
+        "content is not reliably extracted. Check the original; linked attachments are not read."
+    ),
+    "import.warning.extraction_scope": (
+        "Only the extracted text shown here is processed. Missing content affects document "
+        "completeness; it is not silently included in the AI request. Review and "
+        "pseudonymize any text you add before sending it."
     ),
 }
 
@@ -127,9 +164,7 @@ FR: dict[str, str] = {
     "import.paste.label": "Texte à traiter",
     "import.paste.placeholder": "Collez ici le texte d'un document.",
     "import.upload.label": "Choisir un fichier (.txt, .docx ou .pdf)",
-    "import.upload.note": (
-        "PDF texte uniquement, les documents numérisés ne sont pas pris en charge."
-    ),
+    "import.upload.note": "PDF : texte extrait sans OCR. Vérifiez le résultat.",
     "import.upload.loaded": "Fichier {name} chargé.",
     "import.source.pasted": "Texte collé",
     "import.source.summary": "Source : {name}. {count} caractères.",
@@ -200,6 +235,7 @@ FR: dict[str, str] = {
         "Ce texte est trop long (plus de 200 000 caractères). Divisez-le en plusieurs parties."
     ),
     "import.error.empty": "Aucun texte à traiter. Collez un texte ou choisissez un autre fichier.",
+    "import.error.previous_kept": "Fichier non chargé. Le texte précédent reste affiché.",
     "import.error.encoding": (
         "Le texte n'a pas pu être décodé. Enregistrez le fichier en UTF-8 et réessayez."
     ),
@@ -210,8 +246,9 @@ FR: dict[str, str] = {
         "Ce PDF est protégé par un mot de passe. Retirez la protection et téléversez-le à nouveau."
     ),
     "import.error.pdf_no_text": (
-        "Ce PDF n'a pas de texte sélectionnable ; il s'agit probablement d'un document "
-        "numérisé. Les documents numérisés ne sont pas pris en charge."
+        "Aucun texte exploitable n'a été extrait des pages de ce PDF. Il peut être vide ou "
+        "contenir uniquement des images. L'OCR n'est pas disponible. Utilisez une version "
+        "texte ou collez un texte vérifié."
     ),
     "import.error.pdf_invalid": "Ce PDF est illisible. Exportez-le à nouveau depuis sa source.",
     "import.error.sample_missing": "Le fichier du cas d'exemple manque dans cette installation.",
@@ -222,5 +259,42 @@ FR: dict[str, str] = {
     "import.warning.encoding_cp1252": (
         "Ce fichier n'est pas en UTF-8. Il a été lu en Windows-1252 ; vérifiez les lettres "
         "accentuées."
+    ),
+    "import.warning.pdf_empty_pages": (
+        "La complétude du document est inconnue. Aucun texte extrait des pages PDF : {pages}. "
+        "Elles peuvent être vides ou contenir des éléments non extractibles par ce lecteur. "
+        "Comparez-les à l'original ; l'OCR n'est pas disponible."
+    ),
+    "import.warning.pdf_short_pages": (
+        "La complétude du document est inconnue. Très peu de texte extrait des pages PDF : "
+        "{pages}. Une page courte peut être légitime ; ce seuil ne prouve pas un scan. "
+        "Comparez ces pages à l'original."
+    ),
+    "import.warning.docx_notes": (
+        "Extraction Word partielle : des notes de bas de page ou de fin sont présentes et "
+        "ne sont pas extraites. Copiez les passages utiles dans le texte à traiter."
+    ),
+    "import.warning.docx_comments": (
+        "Extraction Word partielle : des commentaires sont présents et ne sont pas extraits. "
+        "Relisez-les dans l'original et copiez les passages utiles dans le texte à traiter."
+    ),
+    "import.warning.docx_text_boxes": (
+        "Extraction Word partielle : des zones de texte sont présentes et ne sont pas "
+        "extraites. Copiez les passages utiles dans le texte à traiter."
+    ),
+    "import.warning.docx_revisions": (
+        "Extraction Word partielle : des révisions sont présentes. Leur extraction n'est "
+        "pas fiable. Relisez-les dans une copie de l'original, acceptez-les ou rejetez-les, "
+        "puis importez cette copie."
+    ),
+    "import.warning.docx_embedded_content": (
+        "Extraction Word partielle : des contenus intégrés ou contrôles de contenu sont "
+        "présents. Leur extraction n'est pas fiable. Vérifiez l'original ; les pièces jointes "
+        "liées ne sont pas lues."
+    ),
+    "import.warning.extraction_scope": (
+        "Seul le texte extrait affiché ici est traité. Un contenu absent affecte la "
+        "complétude du document ; il n'est pas inclus dans la requête IA. Relisez et "
+        "pseudonymisez tout texte ajouté avant de l'envoyer."
     ),
 }
