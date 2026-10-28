@@ -14,7 +14,10 @@ EN: dict[str, str] = {
         " professional secrecy, a name masked by mistake is only a nuisance."
     ),
     "review.summary": "{count} detections are ready for review, grouped into {groups} entities.",
-    "review.counts.heading": "Counts",
+    "review.counts.heading": "By type",
+    "review.counts.types": "Types",
+    "review.counts.low": "Low confidence",
+    "review.counts.low.help": "Occurrences scored below {score}. Check them first.",
     "review.counts.masked": "Masked occurrences",
     "review.counts.rejected": "Rejected occurrences",
     "review.counts.groups": "Entities",
@@ -31,6 +34,8 @@ EN: dict[str, str] = {
     "review.table.nothing": "No entity of the selected types.",
     "review.filter.label": "Show only these types",
     "review.column.mask": "Mask",
+    "review.column.mask.help": "Uncheck to keep every occurrence of this entity in clear.",
+    "review.column.type.help": "The type sets the token, for example [PERSONNE_1].",
     "review.column.text": "Text",
     "review.column.type": "Type",
     "review.column.occurrences": "Occurrences",
@@ -101,7 +106,12 @@ FR: dict[str, str] = {
         " viole le secret professionnel ; un nom masqué par erreur est une gêne."
     ),
     "review.summary": "{count} détections à vérifier, regroupées en {groups} entités.",
-    "review.counts.heading": "Décomptes",
+    "review.counts.heading": "Par type",
+    "review.counts.types": "Types",
+    "review.counts.low": "Faible confiance",
+    "review.counts.low.help": (
+        "Occurrences dont le score est inférieur à {score}. À vérifier en premier."
+    ),
     "review.counts.masked": "Occurrences masquées",
     "review.counts.rejected": "Occurrences rejetées",
     "review.counts.groups": "Entités",
@@ -118,6 +128,10 @@ FR: dict[str, str] = {
     "review.table.nothing": "Aucune entité des types sélectionnés.",
     "review.filter.label": "Afficher uniquement ces types",
     "review.column.mask": "Masquer",
+    "review.column.mask.help": (
+        "Décochez pour laisser en clair toutes les occurrences de cette entité."
+    ),
+    "review.column.type.help": "Le type détermine le jeton, par exemple [PERSONNE_1].",
     "review.column.text": "Texte",
     "review.column.type": "Type",
     "review.column.occurrences": "Occurrences",

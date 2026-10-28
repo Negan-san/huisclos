@@ -31,6 +31,24 @@ EN: dict[str, str] = {
     "import.detect.no_types": "Select at least one type to detect in the sidebar.",
     "import.detect.note": "Detection is not repeated when the text and the settings are unchanged.",
     "import.privacy": "Processing happens on this computer. Nothing is sent anywhere.",
+    "import.privacy.title": "Stays on this computer",
+    "import.privacy.detail": (
+        "Only the pseudonymized text leaves, and only when you copy it into your AI tool in the"
+        " Restore step."
+    ),
+    "import.privacy.demo.title": "Public demo",
+    "import.privacy.demo": (
+        "On this demo, the text is processed by the demo server. Use fictitious data only."
+    ),
+    "import.card.title": "Your document",
+    "import.detects.title": "What HuisClos detects",
+    "import.detects.intro": (
+        "You review every value found before anything is replaced. These types are searched:"
+    ),
+    "import.detects.settings": "Change the types and the threshold in the sidebar.",
+    "import.detect.step.engine": "Preparing the detection engine.",
+    "import.detect.step.search": "Looking for names, companies, addresses and identifiers.",
+    "import.detect.done": "Detection complete.",
     "import.error.unsupported_type": (
         "This file type is not supported. Use a .txt, .docx or .pdf file."
     ),
@@ -96,6 +114,25 @@ FR: dict[str, str] = {
         "La détection n'est pas répétée si le texte et les réglages sont inchangés."
     ),
     "import.privacy": "Le traitement se fait sur cet ordinateur. Rien n'est envoyé à l'extérieur.",
+    "import.privacy.title": "Reste sur cet ordinateur",
+    "import.privacy.detail": (
+        "Seul le texte pseudonymisé sort, et seulement quand vous le copiez dans votre outil d'IA"
+        " à l'étape Restaurer."
+    ),
+    "import.privacy.demo.title": "Démonstration publique",
+    "import.privacy.demo": (
+        "Sur cette démonstration, le texte est traité par le serveur de démonstration. "
+        "Utilisez uniquement des données fictives."
+    ),
+    "import.card.title": "Votre document",
+    "import.detects.title": "Ce que HuisClos détecte",
+    "import.detects.intro": (
+        "Vous vérifiez chaque valeur trouvée avant tout remplacement. Types recherchés :"
+    ),
+    "import.detects.settings": "Modifiez les types et le seuil dans la barre latérale.",
+    "import.detect.step.engine": "Préparation du moteur de détection.",
+    "import.detect.step.search": "Recherche des noms, sociétés, adresses et identifiants.",
+    "import.detect.done": "Détection terminée.",
     "import.error.unsupported_type": (
         "Ce type de fichier n'est pas pris en charge. Utilisez un fichier .txt, .docx ou .pdf."
     ),

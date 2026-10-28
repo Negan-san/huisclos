@@ -19,18 +19,27 @@ Decisions = Mapping[tuple[int, int], bool]
 
 # Les styles sont écrits ici, et non dans style.css, pour que le composant reste lisible
 # même si la feuille de style n'a pas été injectée. Les couleurs viennent de la charte.
-_DOCUMENT_STYLE = "white-space:pre-wrap;overflow-wrap:anywhere;line-height:2.2"
+# L'interligne laisse la place au libellé de type ; box-decoration-break répète le fond et
+# le trait sur chaque ligne d'une mention coupée par un retour à la ligne.
+_DOCUMENT_STYLE = (
+    "white-space:pre-wrap;overflow-wrap:anywhere;line-height:2.2;font-size:0.9375rem;"
+    "color:var(--hc-ink,#1B1F24)"
+)
 _INK = "var(--hc-ink,#1B1F24)"
 _MUTED = "var(--hc-muted,#596270)"
-_MARK_STYLE = f"color:{_INK};padding:2px 4px;border-radius:4px"
+_MARK_STYLE = (
+    f"color:{_INK};padding:2px 4px;border-radius:4px;"
+    "box-decoration-break:clone;-webkit-box-decoration-break:clone"
+)
 _REJECTED_STYLE = (
-    f"background:var(--hc-surface,#F4F5F7);color:{_MUTED};"
-    "text-decoration:line-through;padding:2px 4px;border-radius:4px"
+    f"background:var(--hc-surface,#F1F3F6);color:{_MUTED};"
+    "text-decoration:line-through;padding:2px 4px;border-radius:4px;"
+    "box-decoration-break:clone;-webkit-box-decoration-break:clone"
 )
 # Le libellé est en petites capitales, plus petit que le texte, et ne porte jamais la
 # couleur seule : le type reste lisible en noir et blanc.
 _TAG_STYLE = (
-    "font-variant:small-caps;font-size:0.75em;font-weight:600;letter-spacing:0.05em;"
+    "font-variant:small-caps;font-size:0.6875em;font-weight:700;letter-spacing:0.06em;"
     "margin:0 8px 0 4px;color:{color}"
 )
 
@@ -61,12 +70,15 @@ def _entity_html(shown: str, detection: Detection, masked: bool) -> str:
             f'<mark class="hc-rejected" title="{title}" style="{_REJECTED_STYLE}">{escaped}</mark>'
             f'<span style="{_TAG_STYLE.format(color=_MUTED)}">{tag}</span>'
         )
-    color = html.escape(ENTITY_STYLES[kind].color, quote=True)
+    style = ENTITY_STYLES[kind]
+    color = html.escape(style.color, quote=True)
+    strong = html.escape(style.strong, quote=True)
     tag = html.escape(t(f"review.tag.{kind.value}"))
     return (
         f'<mark class="hc-hl-{kind.value}" title="{title}" '
-        f'style="background:{color};{_MARK_STYLE}">{escaped}</mark>'
-        f'<span style="{_TAG_STYLE.format(color=_INK)}">{tag}</span>'
+        f'style="background:{color};box-shadow:inset 0 -2px 0 {strong};{_MARK_STYLE}">'
+        f"{escaped}</mark>"
+        f'<span style="{_TAG_STYLE.format(color=strong)}">{tag}</span>'
     )
 
 

@@ -32,6 +32,7 @@
     --hc-space-6: 24px;
     --hc-space-8: 32px;
     --hc-space-10: 40px;
+    --hc-space-12: 48px;
 
     /* Rayons et ombres légères. */
     --hc-radius-sm: 4px;
@@ -52,10 +53,12 @@
         sans-serif;
 }
 
-/* Les icônes de Streamlit ont leur propre police : on ne les touche pas. */
-html,
-body,
-[class*="st-"]:not([data-testid="stIconMaterial"]) {
+/* La police du système est fixée par le thème (.streamlit/config.toml) ; seuls les blocs
+   HTML de HuisClos la reprennent ici. Les icônes gardent leur propre police. */
+.hc-brand,
+.hc-stepper,
+.hc-document,
+.hc-legend {
     font-family: var(--hc-font);
 }
 
@@ -74,6 +77,16 @@ body,
     max-width: 1200px;
     padding-top: calc(60px + var(--hc-space-6));
     padding-bottom: var(--hc-space-10);
+}
+
+/* Sur grand écran, des marges latérales plus étroites que celles de Streamlit laissent au
+   tableau de décision la place de ses huit colonnes. */
+@media (min-width: 641px) {
+    .block-container,
+    [data-testid="stMainBlockContainer"] {
+        padding-left: var(--hc-space-12);
+        padding-right: var(--hc-space-12);
+    }
 }
 
 /* Focus toujours visible au clavier, de la couleur d'accent. */
@@ -282,6 +295,20 @@ textarea:focus-visible,
     box-shadow: var(--hc-shadow-sm);
 }
 
+/* Titres de carte : plus petits que les titres de page, sans marge haute. */
+[class*="st-key-hc-card"] h3 {
+    padding-top: 0;
+    font-size: var(--hc-text-lg);
+}
+
+/* Texte surligné présenté comme une page de document : marges, interligne confortable. */
+.st-key-hc-document {
+    padding: var(--hc-space-6) var(--hc-space-8);
+    background: var(--hc-card);
+    border: 1px solid var(--hc-border);
+    border-radius: var(--hc-radius);
+}
+
 /* Indicateurs chiffrés en cartes. */
 [data-testid="stMetric"] {
     background: var(--hc-card);
@@ -293,6 +320,7 @@ textarea:focus-visible,
     color: var(--hc-muted);
     font-size: var(--hc-text-sm);
     font-weight: 600;
+    white-space: normal;
 }
 
 [data-testid="stMetricValue"] {
@@ -339,5 +367,23 @@ textarea:focus-visible,
 
     .hc-step-text {
         max-width: none;
+    }
+
+    /* Deux cartes d'indicateurs par ligne plutôt qu'une longue colonne. */
+    .st-key-hc-metrics [data-testid="stHorizontalBlock"] {
+        flex-flow: row wrap;
+    }
+
+    .st-key-hc-metrics [data-testid="stColumn"] {
+        flex: 1 1 calc(50% - 16px) !important;
+        min-width: calc(50% - 16px) !important;
+    }
+
+    [class*="st-key-hc-card"] {
+        padding: var(--hc-space-4);
+    }
+
+    .st-key-hc-document {
+        padding: var(--hc-space-4);
     }
 }

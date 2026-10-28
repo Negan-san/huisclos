@@ -30,10 +30,15 @@ def literal_markdown(value: str) -> str:
 
 @dataclass(frozen=True)
 class EntityStyle:
-    """Couleur de surlignage d'un type d'entité et clé du texte de son libellé."""
+    """Couleurs d'un type d'entité et clé du texte de son libellé.
+
+    color est le fond doux du surlignage ; strong, la couleur franche du trait sous la
+    mention, de la pastille de légende et du libellé de type écrit à côté de la mention.
+    """
 
     label_key: str
     color: str
+    strong: str
 
     @property
     def label(self) -> str:
@@ -42,21 +47,23 @@ class EntityStyle:
 
 
 # Un seul dictionnaire pour toute l'interface. Le texte du surlignage est #1B1F24 : chaque
-# fond ci-dessous donne un contraste d'au moins 4,5:1 avec lui (vérifié par un test).
+# fond doux donne un contraste d'au moins 4,5:1 avec lui, et chaque couleur franche un
+# contraste d'au moins 4,5:1 sur fond blanc, car elle sert aussi de couleur de texte
+# (vérifié par des tests).
 ENTITY_STYLES: dict[EntityType, EntityStyle] = {
-    EntityType.PERSON: EntityStyle("entity.PERSON", "#DCE8F7"),
-    EntityType.ORGANIZATION: EntityStyle("entity.ORGANIZATION", "#E3F1E7"),
-    EntityType.ADDRESS: EntityStyle("entity.ADDRESS", "#F6EBD9"),
-    EntityType.EMAIL: EntityStyle("entity.EMAIL", "#DDF0F0"),
-    EntityType.PHONE: EntityStyle("entity.PHONE", "#FBE4E0"),
-    EntityType.IBAN: EntityStyle("entity.IBAN", "#FFF2C2"),
-    EntityType.NIR: EntityStyle("entity.NIR", "#F9D9D9"),
-    EntityType.SIREN: EntityStyle("entity.SIREN", "#E6E6E6"),
-    EntityType.SIRET: EntityStyle("entity.SIRET", "#E6E6E6"),
-    EntityType.BIRTH_DATE: EntityStyle("entity.BIRTH_DATE", "#E0EEF0"),
-    EntityType.CASE_NUMBER: EntityStyle("entity.CASE_NUMBER", "#EAE6DF"),
-    EntityType.LOCATION: EntityStyle("entity.LOCATION", "#E8F0D9"),
-    EntityType.CUSTOM: EntityStyle("entity.CUSTOM", "#EEEEEE"),
+    EntityType.PERSON: EntityStyle("entity.PERSON", "#DCE8F7", "#2B5A8E"),
+    EntityType.ORGANIZATION: EntityStyle("entity.ORGANIZATION", "#E3F1E7", "#2E6B47"),
+    EntityType.ADDRESS: EntityStyle("entity.ADDRESS", "#F6EBD9", "#83561A"),
+    EntityType.EMAIL: EntityStyle("entity.EMAIL", "#DDF0F0", "#1D6767"),
+    EntityType.PHONE: EntityStyle("entity.PHONE", "#FBE4E0", "#A23B2A"),
+    EntityType.IBAN: EntityStyle("entity.IBAN", "#FFF2C2", "#765900"),
+    EntityType.NIR: EntityStyle("entity.NIR", "#F9D9D9", "#9B2C3C"),
+    EntityType.SIREN: EntityStyle("entity.SIREN", "#E6E6E6", "#4A5260"),
+    EntityType.SIRET: EntityStyle("entity.SIRET", "#E6E6E6", "#4A5260"),
+    EntityType.BIRTH_DATE: EntityStyle("entity.BIRTH_DATE", "#E0EEF0", "#2F6670"),
+    EntityType.CASE_NUMBER: EntityStyle("entity.CASE_NUMBER", "#EAE6DF", "#5E5446"),
+    EntityType.LOCATION: EntityStyle("entity.LOCATION", "#E8F0D9", "#4A6620"),
+    EntityType.CUSTOM: EntityStyle("entity.CUSTOM", "#EEEEEE", "#555B66"),
 }
 
 
@@ -68,15 +75,19 @@ def entity_label(entity_type: EntityType) -> str:
 def entity_css() -> str:
     """Construit les règles CSS de surlignage à partir de ENTITY_STYLES, sans les dupliquer."""
     return "\n".join(
-        f".hc-hl-{kind.value} {{ background: {style.color}; }}"
+        f".hc-hl-{kind.value} {{ background: {style.color}; }}\n"
+        f".hc-hl-{kind.value} .hc-swatch {{ background: {style.strong}; }}"
         for kind, style in ENTITY_STYLES.items()
     )
 
 
 def entity_badge_html(entity_type: EntityType) -> str:
-    """Renvoie une pastille HTML : fond de la couleur du type et libellé en texte."""
+    """Renvoie une pastille HTML : fond doux du type, point de couleur et libellé en texte."""
     label = html.escape(entity_label(entity_type))
-    return f'<span class="hc-badge hc-hl-{entity_type.value}">{label}</span>'
+    return (
+        f'<span class="hc-badge hc-hl-{entity_type.value}">'
+        f'<span class="hc-swatch" aria-hidden="true"></span>{label}</span>'
+    )
 
 
 def inject_style() -> None:

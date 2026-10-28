@@ -13,6 +13,8 @@ import pytest
 from streamlit.testing.v1 import AppTest
 
 from app import i18n
+from app.ui_common import ENTITY_STYLES
+from huisclos.models import EntityType
 
 ROOT = Path(__file__).resolve().parent.parent
 APP_PATH = str(ROOT / "streamlit_app.py")
@@ -66,6 +68,16 @@ def test_text_tokens_reach_aa_contrast(text: str, background: str) -> None:
 @pytest.mark.parametrize(("component", "background"), COMPONENT_PAIRS)
 def test_component_tokens_reach_three_to_one(component: str, background: str) -> None:
     assert contrast(TOKENS[component], TOKENS[background]) >= 3
+
+
+@pytest.mark.parametrize("kind", list(EntityType))
+def test_entity_colors_are_readable_on_the_document_page(kind: EntityType) -> None:
+    style = ENTITY_STYLES[kind]
+    # Texte de la mention sur son fond doux, libellé de type de couleur franche sur la page
+    # blanche, trait franc visible sur le fond doux.
+    assert contrast(TOKENS["ink"], style.color) >= 4.5
+    assert contrast(style.strong, TOKENS["card"]) >= 4.5
+    assert contrast(style.strong, style.color) >= 3
 
 
 def test_theme_uses_the_same_colors_as_the_tokens() -> None:

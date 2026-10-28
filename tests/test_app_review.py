@@ -13,7 +13,8 @@ import pytest
 from streamlit.testing.v1 import AppTest
 
 from app import i18n
-from app.steps.review_step import KEY_TABLE_VERSION, TABLE_KEY_PREFIX, find_occurrences
+from app.steps.review_decisions import find_occurrences
+from app.steps.review_step import KEY_TABLE_VERSION, TABLE_KEY_PREFIX
 from huisclos.models import Detection, EntityType, PseudonymizationResult, Source
 from huisclos.pseudonymize.grouping import group_mentions
 
@@ -114,9 +115,11 @@ def current_step(app: AppTest) -> str:
 def test_review_screen_shows_counts_table_and_highlighted_text() -> None:
     app = review_app()
     assert metrics(app) == {
+        "Entities": "14",
         "Masked occurrences": "18",
         "Rejected occurrences": "0",
-        "Entities": "14",
+        "Types": "11",
+        "Low confidence": "2",
     }
     rows = table_rows(app)
     assert len(rows) == 14
@@ -149,6 +152,35 @@ def test_review_screen_shows_counts_table_and_highlighted_text() -> None:
     assert "hc-hl-IBAN" in legend
     assert "hc-hl-CUSTOM" not in legend
     assert "hc-hl-LOCATION" not in legend
+
+
+def test_indicator_cards_are_bordered_in_a_fixed_order_with_icons() -> None:
+    app = review_app()
+    cards = list(app.metric)
+    assert [card.label for card in cards] == [
+        "Entities",
+        "Masked occurrences",
+        "Rejected occurrences",
+        "Types",
+        "Low confidence",
+    ]
+    assert all(card.proto.show_border for card in cards)
+    assert all(card.proto.icon.startswith(":material/") for card in cards)
+    assert "below 0.75" in cards[-1].proto.help
+    detections = app.session_state["detections"]
+    assert sum(d.score < 0.75 for d in detections) == 2
+
+
+def test_indicator_cards_follow_the_decisions() -> None:
+    app = review_app()
+    app = edit_row(app, "Pierre VERNOLAC", Mask=False)
+    assert metrics(app)["Masked occurrences"] == "15"
+    assert metrics(app)["Rejected occurrences"] == "3"
+    assert metrics(app)["Entities"] == "14"
+    app = add_value(app, "4471-B")
+    assert metrics(app)["Entities"] == "15"
+    assert metrics(app)["Types"] == "12"
+    assert metrics(app)["Low confidence"] == "2"
 
 
 def test_unchecking_a_group_removes_it_from_the_pseudonymization() -> None:

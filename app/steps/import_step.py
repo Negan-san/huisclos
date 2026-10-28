@@ -28,10 +28,11 @@ from app.state import (
     clear_results,
     go_to,
 )
-from app.ui_common import literal_markdown
+from app.ui_common import entity_badge_html, is_public_demo, literal_markdown
 from huisclos.config import DetectionConfig
 from huisclos.detection.pipeline import detect
 from huisclos.io.readers import DocumentReadError, read_document, read_pasted_text
+from huisclos.models import EntityType
 
 SAMPLE_PATH = Path(__file__).resolve().parents[2] / "data" / "samples" / "demo_case_fr.txt"
 UPLOAD_TYPES = ["txt", "docx", "pdf"]
@@ -135,11 +136,11 @@ def _render_source_feedback() -> None:
         st.warning(t(f"import.warning.{warning}"))
     text = st.session_state[KEY_SOURCE_TEXT]
     if not text.strip():
-        st.info(t("import.empty"))
+        st.info(t("import.empty"), icon=":material/upload_file:")
         return
     name = st.session_state[KEY_SOURCE_NAME]
     if name == SAMPLE_PATH.name:
-        st.info(t("import.sample.notice"))
+        st.info(t("import.sample.notice"), icon=":material/science:")
     st.caption(t("import.source.summary", name=literal_markdown(name), count=f"{len(text):,}"))
 
 
@@ -161,9 +162,14 @@ def _run_detection(config: DetectionConfig) -> None:
     )
     if not unchanged:
         try:
-            with st.spinner(t("import.detect.spinner")):
+            # Le premier passage charge le modèle de langue (plusieurs secondes) : l'état
+            # détaillé dit ce qui se passe plutôt qu'une simple roue.
+            with st.status(t("import.detect.spinner")) as status:
+                status.write(t("import.detect.step.engine"))
                 prepare_engine(config)
+                status.write(t("import.detect.step.search"))
                 detections = detect(text, config)
+                status.update(label=t("import.detect.done"), state="complete")
         except RuntimeError:
             st.error(t("import.error.engine"))
             return
@@ -176,22 +182,60 @@ def _run_detection(config: DetectionConfig) -> None:
     st.rerun()
 
 
+def _render_document_card(config: DetectionConfig) -> None:
+    """Carte de saisie : exemple, onglets de saisie, retour de lecture et bouton de détection."""
+    with st.container(key="hc-card-import"):
+        with st.container(horizontal=True, vertical_alignment="center"):
+            st.subheader(t("import.card.title"), anchor=False)
+            st.button(
+                t("import.sample.button"),
+                key="load_sample",
+                on_click=_on_sample,
+                icon=":material/description:",
+            )
+        _render_tabs()
+        _render_source_feedback()
+        if not config.enabled_types:
+            st.warning(t("import.detect.no_types"))
+        if st.button(
+            t("import.detect.button"),
+            key="detect",
+            type="primary",
+            icon=":material/manage_search:",
+            disabled=not config.enabled_types,
+        ):
+            _run_detection(config)
+        st.caption(t("import.detect.note"))
+
+
+def _render_aside(config: DetectionConfig) -> None:
+    """Panneau de droite : types recherchés et garantie de confidentialité."""
+    with st.container(key="hc-card-detects"):
+        st.subheader(t("import.detects.title"), anchor=False)
+        st.caption(t("import.detects.intro"))
+        badges = "".join(
+            entity_badge_html(kind) for kind in EntityType if kind in config.enabled_types
+        )
+        st.html(f'<div class="hc-legend">{badges}</div>')
+        st.caption(t("import.detects.settings"))
+    # Sur la démonstration publique, le texte est traité par le serveur de démonstration :
+    # l'encadré ne doit pas promettre un traitement local.
+    demo = is_public_demo()
+    with st.container(key="hc-card-privacy"):
+        icon = ":material/science:" if demo else ":material/lock:"
+        title = t("import.privacy.demo.title" if demo else "import.privacy.title")
+        st.markdown(f"{icon} **{title}**")
+        st.markdown(t("import.privacy.demo" if demo else "import.privacy"))
+        st.caption(t("import.privacy.detail"))
+
+
 def render() -> None:
-    """Affiche l'étape Import."""
-    st.header(t("import.title"))
+    """Affiche l'étape Import : saisie à gauche, explications à droite."""
+    st.header(t("import.title"), anchor=False)
     st.markdown(t("import.intro"))
-    st.button(t("import.sample.button"), key="load_sample", on_click=_on_sample)
-    _render_tabs()
-    _render_source_feedback()
     config = build_config()
-    if not config.enabled_types:
-        st.warning(t("import.detect.no_types"))
-    if st.button(
-        t("import.detect.button"),
-        key="detect",
-        type="primary",
-        disabled=not config.enabled_types,
-    ):
-        _run_detection(config)
-    st.caption(t("import.detect.note"))
-    st.caption(t("import.privacy"))
+    main, aside = st.columns([2, 1], gap="medium")
+    with main:
+        _render_document_card(config)
+    with aside:
+        _render_aside(config)
