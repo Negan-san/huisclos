@@ -1,8 +1,9 @@
 """Point d'entrée de l'application HuisClos.
 
 Ajoute la racine du dépôt et src/ au chemin d'import, charge la feuille de style locale,
-affiche l'en-tête et la barre latérale, puis lance la navigation entre les trois pages :
-Pseudonymize (le parcours Import, Review, Restore), Evaluation et Method & limits.
+affiche l'en-tête et la barre latérale, puis lance la navigation entre deux pages visibles,
+Pseudonymize (le parcours Import, Review, Restore) et Method & limits, et une page masquée,
+Evaluation, ouverte par un lien en bas de Method & limits.
 """
 
 import sys
@@ -45,6 +46,9 @@ def main() -> None:
             title=t("nav.evaluation"),
             icon=":material/monitoring:",
             url_path="evaluation",
+            # Résultats chiffrés destinés à un lecteur technique : hors de la barre de
+            # navigation, la page reste ouverte par le lien de Method & limits.
+            visibility="hidden",
         ),
         st.Page(
             "app/pages/method.py",

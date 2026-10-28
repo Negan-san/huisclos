@@ -1,4 +1,4 @@
-"""Éléments communs de la charte : feuille de style, en-tête, bandeau de démo, étapes, types.
+"""Éléments communs de la charte : feuille de style, en-tête, ligne de démo, étapes, types.
 
 Entrées : app/assets/style.css, les textes de app.i18n et l'état de session.
 Sorties : fonctions d'affichage appelées par streamlit_app.py et par les pages, et le
@@ -116,7 +116,7 @@ def is_public_demo() -> bool:
 
 
 def render_header(hero: bool = False) -> None:
-    """Affiche le bandeau de démo éventuel puis l'en-tête de marque.
+    """Affiche la ligne de démonstration éventuelle puis l'en-tête de marque.
 
     À gauche, le logo, le nom et l'accroche ; à droite, la pastille "Local processing" (icône
     de cadenas) et la mention juridique. La pastille rappelle la garantie principale de l'outil
@@ -125,7 +125,7 @@ def render_header(hero: bool = False) -> None:
     """
     demo = is_public_demo()
     if demo:
-        st.warning(t("demo.banner"), icon=":material/science:")
+        st.html(demo_strip_html())
     with st.container(key="hc-header", horizontal=True, vertical_alignment="center"):
         # Un seul bloc HTML pour le logo, le nom et l'accroche : deux composants empilés dans
         # une rangée se chevauchent, car Streamlit réserve à un titre moins que sa hauteur.
@@ -138,6 +138,16 @@ def render_header(hero: bool = False) -> None:
             else:
                 st.badge(t("app.local_badge"), icon=":material/lock:", color="primary")
             st.caption(t("app.legal_note"))
+
+
+def demo_strip_html() -> str:
+    """Ligne fine et discrète de la démonstration publique, au-dessus de l'en-tête.
+
+    Elle remplace l'ancien bandeau d'alerte, trop haut, qui repoussait le logo et la
+    description. Le message reste écrit en entier et porte role="note" ; la pastille
+    "Public demo" de l'en-tête répète l'information sur chaque page.
+    """
+    return f'<p class="hc-demo-strip" role="note">{html.escape(t("demo.banner"))}</p>'
 
 
 def _brand_html(hero: bool) -> str:

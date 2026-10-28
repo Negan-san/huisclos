@@ -8,7 +8,10 @@ Place dans le pipeline : lu par app.i18n, qui fusionne les dictionnaires de tous
 EN: dict[str, str] = {
     "method.title": "Method & limits",
     "method.intro": (
-        "How HuisClos protects a client file, what it cannot guarantee, and the rules behind it."
+        "This page explains, in plain words, how HuisClos protects a client file before you "
+        "use an AI tool: what happens at each step, which technologies do the work, what "
+        "never leaves your computer, the legal rules behind the tool, and what it cannot "
+        "guarantee."
     ),
     "method.diagram.title": "Pipeline",
     "method.diagram.alt": (
@@ -29,27 +32,39 @@ EN: dict[str, str] = {
     "method.diagram.remote": "Outside",
     "method.how.title": "How it works",
     "method.how.1": (
-        "**1. Read.** The document is read on this computer: pasted text, DOCX or text PDF."
+        "**1. Import.** You paste the text or open a file: Word (DOCX), PDF that contains "
+        "text, or plain text. The file is read on this computer, by HuisClos itself. You "
+        "can also load a fictitious sample case to try the tool."
     ),
     "method.how.2": (
-        "**2. Detect.** Rules and a French language model find names, companies, addresses, "
-        "identifiers and dates."
+        "**2. Detect.** HuisClos searches the text for names of persons and companies, "
+        "addresses, email addresses, phone numbers, bank and social security numbers, "
+        "company numbers, birth dates and case numbers. Rules find what has a fixed shape; a "
+        "language model finds names from the context of the sentence. Each detection "
+        "receives a confidence score."
     ),
     "method.how.3": (
-        "**3. Review.** You accept, reject or add detections. Nothing is replaced without your"
-        " decision."
+        "**3. Review.** Every detection is highlighted in the text with its color and its "
+        "type written next to it. You keep, reject or add values, including a value the tool "
+        "missed. Nothing is replaced without your decision: the tool proposes, you decide."
     ),
     "method.how.4": (
-        "**4. Pseudonymize.** Each person or company gets a stable token such as "
-        "`[PERSONNE_1]`. The mapping table stays on this computer."
+        "**4. Pseudonymize.** Each validated value is replaced by a token such as "
+        "`[PERSONNE_1]`. The same person keeps the same token in the whole document, even "
+        "when the name is written in capitals or in a shorter form. HuisClos builds the "
+        "mapping table that links each token to its real value; it stays on this computer."
     ),
     "method.how.5": (
-        "**5. Ask the AI.** You send only the pseudonymized text to the AI tool of your "
-        "choice. The mapping table is never sent."
+        "**5. Ask the AI.** You write your question and HuisClos assembles the message: the "
+        "pseudonymized text, then your instruction. A final check searches it for any real "
+        "value left in clear. You then copy the message into the AI tool of your choice, or "
+        "send it to Mistral if configured. The mapping table is never sent."
     ),
     "method.how.6": (
-        "**6. Restore.** The mapping table puts the real values back into the answer of the AI"
-        " tool."
+        "**6. Restore.** You paste the answer of the AI tool. HuisClos puts each real value "
+        "back in place of its token, even when the AI tool changed its case or spacing, and "
+        "lists the tokens it does not know. You can download the restored text as a text or "
+        "Word file."
     ),
     "method.hybrid.title": "Why hybrid AI",
     "method.hybrid.rules": (
@@ -105,7 +120,7 @@ EN: dict[str, str] = {
     "method.limits.errors": (
         "**Detection errors.** No detector finds everything. A missed name is a breach of "
         "secrecy. Read the Review step carefully and check the pseudonymized text before you "
-        "send it anywhere. The Evaluation page reports the measured recall."
+        'send it anywhere. The section "How we tested it" below gives the measured results.'
     ),
     "method.limits.tokens": (
         "**Tokens altered by the AI tool.** The AI tool may rewrite, translate or drop a "
@@ -117,34 +132,16 @@ EN: dict[str, str] = {
         " text passes through the machine of the host. To process real client files, install "
         "HuisClos on your computer (see the user guide)."
     ),
-    "method.languages.title": "Document languages",
-    "method.languages.supported": (
-        "**French and English documents.** You choose the language of the document in the "
-        "sidebar. It selects the rules and the local language model (spaCy French or English). "
-        "It is separate from the interface language and from the token style; a language is "
-        "not a country or a court system."
-    ),
-    "method.languages.profiles": (
-        "**Profiles.** Standard uses rules, spaCy and propagation in both languages. "
-        "Enhanced adds CamemBERT for French or GLiNER for English, in a local "
-        "installation only. Models are never downloaded by the application. Both "
-        "Enhanced profiles remain experimental; after gate G8, Enhanced English is not "
-        "recommended because its precision loss exceeded the pre-registered margin."
-    ),
-    "method.languages.limits": (
-        "**Limits.** Published evaluation tables remain historical French measures. "
-        "English uses a small spaCy model; local dev comparisons are documented in "
-        "LOCAL_MODELS.md and do not validate generalisation. Gate G8 measured English "
-        "once on a small fictional blind set, with a NO-GO verdict. Review every result."
-    ),
     "method.disclaimer": "Decision-support tool, not legal advice.",
 }
 
 FR: dict[str, str] = {
     "method.title": "Méthode et limites",
     "method.intro": (
-        "Comment HuisClos protège un dossier client, ce qu'il ne peut pas garantir et les "
-        "règles qui le guident."
+        "Cette page explique simplement comment HuisClos protège un dossier client avant "
+        "l'utilisation d'un outil d'IA : ce qui se passe à chaque étape, quelles "
+        "technologies font le travail, ce qui ne quitte jamais votre ordinateur, les règles "
+        "juridiques qui guident l'outil et ce qu'il ne peut pas garantir."
     ),
     "method.diagram.title": "Pipeline",
     "method.diagram.alt": (
@@ -165,27 +162,42 @@ FR: dict[str, str] = {
     "method.diagram.remote": "À l'extérieur",
     "method.how.title": "Fonctionnement",
     "method.how.1": (
-        "**1. Lire.** Le document est lu sur cet ordinateur : texte collé, DOCX ou PDF texte."
+        "**1. Importer.** Vous collez le texte ou ouvrez un fichier : Word (DOCX), PDF "
+        "contenant du texte ou texte brut. Le fichier est lu sur cet ordinateur, par HuisClos "
+        "lui-même. Vous pouvez aussi charger un cas fictif pour essayer l'outil."
     ),
     "method.how.2": (
-        "**2. Détecter.** Des règles et un modèle de langue française repèrent les noms, "
-        "sociétés, adresses, identifiants et dates."
+        "**2. Détecter.** HuisClos cherche dans le texte les noms de personnes et de "
+        "sociétés, les adresses, courriels, téléphones, numéros bancaires et de sécurité "
+        "sociale, numéros d'entreprise, dates de naissance et numéros de dossier. Des règles "
+        "trouvent ce qui a une forme fixe ; un modèle de langue trouve les noms d'après le "
+        "contexte de la phrase. Chaque détection reçoit un score de confiance."
     ),
     "method.how.3": (
-        "**3. Vérifier.** Vous acceptez, rejetez ou ajoutez des détections. Rien n'est "
-        "remplacé sans votre décision."
+        "**3. Vérifier.** Chaque détection est surlignée dans le texte avec sa couleur et "
+        "son type écrit à côté. Vous gardez, rejetez ou ajoutez des valeurs, y compris une "
+        "valeur oubliée par l'outil. Rien n'est remplacé sans votre décision : l'outil "
+        "propose, vous décidez."
     ),
     "method.how.4": (
-        "**4. Pseudonymiser.** Chaque personne ou société reçoit un jeton stable comme "
-        "`[PERSONNE_1]`. La table de correspondance reste sur cet ordinateur."
+        "**4. Pseudonymiser.** Chaque valeur validée est remplacée par un jeton comme "
+        "`[PERSONNE_1]`. Une même personne garde le même jeton dans tout le document, même "
+        "écrite en majuscules ou sous une forme courte. HuisClos construit la table de "
+        "correspondance qui relie chaque jeton à sa vraie valeur ; elle reste sur cet "
+        "ordinateur."
     ),
     "method.how.5": (
-        "**5. Interroger l'IA.** Vous envoyez uniquement le texte pseudonymisé à l'outil d'IA "
-        "de votre choix. La table de correspondance n'est jamais envoyée."
+        "**5. Interroger l'IA.** Vous écrivez votre question et HuisClos compose le message "
+        ": le texte pseudonymisé, puis votre consigne. Un contrôle final y cherche toute "
+        "vraie valeur restée en clair. Vous copiez ensuite le message dans l'outil d'IA de "
+        "votre choix, ou l'envoyez à Mistral s'il est configuré. La table de correspondance "
+        "n'est jamais envoyée."
     ),
     "method.how.6": (
-        "**6. Restaurer.** La table de correspondance remet les vraies valeurs dans la réponse"
-        " de l'outil d'IA."
+        "**6. Restaurer.** Vous collez la réponse de l'outil d'IA. HuisClos remet chaque "
+        "vraie valeur à la place de son jeton, même si l'outil d'IA en a changé la casse ou "
+        "les espaces, et liste les jetons qu'il ne connaît pas. Vous pouvez télécharger le "
+        "texte restauré en fichier texte ou Word."
     ),
     "method.hybrid.title": "Pourquoi une IA hybride",
     "method.hybrid.rules": (
@@ -243,9 +255,10 @@ FR: dict[str, str] = {
         "d'identifier la personne. Le texte pseudonymisé reste une donnée personnelle."
     ),
     "method.limits.errors": (
-        "**Erreurs de détection.** Aucun détecteur ne trouve tout. Un nom oublié constitue une"
-        " violation du secret. Relisez attentivement l'étape Vérifier et contrôlez le texte "
-        "pseudonymisé avant tout envoi. La page Évaluation présente le rappel mesuré."
+        "**Erreurs de détection.** Aucun détecteur ne trouve tout. Un nom oublié constitue "
+        "une violation du secret. Relisez attentivement l'étape Vérifier et contrôlez le "
+        'texte pseudonymisé avant tout envoi. La section "Comment nous l\'avons testé" '
+        "ci-dessous donne les résultats mesurés."
     ),
     "method.limits.tokens": (
         "**Jetons modifiés par l'outil d'IA.** L'outil d'IA peut réécrire, traduire ou "
@@ -258,29 +271,6 @@ FR: dict[str, str] = {
         "fictives. Sur un serveur hébergé, le texte passe par la machine de l'hébergeur. Pour "
         "traiter de vrais dossiers clients, installez HuisClos sur votre ordinateur (voir le "
         "guide utilisateur)."
-    ),
-    "method.languages.title": "Langues des documents",
-    "method.languages.supported": (
-        "**Documents français et anglais.** Vous choisissez la langue du document dans la "
-        "barre latérale. Elle choisit les règles et le modèle de langue local (spaCy français "
-        "ou anglais). Elle est distincte de la langue de l'interface et du style des jetons ; "
-        "une langue n'est ni un pays ni un système judiciaire."
-    ),
-    "method.languages.profiles": (
-        "**Profils.** Standard associe r\u00e8gles, spaCy et propagation dans les deux "
-        "langues. Le profil renforc\u00e9 ajoute CamemBERT en fran\u00e7ais ou GLiNER en "
-        "anglais, en installation locale seulement. Aucun mod\u00e8le n'est "
-        "t\u00e9l\u00e9charg\u00e9 par "
-        "l'application. Les deux profils renforc\u00e9s restent exp\u00e9rimentaux ; "
-        "apr\u00e8s G8, le profil renforc\u00e9 anglais n'est pas recommand\u00e9, car sa "
-        "perte de pr\u00e9cision d\u00e9passe la marge pr\u00e9enregistr\u00e9e."
-    ),
-    "method.languages.limits": (
-        "**Limites.** Les tableaux publi\u00e9s restent des mesures fran\u00e7aises "
-        "historiques. L'anglais utilise un petit mod\u00e8le spaCy ; les comparaisons dev "
-        "locales d\u00e9crites dans LOCAL_MODELS.md ne valident pas la g\u00e9n\u00e9ralisation. "
-        "G8 a mesur\u00e9 l'anglais une fois sur un petit lot aveugle fictif, avec un verdict "
-        "NO-GO. Relisez chaque r\u00e9sultat."
     ),
     "method.disclaimer": "Outil d'aide à la décision, sans valeur de conseil juridique.",
 }

@@ -14,6 +14,13 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 22:15 | FIX6 | Evaluation hors navigation, Method & limits détaillée, ligne de démo fine | Claude Code, Opus 5.5
+- Fait : page Evaluation retirée de la barre (visibility="hidden"), ouverte par le lien "See the detailed results" en bas de Method & limits. Method & limits réécrite pour un lecteur sans formation technique : quinze sections (résumé, schéma et lecture, exemple commenté fictif, étapes détaillées, données sortantes, IA hybride, langues, technologies, humain, types, lexique, droit, limites, bonnes pratiques, méthode de test). Textes EN/FR répartis dans method.py, method_guide.py et method_glossary.py. Bandeau "Public demo" remplacé par une ligne fine (hc-demo-strip). USER_GUIDE et DEPLOYMENT alignés.
+- Tests : tests/test_method_page.py (ordre des sections, exemple sans nom réel envoyé, technologies, lexique, page masquée et lien, version française) ; tests de la ligne de démo adaptés. Suite complète 1747 passed après réduction d'une ligne de style.css (limite stricte < 400 de test_gate7) ; Ruff check/format et style conformes (15 avertissements connus). Rendu vérifié par capture Edge headless, serveur arrêté.
+- Décisions : D-FIX6-1.
+- Reste et risques : captures du guide (06_evaluation.png) inchangées ; les chiffres de la section de test reprennent D-G8R2-1 sans nouvelle mesure.
+- Suite : publication demandée par l'utilisateur (main en avance rapide, push main et dev, sans tag) ; S61, script et storyboard.
+
 ### 2026-10-28 21:50 | FIX5 | Logo, en-tête d'accueil et levée de deux réserves de R8 | Claude Code, Opus 5.5
 - Fait : logo app/assets/logo.svg (porte fermée et trou de serrure, couleurs de la charte), icône d'onglet, st.logo et en-tête ; en-tête d'accueil (logo, nom, accroche, description EN/FR) à l'étape Import de la première page, en-tête compact ailleurs. Page Evaluation : phrase "pending G8" remplacée. Contrôle de la consigne : verbe de consigne seul en tête de phrase vu comme un nom par un modèle écarté ("Summarise") ; CHECK_VERSION outbound-2. Feuille de style sans lignes vides pour rester sous 400 lignes. Guide utilisateur complété.
 - Tests : nouveaux tests du filtre (cas pièges : règle, table, hors tête de phrase, nom plus long, détection anglaise réelle) et de l'en-tête (logo local, accueil puis en-tête compact). Suite complète sous garde FIX3R, Ruff check/format, style et diff conformes. Rendu vérifié en local par capture Edge headless (bureau et 390 px), serveur arrêté.

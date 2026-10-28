@@ -1,8 +1,7 @@
 /* Charte HuisClos : système de design à jetons (couleurs, espacements multiples de 4 px,
-   rayons, ombres légères, échelle typographique). Polices du système, aucun dégradé,
-   aucune ressource externe. Les couleurs de surlignage par type sont ajoutées par
-   app/ui_common.py à partir de ENTITY_STYLES. Le thème de .streamlit/config.toml reprend
-   les mêmes valeurs pour les composants natifs. */
+   rayons, ombres légères, échelle typographique). Polices du système, aucun dégradé ni
+   ressource externe. app/ui_common.py ajoute les couleurs de surlignage (ENTITY_STYLES) ;
+   .streamlit/config.toml reprend les mêmes valeurs pour les composants natifs. */
 :root {
     /* Couleurs : un bleu marine principal, un neutre, un seul accent et trois états. */
     --hc-ink: #1B1F24;
@@ -90,6 +89,15 @@ textarea:focus-visible,
 [tabindex]:focus-visible {
     outline: 2px solid var(--hc-accent);
     outline-offset: 2px;
+}
+/* Ligne de la démonstration publique : fine et discrète, pour laisser la place au logo. */
+.hc-demo-strip {
+    margin: 0;
+    padding: var(--hc-space-1) var(--hc-space-3);
+    color: var(--hc-warning);
+    background: var(--hc-warning-soft);
+    border-radius: var(--hc-radius-sm);
+    font-size: var(--hc-text-xs);
 }
 /* En-tête de marque : mot-symbole, accroche, pastille de traitement local, mention RGPD. */
 .st-key-hc-header {
@@ -285,8 +293,7 @@ textarea:focus-visible,
     color: var(--hc-primary);
     font-weight: 600;
 }
-/* Cartes : fond blanc, bordure fine, ombre légère. Toute clé qui commence par hc-card
-   reçoit ce style. */
+/* Cartes : fond blanc, bordure fine, ombre légère, pour toute clé qui commence par hc-card. */
 [class*="st-key-hc-card"] {
     padding: var(--hc-space-6);
     background: var(--hc-card);
@@ -311,8 +318,7 @@ textarea:focus-visible,
 .st-key-hc-reading {
     max-width: 72ch;
 }
-/* Indicateurs chiffrés en cartes, de même hauteur sur une rangée même quand un libellé
-   traduit passe sur deux lignes. */
+/* Indicateurs chiffrés en cartes de même hauteur, même si un libellé passe sur deux lignes. */
 .st-key-hc-metrics [data-testid="stHorizontalBlock"] {
     align-items: stretch;
 }

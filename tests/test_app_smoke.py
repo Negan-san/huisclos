@@ -117,27 +117,6 @@ def test_three_pages_render(page: str, header: str, expected: str) -> None:
     assert any(expected in text for text in texts(app))
 
 
-def test_method_page_content() -> None:
-    app = start().switch_page("app/pages/method.py").run()
-    assert not app.exception
-    assert len(app.get("graphviz_chart")) == 1
-    assert [s.value for s in app.subheader if s.value != "Settings"] == [
-        "Pipeline",
-        "How it works",
-        "Why hybrid AI",
-        "Document languages",
-        "Human in the loop",
-        "What HuisClos looks for",
-        "Legal framework",
-        "Limits",
-    ]
-    page = " ".join(texts(app))
-    for reference in ("71-1130", "66-5", "226-13", "4(5)", "recital 26", "5(1)(c)", "Art. 32"):
-        assert reference in page
-    legend = next(h.value for h in app.get("html") if "hc-legend" in h.value)
-    assert all(style.label in legend for style in ENTITY_STYLES.values())
-
-
 def test_load_sample_case_fills_the_text() -> None:
     app = load_sample(start())
     assert not app.exception
@@ -264,15 +243,25 @@ def test_public_demo_banner_follows_the_environment(
     monkeypatch.setenv("HUISCLOS_PUBLIC_DEMO", value)
     app = start()
     assert not app.exception
-    banners = [w.value for w in app.warning if w.value.startswith("Public demo")]
+    banners = demo_strips(app)
     assert bool(banners) is expected
     if expected:
+        # Une ligne fine, et non plus un bandeau d'alerte qui repousse l'en-tête.
+        assert banners[0].startswith('<p class="hc-demo-strip" role="note">Public demo')
         assert "use fictitious data only" in banners[0]
         assert "install HuisClos on your computer (see the user guide)" in banners[0]
+        assert not [w for w in app.warning if "Public demo" in w.value]
+
+
+def demo_strips(app: AppTest) -> list[str]:
+    """Renvoie les blocs HTML de la ligne de démonstration publique."""
+    return [block.value for block in app.get("html") if "hc-demo-strip" in block.value]
 
 
 def test_no_banner_without_the_variable() -> None:
-    assert not [w for w in start().warning if "Public demo" in w.value]
+    app = start()
+    assert not demo_strips(app)
+    assert not [w for w in app.warning if "Public demo" in w.value]
 
 
 class _Secrets:

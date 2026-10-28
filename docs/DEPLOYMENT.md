@@ -28,7 +28,7 @@ The hosted app at <https://huisclos.streamlit.app> is a public demonstration on 
    ```
 
 5. Click **Deploy**. The first build installs the dependencies and the spaCy model, which takes several minutes. The first detection then loads the model (a few seconds); later detections reuse the same engine, shared by all visitors through `st.cache_resource`.
-6. Check the result: the yellow "Public demo" banner is visible, **Load sample case** then **Detect sensitive data** opens the Review step.
+6. Check the result: the thin "Public demo" line above the header is visible, **Load sample case** then **Detect sensitive data** opens the Review step.
 
 ## Operating the app
 

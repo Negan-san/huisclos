@@ -96,8 +96,10 @@ about ten minutes. After that, HuisClos works without internet.
 
 ## 3. The three steps
 
-The bar at the top of the page shows the pages (**Pseudonymize**, **Evaluation**,
-**Method & limits**); on a narrow screen, they are in the menu of the left column. The left
+The bar at the top of the page shows the pages (**Pseudonymize**, **Method & limits**); on a
+narrow screen, they are in the menu of the left column. The **Evaluation** page, with the
+detailed measured results, opens from the link **See the detailed results** at the bottom of
+**Method & limits**. The left
 column holds the settings. The **Pseudonymize** page guides you through three steps:
 **Import**, **Review** and **Restore**, shown at the top of the page with their state
 (completed, current step, or the reason why a step is not available yet). A step becomes
@@ -270,9 +272,12 @@ Under **Download**, save the files you need (section 6). **Start a new document*
 current session after a confirmation (**Yes, start a new document**). **Back to Review**
 returns to the review.
 
-The **Evaluation** page shows the measured results of the detection. They are historical
-measures on French documents (gate G7 and earlier); the page says so. **Method & limits**
-explains how HuisClos works and which document languages it supports.
+**Method & limits** explains, for a reader without a technical background, how HuisClos
+works: a worked example, each step in detail, what leaves your computer, the technologies
+used, a glossary, the legal framework, the limits and good practices. Its last section, **How
+we tested it**, links to the **Evaluation** page, which shows the measured results of the
+detection. They are historical measures on French documents (gate G7 and earlier); the page
+says so.
 
 ![Evaluation page](screenshots/06_evaluation.png)
 
@@ -681,7 +686,8 @@ All texts below are invented for this guide, not client files or evaluation docu
    Le gérant M. Constant DORVELUNE a transmis à M. Pierre VERNOLAC le planning de la réserve. Atelier Martin des Nivelles SARL produira la consigne écrite. Nouveau témoin : Mme Alice FERRANDOU, joignable au 06 41 27 83 90.
    ```
 
-7. Switch the interface back to English and open **Evaluation**, split **dev**, for
+7. Switch the interface back to English, open **Method & limits**, click **See the detailed
+   results** to open **Evaluation**, and choose split **dev** for
    `06_evaluation.png`. It displays saved French historical G7 results, not the English
    example or a newly run evaluation. Stop the local server when finished.
 
