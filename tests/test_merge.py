@@ -1,6 +1,7 @@
 """Tests de detection.merge : une fonction par règle, sur des détections construites à la main."""
 
 import random
+import re
 
 import pytest
 
@@ -362,3 +363,186 @@ def test_merge_keeps_two_companies_joined_by_a_conjunction() -> None:
     ]
     result = merge(text, raw, CONFIG)
     assert [d.text for d in result] == ["Halbarde SARL", "Vasquelin SAS"]
+
+
+# Arbitrage et seuil (D-AF-A1-1) : un candidat sous le seuil ne retire aucune protection.
+
+LOW = DetectionConfig(threshold=0.30, use_exclusions=False)
+
+
+def covered(detections: list[Detection]) -> set[int]:
+    """Positions des caractères couverts par au moins une détection."""
+    return {index for d in detections for index in range(d.start, d.end)}
+
+
+def visible(text: str) -> set[int]:
+    """Positions des caractères autres que les blancs : celles qu'un masque doit couvrir."""
+    return {index for index, char in enumerate(text) if not char.isspace()}
+
+
+def test_inadmissible_candidate_does_not_cut_an_admissible_name() -> None:
+    """Reproduction G7 : ORGANIZATION à 0,10 rognait PERSON avant d'être écartée."""
+    text = "Paul Martin"
+    person = Detection(0, 11, EntityType.PERSON, 0.85, Source.NER_SPACY, text)
+    weak = Detection(0, 4, EntityType.ORGANIZATION, 0.10, Source.NER_CAMEMBERT, "Paul")
+    alone = merge(text, [person], LOW)
+    assert len(covered(alone)) == 11
+    both = merge(text, [person, weak], LOW)
+    assert covered(both) == covered(alone)
+    assert texts(both) == [("Paul Martin", EntityType.PERSON)]
+
+
+@pytest.mark.parametrize("weak_type", [EntityType.ORGANIZATION, EntityType.ADDRESS])
+@pytest.mark.parametrize(
+    "fragment", ["Paul", "Martin", "Paul Martin", "Paul Martin Lefort", "Dr Paul", "Martin Lefort"]
+)
+def test_weak_overlap_keeps_every_protected_character(weak_type: EntityType, fragment: str) -> None:
+    """Contenu, englobant, chevauchement à gauche ou à droite : la couverture ne baisse pas."""
+    text = "Avis du Dr Paul Martin Lefort reçu."
+    person = det(text, "Paul Martin", EntityType.PERSON)
+    weak = det(text, fragment, weak_type, 0.10, Source.NER_CAMEMBERT)
+    result = merge(text, [weak, person], LOW)
+    assert covered(result) >= set(range(person.start, person.end))
+    assert covered(result) == covered(merge(text, [person], LOW))
+    check_output(text, result)
+
+
+@pytest.mark.parametrize(
+    ("score", "expected"),
+    [
+        (0.29, [("Paul Martin", EntityType.PERSON)]),
+        (0.30, [("Paul", EntityType.ORGANIZATION), ("Martin", EntityType.PERSON)]),
+        (0.31, [("Paul", EntityType.ORGANIZATION), ("Martin", EntityType.PERSON)]),
+    ],
+)
+def test_threshold_boundary_keeps_type_priority(score: float, expected: list[tuple]) -> None:
+    """Sous le seuil, le candidat passe après ; au seuil ou au-dessus, la priorité joue."""
+    text = "Paul Martin"
+    raw = [det(text, text, EntityType.PERSON), det(text, "Paul", EntityType.ORGANIZATION, score)]
+    result = merge(text, raw, LOW)
+    assert texts(result) == expected
+    assert covered(result) >= visible(text)
+
+
+def test_full_address_aggregation_survives_a_weak_identifier() -> None:
+    """La voie et la ligne postale, chacune sous le seuil, forment encore l'adresse à 0,70."""
+    text = "Siège : 12 rue Haute 75011 Paris."
+    config = DetectionConfig(threshold=0.60, use_exclusions=False)
+    street = det(text, "12 rue Haute", EntityType.ADDRESS, 0.55, Source.PATTERN)
+    postal = det(text, "75011 Paris", EntityType.ADDRESS, 0.45, Source.PATTERN)
+    weak = det(text, "75011", EntityType.PHONE, 0.10, Source.PATTERN)
+    for raw in ([street, postal], [street, postal, weak], [weak, postal, street]):
+        result = merge(text, raw, config)
+        assert texts(result) == [("12 rue Haute 75011 Paris", EntityType.ADDRESS)]
+        assert result[0].score == 0.70
+
+
+def test_weak_case_number_does_not_split_an_admissible_address() -> None:
+    """Un numéro de dossier écarté par le seuil ne laisse pas le code postal en clair."""
+    text = "Domicile : 14 rue des Lilas 75011 Paris."
+    address = det(text, "14 rue des Lilas 75011 Paris", EntityType.ADDRESS, 0.70, Source.PATTERN)
+    weak = det(text, "75011", EntityType.CASE_NUMBER, 0.20, Source.PATTERN)
+    assert texts(merge(text, [address, weak], LOW)) == [(address.text, EntityType.ADDRESS)]
+
+
+def test_unjoined_street_stops_blocking_a_name() -> None:
+    """Une voie admise pour sa jonction, privée de son code postal par un ajout manuel,
+    ne masque plus le nom qu'elle contenait ; la borne manuelle est conservée."""
+    text = "Au 12 rue Victor Hugo 75011 Paris."
+    config = DetectionConfig(threshold=0.60, use_exclusions=False)
+    raw = [
+        det(text, "12 rue Victor Hugo", EntityType.ADDRESS, 0.55, Source.PATTERN),
+        det(text, "75011 Paris", EntityType.ADDRESS, 0.45, Source.PATTERN),
+        det(text, "Victor Hugo", EntityType.PERSON),
+        det(text, "75011", EntityType.CUSTOM, 1.0, Source.MANUAL),
+    ]
+    assert texts(merge(text, raw, config)) == [
+        ("Victor Hugo", EntityType.PERSON),
+        ("75011", EntityType.CUSTOM),
+    ]
+
+
+@pytest.mark.parametrize(("threshold", "split"), [(0.50, False), (0.40, True)])
+def test_names_around_an_iban_with_a_wrong_key(threshold: float, split: bool) -> None:
+    """IBAN à clé fausse (0,40) dans un span NER : sous le seuil, il reste masqué en nom."""
+    iban = "FR76 3000 6000 0112 3456 7890 180"
+    text = f"Paul Martin {iban} Marie Durand"
+    raw = [
+        det(text, text, EntityType.PERSON),
+        det(text, iban, EntityType.IBAN, 0.40, Source.PATTERN),
+    ]
+    config = DetectionConfig(threshold=threshold, use_exclusions=False)
+    result = merge(text, raw, config)
+    assert covered(result) >= visible(text)
+    expected = [("Paul Martin", EntityType.PERSON), (iban, EntityType.IBAN)]
+    expected.append(("Marie Durand", EntityType.PERSON))
+    assert texts(result) == (expected if split else [(text, EntityType.PERSON)])
+
+
+def test_names_around_an_email_ignore_a_weak_company() -> None:
+    """Les deux noms autour d'un e-mail restent entiers malgré une société à 0,10."""
+    text = "Paul Martin jean@example.com Marie Durand"
+    raw = [
+        det(text, text, EntityType.PERSON),
+        det(text, "jean@example.com", EntityType.EMAIL, 0.95, Source.PATTERN),
+        det(text, "Marie", EntityType.ORGANIZATION, 0.10, Source.NER_CAMEMBERT),
+    ]
+    assert texts(merge(text, raw, LOW)) == [
+        ("Paul Martin", EntityType.PERSON),
+        ("jean@example.com", EntityType.EMAIL),
+        ("Marie Durand", EntityType.PERSON),
+    ]
+
+
+def test_nearby_legal_reference_stays_readable_with_weak_candidates() -> None:
+    """Une juridiction voisine reste lisible ; un candidat faible ne la fait pas masquer."""
+    text = "Paul Martin Cour de cassation Marie Durand"
+    court = (text.index("Cour"), text.index(" Marie"))
+    raw = [
+        det(text, text, EntityType.PERSON),
+        det(text, "Martin Cour", EntityType.ORGANIZATION, 0.10, Source.NER_CAMEMBERT),
+        det(text, "Cour de cassation", EntityType.ADDRESS, 0.10, Source.NER_CAMEMBERT),
+    ]
+    config = DetectionConfig(threshold=0.30)
+    result = merge(text, raw, config, [court])
+    assert texts(result) == [
+        ("Paul Martin", EntityType.PERSON),
+        ("Marie Durand", EntityType.PERSON),
+    ]
+
+
+WORDS = "Paul Martin Anne Morel 75011 Paris Jean Petit Lyon Marie Durand Rose Blanc"
+KINDS = [EntityType.PERSON, EntityType.ORGANIZATION, EntityType.ADDRESS, EntityType.PHONE]
+
+
+def random_candidates(rng: random.Random, low: float, high: float) -> list[Detection]:
+    """Tire de un à quatre candidats alignés sur les mots de WORDS, scores dans [low, high]."""
+    bounds = [(m.start(), m.end()) for m in re.finditer(r"\S+", WORDS)]
+    candidates = []
+    for _ in range(rng.randint(1, 4)):
+        first = rng.randrange(len(bounds))
+        last = min(len(bounds) - 1, first + rng.randrange(3))
+        start, end = bounds[first][0], bounds[last][1]
+        score = round(rng.uniform(low, high), 2)
+        candidates.append(
+            Detection(start, end, rng.choice(KINDS), score, Source.NER_SPACY, WORDS[start:end])
+        )
+    return candidates
+
+
+def test_weak_candidates_never_reduce_coverage_randomly() -> None:
+    """Propriété sur 400 tirages : ajouter des candidats sous le seuil ne découvre aucun
+    caractère visible, quel que soit l'ordre d'arrivée, sans chevauchement et avec un texte
+    exact. Un candidat faible joint à une adresse admissible peut prendre un mot à un nom
+    moins prioritaire : seul l'espace qui les sépare change alors de couverture."""
+    rng = random.Random(41)
+    for _ in range(400):
+        strong = random_candidates(rng, 0.30, 1.0)
+        weak = random_candidates(rng, 0.0, 0.29)
+        reference = merge(WORDS, strong, LOW)
+        result = merge(WORDS, strong + weak, LOW)
+        assert covered(result) >= covered(reference) & visible(WORDS), (strong, weak)
+        shuffled = strong + weak
+        rng.shuffle(shuffled)
+        assert merge(WORDS, shuffled, LOW) == result
+        check_output(WORDS, result)

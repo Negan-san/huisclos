@@ -14,6 +14,15 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 12:05 | AF-A1 | Fusion sans perte, fenêtres recouvrantes et socle des modèles | Claude Code, Opus 5.5
+- Fait : fusion du SHA validé 4fc14cc en avance rapide. Test rouge de la perte G7 (11 puis 6 caractères), puis arbitrage corrigé : candidats admissibles d'abord, jonction de l'adresse prise en compte, boucle de correction bornée ; arbitrage extrait dans detection/conflicts.py. Fenêtres CamemBERT recouvrantes de 64 jetons (detection/windows.py), une seule tokenisation, vue la plus éloignée d'une coupure ; ancien découpage quadratique retiré.
+- Modèles et environnements hors dépôt (post_g7_assets) : baseline_python = G7 exact + en_core_web_sm 3.8.0 ; candidate_python = Transformers 5.16.1, Hub 1.9.2, GLiNER 0.2.29. Anonym-IA V2, GLiNER, mdeberta (configuration et tokenizer) et CamemBERT exporté, empreintes vérifiées ; chargement hors ligne en processus neuf, caches vides, réseau coupé. Constat : un tokenizer CamemBERT sans vocabulaire se chargeait en silence, garde ajoutée. scripts/prepare_local_models.py, docs/LOCAL_MODELS.md.
+- Tests : tests/test_detection_windows.py (33), test_merge (+23), test_camembert mis à jour. pytest 1285 passed sous .venv et sous baseline_python ; candidat : tests CamemBERT, fenêtres et fusion 100 passed (avertissement torch.jit.script). Ruff check et format : OK ; check_style : 0 erreur, 5 avertissements connus ; diff --check : OK.
+- Mesure : dev seul, seuil 0,30, sortie hors results/ : hybrid et hybrid_camembert identiques à G7 ; recouvrement 0/32/64/128 sans effet sur les métriques dev. Aucun test, challenge ni all mesuré ; résultats G7 intacts.
+- Décisions : D-AF-A1-1 à D-AF-A1-3.
+- Risques : dev saturé, l'apport du recouvrement n'y est pas mesurable ; le nouvel ordre d'arbitrage peut changer des résultats sur les autres splits, à mesurer en gate. Étiquettes Anonym-IA à faire correspondre aux types HuisClos avant B3.
+- Prochaine session : selon post_g7.py finish A1.
+
 ### 2026-10-28 11:10 | PIL-G7 | Parcours bilingue et pilotage parallèle après G7 | Codex
 - Fait : MASTER_PLAN révisé avec calendrier actif à deux pistes, treize prompts autonomes et barrières de commits ; A reçoit la logique difficile et l'intégration, B les mesures, imports, corpus et contrôle indépendant. Les fiches antérieures restent archivées.
 - Périmètre demandé : documents français et anglais, distincts de la langue UI et du style des jetons ; socles locaux par langue, comparaison Anonym-IA V2/GLiNER/combinaisons, migration neuronale seulement après essai isolé et gain mesuré. Le support EN reste à implémenter, aucun code métier changé.
