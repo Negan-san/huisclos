@@ -1,0 +1,15 @@
+{
+  "completed_at_utc": "2026-10-28T16:47:27.747002+00:00",
+  "pytest_passed": 1680,
+  "strict_xfailed": 1,
+  "commands": {
+    "pytest": 0,
+    "ruff_check": 0,
+    "ruff_format": 0,
+    "style": 0,
+    "diff": 0
+  },
+  "all_commands_green": true,
+  "global_verdict": "NO-GO",
+  "open_fixture": "G8-01"
+}

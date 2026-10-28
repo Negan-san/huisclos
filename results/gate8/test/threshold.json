@@ -1,0 +1,4 @@
+{
+  "threshold": 0.3,
+  "criterion": "frozen dev threshold"
+}

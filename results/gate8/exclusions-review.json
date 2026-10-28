@@ -1,0 +1,16 @@
+{
+  "reviewed_at_utc": "2026-10-28T16:44:02.795694+00:00",
+  "method": "Source-only static review of the G7-to-A4 diff; no reserved comparison",
+  "timing": "Supplementary review after main blind measurement; not represented as pre-registration",
+  "source_sha256": "97b78c1abc6f922cf34dae4dadfcfeaf6d40aa434a8d5412cb2ebfa3b9a99b7e",
+  "section_entry_counts": {
+    "juridictions": 27,
+    "institutions": 17,
+    "textes": 12,
+    "acronymes": 40,
+    "mots": 59
+  },
+  "private_identity_rules_found": 0,
+  "roles": "Public jurisdictions, institutions, statutes, citations, acronyms, grammatical and contractual words",
+  "limitations": "Static source review does not establish authorship or exhaustive absence of overfitting"
+}

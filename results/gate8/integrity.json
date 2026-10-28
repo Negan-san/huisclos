@@ -1,0 +1,75 @@
+{
+  "measured_commit": "e3d13bdc25839783eebe998c8f971862d78754d5",
+  "freeze": "dc5b04146c9217bdd09da5064091e0cf638f5b37",
+  "corpora": {
+    "fr": {
+      "language": "fr",
+      "sha256": "df179266f4866128c5b4aaa770559d4ebedfd06c5a0cf47a9f6490ab51d89d6f",
+      "document_count": 8,
+      "entity_count": 112,
+      "character_count": 22640,
+      "word_count": 3392,
+      "genre_counts": {
+        "consultation": 2,
+        "correspondence": 2,
+        "instrument_draft": 2,
+        "summary": 2
+      },
+      "entity_counts": {
+        "ADDRESS": 13,
+        "BIRTH_DATE": 2,
+        "CASE_NUMBER": 8,
+        "CUSTOM": 7,
+        "EMAIL": 15,
+        "IBAN": 4,
+        "NIR": 1,
+        "ORGANIZATION": 10,
+        "PERSON": 32,
+        "PHONE": 10,
+        "SIREN": 5,
+        "SIRET": 5
+      }
+    },
+    "en": {
+      "language": "en",
+      "sha256": "e3fd4886a2499563f6710cf1cfe57a3f27b3302be1e576e06ac67a4ddede5aea",
+      "document_count": 8,
+      "entity_count": 108,
+      "character_count": 23252,
+      "word_count": 3500,
+      "genre_counts": {
+        "consultation": 2,
+        "correspondence": 2,
+        "instrument_draft": 2,
+        "summary": 2
+      },
+      "entity_counts": {
+        "ADDRESS": 13,
+        "BIRTH_DATE": 3,
+        "CASE_NUMBER": 8,
+        "CUSTOM": 8,
+        "EMAIL": 16,
+        "IBAN": 2,
+        "NIR": 1,
+        "ORGANIZATION": 12,
+        "PERSON": 31,
+        "PHONE": 10,
+        "SIREN": 2,
+        "SIRET": 2
+      }
+    }
+  },
+  "plans": {
+    "fr": {
+      "a4_sha256": "7fd554ae608eb5e3231a9663ee7fe8f6b3303bfe42adb5e4559d2bc43ffbb453",
+      "gate_sha256": "8355f1282fa430fc9952ece7e576613f6b3a31eafdedc4be8783abc9687a6494"
+    },
+    "en": {
+      "a4_sha256": "ce2af6dec9f395b7c26ad5e924ba5b4762451d939a2aa749197585301708fdd1",
+      "gate_sha256": "d5240419d4683006ddb2615f1c1f4970a5fbd2f95ee072d99068426f4983df06"
+    }
+  },
+  "logic_unchanged_since_a4": true,
+  "source_hashes_verified": 16,
+  "temporary_reference": "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\pilotage\\post_g7_assets\\benchmarks\\G8\\reference_g7"
+}

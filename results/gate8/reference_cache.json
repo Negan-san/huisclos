@@ -1,0 +1,11 @@
+{
+  "revision": "ef35fe7767c1dad71f5c853838cdd80d0b3441ed",
+  "file_sha256": {
+    "config.json": "17ec2dd3a642bfc839f3f94bd5ba2e996700aa69b06b3937b0e80b458b962207",
+    "model.safetensors": "decc811bc764b0e94f1adc16b37a127300201eb8b5e4b733a89185d68b9d81c9",
+    "sentencepiece.bpe.model": "988bc5a00281c6d210a5d34bd143d0363741a432fefe741bf71e61b1869d4314",
+    "special_tokens_map.json": "645708b160268d79dbc31bc05bc93f77fda8dfd45dc806b5c3a86e17cfcc5a7a",
+    "tokenizer_config.json": "a47e711439fb76c78b60929e8baa3a487a36b476c01886934d5dd2ec5d0c8f8f"
+  },
+  "matches_a1": true
+}

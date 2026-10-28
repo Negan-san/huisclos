@@ -1,0 +1,2588 @@
+{
+  "blind_fr": {
+    "profiles": {
+      "enhanced": {
+        "partial": {
+          "config": "enhanced",
+          "exposed_entities": 7,
+          "f1": 0.8695652173913043,
+          "f2": 0.8620689655172413,
+          "fn": 15,
+          "fp": 12,
+          "leak_rate": 0.06366307541625857,
+          "leaked_characters": 130,
+          "mode": "partial",
+          "precision": 0.8823529411764706,
+          "recall": 0.8571428571428571,
+          "reference_characters": 2042,
+          "split": "challenge",
+          "threshold": 0.3,
+          "tp": 90,
+          "type": "micro"
+        },
+        "exact": {
+          "config": "enhanced",
+          "exposed_entities": 7,
+          "f1": 0.8599033816425121,
+          "f2": 0.8524904214559387,
+          "fn": 16,
+          "fp": 13,
+          "leak_rate": 0.06366307541625857,
+          "leaked_characters": 130,
+          "mode": "exact",
+          "precision": 0.8725490196078431,
+          "recall": 0.8476190476190476,
+          "reference_characters": 2042,
+          "split": "challenge",
+          "threshold": 0.3,
+          "tp": 89,
+          "type": "micro"
+        },
+        "coverage": {
+          "config": "enhanced",
+          "documents": 8,
+          "documents_with_any_exposure": 8,
+          "documents_with_references": 8,
+          "entities_fully_covered": 96,
+          "entities_fully_exposed": 7,
+          "entities_partially_exposed": 2,
+          "entities_with_any_exposure": 9,
+          "full_coverage_rate": 0.9142857142857143,
+          "leaked_character_rate": 0.06366307541625857,
+          "leaked_characters": 130,
+          "non_sensitive_characters": 20518,
+          "non_sensitive_characters_masked": 27,
+          "non_sensitive_masked_rate": 0.0013159177307729799,
+          "reference_characters": 2042,
+          "reference_entities": 105,
+          "scope": "evaluated",
+          "stage": "pseudonymization",
+          "threshold": 0.3
+        },
+        "custom_location": {
+          "config": "enhanced",
+          "documents": 8,
+          "documents_with_any_exposure": 5,
+          "documents_with_references": 7,
+          "entities_fully_covered": 2,
+          "entities_fully_exposed": 4,
+          "entities_partially_exposed": 1,
+          "entities_with_any_exposure": 5,
+          "full_coverage_rate": 0.2857142857142857,
+          "leaked_character_rate": 0.6625,
+          "leaked_characters": 53,
+          "non_sensitive_characters": 20518,
+          "non_sensitive_characters_masked": 27,
+          "non_sensitive_masked_rate": 0.0013159177307729799,
+          "reference_characters": 80,
+          "reference_entities": 7,
+          "scope": "custom_location",
+          "stage": "pseudonymization",
+          "threshold": 0.3
+        },
+        "historical_intervals": {
+          "config": "enhanced",
+          "documents": 8,
+          "f2": {
+            "lower": 0.8404215491910646,
+            "upper": 0.8886267494816351
+          },
+          "leak_rate": {
+            "lower": 0.04136782495452588,
+            "upper": 0.10197570555846437
+          },
+          "mode": "partial",
+          "precision": {
+            "lower": 0.837037037037037,
+            "upper": 0.9493829113924049
+          },
+          "recall": {
+            "lower": 0.8315789473684211,
+            "upper": 0.8833333333333333
+          },
+          "split": "challenge",
+          "threshold": 0.3,
+          "type": "micro"
+        },
+        "coverage_intervals": {
+          "full_coverage_rate": {
+            "config": "enhanced",
+            "lower": 0.8837152856175209,
+            "metric": "full_coverage_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.9349593495934959
+          },
+          "leaked_character_rate": {
+            "config": "enhanced",
+            "lower": 0.04136782495452588,
+            "metric": "leaked_character_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.10197570555846437
+          },
+          "non_sensitive_masked_rate": {
+            "config": "enhanced",
+            "lower": 0.0,
+            "metric": "non_sensitive_masked_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.0020815592771312326
+          }
+        },
+        "alerts": {
+          "alerts": 2,
+          "alerts_elsewhere": 2,
+          "alerts_on_visible_references": 0,
+          "available": true,
+          "check_threshold": 0.1,
+          "config": "enhanced",
+          "documents": 8,
+          "documents_with_alerts": 1,
+          "exposed_entities": 9,
+          "exposed_entities_alerted": 0,
+          "exposed_entities_alerted_rate": 0.0,
+          "threshold": 0.3
+        },
+        "resources": {
+          "cpu_threads": 2,
+          "final_check_seconds": 14.316706100245938,
+          "inference_seconds": 8.057769600301981,
+          "load_seconds": 12.781794700073078,
+          "logical_cpus": 16,
+          "machine": "Windows-11-10.0.26300-SP0",
+          "main_detection_calls": 8,
+          "network_blocked": true,
+          "peak_rss_bytes": 1221734400,
+          "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+          "substitution_seconds": 0.009484800044447184,
+          "wall_seconds": 35.256417700089514
+        }
+      },
+      "g7_enhanced": {
+        "partial": {
+          "config": "g7_enhanced",
+          "exposed_entities": 7,
+          "f1": 0.8695652173913043,
+          "f2": 0.8620689655172413,
+          "fn": 15,
+          "fp": 12,
+          "leak_rate": 0.07933398628795299,
+          "leaked_characters": 162,
+          "mode": "partial",
+          "precision": 0.8823529411764706,
+          "recall": 0.8571428571428571,
+          "reference_characters": 2042,
+          "split": "challenge",
+          "threshold": 0.3,
+          "tp": 90,
+          "type": "micro"
+        },
+        "exact": {
+          "config": "g7_enhanced",
+          "exposed_entities": 7,
+          "f1": 0.8502415458937198,
+          "f2": 0.842911877394636,
+          "fn": 17,
+          "fp": 14,
+          "leak_rate": 0.07933398628795299,
+          "leaked_characters": 162,
+          "mode": "exact",
+          "precision": 0.8627450980392157,
+          "recall": 0.8380952380952381,
+          "reference_characters": 2042,
+          "split": "challenge",
+          "threshold": 0.3,
+          "tp": 88,
+          "type": "micro"
+        },
+        "coverage": {
+          "config": "g7_enhanced",
+          "documents": 8,
+          "documents_with_any_exposure": 8,
+          "documents_with_references": 8,
+          "entities_fully_covered": 95,
+          "entities_fully_exposed": 7,
+          "entities_partially_exposed": 3,
+          "entities_with_any_exposure": 10,
+          "full_coverage_rate": 0.9047619047619048,
+          "leaked_character_rate": 0.07933398628795299,
+          "leaked_characters": 162,
+          "non_sensitive_characters": 20518,
+          "non_sensitive_characters_masked": 27,
+          "non_sensitive_masked_rate": 0.0013159177307729799,
+          "reference_characters": 2042,
+          "reference_entities": 105,
+          "scope": "evaluated",
+          "stage": "pseudonymization",
+          "threshold": 0.3
+        },
+        "custom_location": {
+          "config": "g7_enhanced",
+          "documents": 8,
+          "documents_with_any_exposure": 5,
+          "documents_with_references": 7,
+          "entities_fully_covered": 2,
+          "entities_fully_exposed": 4,
+          "entities_partially_exposed": 1,
+          "entities_with_any_exposure": 5,
+          "full_coverage_rate": 0.2857142857142857,
+          "leaked_character_rate": 0.6625,
+          "leaked_characters": 53,
+          "non_sensitive_characters": 20518,
+          "non_sensitive_characters_masked": 27,
+          "non_sensitive_masked_rate": 0.0013159177307729799,
+          "reference_characters": 80,
+          "reference_entities": 7,
+          "scope": "custom_location",
+          "stage": "pseudonymization",
+          "threshold": 0.3
+        },
+        "historical_intervals": {
+          "config": "g7_enhanced",
+          "documents": 8,
+          "f2": {
+            "lower": 0.8404215491910646,
+            "upper": 0.8886267494816351
+          },
+          "leak_rate": {
+            "lower": 0.05061957348374422,
+            "upper": 0.11307529608269128
+          },
+          "mode": "partial",
+          "precision": {
+            "lower": 0.837037037037037,
+            "upper": 0.9493829113924049
+          },
+          "recall": {
+            "lower": 0.8315789473684211,
+            "upper": 0.8833333333333333
+          },
+          "split": "challenge",
+          "threshold": 0.3,
+          "type": "micro"
+        },
+        "coverage_intervals": {
+          "full_coverage_rate": {
+            "config": "g7_enhanced",
+            "lower": 0.8764044943820225,
+            "metric": "full_coverage_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.926829268292683
+          },
+          "leaked_character_rate": {
+            "config": "g7_enhanced",
+            "lower": 0.05061957348374422,
+            "metric": "leaked_character_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.11307529608269128
+          },
+          "non_sensitive_masked_rate": {
+            "config": "g7_enhanced",
+            "lower": 0.0,
+            "metric": "non_sensitive_masked_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.0020815592771312326
+          }
+        },
+        "alerts": {
+          "alerts": 2,
+          "alerts_elsewhere": 2,
+          "alerts_on_visible_references": 0,
+          "available": true,
+          "check_threshold": 0.1,
+          "config": "g7_enhanced",
+          "documents": 8,
+          "documents_with_alerts": 1,
+          "exposed_entities": 10,
+          "exposed_entities_alerted": 0,
+          "exposed_entities_alerted_rate": 0.0,
+          "threshold": 0.3
+        },
+        "resources": {
+          "cpu_threads": 2,
+          "final_check_seconds": 6.973483400186524,
+          "inference_seconds": 7.981951699825004,
+          "load_seconds": 13.550961000146344,
+          "logical_cpus": 16,
+          "machine": "Windows-11-10.0.26300-SP0",
+          "main_detection_calls": 8,
+          "network_blocked": true,
+          "peak_rss_bytes": 1314062336,
+          "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+          "substitution_seconds": 0.007385699776932597,
+          "wall_seconds": 28.600068600149825
+        }
+      },
+      "g7_standard": {
+        "partial": {
+          "config": "g7_standard",
+          "exposed_entities": 7,
+          "f1": 0.8792270531400966,
+          "f2": 0.8716475095785441,
+          "fn": 14,
+          "fp": 11,
+          "leak_rate": 0.08374142997061704,
+          "leaked_characters": 171,
+          "mode": "partial",
+          "precision": 0.8921568627450981,
+          "recall": 0.8666666666666667,
+          "reference_characters": 2042,
+          "split": "challenge",
+          "threshold": 0.3,
+          "tp": 91,
+          "type": "micro"
+        },
+        "exact": {
+          "config": "g7_standard",
+          "exposed_entities": 7,
+          "f1": 0.8599033816425121,
+          "f2": 0.8524904214559387,
+          "fn": 16,
+          "fp": 13,
+          "leak_rate": 0.08374142997061704,
+          "leaked_characters": 171,
+          "mode": "exact",
+          "precision": 0.8725490196078431,
+          "recall": 0.8476190476190476,
+          "reference_characters": 2042,
+          "split": "challenge",
+          "threshold": 0.3,
+          "tp": 89,
+          "type": "micro"
+        },
+        "coverage": {
+          "config": "g7_standard",
+          "documents": 8,
+          "documents_with_any_exposure": 8,
+          "documents_with_references": 8,
+          "entities_fully_covered": 94,
+          "entities_fully_exposed": 7,
+          "entities_partially_exposed": 4,
+          "entities_with_any_exposure": 11,
+          "full_coverage_rate": 0.8952380952380953,
+          "leaked_character_rate": 0.08374142997061704,
+          "leaked_characters": 171,
+          "non_sensitive_characters": 20518,
+          "non_sensitive_characters_masked": 27,
+          "non_sensitive_masked_rate": 0.0013159177307729799,
+          "reference_characters": 2042,
+          "reference_entities": 105,
+          "scope": "evaluated",
+          "stage": "pseudonymization",
+          "threshold": 0.3
+        },
+        "custom_location": {
+          "config": "g7_standard",
+          "documents": 8,
+          "documents_with_any_exposure": 5,
+          "documents_with_references": 7,
+          "entities_fully_covered": 2,
+          "entities_fully_exposed": 4,
+          "entities_partially_exposed": 1,
+          "entities_with_any_exposure": 5,
+          "full_coverage_rate": 0.2857142857142857,
+          "leaked_character_rate": 0.6625,
+          "leaked_characters": 53,
+          "non_sensitive_characters": 20518,
+          "non_sensitive_characters_masked": 27,
+          "non_sensitive_masked_rate": 0.0013159177307729799,
+          "reference_characters": 80,
+          "reference_entities": 7,
+          "scope": "custom_location",
+          "stage": "pseudonymization",
+          "threshold": 0.3
+        },
+        "historical_intervals": {
+          "config": "g7_standard",
+          "documents": 8,
+          "f2": {
+            "lower": 0.8469387755102041,
+            "upper": 0.8953900709219859
+          },
+          "leak_rate": {
+            "lower": 0.05061957348374422,
+            "upper": 0.12253656623130516
+          },
+          "mode": "partial",
+          "precision": {
+            "lower": 0.8473282442748091,
+            "upper": 0.95
+          },
+          "recall": {
+            "lower": 0.8367346938775511,
+            "upper": 0.8914728682170543
+          },
+          "split": "challenge",
+          "threshold": 0.3,
+          "type": "micro"
+        },
+        "coverage_intervals": {
+          "full_coverage_rate": {
+            "config": "g7_standard",
+            "lower": 0.8608594539939333,
+            "metric": "full_coverage_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.9259259259259259
+          },
+          "leaked_character_rate": {
+            "config": "g7_standard",
+            "lower": 0.05061957348374422,
+            "metric": "leaked_character_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.12253656623130516
+          },
+          "non_sensitive_masked_rate": {
+            "config": "g7_standard",
+            "lower": 0.0,
+            "metric": "non_sensitive_masked_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.0020815592771312326
+          }
+        },
+        "alerts": {
+          "alerts": 3,
+          "alerts_elsewhere": 2,
+          "alerts_on_visible_references": 1,
+          "available": true,
+          "check_threshold": 0.1,
+          "config": "g7_standard",
+          "documents": 8,
+          "documents_with_alerts": 2,
+          "exposed_entities": 11,
+          "exposed_entities_alerted": 1,
+          "exposed_entities_alerted_rate": 0.09090909090909091,
+          "threshold": 0.3
+        },
+        "resources": {
+          "cpu_threads": 2,
+          "final_check_seconds": 1.0243900993373245,
+          "inference_seconds": 1.1219415001105517,
+          "load_seconds": 12.143883100012317,
+          "logical_cpus": 16,
+          "machine": "Windows-11-10.0.26300-SP0",
+          "main_detection_calls": 8,
+          "network_blocked": true,
+          "peak_rss_bytes": 773308416,
+          "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+          "substitution_seconds": 0.006723199971020222,
+          "wall_seconds": 14.381215800065547
+        }
+      },
+      "standard": {
+        "partial": {
+          "config": "standard",
+          "exposed_entities": 7,
+          "f1": 0.8792270531400966,
+          "f2": 0.8716475095785441,
+          "fn": 14,
+          "fp": 11,
+          "leak_rate": 0.06807051909892263,
+          "leaked_characters": 139,
+          "mode": "partial",
+          "precision": 0.8921568627450981,
+          "recall": 0.8666666666666667,
+          "reference_characters": 2042,
+          "split": "challenge",
+          "threshold": 0.3,
+          "tp": 91,
+          "type": "micro"
+        },
+        "exact": {
+          "config": "standard",
+          "exposed_entities": 7,
+          "f1": 0.8695652173913043,
+          "f2": 0.8620689655172413,
+          "fn": 15,
+          "fp": 12,
+          "leak_rate": 0.06807051909892263,
+          "leaked_characters": 139,
+          "mode": "exact",
+          "precision": 0.8823529411764706,
+          "recall": 0.8571428571428571,
+          "reference_characters": 2042,
+          "split": "challenge",
+          "threshold": 0.3,
+          "tp": 90,
+          "type": "micro"
+        },
+        "coverage": {
+          "config": "standard",
+          "documents": 8,
+          "documents_with_any_exposure": 8,
+          "documents_with_references": 8,
+          "entities_fully_covered": 95,
+          "entities_fully_exposed": 7,
+          "entities_partially_exposed": 3,
+          "entities_with_any_exposure": 10,
+          "full_coverage_rate": 0.9047619047619048,
+          "leaked_character_rate": 0.06807051909892263,
+          "leaked_characters": 139,
+          "non_sensitive_characters": 20518,
+          "non_sensitive_characters_masked": 27,
+          "non_sensitive_masked_rate": 0.0013159177307729799,
+          "reference_characters": 2042,
+          "reference_entities": 105,
+          "scope": "evaluated",
+          "stage": "pseudonymization",
+          "threshold": 0.3
+        },
+        "custom_location": {
+          "config": "standard",
+          "documents": 8,
+          "documents_with_any_exposure": 5,
+          "documents_with_references": 7,
+          "entities_fully_covered": 2,
+          "entities_fully_exposed": 4,
+          "entities_partially_exposed": 1,
+          "entities_with_any_exposure": 5,
+          "full_coverage_rate": 0.2857142857142857,
+          "leaked_character_rate": 0.6625,
+          "leaked_characters": 53,
+          "non_sensitive_characters": 20518,
+          "non_sensitive_characters_masked": 27,
+          "non_sensitive_masked_rate": 0.0013159177307729799,
+          "reference_characters": 80,
+          "reference_entities": 7,
+          "scope": "custom_location",
+          "stage": "pseudonymization",
+          "threshold": 0.3
+        },
+        "historical_intervals": {
+          "config": "standard",
+          "documents": 8,
+          "f2": {
+            "lower": 0.8469387755102041,
+            "upper": 0.8953900709219859
+          },
+          "leak_rate": {
+            "lower": 0.04799237647907181,
+            "upper": 0.10303890539027116
+          },
+          "mode": "partial",
+          "precision": {
+            "lower": 0.8473282442748091,
+            "upper": 0.95
+          },
+          "recall": {
+            "lower": 0.8367346938775511,
+            "upper": 0.8914728682170543
+          },
+          "split": "challenge",
+          "threshold": 0.3,
+          "type": "micro"
+        },
+        "coverage_intervals": {
+          "full_coverage_rate": {
+            "config": "standard",
+            "lower": 0.8764044943820225,
+            "metric": "full_coverage_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.926829268292683
+          },
+          "leaked_character_rate": {
+            "config": "standard",
+            "lower": 0.04799237647907181,
+            "metric": "leaked_character_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.10303890539027116
+          },
+          "non_sensitive_masked_rate": {
+            "config": "standard",
+            "lower": 0.0,
+            "metric": "non_sensitive_masked_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.0020815592771312326
+          }
+        },
+        "alerts": {
+          "alerts": 3,
+          "alerts_elsewhere": 2,
+          "alerts_on_visible_references": 1,
+          "available": true,
+          "check_threshold": 0.1,
+          "config": "standard",
+          "documents": 8,
+          "documents_with_alerts": 2,
+          "exposed_entities": 10,
+          "exposed_entities_alerted": 1,
+          "exposed_entities_alerted_rate": 0.1,
+          "threshold": 0.3
+        },
+        "resources": {
+          "cpu_threads": 2,
+          "final_check_seconds": 1.954006199957803,
+          "inference_seconds": 1.1699822002556175,
+          "load_seconds": 12.138206099858508,
+          "logical_cpus": 16,
+          "machine": "Windows-11-10.0.26300-SP0",
+          "main_detection_calls": 8,
+          "network_blocked": true,
+          "peak_rss_bytes": 775663616,
+          "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+          "substitution_seconds": 0.009014000417664647,
+          "wall_seconds": 15.356084399856627
+        }
+      }
+    },
+    "metadata": {
+      "corpus_sha256": {
+        "challenge.jsonl": "df179266f4866128c5b4aaa770559d4ebedfd06c5a0cf47a9f6490ab51d89d6f"
+      },
+      "dataset_id": "gate8_blind_fr",
+      "date": "2026-10-28T16:30:19.076736+00:00",
+      "document_count": 8,
+      "document_language": "fr",
+      "git_commit": "e3d13bdc25839783eebe998c8f971862d78754d5",
+      "mode": "gate",
+      "plan": {
+        "comparisons": [
+          [
+            "enhanced",
+            "standard"
+          ],
+          [
+            "standard",
+            "g7_standard"
+          ],
+          [
+            "enhanced",
+            "g7_enhanced"
+          ]
+        ],
+        "document_language": "fr",
+        "profiles": {
+          "enhanced": {
+            "preset": "hybrid_camembert",
+            "threshold": 0.3
+          },
+          "g7_enhanced": {
+            "checkout": "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\pilotage\\post_g7_assets\\benchmarks\\G8\\reference_g7",
+            "preset": "hybrid_camembert",
+            "python": "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\pilotage\\post_g7_assets\\envs\\baseline\\Scripts\\python.exe",
+            "threshold": 0.3
+          },
+          "g7_standard": {
+            "checkout": "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\pilotage\\post_g7_assets\\benchmarks\\G8\\reference_g7",
+            "preset": "hybrid",
+            "python": "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\pilotage\\post_g7_assets\\envs\\baseline\\Scripts\\python.exe",
+            "threshold": 0.3
+          },
+          "standard": {
+            "preset": "hybrid",
+            "threshold": 0.3
+          }
+        }
+      },
+      "plan_sha256": "8355f1282fa430fc9952ece7e576613f6b3a31eafdedc4be8783abc9687a6494",
+      "profiles": {
+        "enhanced": {
+          "configuration": {
+            "document_language": "fr",
+            "enabled_types": [
+              "ADDRESS",
+              "BIRTH_DATE",
+              "CASE_NUMBER",
+              "CUSTOM",
+              "EMAIL",
+              "IBAN",
+              "NIR",
+              "ORGANIZATION",
+              "PERSON",
+              "PHONE",
+              "SIREN",
+              "SIRET"
+            ],
+            "gliner_threshold": 0.7,
+            "spacy_model": "fr_core_news_md",
+            "threshold": 0.3,
+            "use_camembert": true,
+            "use_exclusions": true,
+            "use_gliner": false,
+            "use_heuristics": true,
+            "use_patterns": true,
+            "use_propagation": true,
+            "use_spacy": true
+          },
+          "document_language_field": true,
+          "final_check_threshold": 0.1,
+          "git_clean": false,
+          "git_commit": "e3d13bdc25839783eebe998c8f971862d78754d5",
+          "models": {
+            "camembert": {
+              "name": "Jean-Baptiste/camembert-ner",
+              "revision": "ef35fe7767c1dad71f5c853838cdd80d0b3441ed"
+            },
+            "spacy": {
+              "name": "fr_core_news_md",
+              "version": "3.8.0"
+            }
+          },
+          "preset": "hybrid_camembert",
+          "python": "3.12.10",
+          "resources": {
+            "cpu_threads": 2,
+            "final_check_seconds": 14.316706100245938,
+            "inference_seconds": 8.057769600301981,
+            "load_seconds": 12.781794700073078,
+            "logical_cpus": 16,
+            "machine": "Windows-11-10.0.26300-SP0",
+            "main_detection_calls": 8,
+            "network_blocked": true,
+            "peak_rss_bytes": 1221734400,
+            "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+            "substitution_seconds": 0.009484800044447184,
+            "wall_seconds": 35.256417700089514
+          },
+          "runtime_identity": "fr;spacy=fr_core_news_md==3.8.0;spacy_engine=3.8.18;presidio=2.2.366;local_package={\"files\": {\"config.json\": [892, 1793183619776265300], \"model.safetensors\": [440168896, 1793183620008920000], \"sentencepiece.bpe.model\": [810912, 1793183620728910600], \"special_tokens_map.json\": [210, 1793183620743707800], \"tokenizer_config.json\": [269, 1793183620754629300]}, \"root\": \"C:\\\\Users\\\\nasci\\\\Documents\\\\Coding Project\\\\Assignment\\\\pilotage\\\\post_g7_assets\"};transformers=5.16.1;torch=2.14.1+cpu;tokenizers=0.23.3;huggingface-hub=1.9.2;sentencepiece=0.2.2;camembert=Jean-Baptiste/camembert-ner@ef35fe7767c1dad71f5c853838cdd80d0b3441ed",
+          "source": "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b",
+          "versions": {
+            "en_core_web_sm": "3.8.0",
+            "fr_core_news_md": "3.8.0",
+            "gliner": "0.2.29",
+            "huggingface-hub": "1.9.2",
+            "presidio-analyzer": "2.2.366",
+            "presidio-anonymizer": "2.2.366",
+            "sentencepiece": "0.2.2",
+            "spacy": "3.8.18",
+            "tokenizers": "0.23.3",
+            "torch": "2.14.1+cpu",
+            "transformers": "5.16.1"
+          }
+        },
+        "g7_enhanced": {
+          "configuration": {
+            "enabled_types": [
+              "ADDRESS",
+              "BIRTH_DATE",
+              "CASE_NUMBER",
+              "CUSTOM",
+              "EMAIL",
+              "IBAN",
+              "NIR",
+              "ORGANIZATION",
+              "PERSON",
+              "PHONE",
+              "SIREN",
+              "SIRET"
+            ],
+            "spacy_model": "fr_core_news_md",
+            "threshold": 0.3,
+            "use_camembert": true,
+            "use_exclusions": true,
+            "use_heuristics": true,
+            "use_patterns": true,
+            "use_propagation": true,
+            "use_spacy": true
+          },
+          "document_language_field": false,
+          "final_check_threshold": 0.1,
+          "git_clean": true,
+          "git_commit": "422a2cdf45733862576f635e338403b47cdf9aa1",
+          "models": {
+            "camembert": {
+              "name": "Jean-Baptiste/camembert-ner",
+              "revision": "ef35fe7767c1dad71f5c853838cdd80d0b3441ed"
+            },
+            "spacy": {
+              "name": "fr_core_news_md",
+              "version": "3.8.0"
+            }
+          },
+          "preset": "hybrid_camembert",
+          "python": "3.12.10",
+          "resources": {
+            "cpu_threads": 2,
+            "final_check_seconds": 6.973483400186524,
+            "inference_seconds": 7.981951699825004,
+            "load_seconds": 13.550961000146344,
+            "logical_cpus": 16,
+            "machine": "Windows-11-10.0.26300-SP0",
+            "main_detection_calls": 8,
+            "network_blocked": true,
+            "peak_rss_bytes": 1314062336,
+            "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+            "substitution_seconds": 0.007385699776932597,
+            "wall_seconds": 28.600068600149825
+          },
+          "runtime_identity": null,
+          "source": "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\pilotage\\post_g7_assets\\benchmarks\\G8\\reference_g7",
+          "versions": {
+            "en_core_web_sm": "3.8.0",
+            "fr_core_news_md": "3.8.0",
+            "gliner": null,
+            "huggingface-hub": "2.3.0",
+            "presidio-analyzer": "2.2.366",
+            "presidio-anonymizer": "2.2.366",
+            "sentencepiece": "0.2.2",
+            "spacy": "3.8.18",
+            "tokenizers": "0.23.3",
+            "torch": "2.14.1+cpu",
+            "transformers": "5.21.0"
+          }
+        },
+        "g7_standard": {
+          "configuration": {
+            "enabled_types": [
+              "ADDRESS",
+              "BIRTH_DATE",
+              "CASE_NUMBER",
+              "CUSTOM",
+              "EMAIL",
+              "IBAN",
+              "NIR",
+              "ORGANIZATION",
+              "PERSON",
+              "PHONE",
+              "SIREN",
+              "SIRET"
+            ],
+            "spacy_model": "fr_core_news_md",
+            "threshold": 0.3,
+            "use_camembert": false,
+            "use_exclusions": true,
+            "use_heuristics": true,
+            "use_patterns": true,
+            "use_propagation": true,
+            "use_spacy": true
+          },
+          "document_language_field": false,
+          "final_check_threshold": 0.1,
+          "git_clean": true,
+          "git_commit": "422a2cdf45733862576f635e338403b47cdf9aa1",
+          "models": {
+            "spacy": {
+              "name": "fr_core_news_md",
+              "version": "3.8.0"
+            }
+          },
+          "preset": "hybrid",
+          "python": "3.12.10",
+          "resources": {
+            "cpu_threads": 2,
+            "final_check_seconds": 1.0243900993373245,
+            "inference_seconds": 1.1219415001105517,
+            "load_seconds": 12.143883100012317,
+            "logical_cpus": 16,
+            "machine": "Windows-11-10.0.26300-SP0",
+            "main_detection_calls": 8,
+            "network_blocked": true,
+            "peak_rss_bytes": 773308416,
+            "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+            "substitution_seconds": 0.006723199971020222,
+            "wall_seconds": 14.381215800065547
+          },
+          "runtime_identity": null,
+          "source": "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\pilotage\\post_g7_assets\\benchmarks\\G8\\reference_g7",
+          "versions": {
+            "en_core_web_sm": "3.8.0",
+            "fr_core_news_md": "3.8.0",
+            "gliner": null,
+            "huggingface-hub": "2.3.0",
+            "presidio-analyzer": "2.2.366",
+            "presidio-anonymizer": "2.2.366",
+            "sentencepiece": "0.2.2",
+            "spacy": "3.8.18",
+            "tokenizers": "0.23.3",
+            "torch": "2.14.1+cpu",
+            "transformers": "5.21.0"
+          }
+        },
+        "standard": {
+          "configuration": {
+            "document_language": "fr",
+            "enabled_types": [
+              "ADDRESS",
+              "BIRTH_DATE",
+              "CASE_NUMBER",
+              "CUSTOM",
+              "EMAIL",
+              "IBAN",
+              "NIR",
+              "ORGANIZATION",
+              "PERSON",
+              "PHONE",
+              "SIREN",
+              "SIRET"
+            ],
+            "gliner_threshold": 0.7,
+            "spacy_model": "fr_core_news_md",
+            "threshold": 0.3,
+            "use_camembert": false,
+            "use_exclusions": true,
+            "use_gliner": false,
+            "use_heuristics": true,
+            "use_patterns": true,
+            "use_propagation": true,
+            "use_spacy": true
+          },
+          "document_language_field": true,
+          "final_check_threshold": 0.1,
+          "git_clean": false,
+          "git_commit": "e3d13bdc25839783eebe998c8f971862d78754d5",
+          "models": {
+            "spacy": {
+              "name": "fr_core_news_md",
+              "version": "3.8.0"
+            }
+          },
+          "preset": "hybrid",
+          "python": "3.12.10",
+          "resources": {
+            "cpu_threads": 2,
+            "final_check_seconds": 1.954006199957803,
+            "inference_seconds": 1.1699822002556175,
+            "load_seconds": 12.138206099858508,
+            "logical_cpus": 16,
+            "machine": "Windows-11-10.0.26300-SP0",
+            "main_detection_calls": 8,
+            "network_blocked": true,
+            "peak_rss_bytes": 775663616,
+            "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+            "substitution_seconds": 0.009014000417664647,
+            "wall_seconds": 15.356084399856627
+          },
+          "runtime_identity": "fr;spacy=fr_core_news_md==3.8.0;spacy_engine=3.8.18;presidio=2.2.366",
+          "source": "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b",
+          "versions": {
+            "en_core_web_sm": "3.8.0",
+            "fr_core_news_md": "3.8.0",
+            "gliner": "0.2.29",
+            "huggingface-hub": "1.9.2",
+            "presidio-analyzer": "2.2.366",
+            "presidio-anonymizer": "2.2.366",
+            "sentencepiece": "0.2.2",
+            "spacy": "3.8.18",
+            "tokenizers": "0.23.3",
+            "torch": "2.14.1+cpu",
+            "transformers": "5.16.1"
+          }
+        }
+      },
+      "scopes": {
+        "custom_location": [
+          "CUSTOM",
+          "LOCATION"
+        ],
+        "evaluated": [
+          "ADDRESS",
+          "BIRTH_DATE",
+          "CASE_NUMBER",
+          "EMAIL",
+          "IBAN",
+          "NIR",
+          "ORGANIZATION",
+          "PERSON",
+          "PHONE",
+          "SIREN",
+          "SIRET"
+        ]
+      },
+      "split": "challenge",
+      "stages": {
+        "detection": "proposals of detect(), one call per document and profile",
+        "final_check": "alerts on the pseudonymized text; an alert masks nothing",
+        "pseudonymization": "automatic substitution of every proposal, no human review"
+      }
+    },
+    "criteria": [
+      {
+        "applicable": true,
+        "candidate": "enhanced",
+        "higher_full_coverage": true,
+        "lower_leakage": true,
+        "met": true,
+        "over_masking_margin": 0.01,
+        "over_masking_within_margin": true,
+        "precision_margin": 0.02,
+        "precision_within_margin": true,
+        "reference": "standard"
+      },
+      {
+        "applicable": true,
+        "candidate": "standard",
+        "higher_full_coverage": true,
+        "lower_leakage": true,
+        "met": true,
+        "over_masking_margin": 0.01,
+        "over_masking_within_margin": true,
+        "precision_margin": 0.02,
+        "precision_within_margin": true,
+        "reference": "g7_standard"
+      },
+      {
+        "applicable": true,
+        "candidate": "enhanced",
+        "higher_full_coverage": true,
+        "lower_leakage": true,
+        "met": true,
+        "over_masking_margin": 0.01,
+        "over_masking_within_margin": true,
+        "precision_margin": 0.02,
+        "precision_within_margin": true,
+        "reference": "g7_enhanced"
+      }
+    ],
+    "paired_differences": [
+      {
+        "candidate": "enhanced",
+        "estimate": -0.009803921568627527,
+        "excludes_zero": false,
+        "lower": -0.026548672566371615,
+        "metric": "precision",
+        "reference": "standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": -0.009523809523809601,
+        "excludes_zero": false,
+        "lower": -0.026086956521739202,
+        "metric": "recall",
+        "reference": "standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.00952380952380949,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "full_coverage_rate",
+        "reference": "standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.02752293577981646
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": -0.004407443682664061,
+        "excludes_zero": false,
+        "lower": -0.012506660998677588,
+        "metric": "leaked_character_rate",
+        "reference": "standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.0,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "non_sensitive_masked_rate",
+        "reference": "standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.00952380952380949,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "full_coverage_rate",
+        "reference": "standard",
+        "stage": "pseudonymization",
+        "undefined_draws": 0,
+        "upper": 0.02752293577981646
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": -0.004407443682664061,
+        "excludes_zero": false,
+        "lower": -0.012506660998677588,
+        "metric": "leaked_character_rate",
+        "reference": "standard",
+        "stage": "pseudonymization",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.0,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "non_sensitive_masked_rate",
+        "reference": "standard",
+        "stage": "pseudonymization",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "standard",
+        "estimate": 0.0,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "precision",
+        "reference": "g7_standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "standard",
+        "estimate": 0.0,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "recall",
+        "reference": "g7_standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "standard",
+        "estimate": 0.00952380952380949,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "full_coverage_rate",
+        "reference": "g7_standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.02752293577981657
+      },
+      {
+        "candidate": "standard",
+        "estimate": -0.015670910871694407,
+        "excludes_zero": false,
+        "lower": -0.04446812799529809,
+        "metric": "leaked_character_rate",
+        "reference": "g7_standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "standard",
+        "estimate": 0.0,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "non_sensitive_masked_rate",
+        "reference": "g7_standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "standard",
+        "estimate": 0.00952380952380949,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "full_coverage_rate",
+        "reference": "g7_standard",
+        "stage": "pseudonymization",
+        "undefined_draws": 0,
+        "upper": 0.02752293577981657
+      },
+      {
+        "candidate": "standard",
+        "estimate": -0.015670910871694407,
+        "excludes_zero": false,
+        "lower": -0.04446812799529809,
+        "metric": "leaked_character_rate",
+        "reference": "g7_standard",
+        "stage": "pseudonymization",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "standard",
+        "estimate": 0.0,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "non_sensitive_masked_rate",
+        "reference": "g7_standard",
+        "stage": "pseudonymization",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.0,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "precision",
+        "reference": "g7_enhanced",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.0,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "recall",
+        "reference": "g7_enhanced",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.00952380952380949,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "full_coverage_rate",
+        "reference": "g7_enhanced",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.02752293577981646
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": -0.01567091087169442,
+        "excludes_zero": false,
+        "lower": -0.04446812799529809,
+        "metric": "leaked_character_rate",
+        "reference": "g7_enhanced",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.0,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "non_sensitive_masked_rate",
+        "reference": "g7_enhanced",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.00952380952380949,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "full_coverage_rate",
+        "reference": "g7_enhanced",
+        "stage": "pseudonymization",
+        "undefined_draws": 0,
+        "upper": 0.02752293577981646
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": -0.01567091087169442,
+        "excludes_zero": false,
+        "lower": -0.04446812799529809,
+        "metric": "leaked_character_rate",
+        "reference": "g7_enhanced",
+        "stage": "pseudonymization",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.0,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "non_sensitive_masked_rate",
+        "reference": "g7_enhanced",
+        "stage": "pseudonymization",
+        "undefined_draws": 0,
+        "upper": 0.0
+      }
+    ]
+  },
+  "blind_en": {
+    "profiles": {
+      "enhanced": {
+        "partial": {
+          "config": "enhanced",
+          "exposed_entities": 5,
+          "f1": 0.7913043478260869,
+          "f2": 0.8584905660377359,
+          "fn": 9,
+          "fp": 39,
+          "leak_rate": 0.05032822757111598,
+          "leaked_characters": 115,
+          "mode": "partial",
+          "precision": 0.7,
+          "recall": 0.91,
+          "reference_characters": 2285,
+          "split": "challenge",
+          "threshold": 0.3,
+          "tp": 91,
+          "type": "micro"
+        },
+        "exact": {
+          "config": "enhanced",
+          "exposed_entities": 5,
+          "f1": 0.7304347826086957,
+          "f2": 0.7924528301886793,
+          "fn": 16,
+          "fp": 46,
+          "leak_rate": 0.05032822757111598,
+          "leaked_characters": 115,
+          "mode": "exact",
+          "precision": 0.6461538461538462,
+          "recall": 0.84,
+          "reference_characters": 2285,
+          "split": "challenge",
+          "threshold": 0.3,
+          "tp": 84,
+          "type": "micro"
+        },
+        "coverage": {
+          "config": "enhanced",
+          "documents": 8,
+          "documents_with_any_exposure": 7,
+          "documents_with_references": 8,
+          "entities_fully_covered": 88,
+          "entities_fully_exposed": 5,
+          "entities_partially_exposed": 7,
+          "entities_with_any_exposure": 12,
+          "full_coverage_rate": 0.88,
+          "leaked_character_rate": 0.05032822757111598,
+          "leaked_characters": 115,
+          "non_sensitive_characters": 20880,
+          "non_sensitive_characters_masked": 252,
+          "non_sensitive_masked_rate": 0.01206896551724138,
+          "reference_characters": 2285,
+          "reference_entities": 100,
+          "scope": "evaluated",
+          "stage": "pseudonymization",
+          "threshold": 0.3
+        },
+        "custom_location": {
+          "config": "enhanced",
+          "documents": 8,
+          "documents_with_any_exposure": 6,
+          "documents_with_references": 8,
+          "entities_fully_covered": 2,
+          "entities_fully_exposed": 4,
+          "entities_partially_exposed": 2,
+          "entities_with_any_exposure": 6,
+          "full_coverage_rate": 0.25,
+          "leaked_character_rate": 0.6896551724137931,
+          "leaked_characters": 60,
+          "non_sensitive_characters": 20880,
+          "non_sensitive_characters_masked": 252,
+          "non_sensitive_masked_rate": 0.01206896551724138,
+          "reference_characters": 87,
+          "reference_entities": 8,
+          "scope": "custom_location",
+          "stage": "pseudonymization",
+          "threshold": 0.3
+        },
+        "historical_intervals": {
+          "config": "enhanced",
+          "documents": 8,
+          "f2": {
+            "lower": 0.8267652099952317,
+            "upper": 0.8928571428571429
+          },
+          "leak_rate": {
+            "lower": 0.02660259195396568,
+            "upper": 0.06803056648668435
+          },
+          "mode": "partial",
+          "precision": {
+            "lower": 0.6459627329192547,
+            "upper": 0.7708482142857143
+          },
+          "recall": {
+            "lower": 0.875,
+            "upper": 0.9456521739130435
+          },
+          "split": "challenge",
+          "threshold": 0.3,
+          "type": "micro"
+        },
+        "coverage_intervals": {
+          "full_coverage_rate": {
+            "config": "enhanced",
+            "lower": 0.8383766233766233,
+            "metric": "full_coverage_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.9270833333333334
+          },
+          "leaked_character_rate": {
+            "config": "enhanced",
+            "lower": 0.02660259195396568,
+            "metric": "leaked_character_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.06803056648668435
+          },
+          "non_sensitive_masked_rate": {
+            "config": "enhanced",
+            "lower": 0.007796071197683688,
+            "metric": "non_sensitive_masked_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.016583501873254962
+          }
+        },
+        "alerts": {
+          "alerts": 43,
+          "alerts_elsewhere": 39,
+          "alerts_on_visible_references": 4,
+          "available": true,
+          "check_threshold": 0.1,
+          "config": "enhanced",
+          "documents": 8,
+          "documents_with_alerts": 7,
+          "exposed_entities": 12,
+          "exposed_entities_alerted": 4,
+          "exposed_entities_alerted_rate": 0.3333333333333333,
+          "threshold": 0.3
+        },
+        "resources": {
+          "cpu_threads": 2,
+          "final_check_seconds": 38.9882500001695,
+          "inference_seconds": 21.279583199881017,
+          "load_seconds": 14.588111100019887,
+          "logical_cpus": 16,
+          "machine": "Windows-11-10.0.26300-SP0",
+          "main_detection_calls": 8,
+          "network_blocked": true,
+          "peak_rss_bytes": 2960465920,
+          "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+          "substitution_seconds": 0.013008099747821689,
+          "wall_seconds": 74.96203000005335
+        }
+      },
+      "standard": {
+        "partial": {
+          "config": "standard",
+          "exposed_entities": 6,
+          "f1": 0.8708133971291866,
+          "f2": 0.8939096267190569,
+          "fn": 9,
+          "fp": 18,
+          "leak_rate": 0.10284463894967177,
+          "leaked_characters": 235,
+          "mode": "partial",
+          "precision": 0.8348623853211009,
+          "recall": 0.91,
+          "reference_characters": 2285,
+          "split": "challenge",
+          "threshold": 0.3,
+          "tp": 91,
+          "type": "micro"
+        },
+        "exact": {
+          "config": "standard",
+          "exposed_entities": 6,
+          "f1": 0.7177033492822966,
+          "f2": 0.7367387033398821,
+          "fn": 25,
+          "fp": 34,
+          "leak_rate": 0.10284463894967177,
+          "leaked_characters": 235,
+          "mode": "exact",
+          "precision": 0.6880733944954128,
+          "recall": 0.75,
+          "reference_characters": 2285,
+          "split": "challenge",
+          "threshold": 0.3,
+          "tp": 75,
+          "type": "micro"
+        },
+        "coverage": {
+          "config": "standard",
+          "documents": 8,
+          "documents_with_any_exposure": 8,
+          "documents_with_references": 8,
+          "entities_fully_covered": 78,
+          "entities_fully_exposed": 6,
+          "entities_partially_exposed": 16,
+          "entities_with_any_exposure": 22,
+          "full_coverage_rate": 0.78,
+          "leaked_character_rate": 0.10284463894967177,
+          "leaked_characters": 235,
+          "non_sensitive_characters": 20880,
+          "non_sensitive_characters_masked": 93,
+          "non_sensitive_masked_rate": 0.004454022988505747,
+          "reference_characters": 2285,
+          "reference_entities": 100,
+          "scope": "evaluated",
+          "stage": "pseudonymization",
+          "threshold": 0.3
+        },
+        "custom_location": {
+          "config": "standard",
+          "documents": 8,
+          "documents_with_any_exposure": 6,
+          "documents_with_references": 8,
+          "entities_fully_covered": 2,
+          "entities_fully_exposed": 4,
+          "entities_partially_exposed": 2,
+          "entities_with_any_exposure": 6,
+          "full_coverage_rate": 0.25,
+          "leaked_character_rate": 0.6896551724137931,
+          "leaked_characters": 60,
+          "non_sensitive_characters": 20880,
+          "non_sensitive_characters_masked": 93,
+          "non_sensitive_masked_rate": 0.004454022988505747,
+          "reference_characters": 87,
+          "reference_entities": 8,
+          "scope": "custom_location",
+          "stage": "pseudonymization",
+          "threshold": 0.3
+        },
+        "historical_intervals": {
+          "config": "standard",
+          "documents": 8,
+          "f2": {
+            "lower": 0.8410112065354001,
+            "upper": 0.9375
+          },
+          "leak_rate": {
+            "lower": 0.06866573343732525,
+            "upper": 0.13552791441604006
+          },
+          "mode": "partial",
+          "precision": {
+            "lower": 0.7641380789022298,
+            "upper": 0.9032328805885681
+          },
+          "recall": {
+            "lower": 0.8518321513002364,
+            "upper": 0.9495903361344536
+          },
+          "split": "challenge",
+          "threshold": 0.3,
+          "type": "micro"
+        },
+        "coverage_intervals": {
+          "full_coverage_rate": {
+            "config": "standard",
+            "lower": 0.7241297208538587,
+            "metric": "full_coverage_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.8367346938775511
+          },
+          "leaked_character_rate": {
+            "config": "standard",
+            "lower": 0.06866573343732525,
+            "metric": "leaked_character_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.13552791441604006
+          },
+          "non_sensitive_masked_rate": {
+            "config": "standard",
+            "lower": 0.0019740622322303863,
+            "metric": "non_sensitive_masked_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.007487720138972085
+          }
+        },
+        "alerts": {
+          "alerts": 28,
+          "alerts_elsewhere": 27,
+          "alerts_on_visible_references": 1,
+          "available": true,
+          "check_threshold": 0.1,
+          "config": "standard",
+          "documents": 8,
+          "documents_with_alerts": 6,
+          "exposed_entities": 22,
+          "exposed_entities_alerted": 1,
+          "exposed_entities_alerted_rate": 0.045454545454545456,
+          "threshold": 0.3
+        },
+        "resources": {
+          "cpu_threads": 2,
+          "final_check_seconds": 2.0500201005488634,
+          "inference_seconds": 1.052463399944827,
+          "load_seconds": 9.156112700002268,
+          "logical_cpus": 16,
+          "machine": "Windows-11-10.0.26300-SP0",
+          "main_detection_calls": 8,
+          "network_blocked": true,
+          "peak_rss_bytes": 440598528,
+          "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+          "substitution_seconds": 0.01085279998369515,
+          "wall_seconds": 12.35537949996069
+        }
+      }
+    },
+    "metadata": {
+      "corpus_sha256": {
+        "challenge.jsonl": "e3fd4886a2499563f6710cf1cfe57a3f27b3302be1e576e06ac67a4ddede5aea"
+      },
+      "dataset_id": "gate8_blind_en",
+      "date": "2026-10-28T16:32:36.025703+00:00",
+      "document_count": 8,
+      "document_language": "en",
+      "git_commit": "e3d13bdc25839783eebe998c8f971862d78754d5",
+      "mode": "gate",
+      "plan": {
+        "comparisons": [
+          [
+            "enhanced",
+            "standard"
+          ]
+        ],
+        "document_language": "en",
+        "profiles": {
+          "enhanced": {
+            "preset": "hybrid_gliner",
+            "threshold": 0.3
+          },
+          "standard": {
+            "preset": "hybrid",
+            "threshold": 0.3
+          }
+        }
+      },
+      "plan_sha256": "d5240419d4683006ddb2615f1c1f4970a5fbd2f95ee072d99068426f4983df06",
+      "profiles": {
+        "enhanced": {
+          "configuration": {
+            "document_language": "en",
+            "enabled_types": [
+              "ADDRESS",
+              "BIRTH_DATE",
+              "CASE_NUMBER",
+              "CUSTOM",
+              "EMAIL",
+              "IBAN",
+              "NIR",
+              "ORGANIZATION",
+              "PERSON",
+              "PHONE",
+              "SIREN",
+              "SIRET"
+            ],
+            "gliner_threshold": 0.7,
+            "spacy_model": "en_core_web_sm",
+            "threshold": 0.3,
+            "use_camembert": false,
+            "use_exclusions": true,
+            "use_gliner": true,
+            "use_heuristics": true,
+            "use_patterns": true,
+            "use_propagation": true,
+            "use_spacy": true
+          },
+          "document_language_field": true,
+          "final_check_threshold": 0.1,
+          "git_clean": false,
+          "git_commit": "e3d13bdc25839783eebe998c8f971862d78754d5",
+          "models": {
+            "spacy": {
+              "name": "en_core_web_sm",
+              "version": "3.8.0"
+            }
+          },
+          "preset": "hybrid_gliner",
+          "python": "3.12.10",
+          "resources": {
+            "cpu_threads": 2,
+            "final_check_seconds": 38.9882500001695,
+            "inference_seconds": 21.279583199881017,
+            "load_seconds": 14.588111100019887,
+            "logical_cpus": 16,
+            "machine": "Windows-11-10.0.26300-SP0",
+            "main_detection_calls": 8,
+            "network_blocked": true,
+            "peak_rss_bytes": 2960465920,
+            "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+            "substitution_seconds": 0.013008099747821689,
+            "wall_seconds": 74.96203000005335
+          },
+          "runtime_identity": "en;spacy=en_core_web_sm==3.8.0;spacy_engine=3.8.18;presidio=2.2.366;gliner={\"encoder_limit\": 512, \"files\": {\"gliner_multi_pii_v1@1fcf13e85f4eef5394e1fcd406cf2ca9ea82351d/gliner_config.json\": [478, 1793183643069604300], \"gliner_multi_pii_v1@1fcf13e85f4eef5394e1fcd406cf2ca9ea82351d/pytorch_model.bin\": [1155900362, 1793183666788131800], \"mdeberta_v3_base@a0484667b22365f84929a935b5e50a51f71f159d/config.json\": [579, 1793183627893166500], \"mdeberta_v3_base@a0484667b22365f84929a935b5e50a51f71f159d/spm.model\": [4305025, 1793183628750261100], \"mdeberta_v3_base@a0484667b22365f84929a935b5e50a51f71f159d/tokenizer_config.json\": [52, 1793183629064717100]}, \"implementation\": \"A4.2\", \"labels\": {\"address\": \"ADDRESS\", \"date of birth\": \"BIRTH_DATE\", \"email\": \"EMAIL\", \"organization\": \"ORGANIZATION\", \"person\": \"PERSON\", \"phone number\": \"PHONE\"}, \"manifest\": \"0a8db28f3db1754378d16200a6e43b8917f235d6c0875bb51da0cacbd6bbe40d\", \"overlap\": 64, \"root\": \"C:\\\\Users\\\\nasci\\\\Documents\\\\Coding Project\\\\Assignment\\\\pilotage\\\\post_g7_assets\", \"versions\": {\"gliner\": \"0.2.29\", \"huggingface-hub\": \"1.9.2\", \"sentencepiece\": \"0.2.2\", \"tokenizers\": \"0.23.3\", \"torch\": \"2.14.1+cpu\", \"transformers\": \"5.16.1\"}, \"window\": 256}",
+          "source": "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b",
+          "versions": {
+            "en_core_web_sm": "3.8.0",
+            "fr_core_news_md": "3.8.0",
+            "gliner": "0.2.29",
+            "huggingface-hub": "1.9.2",
+            "presidio-analyzer": "2.2.366",
+            "presidio-anonymizer": "2.2.366",
+            "sentencepiece": "0.2.2",
+            "spacy": "3.8.18",
+            "tokenizers": "0.23.3",
+            "torch": "2.14.1+cpu",
+            "transformers": "5.16.1"
+          }
+        },
+        "standard": {
+          "configuration": {
+            "document_language": "en",
+            "enabled_types": [
+              "ADDRESS",
+              "BIRTH_DATE",
+              "CASE_NUMBER",
+              "CUSTOM",
+              "EMAIL",
+              "IBAN",
+              "NIR",
+              "ORGANIZATION",
+              "PERSON",
+              "PHONE",
+              "SIREN",
+              "SIRET"
+            ],
+            "gliner_threshold": 0.7,
+            "spacy_model": "en_core_web_sm",
+            "threshold": 0.3,
+            "use_camembert": false,
+            "use_exclusions": true,
+            "use_gliner": false,
+            "use_heuristics": true,
+            "use_patterns": true,
+            "use_propagation": true,
+            "use_spacy": true
+          },
+          "document_language_field": true,
+          "final_check_threshold": 0.1,
+          "git_clean": false,
+          "git_commit": "e3d13bdc25839783eebe998c8f971862d78754d5",
+          "models": {
+            "spacy": {
+              "name": "en_core_web_sm",
+              "version": "3.8.0"
+            }
+          },
+          "preset": "hybrid",
+          "python": "3.12.10",
+          "resources": {
+            "cpu_threads": 2,
+            "final_check_seconds": 2.0500201005488634,
+            "inference_seconds": 1.052463399944827,
+            "load_seconds": 9.156112700002268,
+            "logical_cpus": 16,
+            "machine": "Windows-11-10.0.26300-SP0",
+            "main_detection_calls": 8,
+            "network_blocked": true,
+            "peak_rss_bytes": 440598528,
+            "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+            "substitution_seconds": 0.01085279998369515,
+            "wall_seconds": 12.35537949996069
+          },
+          "runtime_identity": "en;spacy=en_core_web_sm==3.8.0;spacy_engine=3.8.18;presidio=2.2.366",
+          "source": "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b",
+          "versions": {
+            "en_core_web_sm": "3.8.0",
+            "fr_core_news_md": "3.8.0",
+            "gliner": "0.2.29",
+            "huggingface-hub": "1.9.2",
+            "presidio-analyzer": "2.2.366",
+            "presidio-anonymizer": "2.2.366",
+            "sentencepiece": "0.2.2",
+            "spacy": "3.8.18",
+            "tokenizers": "0.23.3",
+            "torch": "2.14.1+cpu",
+            "transformers": "5.16.1"
+          }
+        }
+      },
+      "scopes": {
+        "custom_location": [
+          "CUSTOM",
+          "LOCATION"
+        ],
+        "evaluated": [
+          "ADDRESS",
+          "BIRTH_DATE",
+          "CASE_NUMBER",
+          "EMAIL",
+          "IBAN",
+          "NIR",
+          "ORGANIZATION",
+          "PERSON",
+          "PHONE",
+          "SIREN",
+          "SIRET"
+        ]
+      },
+      "split": "challenge",
+      "stages": {
+        "detection": "proposals of detect(), one call per document and profile",
+        "final_check": "alerts on the pseudonymized text; an alert masks nothing",
+        "pseudonymization": "automatic substitution of every proposal, no human review"
+      }
+    },
+    "criteria": [
+      {
+        "applicable": true,
+        "candidate": "enhanced",
+        "higher_full_coverage": true,
+        "lower_leakage": true,
+        "met": false,
+        "over_masking_margin": 0.01,
+        "over_masking_within_margin": true,
+        "precision_margin": 0.02,
+        "precision_within_margin": false,
+        "reference": "standard"
+      }
+    ],
+    "paired_differences": [
+      {
+        "candidate": "enhanced",
+        "estimate": -0.13486238532110095,
+        "excludes_zero": true,
+        "lower": -0.2021172555043523,
+        "metric": "precision",
+        "reference": "standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": -0.05141566239957329
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.0,
+        "excludes_zero": false,
+        "lower": -0.025429161234246024,
+        "metric": "recall",
+        "reference": "standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.03125
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.09999999999999998,
+        "excludes_zero": true,
+        "lower": 0.0803571428571429,
+        "metric": "full_coverage_rate",
+        "reference": "standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.12903225806451613
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": -0.0525164113785558,
+        "excludes_zero": true,
+        "lower": -0.07400036653661482,
+        "metric": "leaked_character_rate",
+        "reference": "standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": -0.03552500424237063
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.007614942528735632,
+        "excludes_zero": true,
+        "lower": 0.003429754087264254,
+        "metric": "non_sensitive_masked_rate",
+        "reference": "standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.01229353916618803
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.09999999999999998,
+        "excludes_zero": true,
+        "lower": 0.0803571428571429,
+        "metric": "full_coverage_rate",
+        "reference": "standard",
+        "stage": "pseudonymization",
+        "undefined_draws": 0,
+        "upper": 0.12903225806451613
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": -0.0525164113785558,
+        "excludes_zero": true,
+        "lower": -0.07400036653661482,
+        "metric": "leaked_character_rate",
+        "reference": "standard",
+        "stage": "pseudonymization",
+        "undefined_draws": 0,
+        "upper": -0.03552500424237063
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.007614942528735632,
+        "excludes_zero": true,
+        "lower": 0.003429754087264254,
+        "metric": "non_sensitive_masked_rate",
+        "reference": "standard",
+        "stage": "pseudonymization",
+        "undefined_draws": 0,
+        "upper": 0.01229353916618803
+      }
+    ]
+  },
+  "test": {
+    "profiles": {
+      "enhanced": {
+        "partial": {
+          "config": "enhanced",
+          "exposed_entities": 0,
+          "f1": 0.9893617021276596,
+          "f2": 0.9957173447537473,
+          "fn": 0,
+          "fp": 2,
+          "leak_rate": 0.0,
+          "leaked_characters": 0,
+          "mode": "partial",
+          "precision": 0.9789473684210527,
+          "recall": 1.0,
+          "reference_characters": 1889,
+          "split": "test",
+          "threshold": 0.3,
+          "tp": 93,
+          "type": "micro"
+        },
+        "exact": {
+          "config": "enhanced",
+          "exposed_entities": 0,
+          "f1": 0.9787234042553191,
+          "f2": 0.9850107066381156,
+          "fn": 1,
+          "fp": 3,
+          "leak_rate": 0.0,
+          "leaked_characters": 0,
+          "mode": "exact",
+          "precision": 0.968421052631579,
+          "recall": 0.989247311827957,
+          "reference_characters": 1889,
+          "split": "test",
+          "threshold": 0.3,
+          "tp": 92,
+          "type": "micro"
+        },
+        "coverage": {
+          "config": "enhanced",
+          "documents": 6,
+          "documents_with_any_exposure": 0,
+          "documents_with_references": 6,
+          "entities_fully_covered": 93,
+          "entities_fully_exposed": 0,
+          "entities_partially_exposed": 0,
+          "entities_with_any_exposure": 0,
+          "full_coverage_rate": 1.0,
+          "leaked_character_rate": 0.0,
+          "leaked_characters": 0,
+          "non_sensitive_characters": 11645,
+          "non_sensitive_characters_masked": 25,
+          "non_sensitive_masked_rate": 0.0021468441391155,
+          "reference_characters": 1889,
+          "reference_entities": 93,
+          "scope": "evaluated",
+          "stage": "pseudonymization",
+          "threshold": 0.3
+        },
+        "custom_location": {
+          "config": "enhanced",
+          "documents": 6,
+          "documents_with_any_exposure": 4,
+          "documents_with_references": 6,
+          "entities_fully_covered": 2,
+          "entities_fully_exposed": 4,
+          "entities_partially_exposed": 0,
+          "entities_with_any_exposure": 4,
+          "full_coverage_rate": 0.3333333333333333,
+          "leaked_character_rate": 0.7017543859649122,
+          "leaked_characters": 40,
+          "non_sensitive_characters": 11645,
+          "non_sensitive_characters_masked": 25,
+          "non_sensitive_masked_rate": 0.0021468441391155,
+          "reference_characters": 57,
+          "reference_entities": 6,
+          "scope": "custom_location",
+          "stage": "pseudonymization",
+          "threshold": 0.3
+        },
+        "historical_intervals": {
+          "config": "enhanced",
+          "documents": 6,
+          "f2": {
+            "lower": 0.9908883826879271,
+            "upper": 1.0
+          },
+          "leak_rate": {
+            "lower": 0.0,
+            "upper": 0.0
+          },
+          "mode": "partial",
+          "precision": {
+            "lower": 0.9560439560439561,
+            "upper": 1.0
+          },
+          "recall": {
+            "lower": 1.0,
+            "upper": 1.0
+          },
+          "split": "test",
+          "threshold": 0.3,
+          "type": "micro"
+        },
+        "coverage_intervals": {
+          "full_coverage_rate": {
+            "config": "enhanced",
+            "lower": 1.0,
+            "metric": "full_coverage_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 1.0
+          },
+          "leaked_character_rate": {
+            "config": "enhanced",
+            "lower": 0.0,
+            "metric": "leaked_character_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.0
+          },
+          "non_sensitive_masked_rate": {
+            "config": "enhanced",
+            "lower": 0.0004428582565596365,
+            "metric": "non_sensitive_masked_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.00407179657636696
+          }
+        },
+        "alerts": {
+          "alerts": 1,
+          "alerts_elsewhere": 1,
+          "alerts_on_visible_references": 0,
+          "available": true,
+          "check_threshold": 0.1,
+          "config": "enhanced",
+          "documents": 6,
+          "documents_with_alerts": 1,
+          "exposed_entities": 0,
+          "exposed_entities_alerted": 0,
+          "exposed_entities_alerted_rate": null,
+          "threshold": 0.3
+        },
+        "resources": {
+          "cpu_threads": 2,
+          "final_check_seconds": 8.959059200016782,
+          "inference_seconds": 5.321330000413582,
+          "load_seconds": 12.791683800052851,
+          "logical_cpus": 16,
+          "machine": "Windows-11-10.0.26300-SP0",
+          "main_detection_calls": 6,
+          "network_blocked": true,
+          "peak_rss_bytes": 1194635264,
+          "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+          "substitution_seconds": 0.008559299865737557,
+          "wall_seconds": 27.17287480016239
+        }
+      },
+      "standard": {
+        "partial": {
+          "config": "standard",
+          "exposed_entities": 0,
+          "f1": 0.9893617021276596,
+          "f2": 0.9957173447537473,
+          "fn": 0,
+          "fp": 2,
+          "leak_rate": 0.0,
+          "leaked_characters": 0,
+          "mode": "partial",
+          "precision": 0.9789473684210527,
+          "recall": 1.0,
+          "reference_characters": 1889,
+          "split": "test",
+          "threshold": 0.3,
+          "tp": 93,
+          "type": "micro"
+        },
+        "exact": {
+          "config": "standard",
+          "exposed_entities": 0,
+          "f1": 0.9893617021276596,
+          "f2": 0.9957173447537473,
+          "fn": 0,
+          "fp": 2,
+          "leak_rate": 0.0,
+          "leaked_characters": 0,
+          "mode": "exact",
+          "precision": 0.9789473684210527,
+          "recall": 1.0,
+          "reference_characters": 1889,
+          "split": "test",
+          "threshold": 0.3,
+          "tp": 93,
+          "type": "micro"
+        },
+        "coverage": {
+          "config": "standard",
+          "documents": 6,
+          "documents_with_any_exposure": 0,
+          "documents_with_references": 6,
+          "entities_fully_covered": 93,
+          "entities_fully_exposed": 0,
+          "entities_partially_exposed": 0,
+          "entities_with_any_exposure": 0,
+          "full_coverage_rate": 1.0,
+          "leaked_character_rate": 0.0,
+          "leaked_characters": 0,
+          "non_sensitive_characters": 11645,
+          "non_sensitive_characters_masked": 20,
+          "non_sensitive_masked_rate": 0.0017174753112924003,
+          "reference_characters": 1889,
+          "reference_entities": 93,
+          "scope": "evaluated",
+          "stage": "pseudonymization",
+          "threshold": 0.3
+        },
+        "custom_location": {
+          "config": "standard",
+          "documents": 6,
+          "documents_with_any_exposure": 4,
+          "documents_with_references": 6,
+          "entities_fully_covered": 2,
+          "entities_fully_exposed": 4,
+          "entities_partially_exposed": 0,
+          "entities_with_any_exposure": 4,
+          "full_coverage_rate": 0.3333333333333333,
+          "leaked_character_rate": 0.7017543859649122,
+          "leaked_characters": 40,
+          "non_sensitive_characters": 11645,
+          "non_sensitive_characters_masked": 20,
+          "non_sensitive_masked_rate": 0.0017174753112924003,
+          "reference_characters": 57,
+          "reference_entities": 6,
+          "scope": "custom_location",
+          "stage": "pseudonymization",
+          "threshold": 0.3
+        },
+        "historical_intervals": {
+          "config": "standard",
+          "documents": 6,
+          "f2": {
+            "lower": 0.9908883826879271,
+            "upper": 1.0
+          },
+          "leak_rate": {
+            "lower": 0.0,
+            "upper": 0.0
+          },
+          "mode": "partial",
+          "precision": {
+            "lower": 0.9560439560439561,
+            "upper": 1.0
+          },
+          "recall": {
+            "lower": 1.0,
+            "upper": 1.0
+          },
+          "split": "test",
+          "threshold": 0.3,
+          "type": "micro"
+        },
+        "coverage_intervals": {
+          "full_coverage_rate": {
+            "config": "standard",
+            "lower": 1.0,
+            "metric": "full_coverage_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 1.0
+          },
+          "leaked_character_rate": {
+            "config": "standard",
+            "lower": 0.0,
+            "metric": "leaked_character_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.0
+          },
+          "non_sensitive_masked_rate": {
+            "config": "standard",
+            "lower": 0.0,
+            "metric": "non_sensitive_masked_rate",
+            "stage": "pseudonymization",
+            "threshold": 0.3,
+            "undefined_draws": 0,
+            "upper": 0.0037239641254799383
+          }
+        },
+        "alerts": {
+          "alerts": 0,
+          "alerts_elsewhere": 0,
+          "alerts_on_visible_references": 0,
+          "available": true,
+          "check_threshold": 0.1,
+          "config": "standard",
+          "documents": 6,
+          "documents_with_alerts": 0,
+          "exposed_entities": 0,
+          "exposed_entities_alerted": 0,
+          "exposed_entities_alerted_rate": null,
+          "threshold": 0.3
+        },
+        "resources": {
+          "cpu_threads": 2,
+          "final_check_seconds": 1.1279678998980671,
+          "inference_seconds": 0.9287561001256108,
+          "load_seconds": 12.010723100043833,
+          "logical_cpus": 16,
+          "machine": "Windows-11-10.0.26300-SP0",
+          "main_detection_calls": 6,
+          "network_blocked": true,
+          "peak_rss_bytes": 774418432,
+          "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+          "substitution_seconds": 0.00761030032299459,
+          "wall_seconds": 14.159650000045076
+        }
+      }
+    },
+    "metadata": {
+      "corpus_sha256": {
+        "test.jsonl": "12a7852e765d98c10be74025e684c15280ccb47615017529ee320370faa4cd4d"
+      },
+      "dataset_id": "gate8_test",
+      "date": "2026-10-28T16:33:48.820423+00:00",
+      "document_count": 6,
+      "document_language": "fr",
+      "git_commit": "e3d13bdc25839783eebe998c8f971862d78754d5",
+      "mode": "gate",
+      "plan": {
+        "comparisons": [
+          [
+            "enhanced",
+            "standard"
+          ]
+        ],
+        "document_language": "fr",
+        "profiles": {
+          "enhanced": {
+            "preset": "hybrid_camembert",
+            "threshold": 0.3
+          },
+          "standard": {
+            "preset": "hybrid",
+            "threshold": 0.3
+          }
+        }
+      },
+      "plan_sha256": "747c37211f92a02d4eef473e1019b894a88c5d83fff163acebe4975501394da2",
+      "profiles": {
+        "enhanced": {
+          "configuration": {
+            "document_language": "fr",
+            "enabled_types": [
+              "ADDRESS",
+              "BIRTH_DATE",
+              "CASE_NUMBER",
+              "CUSTOM",
+              "EMAIL",
+              "IBAN",
+              "NIR",
+              "ORGANIZATION",
+              "PERSON",
+              "PHONE",
+              "SIREN",
+              "SIRET"
+            ],
+            "gliner_threshold": 0.7,
+            "spacy_model": "fr_core_news_md",
+            "threshold": 0.3,
+            "use_camembert": true,
+            "use_exclusions": true,
+            "use_gliner": false,
+            "use_heuristics": true,
+            "use_patterns": true,
+            "use_propagation": true,
+            "use_spacy": true
+          },
+          "document_language_field": true,
+          "final_check_threshold": 0.1,
+          "git_clean": false,
+          "git_commit": "e3d13bdc25839783eebe998c8f971862d78754d5",
+          "models": {
+            "camembert": {
+              "name": "Jean-Baptiste/camembert-ner",
+              "revision": "ef35fe7767c1dad71f5c853838cdd80d0b3441ed"
+            },
+            "spacy": {
+              "name": "fr_core_news_md",
+              "version": "3.8.0"
+            }
+          },
+          "preset": "hybrid_camembert",
+          "python": "3.12.10",
+          "resources": {
+            "cpu_threads": 2,
+            "final_check_seconds": 8.959059200016782,
+            "inference_seconds": 5.321330000413582,
+            "load_seconds": 12.791683800052851,
+            "logical_cpus": 16,
+            "machine": "Windows-11-10.0.26300-SP0",
+            "main_detection_calls": 6,
+            "network_blocked": true,
+            "peak_rss_bytes": 1194635264,
+            "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+            "substitution_seconds": 0.008559299865737557,
+            "wall_seconds": 27.17287480016239
+          },
+          "runtime_identity": "fr;spacy=fr_core_news_md==3.8.0;spacy_engine=3.8.18;presidio=2.2.366;local_package={\"files\": {\"config.json\": [892, 1793183619776265300], \"model.safetensors\": [440168896, 1793183620008920000], \"sentencepiece.bpe.model\": [810912, 1793183620728910600], \"special_tokens_map.json\": [210, 1793183620743707800], \"tokenizer_config.json\": [269, 1793183620754629300]}, \"root\": \"C:\\\\Users\\\\nasci\\\\Documents\\\\Coding Project\\\\Assignment\\\\pilotage\\\\post_g7_assets\"};transformers=5.16.1;torch=2.14.1+cpu;tokenizers=0.23.3;huggingface-hub=1.9.2;sentencepiece=0.2.2;camembert=Jean-Baptiste/camembert-ner@ef35fe7767c1dad71f5c853838cdd80d0b3441ed",
+          "source": "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b",
+          "versions": {
+            "en_core_web_sm": "3.8.0",
+            "fr_core_news_md": "3.8.0",
+            "gliner": "0.2.29",
+            "huggingface-hub": "1.9.2",
+            "presidio-analyzer": "2.2.366",
+            "presidio-anonymizer": "2.2.366",
+            "sentencepiece": "0.2.2",
+            "spacy": "3.8.18",
+            "tokenizers": "0.23.3",
+            "torch": "2.14.1+cpu",
+            "transformers": "5.16.1"
+          }
+        },
+        "standard": {
+          "configuration": {
+            "document_language": "fr",
+            "enabled_types": [
+              "ADDRESS",
+              "BIRTH_DATE",
+              "CASE_NUMBER",
+              "CUSTOM",
+              "EMAIL",
+              "IBAN",
+              "NIR",
+              "ORGANIZATION",
+              "PERSON",
+              "PHONE",
+              "SIREN",
+              "SIRET"
+            ],
+            "gliner_threshold": 0.7,
+            "spacy_model": "fr_core_news_md",
+            "threshold": 0.3,
+            "use_camembert": false,
+            "use_exclusions": true,
+            "use_gliner": false,
+            "use_heuristics": true,
+            "use_patterns": true,
+            "use_propagation": true,
+            "use_spacy": true
+          },
+          "document_language_field": true,
+          "final_check_threshold": 0.1,
+          "git_clean": false,
+          "git_commit": "e3d13bdc25839783eebe998c8f971862d78754d5",
+          "models": {
+            "spacy": {
+              "name": "fr_core_news_md",
+              "version": "3.8.0"
+            }
+          },
+          "preset": "hybrid",
+          "python": "3.12.10",
+          "resources": {
+            "cpu_threads": 2,
+            "final_check_seconds": 1.1279678998980671,
+            "inference_seconds": 0.9287561001256108,
+            "load_seconds": 12.010723100043833,
+            "logical_cpus": 16,
+            "machine": "Windows-11-10.0.26300-SP0",
+            "main_detection_calls": 6,
+            "network_blocked": true,
+            "peak_rss_bytes": 774418432,
+            "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+            "substitution_seconds": 0.00761030032299459,
+            "wall_seconds": 14.159650000045076
+          },
+          "runtime_identity": "fr;spacy=fr_core_news_md==3.8.0;spacy_engine=3.8.18;presidio=2.2.366",
+          "source": "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b",
+          "versions": {
+            "en_core_web_sm": "3.8.0",
+            "fr_core_news_md": "3.8.0",
+            "gliner": "0.2.29",
+            "huggingface-hub": "1.9.2",
+            "presidio-analyzer": "2.2.366",
+            "presidio-anonymizer": "2.2.366",
+            "sentencepiece": "0.2.2",
+            "spacy": "3.8.18",
+            "tokenizers": "0.23.3",
+            "torch": "2.14.1+cpu",
+            "transformers": "5.16.1"
+          }
+        }
+      },
+      "scopes": {
+        "custom_location": [
+          "CUSTOM",
+          "LOCATION"
+        ],
+        "evaluated": [
+          "ADDRESS",
+          "BIRTH_DATE",
+          "CASE_NUMBER",
+          "EMAIL",
+          "IBAN",
+          "NIR",
+          "ORGANIZATION",
+          "PERSON",
+          "PHONE",
+          "SIREN",
+          "SIRET"
+        ]
+      },
+      "split": "test",
+      "stages": {
+        "detection": "proposals of detect(), one call per document and profile",
+        "final_check": "alerts on the pseudonymized text; an alert masks nothing",
+        "pseudonymization": "automatic substitution of every proposal, no human review"
+      }
+    },
+    "criteria": [
+      {
+        "applicable": true,
+        "candidate": "enhanced",
+        "higher_full_coverage": false,
+        "lower_leakage": false,
+        "met": false,
+        "over_masking_margin": 0.01,
+        "over_masking_within_margin": true,
+        "precision_margin": 0.02,
+        "precision_within_margin": true,
+        "reference": "standard"
+      }
+    ],
+    "paired_differences": [
+      {
+        "candidate": "enhanced",
+        "estimate": 0.0,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "precision",
+        "reference": "standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.0,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "recall",
+        "reference": "standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.0,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "full_coverage_rate",
+        "reference": "standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.0,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "leaked_character_rate",
+        "reference": "standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.00042936882782309985,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "non_sensitive_masked_rate",
+        "reference": "standard",
+        "stage": "detection",
+        "undefined_draws": 0,
+        "upper": 0.0012895460797799174
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.0,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "full_coverage_rate",
+        "reference": "standard",
+        "stage": "pseudonymization",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.0,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "leaked_character_rate",
+        "reference": "standard",
+        "stage": "pseudonymization",
+        "undefined_draws": 0,
+        "upper": 0.0
+      },
+      {
+        "candidate": "enhanced",
+        "estimate": 0.00042936882782309985,
+        "excludes_zero": false,
+        "lower": 0.0,
+        "metric": "non_sensitive_masked_rate",
+        "reference": "standard",
+        "stage": "pseudonymization",
+        "undefined_draws": 0,
+        "upper": 0.0012895460797799174
+      }
+    ]
+  },
+  "challenge": {
+    "available": false,
+    "failure": {
+      "observed_at_utc": "2026-10-28T16:37:12.248642+00:00",
+      "available": false,
+      "measurement_cli_exit_code": 2,
+      "report_produced": false,
+      "root_cause": "undetermined; reserved worker stderr not retained or displayed",
+      "stage_of_failure": "undetermined",
+      "predictions_recoverable": false,
+      "repeat_forbidden": true,
+      "impact": "historical challenge comparison unavailable; global NO-GO"
+    }
+  }
+}

@@ -210,3 +210,30 @@ retained-runtime-final.json porte le SHA-256
 `3e3e8fefcbe59f057e199f558dd1a634d6ebf2c103f35b9df524ee21ae5c5416` ; le rapport de
 provenance integration-summary.json porte
 `8f2bcf99aac29f0d6904b7806168bab564c948ea862244fc0214bb383e67f5ff`.
+
+## 13. Constat G8 du 28 octobre 2026
+
+Le protocole et les seuils ci-dessus restent figés. G8 conclut NO-GO global : Enhanced EN
+réduit les fuites mais dépasse la perte de précision autorisée ; la série challenge
+historique échoue sans rapport exploitable et n'est pas relancée. Les contrôles techniques
+et les gains FR mesurés sont conservés, sans annoncer une validation bilingue complète.
+
+Le quatrième test historique est mesuré une fois, après vérification du dev : 93/93 entités
+couvertes et zéro caractère exposé dans les onze types, dans les deux profils actuels.
+Les deux lots aveugles neufs sont mesurés une fois par profil/code ; leurs langues restent
+séparées. Aucun G7 anglais n'est inventé. Les alertes ne réduisent aucune fuite.
+
+Le harnais G8 complète B1 avec le contrôle réel du contexte source et les coûts par
+processus ; les prédictions servent à toutes les métriques avant d'être oubliées. Les
+mesures dev du harnais utilisent le mode gate sur le seul split dev pour isoler les
+profils et supprimer les détails. Le CLI --split dev et la grille EN sont vérifiés avant
+registration.json et avant tout chiffre réservé. Pour les splits historiques, run_gate.py
+exige --split test puis --split challenge et dérive les rapports compatibles depuis les
+mêmes prédictions : aucun deuxième passage par le CLI historique, aucun --split all.
+
+G8-01 reproduit sur une panne injectée la perte des prédictions quand le contrôle final
+échoue ; xfail strict, sans lien établi avec l'échec challenge. La cause et la sous-étape
+de cet échec réservé restent inconnues, sans journal sensible conservé. Aucune nouvelle
+détection réservée n'est autorisée par ce constat ; un relais explicite devra en fixer
+les limites. [D-G8-1](DECISIONS.md#d-g8-1-gate-bilingue-et-protection-complete) et
+[rapport complet](../results/gate8/report.md) conservent méthodes, intervalles et replis.

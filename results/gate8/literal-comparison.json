@@ -1,0 +1,149 @@
+{
+  "classification_sha256": "a694b6c3ab3edbf7ac6dbe9f15021cf751b7972f32b5fc6ceda3644099ba9050",
+  "splits": {
+    "test": {
+      "documents": 6,
+      "sha256": "12a7852e765d98c10be74025e684c15280ccb47615017529ee320370faa4cd4d",
+      "counts": {
+        "conservative_complete_candidate": {
+          "values": 882,
+          "exact_text": 1,
+          "folded_text": 1,
+          "folded_annotation": 0
+        },
+        "conservative_fixture_fragment": {
+          "values": 32,
+          "exact_text": 0,
+          "folded_text": 1,
+          "folded_annotation": 0
+        },
+        "generic_atomic_or_technical": {
+          "values": 726,
+          "exact_text": 42,
+          "folded_text": 58,
+          "folded_annotation": 19
+        },
+        "generic_pattern": {
+          "values": 86,
+          "exact_text": 0,
+          "folded_text": 0,
+          "folded_annotation": 0
+        },
+        "preexisting": {
+          "values": 288,
+          "exact_text": 41,
+          "folded_text": 49,
+          "folded_annotation": 31
+        }
+      }
+    },
+    "challenge": {
+      "documents": 8,
+      "sha256": "c47502d65bf05b6f3e0bd7e0bf9ccd9e58b046787fa2252e6a49ece85a03d609",
+      "counts": {
+        "conservative_complete_candidate": {
+          "values": 882,
+          "exact_text": 0,
+          "folded_text": 0,
+          "folded_annotation": 0
+        },
+        "conservative_fixture_fragment": {
+          "values": 32,
+          "exact_text": 1,
+          "folded_text": 3,
+          "folded_annotation": 2
+        },
+        "generic_atomic_or_technical": {
+          "values": 726,
+          "exact_text": 47,
+          "folded_text": 65,
+          "folded_annotation": 37
+        },
+        "generic_pattern": {
+          "values": 86,
+          "exact_text": 0,
+          "folded_text": 0,
+          "folded_annotation": 0
+        },
+        "preexisting": {
+          "values": 288,
+          "exact_text": 54,
+          "folded_text": 61,
+          "folded_annotation": 37
+        }
+      }
+    },
+    "blind_fr": {
+      "documents": 8,
+      "sha256": "df179266f4866128c5b4aaa770559d4ebedfd06c5a0cf47a9f6490ab51d89d6f",
+      "counts": {
+        "conservative_complete_candidate": {
+          "values": 882,
+          "exact_text": 0,
+          "folded_text": 0,
+          "folded_annotation": 0
+        },
+        "conservative_fixture_fragment": {
+          "values": 32,
+          "exact_text": 0,
+          "folded_text": 1,
+          "folded_annotation": 1
+        },
+        "generic_atomic_or_technical": {
+          "values": 726,
+          "exact_text": 48,
+          "folded_text": 65,
+          "folded_annotation": 25
+        },
+        "generic_pattern": {
+          "values": 86,
+          "exact_text": 0,
+          "folded_text": 0,
+          "folded_annotation": 0
+        },
+        "preexisting": {
+          "values": 288,
+          "exact_text": 45,
+          "folded_text": 54,
+          "folded_annotation": 25
+        }
+      }
+    },
+    "blind_en": {
+      "documents": 8,
+      "sha256": "e3fd4886a2499563f6710cf1cfe57a3f27b3302be1e576e06ac67a4ddede5aea",
+      "counts": {
+        "conservative_complete_candidate": {
+          "values": 882,
+          "exact_text": 1,
+          "folded_text": 1,
+          "folded_annotation": 0
+        },
+        "conservative_fixture_fragment": {
+          "values": 32,
+          "exact_text": 0,
+          "folded_text": 1,
+          "folded_annotation": 0
+        },
+        "generic_atomic_or_technical": {
+          "values": 726,
+          "exact_text": 68,
+          "folded_text": 96,
+          "folded_annotation": 32
+        },
+        "generic_pattern": {
+          "values": 86,
+          "exact_text": 0,
+          "folded_text": 0,
+          "folded_annotation": 0
+        },
+        "preexisting": {
+          "values": 288,
+          "exact_text": 60,
+          "folded_text": 70,
+          "folded_annotation": 26
+        }
+      }
+    }
+  }
+}

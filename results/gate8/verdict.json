@@ -1,0 +1,21 @@
+{
+  "global": "NO-GO",
+  "decision": "D-G8-1",
+  "technical_workflow_controls": "GO for observed FR/EN local controls",
+  "fr_standard": "measured improvements; historical challenge validation open",
+  "fr_enhanced": "point criterion met against Standard; complete validation open",
+  "en_standard": "functional with substantial exposure; experimental, manual review required",
+  "en_enhanced": "NO-GO recommendation: precision loss 0.134862 exceeds frozen 0.02 margin",
+  "historical_test_measurement_number": 4,
+  "historical_challenge_available": false,
+  "reserved_attempts": 4,
+  "completed_reserved_series": 3,
+  "automatic_repeats_allowed": false,
+  "open_points": [
+    "G8-01: synthetic final-check exception discards main predictions",
+    "Historical challenge attempt failed; root cause and failure stage undetermined",
+    "English Enhanced fails frozen precision margin; no reserved tuning"
+  ],
+  "fallback": "Standard, full human review and manual additions; no claim of anonymity or zero leakage",
+  "tag_or_push": false
+}

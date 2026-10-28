@@ -14,6 +14,22 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 | G8 | Gate bilingue et protection complète, NO-GO | Codex
+- Fait : start/base acceptés, fusion du SHA A5 029caa9 sans perte ; C3 centralisé, gel A4 et empreintes vérifiés, référence G7 autonome et poids préservés. Nouveaux contrôles AppTest croisant les deux langues UI/document, payload exact, révocations, mémoire et traitement hors ligne ; aucun détecteur ni seuil modifié.
+- Mesures uniques : FR neuf Standard 95/105, Enhanced 96/105 couverts, fuite 139/2042 et 130/2042 ; chaque profil gagne une entité et 32 caractères contre sa référence G7. EN 78/100 vers 88/100 et fuite 235/2285 vers 115/2285, mais précision 0,8349 vers 0,7000 : marge de deux points refusée. Quatrième test historique : 93/93 couverts, fuite nulle contre 37/1889 G7 ; ancien challenge lancé une fois, échec sans rapport, aucune relance.
+- Tests : 1680 passed, 1 xfailed strict ; Ruff check/format conformes, check_style sans erreur (quinze avertissements connus), diff --check conforme. Processus neufs, caches vides, réseau et écritures des documents interdits, auxiliaires manquants refusés ; deux pip check et vingt fichiers de modèles conformes. Rapports et reçus dans results/gate8/.
+- Décisions : D-G8-1 ; GO des contrôles techniques et gains FR observés, validation historique complète ouverte ; EN Standard reste expérimental avec réserves, Enhanced EN non recommandé, verdict global NO-GO. Aucun score ne garantit anonymat ou fuite nulle.
+- Points ouverts : cause challenge inconnue, prédictions non récupérables ; G8-01 reproduit indépendamment la perte des sorties du harnais si le contrôle final échoue, xfail strict, lien causal non établi. Aucun contenu réservé, identifiant ou erreur détaillée exporté ; aucune correction de détection inspirée des chiffres aveugles.
+- Suite : commit G8, finish G8 --nogo et prompt de correction du pilote ; aucun tag, push ni lancement anticipé de R8. Standard et revue humaine complète comme repli ; préserver tous les reçus et ne pas remesurer automatiquement les splits réservés.
+
+### 2026-10-28 | C3 | Lot aveugle bilingue après gel A4 | Codex, piste B
+- Fait (fragment docs/parallel/C3.md, centralisé par G8) : commit 08a2e83, conversation neuve et auteur unique, gel dc5b041 vérifié avant et après rédaction ; seize documents fictifs, huit par langue, deux par genre, douze types représentés. FR : 22 640 caractères et 112 annotations ; EN : 23 252 caractères et 108 annotations.
+- Méthode : conventions post_g7_fr_en_1.0 figées avant annotation, deuxième lecture éditoriale, constructeur pur limité aux seize sources explicites ; aucun détecteur, service d'annotation, ancien corpus ou mesure de performance consulté.
+- Tests C3 : 27 contrôles du constructeur, --check identique, schéma et empreintes vérifiés ; 1661 tests verts, Ruff, style et diff conformes. Aucun changement de logique, environnement ou donnée de démonstration.
+- Décisions : D-C3-1 à D-C3-3 intégrées par G8 ; corpus réservé aux seuls scripts des gates, langue portée par manifeste, split challenge conservé.
+- Risques : auteur et famille de modèle uniques, styles corrélés, exhaustivité éditoriale non démontrée ; pas de preuve d'indépendance statistique, pas de couverture LOCATION ni de tous les identifiants étrangers.
+- Suite : mesure unique G8, sans lecture manuelle ni export des erreurs réservées ; aucun tag ni push C3.
+
 ### 2026-10-28 17:06 | AF-A5 | Guide et captures du parcours bilingue finalisés | Claude Code, puis Codex
 - Fait : reprise du guide et des huit images laissés par Claude, sans perdre son travail ; start A5 accepté, base B3 670e8da déjà fusionnée, gel A4 dc5b041 vérifié avant et après. README et USER_GUIDE décrivent le parcours livré, les trois langues indépendantes, les profils, formats FR/US/UK, imports partiels, revue périmée, table de dossier et message composé du document et de la consigne.
 - Documentation : libellés anglais et français alignés sur i18n, alertes par segment, absence de dérogation aux jetons inconnus, décisions explicites et révocation du consentement ; export nommé Checked message. LOCAL_MODELS distingue histoire A1 et migration A4, révisions, licences, installation hors dépôt et coûts observés ; chiffres G7 conservés, gains dev séparés et profils expérimentaux avant G8. CREDITS absent, non créé.

@@ -9,8 +9,9 @@ receive fictitious data.
 
 Three choices are independent of each other: the language of the document you analyse, the
 language of the interface, and the style of the tokens. Section 4 explains them. The English
-support and the updated detection profiles were delivered after the last measured gate (G7)
-and are still experimental: see section 4.3.
+support and updated profiles were measured in G8. Complete bilingual validation is NO-GO:
+the historical challenge run failed and English Enhanced is not recommended. English remains
+experimental: see section 4.3.
 
 Important: pseudonymization is not anonymization (GDPR, art. 4(5) and recital 26). The
 pseudonymized text remains personal data. Read it before you send it.
@@ -331,7 +332,7 @@ The group **Document** also holds the **Detection profile**.
 | Profile | Document languages | What it uses | Where it is offered |
 | --- | --- | --- | --- |
 | **Standard** (default) | French, English | Rules, control digits, the spaCy model of the document language, propagation of each value to its other mentions. | Everywhere, including the public demo. |
-| **Enhanced local detection** | French, English | Standard plus a neural model that runs on your computer: CamemBERT for a French document, GLiNER for an English one. | Local installation only. Experimental until the bilingual gate G8. |
+| **Enhanced local detection** | French, English | Standard plus a neural model that runs on your computer: CamemBERT for a French document, GLiNER for an English one. | Local installation only. English Enhanced failed the G8 recommendation criterion; use Standard instead. French Enhanced has a small measured gain. |
 
 How Enhanced behaves:
 
@@ -359,16 +360,26 @@ What has been measured, and what has not:
 | --- | --- | --- |
 | Evaluation page and README tables | French, gate G7 and earlier | Historical, unchanged. Standard is the `hybrid` configuration and Enhanced French is `hybrid_camembert`. |
 | Development comparison after G7 | 20 French and 8 English fictitious documents | Dev only. French: both profiles fully cover 311 of 311 entities, as at G7. English: Standard fully covers 124 of 136 entities and Enhanced 126 of 136. Leaked characters fall from 105/2553 to 63/2553; non-sensitive masking stays at 48 characters. Paired intervals include zero: this point gain is not statistically established. |
-| Blind bilingual validation | New French and English documents | Pending (gate G8). |
+| G8 new blind French documents | 8 fictitious documents, 105 evaluated entities | Standard covers 95/105 entities, Enhanced 96/105; respectively 139 and 130 characters remain exposed out of 2042. French corrections improve coverage against their corresponding G7 profiles. Paired intervals include zero. |
+| G8 new blind English documents | 8 fictitious documents, 100 evaluated entities | Standard covers 78/100 entities and Enhanced 88/100. Enhanced reduces leaked characters from 235 to 115 out of 2285, but precision drops from 0.8349 to 0.7000, outside the pre-registered two-point margin. Enhanced is not recommended. |
+| G8 historical French test | Fourth project measure, 6 documents | Both profiles cover 93/93 entities, no leaked character in the eleven evaluated types. G7 had 37/1889 leaked characters. CUSTOM remains separate. |
+| G8 historical challenge | One authorised attempt | Failed without a usable report; not repeated. Complete bilingual validation is NO-GO pending correction and an explicitly authorised follow-up. |
 
 The development sets are small and fictitious. The English rules were developed together
 with a few small example documents, which cannot show how they behave on new ones. Treat
 both English profiles as experimental: read every detection, and expect missed values.
-HuisClos makes no claim of precision on your documents.
+HuisClos makes no claim of precision on your documents. On the new blind English documents,
+Standard leaves some annotated content exposed in all eight documents. G8 also measures
+additional CUSTOM exposures outside the main figures. Use Standard as the fallback and
+add missed identifiers manually; do not rely on English Enhanced to make a document safe.
+Full intervals, costs and separate entity scopes: [G8 report](../results/gate8/report.md).
 
 On the English dev, Enhanced's final check raised 29 alerts, 28 outside annotated references,
 while 10 entities were still exposed. Standard raised no alert despite 12 exposed entities.
-An alert does not mask anything and an empty alert list is not a guarantee of confidentiality.
+On the new blind English set, Standard raises 28 alerts, only one on a visible reference;
+Enhanced raises 43, four on visible references. Twenty-two and twelve entities respectively
+still have exposed content. An alert does not mask anything and an empty alert list is not
+a guarantee of confidentiality.
 
 ### 4.4 Other settings
 
@@ -571,9 +582,10 @@ guarantee immediate removal from server memory. To clear the current session exp
 **Why is a word masked when it should not be?** The detection prefers masking too much to
 missing a name. Uncheck **Mask** for that row in the Review step.
 
-**Is the English support as reliable as the French one?** It is newer and has not been
-validated on documents it has not seen. Its development results are in section 4.3. Review
-English documents with extra care.
+**Is the English support as reliable as the French one?** G8 measured new blind documents
+and found substantial residual exposure. English Enhanced failed its precision margin and
+is not recommended. Complete bilingual validation is NO-GO. See section 4.3, keep Standard
+as the fallback and review English documents with extra care.
 
 **Can I restore an answer received days later?** Yes, if you downloaded the mapping table.
 Follow the new-session workaround in section 6, then upload it under

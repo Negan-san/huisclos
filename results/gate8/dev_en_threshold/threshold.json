@@ -1,0 +1,4 @@
+{
+  "threshold": 0.3,
+  "criterion": "max F2 (partial, micro) on EN dev; lowest tie"
+}

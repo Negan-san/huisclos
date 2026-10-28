@@ -1,0 +1,39 @@
+{
+  "document_language": "fr",
+  "profiles": {
+    "standard": {
+      "preset": "hybrid",
+      "threshold": 0.3
+    },
+    "enhanced": {
+      "preset": "hybrid_camembert",
+      "threshold": 0.3
+    },
+    "g7_standard": {
+      "preset": "hybrid",
+      "threshold": 0.3,
+      "checkout": "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\pilotage\\post_g7_assets\\benchmarks\\G8\\reference_g7",
+      "python": "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\pilotage\\post_g7_assets\\envs\\baseline\\Scripts\\python.exe"
+    },
+    "g7_enhanced": {
+      "preset": "hybrid_camembert",
+      "threshold": 0.3,
+      "checkout": "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\pilotage\\post_g7_assets\\benchmarks\\G8\\reference_g7",
+      "python": "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\pilotage\\post_g7_assets\\envs\\baseline\\Scripts\\python.exe"
+    }
+  },
+  "comparisons": [
+    [
+      "enhanced",
+      "standard"
+    ],
+    [
+      "standard",
+      "g7_standard"
+    ],
+    [
+      "enhanced",
+      "g7_enhanced"
+    ]
+  ]
+}

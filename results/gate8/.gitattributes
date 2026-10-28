@@ -1,0 +1,8 @@
+# Les empreintes de preuve portent sur les octets mesurés, y compris CRLF.
+*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+*.log -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+*.md -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+*.csv -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Ces deux rapports générés et archivés gardent leur ligne vide finale originale.
+g7_archive/summary.md -diff
+historical/summary.md -diff

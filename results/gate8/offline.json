@@ -1,0 +1,28 @@
+{
+  "fr_complete": {
+    "exact_roundtrips": 2,
+    "stable_tokens": true,
+    "mixed_reply_restored": true,
+    "mapping_disk_writes": 0,
+    "network_blocked": true,
+    "cache_files": 0
+  },
+  "fr_missing": {
+    "missing_file_refused": true,
+    "code": "missing",
+    "cache_files": 0
+  },
+  "en_complete": {
+    "exact_roundtrips": 2,
+    "stable_tokens": true,
+    "mixed_reply_restored": true,
+    "mapping_disk_writes": 0,
+    "network_blocked": true,
+    "cache_files": 0
+  },
+  "en_missing": {
+    "missing_file_refused": true,
+    "code": "local_missing",
+    "cache_files": 0
+  }
+}

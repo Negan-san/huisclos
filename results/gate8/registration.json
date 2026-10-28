@@ -1,0 +1,45 @@
+{
+  "registered_at_utc": "2026-10-28T16:28:21.473105+00:00",
+  "dev_reports": {
+    "fr": "8c31f9382ccd22833a426c94733e355a4d48b87b1a5e8e809a6abdc14215addc",
+    "en": "9fe1fcf1227cddf0697f2f6a9941ec64c62de796b3a15e6fe502f9f4cce5b261"
+  },
+  "artifact_sha256": {
+    "scripts\\gate8_measure.py": "a438d8a6bc73701d2ae403bed3bb818b1256e0eaa993c09d238c534ace6c5a96",
+    "scripts\\evaluate_robustness.py": "8aec0a0965a96f908c79a1fc4adc5d145764d09759ec437cca2bf241fbd29a3c",
+    "results\\gate8\\run_gate.py": "f5d214152311e99958415d3cfd552e172a3df2e0e7eb064ceaaed510fd726db3",
+    "results\\gate8\\plan_fr.json": "8355f1282fa430fc9952ece7e576613f6b3a31eafdedc4be8783abc9687a6494",
+    "results\\gate8\\plan_en.json": "d5240419d4683006ddb2615f1c1f4970a5fbd2f95ee072d99068426f4983df06",
+    "results\\gate8\\plan_historical_fr.json": "747c37211f92a02d4eef473e1019b894a88c5d83fff163acebe4975501394da2"
+  },
+  "thresholds": {
+    "fr": 0.3,
+    "en": 0.3,
+    "gliner": 0.7,
+    "final_check": 0.1
+  },
+  "bootstrap": {
+    "draws": 2000,
+    "seed": 45,
+    "paired": true
+  },
+  "margins": {
+    "partial_precision": 0.02,
+    "overmasking": 0.01
+  },
+  "historical_test_measurement_number": 4,
+  "historical_predecessors": [
+    "G4",
+    "G4bis",
+    "G7"
+  ],
+  "g7_english_reference_available": false,
+  "reserved_series": [
+    "blind_fr",
+    "blind_en",
+    "test",
+    "challenge"
+  ],
+  "new_threshold_selection_allowed": false,
+  "details_export_allowed": false
+}

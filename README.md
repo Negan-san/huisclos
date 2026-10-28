@@ -25,8 +25,10 @@ lets you send only the tokenized text, and puts the real values back into the an
 - Restores the real values in the answer of the AI tool, and reports unknown or altered tokens.
 - Exports the checked message, the restored text (.txt and .docx) and the mapping table.
 
-The post-G7 bilingual profiles remain experimental until gate G8. Standard is the default;
-the optional local Enhanced profile adds CamemBERT for French or GLiNER for English.
+Gate G8 is **NO-GO for complete bilingual validation**: the historical challenge run failed,
+and English Enhanced fails the precision margin fixed before testing. Standard remains the
+default. English detection is experimental and needs careful manual review; English Enhanced
+is not recommended. The local Enhanced option adds CamemBERT for French or GLiNER for English.
 The [user guide](docs/USER_GUIDE.md#4-settings-in-the-left-column) describes the covered
 FR/US/UK formats and their limits; a document language is not a nationality or jurisdiction.
 
@@ -110,10 +112,10 @@ after the detection rules were frozen. The saved reports include 95% document bo
 intervals; these do not account for corpus bias or threshold selection. The
 [challenge comparison](results/challenge_comparison.md) records gate-5 and current results.
 
-### Post-G7 development comparison, pending G8
+### Post-G7 development comparison
 
-These are A4 development observations on the integrated profiles, separate from the historical
-G7 table. No new held-out measurement was run for this documentation session.
+These A4 development observations were reproduced before G8, separately from the historical
+G7 table and the new blind results below.
 
 | Dev language | Profile | Fully covered entities | Leaked characters | Non-sensitive characters masked |
 | --- | --- | ---: | ---: | ---: |
@@ -126,7 +128,37 @@ significance or universal accuracy is claimed. Its local CPU probes need about 2
 the final check raises 29 alerts, 28 outside annotated references, while 10 entities remain
 exposed. An alert alone masks nothing. French Enhanced adds no coverage on the saturated dev.
 [LOCAL_MODELS.md](docs/LOCAL_MODELS.md) records versions, licences, costs and limitations.
-Only gate G8 may validate the frozen bilingual profiles on the new blind corpus.
+### G8 blind results and open points
+
+Eight new fictitious documents per language were measured once after the A4 freeze.
+Main threshold: 0.30 in both languages; GLiNER cutoff: 0.70. No threshold was changed afterwards.
+
+| Language | Profile | Partial precision | Fully covered entities | Leaked characters | Non-sensitive characters masked |
+| --- | --- | ---: | ---: | ---: | ---: |
+| French | Standard | 0.8922 | 95/105 | 139/2042 | 27 |
+| French | Enhanced | 0.8824 | 96/105 | 130/2042 | 27 |
+| English | Standard | 0.8349 | 78/100 | 235/2285 | 93 |
+| English | Enhanced | 0.7000 | 88/100 | 115/2285 | 252 |
+
+French corrections cover one more full entity and expose 32 fewer characters than each
+corresponding G7 profile on these same new documents; paired intervals include zero.
+French Enhanced meets the point criterion against Standard, with a small gain and no
+established statistical difference. English Enhanced protects more characters but loses
+13.49 precision points, exceeding the allowed two-point loss; it is not recommended.
+Standard English leaves at least one annotated character exposed in all eight documents.
+These counts exclude CUSTOM/LOCATION, reported separately with additional exposures.
+
+The fourth historical French test measure covers 93/93 entities with no leaked character
+in the eleven evaluated types; G7 leaked 37/1889. The historical challenge attempt failed
+without a usable report and was not repeated. Its cause remains undetermined; a separate
+synthetic test records a harness failure that discards predictions if the final check fails.
+The French corrections and local workflow checks pass, but the complete gate remains NO-GO.
+Keep English experimental, use Standard as the fallback and manually check every residual
+identifier before sending. The UI Evaluation page still shows historical G7 reports.
+
+[Full G8 report, intervals, costs and limitations](results/gate8/report.md),
+[decision D-G8-1](docs/DECISIONS.md#d-g8-1-gate-bilingue-et-protection-complete).
+No score guarantees anonymity or zero leakage; alerts alone mask nothing.
 
 ## Confidentiality
 
@@ -143,7 +175,8 @@ Only gate G8 may validate the frozen bilingual profiles on the new blind corpus.
 
 ## Limits
 
-- French and English document languages are supported; post-G7 validation is pending G8.
+- French and English have separate detection paths; G8 complete bilingual validation is
+  NO-GO and English Enhanced is not recommended. English support remains experimental.
   Other languages and address formats have no dedicated coverage guarantee.
 - No OCR: a PDF with no extractable text is refused. Mixed PDFs and unsupported Word
   structures can produce partial imports; compare the extracted text with the original.

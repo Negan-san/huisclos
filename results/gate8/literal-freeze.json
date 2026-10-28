@@ -1,0 +1,10 @@
+{
+  "sha256": "a694b6c3ab3edbf7ac6dbe9f15021cf751b7972f32b5fc6ceda3644099ba9050",
+  "category_counts": {
+    "generic_atomic_or_technical": 1401,
+    "preexisting": 1163,
+    "conservative_complete_candidate": 923,
+    "generic_pattern": 88,
+    "conservative_fixture_fragment": 52
+  }
+}

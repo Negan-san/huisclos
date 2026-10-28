@@ -1,0 +1,19 @@
+{
+  "document_language": "en",
+  "profiles": {
+    "standard": {
+      "preset": "hybrid",
+      "threshold": 0.3
+    },
+    "enhanced": {
+      "preset": "hybrid_gliner",
+      "threshold": 0.3
+    }
+  },
+  "comparisons": [
+    [
+      "enhanced",
+      "standard"
+    ]
+  ]
+}
