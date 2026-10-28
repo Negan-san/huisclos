@@ -302,11 +302,17 @@ textarea:focus-visible,
 }
 
 /* Texte surligné présenté comme une page de document : marges, interligne confortable. */
-.st-key-hc-document {
+.st-key-hc-document,
+.st-key-hc-document-restored {
     padding: var(--hc-space-6) var(--hc-space-8);
     background: var(--hc-card);
     border: 1px solid var(--hc-border);
     border-radius: var(--hc-radius);
+}
+
+/* Largeur de lecture limitée pour le texte courant de la page Method & limits. */
+.st-key-hc-reading {
+    max-width: 72ch;
 }
 
 /* Indicateurs chiffrés en cartes. */
@@ -383,7 +389,8 @@ textarea:focus-visible,
         padding: var(--hc-space-4);
     }
 
-    .st-key-hc-document {
+    .st-key-hc-document,
+    .st-key-hc-document-restored {
         padding: var(--hc-space-4);
     }
 }

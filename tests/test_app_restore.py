@@ -191,6 +191,19 @@ def test_pasting_the_pseudonymized_text_restores_the_original_exactly(
     assert any("Exact mode" in caption.value for caption in app.caption)
 
 
+def test_restored_values_are_highlighted_with_a_type_label(
+    sample: tuple[str, PseudonymizationResult],
+) -> None:
+    _, result = sample
+    person, person_name = token_of(result, EntityType.PERSON)
+    app = restore_answer(restore_app(result), f"Note pour {person}. Voir [PERSONNE_99].")
+    document = next(h.value for h in app.get("html") if "hc-document" in h.value)
+    assert f">{person_name}</mark>" in document
+    assert ">PERSON</span>" in document
+    assert "[PERSONNE_99]" in document
+    assert "[PERSONNE_99]</mark>" not in document
+
+
 def test_altered_tokens_are_restored_and_an_invented_token_warns(
     sample: tuple[str, PseudonymizationResult],
 ) -> None:

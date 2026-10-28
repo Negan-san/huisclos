@@ -16,7 +16,7 @@ from huisclos.models import EntityType
 # Couleurs du schéma : celles de la charte (voir app/assets/style.css).
 INK = "#1B1F24"
 PRIMARY = "#1F3A5F"
-SURFACE = "#F4F5F7"
+SURFACE = "#F1F3F6"
 
 LOCAL_NODES = ("document", "read", "detect", "review", "pseudonymize", "restore", "result")
 FLOW = ("document", "read", "detect", "review", "pseudonymize", "llm", "restore", "result")
@@ -58,29 +58,49 @@ def pipeline_dot() -> str:
     return "\n".join(lines)
 
 
-def _render_section(title_key: str, text_keys: tuple[str, ...]) -> None:
-    """Affiche un sous-titre suivi d'une liste de paragraphes."""
-    st.subheader(t(title_key))
-    for key in text_keys:
-        st.markdown(f"- {t(key)}")
+def _render_section(title_key: str, text_keys: tuple[str, ...], key: str) -> None:
+    """Affiche une section en encadré : un sous-titre suivi d'une liste de paragraphes."""
+    with st.container(key=key):
+        st.subheader(t(title_key), anchor=False)
+        st.markdown("\n".join(f"- {t(item)}" for item in text_keys))
+
+
+def _render_human_and_types() -> None:
+    """Deux encadrés côte à côte : la place de l'humain, puis les types recherchés."""
+    human, types = st.columns(2, gap="medium")
+    with human, st.container(key="hc-card-human"):
+        st.subheader(t("method.human.title"), anchor=False)
+        st.info(t("method.human.text"), icon=":material/person_check:")
+    with types, st.container(key="hc-card-method-types"):
+        st.subheader(t("method.types.title"), anchor=False)
+        st.markdown(t("method.types.intro"))
+        badges = "".join(entity_badge_html(kind) for kind in EntityType)
+        st.html(f'<div class="hc-legend">{badges}</div>')
 
 
 def render() -> None:
-    """Affiche la page Method & limits."""
-    st.header(t("method.title"))
-    st.markdown(t("method.intro"))
-    st.subheader(t("method.diagram.title"))
-    st.graphviz_chart(pipeline_dot(), width="stretch", alt=t("method.diagram.alt"))
-    _render_section("method.how.title", HOW_KEYS)
-    _render_section("method.hybrid.title", HYBRID_KEYS)
-    st.subheader(t("method.human.title"))
-    st.markdown(t("method.human.text"))
-    st.subheader(t("method.types.title"))
-    st.markdown(t("method.types.intro"))
-    badges = "".join(entity_badge_html(kind) for kind in EntityType)
-    st.html(f'<div class="hc-legend">{badges}</div>')
-    _render_section("method.legal.title", LEGAL_KEYS)
-    _render_section("method.limits.title", LIMIT_KEYS)
+    """Affiche la page Method & limits : sections en encadrés, deux par ligne sur grand écran.
+
+    Le texte courant garde une largeur de lecture limitée ; l'ordre des sections est celui
+    de la lecture : schéma, méthode, humain, types, cadre juridique, limites.
+    """
+    st.header(t("method.title"), anchor=False)
+    with st.container(key="hc-reading"):
+        st.markdown(t("method.intro"))
+    with st.container(key="hc-card-pipeline"):
+        st.subheader(t("method.diagram.title"), anchor=False)
+        st.graphviz_chart(pipeline_dot(), width="stretch", alt=t("method.diagram.alt"))
+    how, hybrid = st.columns(2, gap="medium")
+    with how:
+        _render_section("method.how.title", HOW_KEYS, "hc-card-how")
+    with hybrid:
+        _render_section("method.hybrid.title", HYBRID_KEYS, "hc-card-hybrid")
+    _render_human_and_types()
+    legal, limits = st.columns(2, gap="medium")
+    with legal:
+        _render_section("method.legal.title", LEGAL_KEYS, "hc-card-legal")
+    with limits:
+        _render_section("method.limits.title", LIMIT_KEYS, "hc-card-limits")
     st.caption(t("method.disclaimer"))
 
 

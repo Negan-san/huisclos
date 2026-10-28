@@ -21,6 +21,7 @@ EN: dict[str, str] = {
         "On {split}, hybrid achieves {recall} recall and a {leak_rate} leak rate at the "
         "selected threshold of {threshold} (partial matching, micro averages)."
     ),
+    "evaluation.kpis": "Hybrid configuration, selected threshold {threshold}.",
     "evaluation.table": "Configuration comparison",
     "evaluation.matching": (
         "Partial matching, micro averages. Leak rate is the share of reference characters left"
@@ -98,6 +99,7 @@ FR: dict[str, str] = {
         "Sur {split}, hybrid atteint un rappel de {recall} et un taux de fuite de {leak_rate} "
         "au seuil retenu de {threshold} (appariement partiel, moyennes micro)."
     ),
+    "evaluation.kpis": "Configuration hybrid, seuil retenu {threshold}.",
     "evaluation.table": "Comparaison des configurations",
     "evaluation.matching": (
         "Appariement partiel, moyennes micro. Le taux de fuite est la part des caractères de "

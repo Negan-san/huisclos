@@ -1,12 +1,14 @@
-"""Texte surligné et légende de l'écran de revue, produits sous forme de HTML sûr.
+"""Texte surligné, légende et texte restauré, produits sous forme de HTML sûr.
 
-Entrées : le texte d'origine, les détections (sans chevauchement) et les décisions de l'humain.
-Sorties : deux chaînes HTML, à afficher avec st.html, et rien d'autre.
-Place dans le pipeline : étape Review ; le texte de l'utilisateur n'entre dans le HTML
-qu'après html.escape, ce qui interdit toute injection.
+Entrées : le texte d'origine, les détections (sans chevauchement) et les décisions de
+l'humain ; pour l'étape Restore, le texte restauré et les valeurs de la table.
+Sorties : des chaînes HTML, à afficher avec st.html, et rien d'autre.
+Place dans le pipeline : étapes Review et Restore ; le texte de l'utilisateur n'entre dans
+le HTML qu'après html.escape, ce qui interdit toute injection.
 """
 
 import html
+import re
 from collections.abc import Mapping, Sequence
 
 from app.i18n import t
@@ -70,6 +72,11 @@ def _entity_html(shown: str, detection: Detection, masked: bool) -> str:
             f'<mark class="hc-rejected" title="{title}" style="{_REJECTED_STYLE}">{escaped}</mark>'
             f'<span style="{_TAG_STYLE.format(color=_MUTED)}">{tag}</span>'
         )
+    return _type_mark(escaped, kind, title)
+
+
+def _type_mark(escaped: str, kind: EntityType, title: str) -> str:
+    """Construit la marque colorée d'une valeur déjà échappée, suivie du libellé de son type."""
     style = ENTITY_STYLES[kind]
     color = html.escape(style.color, quote=True)
     strong = html.escape(style.strong, quote=True)
@@ -80,6 +87,37 @@ def _entity_html(shown: str, detection: Detection, masked: bool) -> str:
         f"{escaped}</mark>"
         f'<span style="{_TAG_STYLE.format(color=strong)}">{tag}</span>'
     )
+
+
+def _value_pattern(values: Mapping[str, EntityType]) -> re.Pattern[str] | None:
+    """Expression qui trouve chaque valeur en mot entier, la plus longue d'abord."""
+    pieces = []
+    for value in sorted((v for v in values if v.strip()), key=len, reverse=True):
+        before = r"(?<!\w)" if re.match(r"\w", value[0]) else ""
+        after = r"(?!\w)" if re.match(r"\w", value[-1]) else ""
+        pieces.append(f"{before}{re.escape(value)}{after}")
+    return re.compile("|".join(pieces)) if pieces else None
+
+
+def render_restored(text: str, values: Mapping[str, EntityType]) -> str:
+    """Renvoie le texte restauré en HTML, chaque vraie valeur de la table étant surlignée.
+
+    Paramètres : text, le texte restauré ; values, les formes réelles remises par la
+    restauration et leur type. Une valeur déjà écrite en clair dans la réponse est aussi
+    surlignée : c'est bien une donnée réelle du dossier.
+    Exemple : render_restored("Voir Jean.", {"Jean": EntityType.PERSON}) surligne "Jean".
+    """
+    pattern = _value_pattern(values)
+    pieces: list[str] = []
+    cursor = 0
+    for match in pattern.finditer(text) if pattern else ():
+        kind = values[match.group()]
+        title = html.escape(t("restore.hover", kind=entity_label(kind)), quote=True)
+        pieces.append(html.escape(text[cursor : match.start()]))
+        pieces.append(_type_mark(html.escape(match.group()), kind, title))
+        cursor = match.end()
+    pieces.append(html.escape(text[cursor:]))
+    return f'<div class="hc-document" style="{_DOCUMENT_STYLE}">{"".join(pieces)}</div>'
 
 
 def render_highlighted(text: str, detections: Sequence[Detection], decisions: Decisions) -> str:

@@ -53,6 +53,17 @@ EN: dict[str, str] = {
     "restore.answer.button": "Restore",
     "restore.answer.empty": "Paste the answer of the AI tool first.",
     "restore.answer.restored_heading": "Restored text",
+    "restore.tab.highlighted": "Highlighted",
+    "restore.tab.plain": "Plain text (copy)",
+    "restore.highlight.note": (
+        "Real values from the mapping table are highlighted, with their type written next to"
+        " them. Read them before using the answer."
+    ),
+    "restore.hover": "{kind}, real value from the mapping table",
+    "restore.send.copy": "Use the copy button at the top right of the text.",
+    "restore.download.group.pseudonymized": "Pseudonymized text",
+    "restore.download.group.restored": "Restored answer",
+    "restore.download.mapping.heading": "Mapping table",
     "restore.mode.exact": (
         "Exact mode: this is the pseudonymized text itself, so every value comes back as it "
         "was written."
@@ -165,6 +176,17 @@ FR: dict[str, str] = {
     "restore.answer.button": "Restaurer",
     "restore.answer.empty": "Collez d'abord la réponse de l'outil d'IA.",
     "restore.answer.restored_heading": "Texte restauré",
+    "restore.tab.highlighted": "Surligné",
+    "restore.tab.plain": "Texte brut (copie)",
+    "restore.highlight.note": (
+        "Les vraies valeurs de la table de correspondance sont surlignées, avec leur type écrit"
+        " à côté. Relisez-les avant d'utiliser la réponse."
+    ),
+    "restore.hover": "{kind}, vraie valeur de la table de correspondance",
+    "restore.send.copy": "Utilisez le bouton de copie en haut à droite du texte.",
+    "restore.download.group.pseudonymized": "Texte pseudonymisé",
+    "restore.download.group.restored": "Réponse restaurée",
+    "restore.download.mapping.heading": "Table de correspondance",
     "restore.mode.exact": (
         "Mode exact : il s'agit du texte pseudonymisé lui-même ; chaque valeur reprend donc sa"
         " forme d'origine."

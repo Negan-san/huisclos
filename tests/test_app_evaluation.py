@@ -176,7 +176,7 @@ def test_charts_preserve_metrics_and_threshold(saved_results: dict[str, Any]) ->
     assert bars["layer"][0]["mark"]["type"] == "bar"
     assert bars["layer"][0]["encoding"]["yOffset"]["field"] == "config"
     colors = bars["layer"][0]["encoding"]["color"]["scale"]["range"]
-    assert colors == list(evaluation.OKABE_ITO[:2])
+    assert colors == list(evaluation.CHART_COLORS[:2])
     assert bars["layer"][1]["mark"]["type"] == "text"
     assert bars["layer"][1]["encoding"]["text"]["field"] == "label"
     labels = next(iter(bars["datasets"].values()))

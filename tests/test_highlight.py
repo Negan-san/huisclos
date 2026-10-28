@@ -5,7 +5,7 @@ from html.parser import HTMLParser
 import pytest
 
 from app import i18n
-from app.components.highlight import render_highlighted, render_legend
+from app.components.highlight import render_highlighted, render_legend, render_restored
 from app.ui_common import ENTITY_STYLES, entity_label
 from huisclos.models import Detection, EntityType, Source
 
@@ -183,3 +183,26 @@ def test_legend_is_empty_without_detection_and_counts_each_type_once() -> None:
 @pytest.mark.parametrize("kind", list(EntityType))
 def test_label_texts_exist_for_every_type(kind: EntityType) -> None:
     assert i18n.EN[f"review.tag.{kind.value}"]
+
+
+def test_restored_values_are_marked_with_their_type_label() -> None:
+    values = {"Jean DUPONT": EntityType.PERSON, "DUPONT": EntityType.PERSON}
+    fragment = render_restored("Voir Jean DUPONT, puis DUPONTEL et DUPONT.", values)
+    page = parse(fragment)
+    assert set(page.tags) <= ALLOWED_TAGS
+    # La valeur la plus longue l'emporte, et un mot plus long n'est jamais coupé.
+    assert page.marks == ["Jean DUPONT", "DUPONT"]
+    assert page.labels == ["PERSON", "PERSON"]
+    assert "".join(page.text).replace("PERSON", "") == "Voir Jean DUPONT, puis DUPONTEL et DUPONT."
+    assert f"background:{ENTITY_STYLES[EntityType.PERSON].color}" in fragment
+    assert 'title="Person, real value from the mapping table"' in fragment
+
+
+def test_restored_text_is_escaped_and_works_without_values() -> None:
+    values = {'"Alpha" & <b>': EntityType.ORGANIZATION}
+    fragment = render_restored('<script>x</script> "Alpha" & <b> fin', values)
+    assert "<script" not in fragment
+    assert "<b>" not in fragment
+    assert parse(fragment).marks == ['"Alpha" & <b>']
+    assert parse(render_restored("abc <d>", {})).text == ["abc <d>"]
+    assert parse(render_restored("abc", {"  ": EntityType.PERSON})).marks == []
