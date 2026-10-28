@@ -19,6 +19,7 @@ lets you send only the tokenized text, and puts the real values back into the an
   (NIR), SIREN, SIRET, birth dates and case numbers in French legal documents.
 - Lets you review every detection: keep it, reject it, change its type, or add a missed value.
 - Replaces each value with a consistent token, such as `[PERSONNE_1]` or `[SOCIETE_A]`.
+- Reuses a case mapping table across documents and checks for residual identifiers before sending.
 - Restores the real values in the answer of the AI tool, and reports unknown or altered tokens.
 - Exports the pseudonymized text, the restored text (.txt and .docx) and the mapping table.
 
@@ -84,13 +85,19 @@ rate is the share of reference characters left uncovered. Full table and definit
 
 | Split | Configuration | Threshold | Precision | Recall | F2 | Leak rate | Exposed entities |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| dev | hybrid | 0.30 | 0.9648 | 1.0000 | 0.9928 | 0.0085 | 0 |
-| test | patterns_only | 0.30 | 1.0000 | 1.0000 | 1.0000 | 0.0529 | 0 |
-| test | ner_only | 0.30 | 0.9091 | 0.4301 | 0.4808 | 0.6993 | 51 |
-| test | hybrid | 0.30 | 0.9789 | 1.0000 | 0.9957 | 0.0529 | 0 |
-| test | hybrid_camembert | 0.30 | 0.9688 | 1.0000 | 0.9936 | 0.0529 | 0 |
+| dev | hybrid | 0.30 | 0.9904 | 1.0000 | 0.9981 | 0.0000 | 0 |
+| test | patterns_only | 0.30 | 1.0000 | 1.0000 | 1.0000 | 0.0196 | 0 |
+| test | ner_only | 0.30 | 0.9091 | 0.4301 | 0.4808 | 0.6945 | 51 |
+| test | hybrid | 0.30 | 0.9789 | 1.0000 | 0.9957 | 0.0196 | 0 |
+| test | hybrid_camembert | 0.30 | 0.9789 | 1.0000 | 0.9957 | 0.0196 | 0 |
+| challenge | hybrid | 0.30 | 0.7921 | 0.8421 | 0.8316 | 0.1283 | 26 |
+| challenge | hybrid_camembert | 0.30 | 0.7955 | 0.9211 | 0.8929 | 0.0969 | 12 |
 
 `hybrid` is the configuration used by the application.
+Gate 7 measured 20 development, 6 test and 8 challenge documents. Challenge was written blind
+after the detection rules were frozen. The saved reports include 95% document bootstrap
+intervals; these do not account for corpus bias or threshold selection. The
+[challenge comparison](results/challenge_comparison.md) records gate-5 and current results.
 
 ## Confidentiality
 

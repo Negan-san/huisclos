@@ -103,12 +103,13 @@ def test_repository_results_render(monkeypatch: pytest.MonkeyPatch) -> None:
     )
     expected_splits = [
         split
-        for split in ("dev", "test")
+        for split in ("dev", "test", "challenge")
         if any(row["split"] == split for row in results["metrics_by_type"])
     ]
     assert app.selectbox[0].options == expected_splits
-    assert len(app.dataframe) == 1
-    assert len(app.get("vega_lite_chart")) == 2
+    has_intervals = any(row["split"] == "dev" for row in results.get("bootstrap_intervals", []))
+    assert len(app.dataframe) == (2 if has_intervals else 1)
+    assert len(app.get("vega_lite_chart")) == (3 if has_intervals else 2)
     assert len(app.get("download_button")) == len(list(evaluation.RESULTS_DIR.glob("*.csv")))
     if "dev" not in results["metadata"].get("document_counts", {}):
         assert any(t("evaluation.documents_missing") == item.value for item in app.caption)

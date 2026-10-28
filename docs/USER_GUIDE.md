@@ -105,6 +105,12 @@ available once the previous one is done.
 2. Check the settings in the left column (section 4 below).
 3. Click **Detect sensitive data**.
 
+For another document in the same case, open **Continue a case (optional)** and upload the
+mapping table saved from the previous document. Known entities keep their tokens, and new
+entities take unused numbers or letters. The table's token style takes precedence over the
+sidebar setting. **Remove the case table** forgets it. The table stays in session memory;
+it is not added to the text sent to the AI tool. Save the merged table after each document.
+
 Accepted files: up to 5 MB and 200,000 characters. PDF files must contain selectable text;
 scanned documents are refused.
 
@@ -150,6 +156,12 @@ first step.
    send both to your AI tool.
 3. Under **Restore the AI answer**, paste the answer in **Answer from the AI tool** and click
    **Restore**.
+
+Before copying, read **Final check**. It searches for values from the mapping table and runs
+detection again at a lower threshold. If a residual identifier is listed, **Mask everywhere**
+adds it to the masked values. Review the updated text before sending it. A clear check does
+not make the text anonymous. With a case table, a reply can mix tokens from several documents;
+restoration uses the merged table. Never send that table to the AI tool.
 
 ![Restore step: restored answer](screenshots/05_restore_result.png)
 

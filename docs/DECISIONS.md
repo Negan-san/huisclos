@@ -348,3 +348,97 @@ Seuil par défaut : 0,40 jusqu'à la gate 4, puis la valeur de results/threshold
 - Alerte : extrait de 40 caractères de part et d'autre, surligné par le composant de S36, origine écrite (table ou seconde détection) et bouton "Mask everywhere" : ajout manuel de la valeur partout (add_manual), nouvelle pseudonymisation avec la même table, tableau de Review renouvelé. Sans alerte : "No residual identifier found", suivi d'une note qui rappelle que le texte n'est pas anonyme pour autant. Moteur indisponible : message d'erreur, jamais de succès.
 - Raison : principe 3, dernier filet avant que le texte ne quitte le poste. Le cas de démonstration traité normalement ne déclenche aucune alerte (test).
 - Limite : la seconde détection lit un texte où les jetons sont des blancs ; une phrase ainsi trouée peut, rarement, donner une fausse alerte, que l'humain peut ignorer après relecture.
+
+## D-G7-1 Contrôle indépendant, troisième mesure test et comparaison challenge
+- Verdict : GO. Synchronisation de lane-b avec dev en avance rapide, sans conflit ; arbre initial propre à b86a977bb30370f913f96189b55b8143e72813b3. Aucun changement de logique de détection, aucune installation, aucun accès externe, aucun tag ni push. Les mesures portent sur ce commit ; les corrections G7 concernent le CSS, les tests, le README et le guide.
+
+| Contrôle | Statut | Commentaire |
+| --- | --- | --- |
+| Synchronisation et état initial | OK | Fusion sans conflit ; git status vide avant et après la fusion. |
+| Points de G5 | OK | G5 recheck était GO. Courriels : 44 occurrences dans tests/, 163 dans corpus/, une dans data/, aucun domaine hors example.com et example.org. |
+| Surajustement S14 | OK | Classification gelée avant comparaison ; zéro correspondance des 19 candidats dans test et challenge. |
+| Ordre C2 | OK | 0c2b5ce suit 254319f ; aucun changement de src/, tests/ ni du builder dans C2. |
+| Pages EN et FR | OK | Dix vues réelles AppTest : Import, Review, Restore, Evaluation, Method ; aucune exception ni erreur inattendue. |
+| HTML, ressources, contraste | OK | Zéro URL externe dans app/ ; échappement des textes utilisateurs dans les composants HTML ; libellés de type et tests WCAG conservés. |
+| Taille des fichiers | corrigé | CSS 407 vers 395 lignes par retrait de douze lignes vides ; toutes les sources app/ Python et CSS sous 400 lignes, test ajouté. |
+| Documentation et libellés | corrigé | Guide S24 complété, quinze libellés de boutons contrôlés, résultats README actualisés, test Evaluation adapté aux intervalles et à challenge. |
+| Mémoire de dossier et contrôle final | OK | Deux documents fictifs hors dépôt ; deux restaurations exactes, jeton commun stable, indices libres, réponse mêlée et reste planté signalé. |
+| Confidentialité | OK | Table en mémoire, aucun texte de table dans le texte à envoyer ; garde des écritures et du réseau pendant les essais ; aucun mapping, .env ou secrets.toml suivi. |
+| Mesures uniques et comparaison | OK | all, challenge actuel, challenge gate-5, puis compare_results.py, dans cet ordre ; cinq configurations disponibles. |
+| Vérifications finales | OK | pytest 1229 passed ; Ruff check et format conformes ; check_style sans erreur, cinq avertissements connus ; diff --check conforme. |
+
+- Audit S14 selon D-G4bisfix-1 : extraction AST des constantes textuelles touchant les lignes ajoutées entre gate-5 et 254319f dans src/, plus les trois expressions ajoutées à data/exclusions_fr.txt. 131 occurrences, 106 valeurs distinctes : 31 déjà présentes dans src/ ou tests/ avant S14, 75 nouvelles. Les expressions de format, particules, civilités, libellés de champs et noms techniques sont génériques par leur rôle. Dix-neuf formulations complètes (docstrings et erreurs) sont conservées comme candidates par prudence ; aucun fragment de nom propre ni identifiant spécifique n'est présent dans le diff. Aucune catégorie n'a été changée après comparaison.
+- Gel : manifeste `%TEMP%/huisclos-g7-3377ba46b0ed4af3a9fb0969c6ecee5b/classification.json`, SHA-256 36388e2b17d37c79941dd79d5c7dafac0ffca7da1257e3967bd5fe4b4650c18a. Script compare_literals.py, SHA-256 d2bfb55ce0bf8fd797b2bf21a9dae466a5df41bfa6d3c5854e60679e34b360c3. Sorties limitées aux comptes ; aucune détection ni métrique dans cet audit, aucun contenu réservé affiché.
+
+| Split | Valeurs distinctes | Sous-chaîne exacte dans le texte | Sans casse dans le texte | Sans casse dans les spans annotés |
+| --- | ---: | ---: | ---: | ---: |
+| test, toutes | 106 | 7 | 7 | 3 |
+| test, nouvelles | 75 | 2 | 2 | 0 |
+| test, candidates | 19 | 0 | 0 | 0 |
+| challenge, toutes | 106 | 12 | 12 | 6 |
+| challenge, nouvelles | 75 | 2 | 2 | 1 |
+| challenge, candidates | 19 | 0 | 0 | 0 |
+
+- Ces recouvrements génériques ne prouvent pas une copie spécifique. L'audit git confirme que C2 est descendant du dernier S14 et ne touche que le corpus et la documentation. Les fichiers test et challenge et leurs sources n'ont été lus que par des scripts, sans contenu affiché ; les tests automatiques d'aller-retour existants ne constituent pas une mesure des métriques.
+- Registre historique test : trois mesures du projet ci-dessous, au seuil 0,30, hybrid, partiel micro. Les deux premières restent dans leur historique et leurs commits. Les intervalles anciens n'ont pas été reconstruits. La troisième mesure est la commande unique `PY scripts/run_evaluation.py --split all` de G7, après choix du seuil sur les vingt dev ; aucun balayage ni export d'erreurs test. Le test compte six documents, 99 annotations dont 93 entités dans les onze types évalués.
+
+| Mesure test | Métadonnée / commit mesuré | Précision | Rappel | F2 | Fuite |
+| --- | --- | ---: | ---: | ---: | ---: |
+| 1, G4 | 2026-10-27T19:22:43.654566+00:00 ; ad978562 | 0,946809 | 0,956989 | 0,954936 | 0,120169 |
+| 2, G4bis | 2026-10-27T21:34:13.774571+00:00 ; 9a18fdd | 0,978947 | 1,000000 | 0,995717 | 0,052938 |
+| 3, G7 | 28 octobre 2026, commande all ; b86a977 | 0,978947 | 1,000000 | 0,995717 | 0,019587 |
+
+- Empreintes : dev 4ef66d76ca10b70f8bc0b86d0066d52fb8a69a69467b3926b06510b216cac5c6 ; test 12a7852e765d98c10be74025e684c15280ccb47615017529ee320370faa4cd4d, inchangé depuis les mesures précédentes ; challenge c47502d65bf05b6f3e0bd7e0bf9ccd9e58b046787fa2252e6a49ece85a03d609. La métadonnée globale du rapport courant est celle de la dernière commande challenge : 2026-10-28T08:21:27.958563+00:00, elle ne constitue pas un horodatage distinct du test.
+- Référence challenge : worktree détaché de gate-5, 8c47a7634a408155086257095aed47b2a27b1067, code intact ; seuil 0,30 de son threshold.json, sans rechoix. Copie hors dépôt, seul champ des enregistrements adapté de challenge à test ; égalité complète des enregistrements vérifiée après inversion du split. Sérialisation JSON différente, empreinte de la copie 5ad31106b23143c97fbc7f1796da28f907e110d7ded7272468584df405999a23. Le rapport brut utilise test ; un rapport dérivé renomme seulement ce split et ses clés de provenance en challenge pour la comparaison.
+- Intervalles référence : le calcul pur de S45 reçoit les prédictions retournées par l'unique mesure de gate-5, avec ses métriques et ses modèles. Aucun changement du code de référence, aucune seconde détection. Bootstrap par document, 2 000 tirages, graine 45, percentiles 2,5 et 97,5 interpolés, seuil fixe ; même méthode pour le code actuel. Script reference_measure.py hors dépôt, SHA-256 e758667ede282cecd96b183c3f69bc895843f2ef261781b6e579dbcfd7c04865.
+- Comparaison : `PY scripts/compare_results.py <reference-challenge> results --split challenge`, sorties results/challenge_comparison.json et .md. L'avertissement corpus_sha256_different est conservé : il provient du split adapté et de la sérialisation, alors que texte, positions, types et autres champs sont identiques. Les deux seuils et les huit documents sont identiques. Aucun intervalle d'écart ni test de significativité n'est déduit des intervalles marginaux.
+
+### Tableaux des mesures
+
+Proportions, appariement partiel micro, seuil 0,30 ; chaque cellule donne la valeur puis l'intervalle bootstrap à 95 %. CUSTOM et LOCATION sont exclus, conformément aux gates précédentes. Dev : 20 documents, 311 entités évaluées ; test : 6 et 93 ; challenge : 8 et 190 (203 annotations au total).
+
+#### Dev actuel
+
+| Configuration | Précision [IC] | Rappel [IC] | F2 [IC] | Fuite [IC] | Entités exposées |
+| --- | --- | --- | --- | --- | ---: |
+| patterns_only | 1.0000 [1.0000, 1.0000] | 0.9743 [0.9479, 0.9967] | 0.9793 [0.9578, 0.9974] | 0.0155 [0.0014, 0.0331] | 8 |
+| ner_only | 0.8599 [0.7952, 0.9198] | 0.4341 [0.3863, 0.4783] | 0.4818 [0.4325, 0.5267] | 0.6956 [0.6508, 0.7429] | 167 |
+| hybrid_no_propagation | 0.9904 [0.9800, 1.0000] | 0.9968 [0.9899, 1.0000] | 0.9955 [0.9894, 0.9994] | 0.0030 [0.0000, 0.0074] | 1 |
+| hybrid | 0.9904 [0.9801, 1.0000] | 1.0000 [1.0000, 1.0000] | 0.9981 [0.9959, 1.0000] | 0.0000 [0.0000, 0.0000] | 0 |
+| hybrid_camembert | 0.9904 [0.9801, 1.0000] | 1.0000 [1.0000, 1.0000] | 0.9981 [0.9959, 1.0000] | 0.0000 [0.0000, 0.0000] | 0 |
+
+#### Test actuel, troisième mesure
+
+| Configuration | Précision [IC] | Rappel [IC] | F2 [IC] | Fuite [IC] | Entités exposées |
+| --- | --- | --- | --- | --- | ---: |
+| patterns_only | 1.0000 [1.0000, 1.0000] | 1.0000 [1.0000, 1.0000] | 1.0000 [1.0000, 1.0000] | 0.0196 [0.0000, 0.0606] | 0 |
+| ner_only | 0.9091 [0.8400, 0.9773] | 0.4301 [0.3542, 0.4839] | 0.4808 [0.4028, 0.5344] | 0.6945 [0.6052, 0.7991] | 51 |
+| hybrid_no_propagation | 0.9789 [0.9560, 1.0000] | 1.0000 [1.0000, 1.0000] | 0.9957 [0.9909, 1.0000] | 0.0196 [0.0000, 0.0606] | 0 |
+| hybrid | 0.9789 [0.9560, 1.0000] | 1.0000 [1.0000, 1.0000] | 0.9957 [0.9909, 1.0000] | 0.0196 [0.0000, 0.0606] | 0 |
+| hybrid_camembert | 0.9789 [0.9560, 1.0000] | 1.0000 [1.0000, 1.0000] | 0.9957 [0.9909, 1.0000] | 0.0196 [0.0000, 0.0606] | 0 |
+
+#### Challenge référence gate-5
+
+| Configuration | Précision [IC] | Rappel [IC] | F2 [IC] | Fuite [IC] | Entités exposées |
+| --- | --- | --- | --- | --- | ---: |
+| patterns_only | 0.9313 [0.8947, 0.9690] | 0.6421 [0.5454, 0.7374] | 0.6846 [0.5961, 0.7684] | 0.3217 [0.2695, 0.3771] | 67 |
+| ner_only | 0.6825 [0.6000, 0.7717] | 0.4526 [0.3694, 0.5506] | 0.4853 [0.3995, 0.5818] | 0.6347 [0.5578, 0.6986] | 94 |
+| hybrid_no_propagation | 0.7629 [0.7178, 0.8122] | 0.7789 [0.6782, 0.8706] | 0.7757 [0.6879, 0.8579] | 0.2094 [0.1610, 0.2634] | 37 |
+| hybrid | 0.7488 [0.7054, 0.7990] | 0.8316 [0.7158, 0.9231] | 0.8136 [0.7163, 0.8917] | 0.1758 [0.1344, 0.2296] | 27 |
+| hybrid_camembert | 0.7489 [0.7087, 0.7888] | 0.9105 [0.8802, 0.9460] | 0.8729 [0.8457, 0.9065] | 0.1328 [0.1028, 0.1669] | 13 |
+
+#### Challenge actuel
+
+| Configuration | Précision [IC] | Rappel [IC] | F2 [IC] | Fuite [IC] | Entités exposées |
+| --- | --- | --- | --- | --- | ---: |
+| patterns_only | 0.9635 [0.9304, 1.0000] | 0.6947 [0.6087, 0.7865] | 0.7358 [0.6567, 0.8161] | 0.2489 [0.1876, 0.3050] | 57 |
+| ner_only | 0.7073 [0.6325, 0.7823] | 0.4579 [0.3804, 0.5517] | 0.4926 [0.4137, 0.5825] | 0.6114 [0.5319, 0.6725] | 94 |
+| hybrid_no_propagation | 0.8128 [0.7539, 0.8743] | 0.8000 [0.7129, 0.8871] | 0.8025 [0.7243, 0.8820] | 0.1581 [0.1010, 0.2167] | 34 |
+| hybrid | 0.7921 [0.7238, 0.8614] | 0.8421 [0.7463, 0.9231] | 0.8316 [0.7517, 0.9047] | 0.1283 [0.0780, 0.1822] | 26 |
+| hybrid_camembert | 0.7955 [0.7197, 0.8643] | 0.9211 [0.8945, 0.9514] | 0.8929 [0.8569, 0.9285] | 0.0969 [0.0591, 0.1347] | 12 |
+
+- Comparaison : rappel test au moins égal à gate-5 pour les cinq configurations ; rappel challenge supérieur pour les cinq configurations. Hybrid challenge : 158/190 vers 160/190 (+1,0526 point), fuite 633/3600 vers 462/3600 (-4,75 points), entités entièrement exposées 27 vers 26. Hybrid test : 93/93, fuite 37/1889, contre 100/1889 en G4bis. Ces gains ponctuels ne prouvent pas une amélioration statistiquement significative.
+- Dossier : case_audit.py hors dépôt (SHA-256 16053f2054b7d673ed9c268353d91848805ca2f052c5fcc80ef6d007f947c9a5) écrit seulement deux textes fictifs avant l'essai, puis interdit les ouvertures en écriture et les connexions. Deux allers-retours exacts, personne commune stable, nouveau numéro et nouvelle lettre libres, trou de numérotation réutilisé, réponse mêlant les deux documents restaurée, reste ajouté après pseudonymisation signalé. Les tests AppTest existants vérifient aussi l'import, le masquage du reste, l'export mémoire et le seul texte transmis au connecteur simulé.
+- Corrections simples : CSS raccourci sans changement de déclaration ; README aligné sur G7 et guide complété pour Continue a case et Final check. tests/test_gate7.py ajoute dix vues EN/FR, quinze libellés et la limite de taille ; test_app_evaluation.py accepte les nouveaux rapports réels avec challenge et intervalles. Les premiers essais des nouveaux tests ont été adaptés à la boucle locale d'AppTest sous Windows et au message rouge intentionnel sur la table sensible ; ce ne sont pas des défauts métier.
+- Points ouverts : aucun défaut de logique établi, aucun xfail strict nécessaire. Limites : 26 entités challenge entièrement exposées par hybrid avant revue humaine, rappel 84,21 % ; corpus petit et fictif, huit challenge d'un même auteur, intervalles conditionnels au corpus et au seuil. Repli : relire chaque détection, ajouter les valeurs oubliées, utiliser le contrôle final et ne transmettre que le texte validé ; traitement réel uniquement en local. Les captures S36 restent à régénérer dans la session documentaire prévue. AppTest contrôle le rendu français de Review, mais la sérialisation de son sélecteur hors session reste une limite du testeur décrite en S24.
+- Suite : pilotage G7 --go après le rapport et le commit ; aucun tag ni push dans cette gate.

@@ -1,23 +1,8 @@
-document_id,type,text,context_before,context_after,nature
-doc_07,ORGANIZATION,IBAN,"nées bancaires de la société, ", FR76 7461 8668 7902 8444 6222,FP
-doc_07,PERSON,Lecture,éance est levée à dix heures. ," faite, Mme VORDELUNE et le se",FP
-doc_08,ORGANIZATION,affaire RG,"ud'hommes de Nanterre, dans l'", n° 26/04782. Mon adresse élec,FP
-doc_08,ORGANIZATION,AC-N47-R,on collègue portait le numéro ,. La quantité 795024786 inscri,FP
-doc_09,ADDRESS,"9 venelle des Tisserands-de-Brume
-48360 Ormecendre-sur-Vallon","le 23 février 1992, demeurant ",", il est convenu ce qui suit.
-",FN
-doc_09,ADDRESS,48360 Ormecendre-sur-Vallon,"nelle des Tisserands-de-Brume
-",", il est convenu ce qui suit.
-",FP
-doc_09,ORGANIZATION,RH-SV-62,2A 120 535 85 et le matricule ,. Le salarié peut demander la ,FP
-doc_11,ORGANIZATION,Service des ressources humaines,"on.
-
-Cordialement,
-Rose BLANC
-","
-",FP
+document_id,type,text,context_before,context_after,nature,category
+doc_07,PERSON,Lecture,éance est levée à dix heures. ," faite, Mme VORDELUNE et le se",FP,extra
+doc_08,ORGANIZATION,AC-N47-R,on collègue portait le numéro ,. La quantité 795024786 inscri,FP,extra
 doc_12,PERSON,FP-26-Q184, : règlement de la facture n° ,"
 
 Madame,
 
-Nous vous mettons e",FP
+Nous vous mettons e",FP,extra
