@@ -1,0 +1,32 @@
+{
+ "R1": "Mme [PERSONNE_1] demande. Mme [PERSONNE_1] produit attestation_[PERSONNE_2].docx.",
+ "R1_restore_exact": true,
+ "R1_deterministic": true,
+ "R1_entities": [
+  [
+   "[PERSONNE_1]",
+   "Odile VARNESSE",
+   [
+    "Odile VARNESSE",
+    "VARNESSE"
+   ]
+  ],
+  [
+   "[PERSONNE_2]",
+   "VARNESSE",
+   [
+    "VARNESSE"
+   ]
+  ]
+ ],
+ "R1_restore_altered": "Mme Odile VARNESSE demande. Mme Odile VARNESSE produit attestation_VARNESSE.docx.",
+ "adjacent": "[PERSONNE_1] [PERSONNE_1] et [PERSONNE_1] [PERSONNE_2].",
+ "adjacent_occurrences": 4,
+ "adjacent_restore": true,
+ "case_memory": "Mme [PERSONNE_3] confirme. Voir attestation_[PERSONNE_4].docx et Mme [PERSONNE_3].",
+ "case_memory_restore": true
+}
+--- témoin mémoire de dossier
+doc1: Mme [PERSONNE_1] demande. Mme [PERSONNE_1] signe.
+doc2: Mme [PERSONNE_1] confirme. Voir attestation_[PERSONNE_1].docx et Mme [PERSONNE_1].
+doc2 nom complet seul après table à deux entrées: Mme [PERSONNE_1] revient.

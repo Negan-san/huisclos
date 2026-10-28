@@ -1,0 +1,211 @@
+{
+  "manual": {
+    "R1_fr_short_name_in_text_and_file": {
+      "ok": false,
+      "error_type": "RuntimeError",
+      "path": "src/huisclos/pseudonymize/tokens.py",
+      "function": "_token_tables",
+      "line": 140
+    },
+    "R2_en_name_at_file_start": {
+      "ok": false,
+      "error_type": "RuntimeError",
+      "path": "src/huisclos/pseudonymize/tokens.py",
+      "function": "_token_tables",
+      "line": 140
+    },
+    "R3_alias_with_hyphens": {
+      "ok": false,
+      "error_type": "RuntimeError",
+      "path": "src/huisclos/pseudonymize/tokens.py",
+      "function": "_token_tables",
+      "line": 140
+    },
+    "T1_control_different_spellings": {
+      "ok": true,
+      "text": "Mme [PERSONNE_1] demande. Pi\u00e8ce : attestation_[PERSONNE_2].docx.",
+      "leaked": [],
+      "restored": true
+    },
+    "T2_control_file_mention_added_manually": {
+      "ok": true,
+      "text": "Mme [PERSONNE_1] demande. Mme [PERSONNE_1] produit attestation_[PERSONNE_1].docx.",
+      "leaked": [],
+      "restored": true
+    },
+    "T3_control_two_file_names_only": {
+      "ok": true,
+      "text": "Pi\u00e8ces : note_[PERSONNE_1].pdf et bilan_[PERSONNE_1].pdf.",
+      "leaked": [],
+      "restored": true
+    }
+  },
+  "pipeline": {
+    "P_fr_standard": {
+      "detections": [
+        [
+          "Odile VARNESSE",
+          "PERSON",
+          "ner_spacy"
+        ],
+        [
+          "Bastien QUERLAIN",
+          "PERSON",
+          "heuristic"
+        ],
+        [
+          "QUERLAIN",
+          "PERSON",
+          "heuristic"
+        ],
+        [
+          "QUERLAIN",
+          "PERSON",
+          "propagation"
+        ]
+      ],
+      "ok": false,
+      "error_type": "RuntimeError",
+      "path": "src/huisclos/pseudonymize/tokens.py",
+      "function": "_token_tables",
+      "line": 140
+    },
+    "P_en_standard": {
+      "detections": [
+        [
+          "Ada KORVELL",
+          "PERSON",
+          "heuristic"
+        ],
+        [
+          "Bastien QUERLAIN",
+          "PERSON",
+          "ner_spacy"
+        ],
+        [
+          "QUERLAIN",
+          "PERSON",
+          "ner_spacy"
+        ],
+        [
+          "QUERLAIN",
+          "PERSON",
+          "propagation"
+        ]
+      ],
+      "ok": false,
+      "error_type": "RuntimeError",
+      "path": "src/huisclos/pseudonymize/tokens.py",
+      "function": "_token_tables",
+      "line": 140
+    }
+  },
+  "locations": {
+    "real_fix2_01_error": {
+      "path": "src/huisclos/pseudonymize/tokens.py",
+      "function": "_token_tables",
+      "line": 140
+    },
+    "real_error_contains_value": false,
+    "library_only": {
+      "path": null,
+      "function": null,
+      "line": null
+    },
+    "frame_outside_repo_named_src_huisclos": {
+      "path": "src/huisclos/forged.py",
+      "function": "forged",
+      "line": 2
+    },
+    "frame_path_with_space": {
+      "path": null,
+      "function": null,
+      "line": null
+    },
+    "frame_identifier_shaped_value": {
+      "path": "src/huisclos/FALVERAC.py",
+      "function": "FALVERAC",
+      "line": 2
+    },
+    "lambda_last_frame_in_src": {
+      "path": null,
+      "function": null,
+      "line": null
+    },
+    "frame_outside_measured_code": {
+      "path": null,
+      "function": null,
+      "line": null
+    }
+  },
+  "forged_failure_detail": {
+    "valid": " at stage pseudonymization (RuntimeError) in src/huisclos/pseudonymize/tokens.py:f:9",
+    "extra_message_key": " at stage pseudonymization (RuntimeError) in src/huisclos/pseudonymize/tokens.py:f:9",
+    "absolute_path": " at stage pseudonymization (RuntimeError)",
+    "dot_dot_path": " at stage pseudonymization (RuntimeError)",
+    "tests_path": " at stage pseudonymization (RuntimeError)",
+    "results_path": " at stage pseudonymization (RuntimeError)",
+    "path_too_long": " at stage pseudonymization (RuntimeError)",
+    "line_zero": " at stage pseudonymization (RuntimeError)",
+    "line_float": " at stage pseudonymization (RuntimeError)",
+    "line_none": " at stage pseudonymization (RuntimeError)",
+    "line_bool": " at stage pseudonymization (RuntimeError)",
+    "missing_function": " at stage pseudonymization (RuntimeError)",
+    "unknown_stage": "",
+    "final_check_stage": "",
+    "error_type_with_space": "",
+    "identifier_shaped_function": " at stage pseudonymization (RuntimeError) in src/huisclos/pseudonymize/tokens.py:FALVERAC:9",
+    "identifier_shaped_path": " at stage pseudonymization (RuntimeError) in src/huisclos/FALVERAC.py:f:9",
+    "identifier_shaped_error_type": " at stage pseudonymization (FALVERAC) in src/huisclos/pseudonymize/tokens.py:f:9",
+    "earlier_line_ignored": "",
+    "last_line_used": " at stage pseudonymization (RuntimeError) in src/huisclos/pseudonymize/tokens.py:f:9"
+  },
+  "sidebar": {
+    "ui_fr": {
+      "en_enhanced": {
+        "exception": false,
+        "profile_kept": true,
+        "warning_is_en_status": true,
+        "caption_has_fr_status": false,
+        "warnings": 1
+      },
+      "fr_enhanced": {
+        "exception": false,
+        "profile_kept": true,
+        "warning_is_en_status": false,
+        "caption_has_fr_status": true,
+        "warnings": 0
+      },
+      "en_standard": {
+        "exception": false,
+        "profile_kept": true,
+        "warning_is_en_status": false,
+        "caption_has_fr_status": false,
+        "warnings": 0
+      }
+    },
+    "ui_en": {
+      "en_enhanced": {
+        "exception": false,
+        "profile_kept": true,
+        "warning_is_en_status": true,
+        "caption_has_fr_status": false,
+        "warnings": 1
+      },
+      "fr_enhanced": {
+        "exception": false,
+        "profile_kept": true,
+        "warning_is_en_status": false,
+        "caption_has_fr_status": true,
+        "warnings": 0
+      },
+      "en_standard": {
+        "exception": false,
+        "profile_kept": true,
+        "warning_is_en_status": false,
+        "caption_has_fr_status": false,
+        "warnings": 0
+      }
+    }
+  }
+}

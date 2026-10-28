@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 20:10 | FIX2R | Recontrôle indépendant de FIX2 | Claude Code, Opus 5.5
+- Fait : SHA figé FIX2 a29532c fusionné en avance rapide sur lane-b. Quatre xfail stricts rejoués (rouges avec --runxfail, tokens.py:140) ; reproductions fictives nouvelles, dont pipeline Standard réel FR et EN, et trois témoins : cause FIX2-01 établie. Harnais diagnostique relu sans relance : registre avant reçu, trois empreintes égales aux blobs, export sans contenu. Patch appliqué dans un worktree temporaire hors dépôt, xfail retirés : 1716 réussis ; worktree supprimé. Lieu du worker testé sur 20 sorties falsifiées ; statut Enhanced EN conforme en AppTest FR et EN. Périmètre FIX2 conforme. Preuves dans results/fix2-recheck/.
+- Tests : pytest 1712 passed, 4 xfailed stricts FIX2-01 (arbre patché hors dépôt : 1716 passed) ; Ruff check et format OK ; check_style 0 erreur, 15 avertissements connus ; diff --check OK. Script de recontrôle results/fix2-recheck/recheck_fix2.py, sortie JSON archivée.
+- Reste à faire : session de correction autorisée de FIX2-01 avec les trois conditions de D-FIX2R-2, puis mesure challenge par une session indépendante autorisée.
+- Décisions : D-FIX2R-1, D-FIX2R-2.
+- Risques ou blocages : le patch laisse deux entrées de même écriture dans la table du dossier, d'où un jeton neuf dans le document suivant (prudent, sans fuite) ; validation du lieu seulement syntaxique. Aucune mesure réservée, aucun réglage, paquet, tag ni push.
+- Prochaine session : correction FIX2-01 sur src/huisclos/pseudonymize/tokens.py, tests et app/steps/review_step.py ; aucun R8.
+
 ### 2026-10-28 18:55 | FIX2 | Investigation ciblée après NO-GO G8R | Claude Code, Opus 5.5
 - Fait : SHA G8R 84bb7f0 fusionné en avance rapide. Cause du challenge établie : sonde de 40 structures fictives puis unique tentative diagnostique enregistrée, même lieu pour les deux profils, tokens.py:_token_tables:140 à la substitution. FIX2-01 : un nom présent dans le texte et dans un nom de fichier réclame deux jetons (D-AF-A2-7 contre la table indexée par texte), FR et EN, sans lien avec G8-01. Harnais : échec du worker situé par fichier, fonction et ligne validés. Enhanced EN : aucune cause générale établie (multi-label et imbrication réfutés sur dev), statut non recommandé visible dans la barre latérale.
 - Tests : pytest 1712 passed, 4 xfailed stricts FIX2-01 ; Ruff check et format OK ; check_style 0 erreur, 15 avertissements connus ; diff --check OK. Premiers essais conservés : deux tests attendaient l'ancien texte « until G8 », six lignes i18n trop longues. Correctif proposé vérifié hors dépôt : 1713 tests puis 94 ciblés.
