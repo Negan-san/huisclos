@@ -8,10 +8,11 @@ everything runs on your computer. The online demo runs on the host's server and 
 receive fictitious data.
 
 Three choices are independent of each other: the language of the document you analyse, the
-language of the interface, and the style of the tokens. Section 4 explains them. The English
-support and updated profiles were measured in G8. Complete bilingual validation is NO-GO:
-the historical challenge run failed and English Enhanced is not recommended. English remains
-experimental: see section 4.3.
+language of the interface, and the style of the tokens. Section 4 explains them. After the
+G8R2 measure, the measured French scope is validated: Standard is the default and Enhanced
+is a local French option. English remains experimental, with strong reservations for
+Standard; English Enhanced is not recommended. There is no complete bilingual validation:
+see section 4.3.
 
 Important: pseudonymization is not anonymization (GDPR, art. 4(5) and recital 26). The
 pseudonymized text remains personal data. Read it before you send it.
@@ -138,7 +139,10 @@ The values of the table are also searched in the new text where the detection mi
 the message "Known values of the case table found in this text" gives their number. The
 table's token style takes precedence over the sidebar setting. **Remove the case table**
 forgets it. The table stays in session memory; it is not added to the text sent to the AI
-tool. Save the merged table after each document.
+tool. Save the merged table after each document. One known limit: when a name also appeared
+inside a file name of an earlier document (such as conclusions_NAME.pdf), the table holds two
+entries with the same spelling, and that person can receive a new token in the next document.
+The value stays masked; check the merged table and the restored text.
 
 ![Second French document of a case, French interface: known entities keep their tokens](screenshots/08_case_memory.png)
 
@@ -332,7 +336,7 @@ The group **Document** also holds the **Detection profile**.
 | Profile | Document languages | What it uses | Where it is offered |
 | --- | --- | --- | --- |
 | **Standard** (default) | French, English | Rules, control digits, the spaCy model of the document language, propagation of each value to its other mentions. | Everywhere, including the public demo. |
-| **Enhanced local detection** | French, English | Standard plus a neural model that runs on your computer: CamemBERT for a French document, GLiNER for an English one. | Local installation only. English Enhanced failed the G8 recommendation criterion; use Standard instead. French Enhanced has a small measured gain. |
+| **Enhanced local detection** | French, English | Standard plus a neural model that runs on your computer: CamemBERT for a French document, GLiNER for an English one. | Local installation only. English Enhanced failed the G8 recommendation criterion; use Standard instead. French Enhanced met the four criteria fixed before the G8R2 measure; it remains an option, not the default. |
 
 How Enhanced behaves:
 
@@ -360,10 +364,11 @@ What has been measured, and what has not:
 | --- | --- | --- |
 | Evaluation page and README tables | French, gate G7 and earlier | Historical, unchanged. Standard is the `hybrid` configuration and Enhanced French is `hybrid_camembert`. |
 | Development comparison after G7 | 20 French and 8 English fictitious documents | Dev only. French: both profiles fully cover 311 of 311 entities, as at G7. English: Standard fully covers 124 of 136 entities and Enhanced 126 of 136. Leaked characters fall from 105/2553 to 63/2553; non-sensitive masking stays at 48 characters. Paired intervals include zero: this point gain is not statistically established. |
-| G8 new blind French documents | 8 fictitious documents, 105 evaluated entities | Standard covers 95/105 entities, Enhanced 96/105; respectively 139 and 130 characters remain exposed out of 2042. French corrections improve coverage against their corresponding G7 profiles. Paired intervals include zero. |
-| G8 new blind English documents | 8 fictitious documents, 100 evaluated entities | Standard covers 78/100 entities and Enhanced 88/100. Enhanced reduces leaked characters from 235 to 115 out of 2285, but precision drops from 0.8349 to 0.7000, outside the pre-registered two-point margin. Enhanced is not recommended. |
-| G8 historical French test | Fourth project measure, 6 documents | Both profiles cover 93/93 entities, no leaked character in the eleven evaluated types. G7 had 37/1889 leaked characters. CUSTOM remains separate. |
-| G8 historical challenge | One authorised attempt | Failed without a usable report; not repeated. FIX2 located the cause: Pseudonymize stops when the same name appears in the text and inside a file name (such as conclusions_NAME.pdf). Nothing is sent in that case. Complete bilingual validation is NO-GO pending the correction and an explicitly authorised follow-up. |
+| G8 new blind French documents | 8 fictitious documents, 105 evaluated entities | Historical, code e3d13bd, not measured again. Standard covers 95/105 entities, Enhanced 96/105; respectively 139 and 130 characters remain exposed out of 2042. French corrections improve coverage against their corresponding G7 profiles. Paired intervals include zero. |
+| G8 new blind English documents | 8 fictitious documents, 100 evaluated entities | Historical, code e3d13bd, not measured again. Standard covers 78/100 entities and Enhanced 88/100. Enhanced reduces leaked characters from 235 to 115 out of 2285, but precision drops from 0.8349 to 0.7000, outside the pre-registered two-point margin. Enhanced is not recommended. |
+| G8 historical French test | Fourth project measure, 6 documents | Historical, code e3d13bd, not measured again. Both profiles cover 93/93 entities, no leaked character in the eleven evaluated types. G7 had 37/1889 leaked characters. CUSTOM remains separate. |
+| G8 historical challenge | One authorised attempt | Failed without a usable report. FIX2 located the cause: Pseudonymize stopped when the same name appeared in the text and inside a file name (such as conclusions_NAME.pdf). FIX3 corrected it; FIX4 clears earlier results before a new attempt and was rechecked independently. |
+| G8R2 French challenge resume | Same 8 fictitious French documents, 190 entities, already known since G7 | Single registered attempt on commit 930c414, plan frozen at G7. Standard fully covers 157/190 entities and Enhanced 170/190; leaked characters 325 and 218 out of 3600; partial precision 0.8039 and 0.8018; non-sensitive masking 366 and 379 characters. The four pre-registered criteria are met. The paired interval of the leakage reduction excludes zero; the interval of the coverage gain touches zero, so no significant coverage gain is claimed. G7 leaked 462 and 349 characters on the same set (descriptive comparison). Not a new blind validation; English not measured. |
 
 The development sets are small and fictitious. The English rules were developed together
 with a few small example documents, which cannot show how they behave on new ones. Treat
@@ -372,7 +377,8 @@ HuisClos makes no claim of precision on your documents. On the new blind English
 Standard leaves some annotated content exposed in all eight documents. G8 also measures
 additional CUSTOM exposures outside the main figures. Use Standard as the fallback and
 add missed identifiers manually; do not rely on English Enhanced to make a document safe.
-Full intervals, costs and separate entity scopes: [G8 report](../results/gate8/report.md).
+Full intervals, costs and separate entity scopes: [G8 report](../results/gate8/report.md)
+(historical) and [G8R2 report](../results/gate8-resume/report.md) (French challenge resume).
 
 On the English dev, Enhanced's final check raised 29 alerts, 28 outside annotated references,
 while 10 entities were still exposed. Standard raised no alert despite 12 exposed entities.
@@ -582,10 +588,11 @@ guarantee immediate removal from server memory. To clear the current session exp
 **Why is a word masked when it should not be?** The detection prefers masking too much to
 missing a name. Uncheck **Mask** for that row in the Review step.
 
-**Is the English support as reliable as the French one?** G8 measured new blind documents
-and found substantial residual exposure. English Enhanced failed its precision margin and
-is not recommended. Complete bilingual validation is NO-GO. See section 4.3, keep Standard
-as the fallback and review English documents with extra care.
+**Is the English support as reliable as the French one?** No. G8 measured new blind English
+documents and found substantial residual exposure. English Enhanced failed its precision
+margin and is not recommended; English Standard is experimental with strong reservations.
+Only the measured French scope is validated, and no profile guarantees zero leakage. See
+section 4.3, keep Standard as the fallback and review English documents with extra care.
 
 **Can I restore an answer received days later?** Yes, if you downloaded the mapping table.
 Follow the new-session workaround in section 6, then upload it under

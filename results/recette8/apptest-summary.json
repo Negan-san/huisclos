@@ -1,0 +1,120 @@
+{
+  "cases": [
+    {
+      "ui": "en",
+      "document": "fr",
+      "profile": "standard",
+      "detections": 5,
+      "detection_sources": [
+        "heuristic",
+        "ner_spacy",
+        "pattern",
+        "propagation"
+      ],
+      "sidebar_warnings": 0,
+      "tokens": 5,
+      "rejected_by_reviewer": "TALMIRAC SARL",
+      "mask_everywhere_clicks": 0,
+      "ready_clean": true,
+      "clean_instruction_alerts": [],
+      "acknowledged_false_alerts": 0,
+      "ready_planted": false,
+      "ready_corrected": true,
+      "planted_alerts": 1,
+      "sent_characters": 262,
+      "unknown_tokens": [
+        "[PERSONNE_99]"
+      ],
+      "exact": true,
+      "ui_language_after_reset": "en",
+      "stable_token": "[PERSONNE_2]",
+      "new_token": "[PERSONNE_4]"
+    },
+    {
+      "ui": "fr",
+      "document": "en",
+      "profile": "standard",
+      "detections": 5,
+      "detection_sources": [
+        "ner_spacy",
+        "pattern",
+        "propagation"
+      ],
+      "sidebar_warnings": 0,
+      "tokens": 5,
+      "rejected_by_reviewer": "BRAMWICK LIMITED",
+      "mask_everywhere_clicks": 0,
+      "ready_clean": true,
+      "clean_instruction_alerts": [
+        "Summarise"
+      ],
+      "acknowledged_false_alerts": 2,
+      "ready_planted": false,
+      "ready_corrected": true,
+      "planted_alerts": 1,
+      "sent_characters": 227,
+      "unknown_tokens": [
+        "[PERSONNE_99]"
+      ],
+      "exact": true,
+      "ui_language_after_reset": "en",
+      "stable_token": "[PERSONNE_2]",
+      "new_token": "[PERSONNE_4]"
+    },
+    {
+      "ui": "fr",
+      "document": "fr",
+      "profile": "enhanced",
+      "detections": 5,
+      "detection_sources": [
+        "ner_camembert",
+        "pattern",
+        "propagation"
+      ],
+      "sidebar_warnings": 0,
+      "tokens": 5,
+      "rejected_by_reviewer": "TALMIRAC SARL",
+      "mask_everywhere_clicks": 0,
+      "ready_clean": true,
+      "clean_instruction_alerts": [],
+      "acknowledged_false_alerts": 0,
+      "ready_planted": false,
+      "ready_corrected": true,
+      "planted_alerts": 1,
+      "sent_characters": 262,
+      "unknown_tokens": [
+        "[PERSONNE_99]"
+      ],
+      "exact": true
+    },
+    {
+      "ui": "en",
+      "document": "en",
+      "profile": "enhanced",
+      "detections": 5,
+      "detection_sources": [
+        "ner_gliner",
+        "propagation"
+      ],
+      "sidebar_warnings": 1,
+      "tokens": 5,
+      "rejected_by_reviewer": "BRAMWICK LIMITED",
+      "mask_everywhere_clicks": 0,
+      "ready_clean": true,
+      "clean_instruction_alerts": [
+        "Summarise"
+      ],
+      "acknowledged_false_alerts": 2,
+      "ready_planted": false,
+      "ready_corrected": true,
+      "planted_alerts": 1,
+      "sent_characters": 227,
+      "unknown_tokens": [
+        "[PERSONNE_99]"
+      ],
+      "exact": true
+    }
+  ],
+  "network": "socket connections refused; Mistral transport simulated",
+  "models_dir_declared_for_enhanced_only": true
+}

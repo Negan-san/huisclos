@@ -14,6 +14,13 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 21:30 | R8 | Recette et publication du périmètre validé après G8R2 | Claude Code, Opus 5.5
+- Fait : HEAD initial 930c414 propre, commit G8R2 a838b05 fusionné en avance rapide, HEAD égal. README et USER_GUIDE alignés sur D-G8R2-1 : collision texte/nom de fichier corrigée, FIX4 recontrôlé et FIX3R-01 clos, reprise unique du challenge, quatre critères FR remplis, G8 test/C3 historiques, réserves EN explicites, limite D-FIX3-2. Recette AppTest results/recette8/test_recette.py : quatre documents fictifs nouveaux, Standard FR/EN et Enhanced FR/EN locaux, langue UI distincte, revue, ajout manuel, consigne plantée puis corrigée, révocations, envoi simulé, restauration exacte, jeton inconnu, second document et jeton stable.
+- Tests : 1749 passed sous garde FIX3R, zéro ouverture réservée refusée ; recette 7 passed ; Ruff check/format, style (0 erreur, 15 avertissements connus) et diff conformes. Journaux et rapport dans results/recette8/.
+- Décisions : D-R8-1 ; GO de la recette pour la publication limitée au périmètre de D-G8R2-1, sans validation bilingue complète.
+- Reste et risques : phrase obsolète "pending G8" de la page Evaluation (prudente, hors périmètre) ; fausse alerte "Summarise" dans une consigne anglaise ; corpus petits et fictifs ; Enhanced EN non recommandé. Publication et vérification publique après le commit, rapportées dans le compte rendu, sans second commit.
+- Suite : S61, script et storyboard alignés sur G8R2 et les réserves EN. Aucune S61, GF, RF ni nouvelle gate dans cette session.
+
 ### 2026-10-28 20:42 | G8R2 | FIX3R-01 clos et reprise challenge conforme | Codex
 - Fait : arbre initial propre, SHA dev FIX4 930c414 enregistré puis fusionné en avance rapide, HEAD identique. Diff limité à l'état, aux tests et à la documentation ; preuves FIX3R inchangées réutilisées. Huit AppTest indépendants FR/EN croisent premier échec et retour réel Restore vers Review, RuntimeError/ValueError, invalidation complète, revue et table conservées, reprise réussie et restauration exacte. Quatre vrais workers Standard/Enhanced FR/EN hors ligne passent.
 - Tests : 1749 passed, aucun xfail, 267,41 s sous garde FIX3R, roundtrip limité à dev, zéro ouverture réservée refusée ; Ruff check/format, style et diff conformes, quinze longueurs connues. Premier précontrôle : 1747 passed et deux tests de chemin échouent car le lanceur étendait HUISCLOS_MODELS_DIR à toute la suite ; journaux conservés, variable limitée aux sondes worker, deux témoins puis suite complète verts. Aucun test historique modifié.

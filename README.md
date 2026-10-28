@@ -25,13 +25,14 @@ lets you send only the tokenized text, and puts the real values back into the an
 - Restores the real values in the answer of the AI tool, and reports unknown or altered tokens.
 - Exports the checked message, the restored text (.txt and .docx) and the mapping table.
 
-Gate G8 is **NO-GO for complete bilingual validation**: the historical challenge run failed,
-and English Enhanced fails the precision margin fixed before testing. Standard remains the
-default. English detection is experimental and needs careful manual review; English Enhanced
-is not recommended. The local Enhanced option adds CamemBERT for French or GLiNER for English.
-FIX2 located the challenge failure: pseudonymization stops when the same name, of the same
-type, appears both in the text and inside a file name. A correction is proposed in
-[results/fix2/report.md](results/fix2/report.md) and still needs an authorised session.
+**Current status (G8R2, 28 October 2026).** The measured French scope is validated on small
+fictitious corpora: Standard is the default and Enhanced is a local French option. English remains experimental: English
+Standard carries strong reservations and English Enhanced is not recommended. There is no
+complete bilingual validation and no guarantee of zero leakage; every detection still needs
+human review. The local Enhanced option adds CamemBERT for French or GLiNER for English.
+The G8 failure is corrected: Pseudonymize used to stop when the same name appeared both in
+the text and inside a file name. FIX3 corrected it, FIX4 clears earlier results before a new
+attempt, and an independent recheck closed the last open point (FIX3R-01).
 The [user guide](docs/USER_GUIDE.md#4-settings-in-the-left-column) describes the covered
 FR/US/UK formats and their limits; a document language is not a nationality or jurisdiction.
 
@@ -131,9 +132,10 @@ significance or universal accuracy is claimed. Its local CPU probes need about 2
 the final check raises 29 alerts, 28 outside annotated references, while 10 entities remain
 exposed. An alert alone masks nothing. French Enhanced adds no coverage on the saturated dev.
 [LOCAL_MODELS.md](docs/LOCAL_MODELS.md) records versions, licences, costs and limitations.
-### G8 blind results and open points
+### Historical G8 blind results
 
-Eight new fictitious documents per language were measured once after the A4 freeze.
+Eight new fictitious documents per language were measured once after the A4 freeze, on the
+code of commit e3d13bd. They were not measured again and do not validate the current code.
 Main threshold: 0.30 in both languages; GLiNER cutoff: 0.70. No threshold was changed afterwards.
 
 | Language | Profile | Partial precision | Fully covered entities | Leaked characters | Non-sensitive characters masked |
@@ -152,15 +154,37 @@ Standard English leaves at least one annotated character exposed in all eight do
 These counts exclude CUSTOM/LOCATION, reported separately with additional exposures.
 
 The fourth historical French test measure covers 93/93 entities with no leaked character
-in the eleven evaluated types; G7 leaked 37/1889. The historical challenge attempt failed
-without a usable report and was not repeated. Its cause remains undetermined; a separate
-synthetic test records a harness failure that discards predictions if the final check fails.
-The French corrections and local workflow checks pass, but the complete gate remains NO-GO.
-Keep English experimental, use Standard as the fallback and manually check every residual
-identifier before sending. The UI Evaluation page still shows historical G7 reports.
-
+in the eleven evaluated types; G7 leaked 37/1889. The G8 challenge attempt failed without a
+usable report because of the file-name collision described above.
 [Full G8 report, intervals, costs and limitations](results/gate8/report.md),
 [decision D-G8-1](docs/DECISIONS.md#d-g8-1-gate-bilingue-et-protection-complete).
+
+### G8R2: single resume of the French challenge
+
+After FIX3 and FIX4, the French challenge set (8 fictitious documents, already known since G7,
+so not a new blind set) was measured once more on commit 930c414, as a single registered
+attempt with the plan frozen at G7: threshold 0.30, paired bootstrap of 2000 draws.
+
+| Profile | Fully covered entities | Leaked characters | Partial precision | Non-sensitive characters masked |
+| --- | ---: | ---: | ---: | ---: |
+| French Standard | 157/190 | 325/3600 | 0.8039 | 366 |
+| French Enhanced | 170/190 | 218/3600 | 0.8018 | 379 |
+
+French Enhanced meets the four criteria fixed before the measure: more fully covered
+entities, fewer leaked characters, a precision loss of 0.0021 within the 0.02 margin and
+extra masking within the 0.01 margin. The paired interval of the leakage reduction,
+[-0.0618; -0.0065], excludes zero. The interval of the coverage gain, [0; 0.1667], touches
+zero: no statistically significant coverage gain is claimed. Before human review, 33 entities
+with Standard and 20 with Enhanced remain at least partly exposed. On the same corpus, G7
+leaked 462 (Standard) and 349 (Enhanced) characters; this comparison between two separate
+reports is descriptive only.
+
+English is not part of this measure. English Standard stays experimental with strong
+reservations; English Enhanced stays experimental and not recommended (historical G8
+precision loss of 0.1349 against a 0.02 margin). Use Standard as the fallback and check every
+residual identifier before sending. The UI Evaluation page still shows historical G7 reports.
+[G8R2 report](results/gate8-resume/report.md),
+[decision D-G8R2-1](docs/DECISIONS.md#d-g8r2-1-clôture-fix3r-01-verdict-fr-et-registre-de-la-reprise-unique).
 No score guarantees anonymity or zero leakage; alerts alone mask nothing.
 
 ## Confidentiality
@@ -178,9 +202,12 @@ No score guarantees anonymity or zero leakage; alerts alone mask nothing.
 
 ## Limits
 
-- French and English have separate detection paths; G8 complete bilingual validation is
-  NO-GO and English Enhanced is not recommended. English support remains experimental.
-  Other languages and address formats have no dedicated coverage guarantee.
+- French and English have separate detection paths. Only the measured French scope is
+  validated; there is no complete bilingual validation, English support remains experimental
+  and English Enhanced is not recommended. Other languages and address formats have no
+  dedicated coverage guarantee.
+- When a name also appears inside a file name, the same person can receive a new token in
+  the next document of a case. The value stays masked, but check the merged case table.
 - No OCR: a PDF with no extractable text is refused. Mixed PDFs and unsupported Word
   structures can produce partial imports; compare the extracted text with the original.
 - Detection misses values and masks some words by mistake. Human review is required.
