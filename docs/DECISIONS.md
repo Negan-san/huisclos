@@ -36,7 +36,7 @@ Format : contexte, choix, raison. D-01 à D-18 viennent du master plan (27 octob
 | --- | --- |
 | NIR ou IBAN à clé valide ; SIREN ou SIRET à clé valide près de son libellé ; ajout manuel | 1,00 |
 | E-mail | 0,95 |
-| Numéro de dossier après "RG" ou "Portalis" ; date après un contexte de naissance | 0,90 |
+| Numéro de dossier après "RG", "Portalis", "parquet" ou "pourvoi" privé ; date après un contexte de naissance ; identifiant interne explicitement libellé (D-S14-1) | 0,90 |
 | SIRET à clé valide sans contexte | 0,85 |
 | NER spaCy (score fixe attribué par Presidio, confirmé en S12 : D-S12-1) | 0,85 |
 | Civilité suivie d'un nom | 0,80 |
@@ -236,3 +236,69 @@ Seuil par défaut : 0,40 jusqu'à la gate 4, puis la valeur de results/threshold
 - Contexte : sur Community Cloud, un seul processus sert tous les visiteurs ; le modèle spaCy occupe l'essentiel de la mémoire (D-05). build_analyzer garde déjà son résultat par lru_cache, mais la logique métier de src/ ne doit pas dépendre de Streamlit.
 - Choix : app/engine.py enveloppe build_analyzer dans st.cache_resource, avec les cinq valeurs simples de la configuration pour clé ; l'étape Import l'appelle juste avant detect(), qui retrouve le même objet. Aucun st.cache_data dans app/ : aucun texte ni résultat de l'utilisateur n'est conservé entre sessions. tests/test_deploy.py vérifie ces deux points et l'absence d'écriture sur le disque dans app/.
 - Raison : un seul chargement du modèle par processus, visible et gérable par Streamlit (vidage du cache), sans modifier src/ ; le bandeau de démo (D-14) était déjà lu dans la variable d'environnement ou le secret HUISCLOS_PUBLIC_DEMO.
+
+## D-S14-1 Identifiants internes libellés
+- Choix : un reconnaisseur local CUSTOM, source pattern, détecte les matricules, numéros de salarié, contrat, police d'assurance, client, adhérent, passeport, carte d'identité, numéro fiscal, immatriculation et identifiant de badge. Le libellé doit toucher une courte séquence de séparateurs, éventuellement un numéro ou le verbe "est", puis une valeur bornée comportant un chiffre. Les plaques actuelles et anciennes sont prises en entier. Le score 0,90 étend D-07 aux identifiants dont le contexte est explicite, comme les numéros de dossier ; le libellé reste visible.
+- Raison : une valeur sans libellé ne suffit pas ; les factures, commandes, montants et articles ne déclenchent jamais ce motif. CUSTOM prime sur les interprétations comme nom et sur une clé SIREN/SIRET fortuitement valide d'un numéro de salarié ; NIR, IBAN et décisions manuelles gardent leur priorité.
+- Limite : les références génériques, les codes alphabétiques et les identifiants sans libellé retenu restent à examiner humainement. Sur dev, rappel CUSTOM exact séparé : 44/50 ; lot 4 : 37/37. Les six omissions de type anciennes ne sont pas toutes des valeurs laissées en clair : certaines sont détectées à tort comme nom.
+
+## D-S14-2 Libellés et fragments après conflit
+- Choix : exclure les libellés usuels suivis de deux-points en tête de ligne, après indentation, point ou point-virgule. La liste porte sur les fonctions de champ (courriel, objet, référence, téléphone, pièce jointe, copie, procédure), pas sur tout mot à majuscule : un locuteur nommé suivi de deux-points reste sensible. Les exclusions sont réappliquées aux fragments laissés par l'arbitrage des chevauchements ; un fragment réduit à un mot grammatical déjà présent dans COMMON_STARTERS est écarté. Les types structurés et ajouts manuels sont préservés.
+- Raison : un NER qui englobe un libellé et une coordonnée ne doit pas réintroduire le libellé après leur séparation. Le même principe couvre les acronymes et les intitulés de service ; "CSE de" est un libellé institutionnel qui ne fait pas partie du nom de l'employeur.
+- Limite : un libellé inédit peut encore être proposé à la revue. Les mots de champ restent autorisés à l'intérieur d'un vrai nom de société. Aucun nom de personne ni de société du corpus n'est ajouté aux exclusions.
+
+## D-S14-3 Personnes, particules, initiales et extraction
+- Choix : les heuristiques prennent les particules successives, les initiales composées, les noms à apostrophe et les deux ordres prénom/nom. Après une civilité, un seul saut de ligne entre mots est admis ; une ligne vide ou un titre de fonction arrête le nom. MM. est retiré comme les autres civilités. La réparation après fusion réutilise les mêmes spans, au lieu d'une seconde grammaire plus courte ; elle absorbe seulement les fragments de noms contenus, sans identifiant ni ajout manuel. Scores inchangés : 0,80 avec civilité, 0,70 pour la casse, éventuellement score du NER déjà présent.
+- Raison : conserver les bornes D-09 et éviter un prénom PERSON séparé d'un nom ORGANIZATION. Les lieux et adresses ne sont pas absorbés comme personnes ; une forme juridique accolée garde le type société.
+- Limite : la suite sans civilité reste fondée sur la casse ou le NER. Un nom en minuscules jamais vu auparavant peut échapper à la détection. La longueur après civilité reste bornée à quatre mots significatifs, hors particules.
+
+## D-S14-4 Propagation des formes connues
+- Choix : une forme connue de plusieurs mots est retrouvée dans toute casse, sans accents et à travers des blancs ou un saut de ligne, aux positions originales. Les particules précédant le nom en majuscules restent dans le nom de famille. Une occurrence connue dont le NER n'a gardé qu'un fragment est élargie en absorbant les seuls fragments de noms contenus. Les exclusions, types structurés et décisions manuelles bloquent cet élargissement. Le score reste celui de l'origine.
+- Raison : une signature coupée et un courriel informel doivent retrouver le même nom complet. Une détection partielle ne doit pas empêcher la propagation du nom entier.
+- Limite prudente : un nom isolé issu d'une forme à majuscule doit garder sa majuscule ; les mots ordinaires en minuscules, comme "petit", restent visibles. Les homonymes restent à départager à la revue ; la propagation ne résout pas leur identité.
+
+## D-S14-5 Adresses complètes
+- Choix : les motifs regroupent voie, bis/ter, résidence, bâtiment, appartement, lieu-dit, BP/CS, code postal et ville, avec Cedex dans toute casse et son indice. Les codes ultramarins suivent le même format postal. Une coupure de ligne entre mots, après un trait d'union ou entre code et ville conserve les positions et la graphie du document. Les quantificateurs restent bornés. Une adresse ne commence pas au milieu d'une référence avec barre oblique.
+- Raison : une adresse sensible forme un seul span jusqu'à la ville, conformément à D-09 ; les compléments ne doivent pas rester en clair. La borne après barre évite de lire les cinq derniers chiffres d'un RG comme code postal de l'en-tête suivant.
+- Limite : ce n'est pas une validation géographique. Les noms de voie et de ville trop longs, les adresses étrangères et les compléments non prévus peuvent rester partiels. Scores D-07 maintenus : 0,70 complète, 0,55 voie, 0,45 code et ville seuls.
+
+## D-S14-6 Courriels et téléphones
+- Choix : le courriel accepte la graphie explicite `[at]`, en conservant ses espaces, au même score 0,95 que la graphie standard. Le téléphone englobe le poste ou l'extension numérique directement annoncée. Les formats +33 (0), 0033, points, tirets et compacts gardent les scores 0,75 et 0,90 avec contexte.
+- Raison : normaliser la valeur n'est pas nécessaire pour la masquer ; le texte exact du span permet la restauration. Un poste interne ne doit pas rester visible après remplacement du numéro principal.
+- Limite : les autres obfuscations de courriel et les extensions de plus de six chiffres ne sont pas couvertes par cette extension. Aucun service ni liste de domaines distant n'est utilisé.
+
+## D-S14-7 Portée du contexte de naissance
+- Choix : conserver la fenêtre de quarante caractères et les graphies de date existantes, mais ne pas réutiliser un contexte de naissance après un premier chiffre. Un lieu peut rester intercalé entre le mot de naissance et la date. Score 0,90 après validation calendaire.
+- Raison : un ancrage strict juste avant la date faisait perdre une naissance des anciens lots ; cette variante a été retirée avant le gel. Le garde-fou numérique conserve ce rappel et évite qu'une audience proche soit prise pour une seconde naissance.
+- Limite : un numéro intercalé dans le contexte peut couper sa portée ; une formulation longue peut dépasser la fenêtre. Les dates ordinaires sans contexte de naissance restent en clair.
+
+## D-S14-8 Numéros de procédure
+- Choix : compléter RG et Portalis par les libellés parquet et pourvoi ; accepter le numéro après Portalis. Scores 0,90, source pattern, libellés hors spans. Un pourvoi proche d'une citation de la Cour de cassation, de Cass., d'ECLI ou du Bulletin reste visible, sauf indication explicite d'affaire inédite ou non publiée.
+- Raison : les références privées permettent d'identifier une affaire, contrairement aux références de jurisprudence publiée de l'annexe A5. La recherche exige un libellé et des formats numériques bornés, jamais un numéro seul.
+- Limite : le caractère publié est estimé dans une fenêtre locale de la ligne. Un texte ambigu ou une citation lointaine nécessite une décision humaine ; ce motif ne consulte aucune base de jurisprudence.
+
+## D-S14-9 Split challenge réservé et adaptateur de validation
+- Choix : le builder accepte challenge, écrit son JSONL seulement si des sources existent et ajoute ses statistiques. L'évaluation explicite `--split challenge` exige le seuil déjà enregistré, sans balayage, préserve les lignes et empreintes dev/test existantes, ne relit pas leurs documents et n'exporte pas d'erreurs challenge. `all` reste dev puis test.
+- Périmètre : evaluation/corpus.py n'était pas autorisé à modification et refuse challenge. Un adaptateur ChallengeDocument dans evaluation/run.py valide tous les autres invariants par le constructeur commun ; l'objet conservé et exporté porte toujours le vrai split challenge. Le builder l'importe seulement pour une source challenge. Aucune constante du module commun n'est modifiée et aucune validation n'est neutralisée.
+- Vérification : sources temporaires fictives seulement, moteur simulé, cas invalides et doublons refusés, seuil absent ou divergent refusé, deux configurations antérieures préservées même si une seule est demandée ensuite. Deux exécutions challenge ne dupliquent pas les lignes. Aucun fichier challenge du dépôt n'existe à la fin de S14.
+- Limite : l'API commune load_split/load_corpus ne charge pas challenge ; l'entrée réservée est load_challenge_corpus ou le CLI. Le déplacement de cet adaptateur vers le module commun relève d'une session autorisant evaluation/corpus.py, par exemple S45. Le split reste réservé à C2 pour sa rédaction et aux gates pour sa mesure.
+
+## D-S14-10 Mesure dev avant/après et cas de démonstration
+- Méthode : hybrid, seuil 0,30 avant et après, appariement partiel micro, mêmes documents et annotations dans chaque comparaison. Premier diagnostic sur les douze anciens dev ; nouveau diagnostic sur vingt dev avant les règles, puis mesure après. Les commandes `scripts/run_evaluation.py --split dev --configs hybrid --out ...` et les mesures par lot écrivent uniquement dans `%TEMP%/huisclos-s14/` (before12, before20, after20-final, before-groups.json, after-groups-final.json). Le seuil est balayé sur dev par le CLI et reste 0,30. Règles gelées au commit 57c8c8c ; lot 4 au commit 013be9d. Empreinte SHA-256 du dev à vingt documents : 4ef66d76ca10b70f8bc0b86d0066d52fb8a69a69467b3926b06510b216cac5c6.
+- Convention : les quatre mesures ci-dessous sont des proportions. CUSTOM et LOCATION restent hors des moyennes et de la fuite, comme en G4/G4bis. Les comptages CUSTOM exacts sont séparés ; un mauvais type est un échec CUSTOM, même si la valeur est couverte par un autre type.
+
+| Dev | Précision avant | Précision après | Rappel avant | Rappel après | F2 avant | F2 après | Fuite avant | Fuite après |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Lots 1 et 2, 12 documents | 0,964824 | 0,984615 | 1,000000 | 1,000000 | 0,992761 | 0,996885 | 0,008475 | 0,000000 |
+| Lot 4, 8 documents | 0,714286 | 1,000000 | 0,924370 | 1,000000 | 0,873016 | 1,000000 | 0,204909 | 0,000000 |
+| Ensemble, 20 documents | 0,855524 | 0,990446 | 0,971061 | 1,000000 | 0,945523 | 0,998074 | 0,087300 | 0,000000 |
+
+| Rappel CUSTOM exact, hors moyennes | Avant | Après |
+| --- | ---: | ---: |
+| Lots 1 et 2 | 0/13 | 7/13 |
+| Lot 4 | 0/37 | 37/37 |
+| Ensemble | 0/50 | 44/50 |
+
+- Bornes : sur les onze types évalués, les vingt dev ont aussi 311 vrais positifs exacts, zéro faux négatif exact et trois faux positifs. La fuite passe de 585/6701 caractères à 0/6701. Les trois faux positifs restants sont un mot de rédaction courant et deux codes classés comme noms. Aucun retrait spécifique à leurs valeurs n'a été ajouté.
+- Démonstration : 18 détections avant et 18 après. Le faux positif ORGANIZATION "Courriel" disparaît ; le matricule 4471-B devient CUSTOM, pattern, 0,90. Les dix-sept autres détections gardent leurs bornes et types. Aucun autre élément identifiant attendu du cas n'est connu comme oublié. Pour conserver un ajout manuel dans la vidéo, proposer seulement la nouvelle ligne fictive `Code de retrait : qx-74-zp.` ; essai sur copie en mémoire, zéro détection sur ce code, fichier de démo inchangé.
+- Limites méthodologiques : les sources dev difficiles et les règles sont écrites dans la même session. Les résultats parfaits du lot 4 ne mesurent donc pas la généralisation. C2 doit écrire challenge à l'aveugle après ce gel, puis G7 mesurer les splits réservés. Aucun contenu test ou challenge n'a été ouvert par l'agent ; aucune évaluation réelle test/all/challenge n'a été lancée. Les tests automatiques existants font leur aller-retour sans métriques, les nouveaux tests d'évaluation utilisent uniquement des corpus temporaires et detect simulé. results/, les sources test, test.jsonl, app/ et data/samples/ sont inchangés. Aucune installation ni aucun accès en ligne.

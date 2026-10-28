@@ -19,7 +19,7 @@ import pytest
 from streamlit.testing.v1 import AppTest
 
 from app.i18n import t
-from app.steps.review_step import KEY_TABLE_VERSION, TABLE_KEY_PREFIX
+from app.steps.review_step import KEY_TABLE_VERSION, TABLE_KEY_PREFIX, find_occurrences
 from huisclos.models import EntityType, Source
 
 APP_PATH = Path(__file__).resolve().parents[1] / "streamlit_app.py"
@@ -230,3 +230,18 @@ def test_uploaded_filename_cannot_embed_an_external_markdown_image() -> None:
     assert name not in caption
     assert r"\!\[tracking\]\(" in caption
     assert "&amp;" in caption
+
+
+def test_find_occurrences_ignores_case_and_accents_and_needs_whole_words() -> None:
+    text = "Élodie et ELODIE; élodiette, MÉLODIE. Élodie-Rose. l'Élodie"
+    assert [text[a:b] for a, b in find_occurrences(text, "elodie")] == [
+        "Élodie",
+        "ELODIE",
+        "Élodie",
+        "Élodie",
+    ]
+    assert find_occurrences("Jean\nDUPONT et Jean  Dupont", "jean dupont") == [(0, 11), (15, 27)]
+    assert find_occurrences("tél : +33 6 12", "+33 6 12") == [(6, 14)]
+    assert find_occurrences("abc", "") == []
+    assert find_occurrences("abc", "  ") == []
+    assert find_occurrences("a.b (a.b)", "a.b") == [(0, 3), (5, 8)]

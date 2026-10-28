@@ -277,21 +277,6 @@ def test_manual_add_replaces_a_rejected_detection() -> None:
     assert "[AUTRE_1]" in pseudonymize(app).text
 
 
-def test_find_occurrences_ignores_case_and_accents_and_needs_whole_words() -> None:
-    text = "Élodie et ELODIE; élodiette, MÉLODIE. Élodie-Rose. l'Élodie"
-    assert [text[a:b] for a, b in find_occurrences(text, "elodie")] == [
-        "Élodie",
-        "ELODIE",
-        "Élodie",
-        "Élodie",
-    ]
-    assert find_occurrences("Jean\nDUPONT et Jean  Dupont", "jean dupont") == [(0, 11), (15, 27)]
-    assert find_occurrences("tél : +33 6 12", "+33 6 12") == [(6, 14)]
-    assert find_occurrences("abc", "") == []
-    assert find_occurrences("abc", "  ") == []
-    assert find_occurrences("a.b (a.b)", "a.b") == [(0, 3), (5, 8)]
-
-
 def test_pseudonymize_goes_to_the_restore_step() -> None:
     app = review_app()
     result = pseudonymize(app)
