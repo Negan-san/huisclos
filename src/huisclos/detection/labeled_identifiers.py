@@ -1,6 +1,6 @@
 """Repère les identifiants internes annoncés par un libellé explicite.
 
-Entrées : texte français et types demandés par Presidio.
+Entrées : texte à libellés français, aussi lu dans un document anglais, et types demandés.
 Sorties : résultats CUSTOM de source pattern, sans le libellé.
 Ce complément des motifs structurés intervient avant la fusion des noms.
 """

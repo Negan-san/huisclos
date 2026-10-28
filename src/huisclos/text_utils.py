@@ -1,4 +1,4 @@
-"""Outils de texte partagés : repliement sans accents, civilités et formes juridiques.
+"""Outils de texte partagés : repliement sans accents, civilités, formes juridiques, dates.
 
 Entrées : chaînes de caractères. Sorties : chaînes repliées, constantes et tests simples.
 Place dans le pipeline : utilisés par la fusion et la propagation des détections, puis par
@@ -7,6 +7,7 @@ la pseudonymisation pour comparer des formes écrites différemment.
 
 import re
 import unicodedata
+from datetime import date
 
 # Apostrophe droite, apostrophes typographiques et accent grave employé comme apostrophe.
 APOSTROPHES = frozenset("'\u2019\u2018\u02bc`")
@@ -14,6 +15,7 @@ APOSTROPHES = frozenset("'\u2019\u2018\u02bc`")
 DASHES = frozenset("-\u2010\u2011\u2012\u2013\u2014\u2212")
 
 # Civilités repliées (minuscules, sans accent ni point) : "M.", "Mme", "Maître", "Me"...
+# Les civilités anglaises restent hors du span comme les françaises (D-09, D-AF-A2-6).
 CIVILITIES = frozenset(
     {
         "m",
@@ -33,12 +35,24 @@ CIVILITIES = frozenset(
         "docteur",
         "pr",
         "professeur",
+        "mrs",
+        "ms",
+        "miss",
+        "mx",
+        "prof",
+        "sir",
+        "dame",
+        "lady",
+        "lord",
     }
 )
 
-# Formes juridiques françaises usuelles, toujours écrites en majuscules dans les actes.
+# Formes juridiques usuelles, en casse exacte : françaises, toujours en majuscules dans les
+# actes, puis anglo-saxonnes, qui figurent aussi dans des contrats français.
 LEGAL_FORMS = frozenset(
     {"SAS", "SASU", "SARL", "EURL", "SA", "SCI", "SNC", "SCP", "SELARL", "SELAS", "SCA", "GIE"}
+    | {"Ltd", "LTD", "Limited", "LIMITED", "LLP", "LLC", "Inc", "INC", "PLC", "plc", "Plc"}
+    | {"Corp", "CORP", "Corporation", "CORPORATION"}
 )
 
 _SPACES = re.compile(r" +")
@@ -100,3 +114,20 @@ def is_capitalized_form(word: str) -> bool:
 def letter_count(text: str) -> int:
     """Renvoie le nombre de lettres de text (chiffres, espaces et ponctuation exclus)."""
     return sum(1 for char in text if char.isalpha())
+
+
+def full_year(year: str) -> int:
+    """Année sur quatre chiffres : "81" donne 1981 et "08" donne 2008 (pivot à 30)."""
+    value = int(year)
+    if len(year) == 2:
+        return value + (2000 if value <= 30 else 1900)
+    return value
+
+
+def is_calendar_date(year: int, month: int, day: int) -> bool:
+    """Vrai si le jour existe dans le calendrier ("31/02/1990" n'existe pas)."""
+    try:
+        date(year, month, day)
+    except ValueError:
+        return False
+    return True

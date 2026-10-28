@@ -1,16 +1,20 @@
 """Propagation : retrouve les autres mentions d'une personne ou d'une société déjà repérée.
 
-Entrées : le texte, les détections fusionnées, la configuration et les passages exclus.
+Entrées : le texte, les détections fusionnées, la configuration, les passages exclus et, en
+option, la vue d'analyse du texte.
 Sorties : les mêmes détections, complétées des occurrences trouvées (source "propagation").
 Place dans le pipeline : après detection.merge, avant la revue humaine. Si "Jean DUPONT"
-est repéré une fois, "M. Dupont" et "DUPONT" plus loin doivent l'être aussi.
+est repéré une fois, "M. Dupont" et "DUPONT" plus loin doivent l'être aussi, de même qu'un
+alias explicitement défini (detection.aliases).
 """
 
 import re
-from collections.abc import Sequence
-from dataclasses import replace
+from collections.abc import Iterator, Sequence
+from dataclasses import dataclass, replace
 
 from huisclos.config import DetectionConfig
+from huisclos.detection.aliases import find_aliases
+from huisclos.detection.analysis_view import INVISIBLE, AnalysisView, build_view
 from huisclos.detection.exclusions import is_excluded
 from huisclos.detection.merge import cutting_spans
 from huisclos.models import Detection, EntityType, Source
@@ -26,6 +30,30 @@ from huisclos.text_utils import (
 MIN_SURNAME_LETTERS = 3
 _PROPAGATED_TYPES = frozenset({EntityType.PERSON, EntityType.ORGANIZATION})
 _PARTICLES = frozenset("de du des le la les van von der den".split())
+
+
+@dataclass(frozen=True)
+class _Space:
+    """Texte où chercher les formes : la vue d'analyse repliée et sa projection."""
+
+    view: AnalysisView
+    folded: str
+
+    def find(self, form: str) -> Iterator[tuple[int, int, str]]:
+        """Occurrences de form : bornes canoniques et texte visible de la vue.
+
+        La recherche porte sur la vue, sans caractères invisibles : "Jean-\u00adPierre"
+        retrouve "Jean-Pierre" ; les bornes sont reprojetées sur le texte canonique.
+        """
+        for match in _pattern(form).finditer(self.folded):
+            start, end = self.view.project(*match.span())
+            yield start, end, self.view.text[match.start() : match.end()]
+
+
+def _space(text: str, view: AnalysisView | None) -> _Space:
+    """Espace de recherche de text, construit depuis sa vue d'analyse."""
+    view = view if view is not None and view.canonical == text else build_view(text)
+    return _Space(view, fold_same_length(view.text))
 
 
 def _is_upper_word(word: str) -> bool:
@@ -92,13 +120,49 @@ def _collect_variants(detections: Sequence[Detection]) -> dict[str, tuple[str, D
             forms = organization_variants(origin.text)
         for form in sorted(forms):
             if letter_count(form) >= 2:
-                variants.setdefault(fold(form), (form, origin))
+                visible = "".join(char for char in form if char not in INVISIBLE)
+                variants.setdefault(fold(visible), (form, origin))
     return variants
 
 
+def _alias_forms(text: str, detections: Sequence[Detection]) -> list[tuple[str, Detection]]:
+    """Alias explicites dont le type est certain, avec leur entité d'origine.
+
+    Un alias défini pour deux entités de même type reste cherché (ses occurrences sont
+    sensibles) ; s'il est défini pour des types différents, il est laissé à la revue.
+    """
+    links = find_aliases(text, detections)
+    types: dict[str, set[EntityType]] = {}
+    for link in links:
+        types.setdefault(fold(link.alias), set()).add(link.origin.entity_type)
+    return [(link.alias, link.origin) for link in links if len(types[fold(link.alias)]) == 1]
+
+
+def _retype_aliases(
+    detections: Sequence[Detection], aliases: Sequence[tuple[str, Detection]]
+) -> list[Detection]:
+    """Donne à une occurrence d'alias le type de son entité d'origine.
+
+    '("Northfield")' après une société fait de "Northfield" une société, même si le NER
+    l'a lu comme une personne. Un ajout manuel ou une valeur de table n'est pas modifié.
+    """
+    kinds = {fold(form): origin.entity_type for form, origin in aliases}
+    kept = {Source.MANUAL, Source.CASE_TABLE}
+    return [
+        replace(d, entity_type=kinds[fold(d.text)])
+        if d.entity_type in _PROPAGATED_TYPES and d.source not in kept and fold(d.text) in kinds
+        else d
+        for d in detections
+    ]
+
+
 def _pattern(form: str) -> re.Pattern[str]:
-    """Motif de recherche d'une forme dans le texte replié, avec bornes de mots."""
-    words = [re.escape(word) for word in fold(form).split(" ")]
+    """Motif de recherche d'une forme dans le texte replié, avec bornes de mots.
+
+    Les caractères invisibles de la forme sont ignorés, comme dans la vue d'analyse.
+    """
+    visible = "".join(char for char in form if char not in INVISIBLE)
+    words = [re.escape(word) for word in fold(visible).split(" ")]
     return re.compile(r"(?<!\w)" + r"\s+".join(words) + r"(?!\w)")
 
 
@@ -132,15 +196,24 @@ def widen_persons(
     manuel ou toute exclusion traversée bloque l'élargissement. La valeur exacte
     connue fournit le type et le score ; aucun nouveau nom n'est inventé.
     """
-    folded = fold_same_length(text)
+    return _widen_persons(text, detections, config, exclusion_spans, _space(text, None))
+
+
+def _widen_persons(
+    text: str,
+    detections: Sequence[Detection],
+    config: DetectionConfig,
+    exclusion_spans: Sequence[tuple[int, int]],
+    space: _Space,
+) -> list[Detection]:
+    """Corps de widen_persons, qui cherche les formes dans l'espace space."""
     result = list(detections)
     variants = _collect_variants(detections)
     for _key, (form, origin) in sorted(variants.items(), key=lambda item: (-len(item[0]), item[0])):
         if origin.entity_type != EntityType.PERSON:
             continue
-        for match in _pattern(form).finditer(folded):
-            start, end = match.span()
-            if not matches_case(text[start:end], form):
+        for start, end, visible in space.find(form):
+            if not matches_case(visible, form):
                 continue
             parts = [d for d in result if d.start < end and start < d.end]
             if not parts or any(
@@ -166,24 +239,26 @@ def widen_persons(
 
 
 def _long_occurrence(
-    text: str, folded: str, short: Detection, forms: Sequence[str]
+    space: _Space, short: Detection, forms: Sequence[str]
 ) -> tuple[int, int] | None:
     """Occurrence d'une forme plus longue de la même société qui contient short.
 
-    Paramètres : forms, les formes de société connues, les plus longues d'abord.
+    Paramètres : space, l'espace de recherche ; forms, les formes de société connues, les
+    plus longues d'abord.
     Valeur retournée : les bornes de la première occurrence trouvée, ou None.
     """
     for form in forms:
         if len(form) <= short.length or fold(short.text) not in fold(form):
             continue
-        for match in _pattern(form).finditer(folded):
-            start, end = match.span()
-            if start <= short.start and short.end <= end and matches_case(text[start:end], form):
+        for start, end, visible in space.find(form):
+            if start <= short.start and short.end <= end and matches_case(visible, form):
                 return start, end
     return None
 
 
-def widen_organizations(text: str, detections: Sequence[Detection]) -> list[Detection]:
+def widen_organizations(
+    text: str, detections: Sequence[Detection], view: AnalysisView | None = None
+) -> list[Detection]:
     """Élargit une société repérée sous sa forme courte à la forme longue qui l'entoure.
 
     Si "Atelier Durandel SARL" est repéré une fois, "Durandel SARL" détecté ailleurs dans
@@ -191,7 +266,7 @@ def widen_organizations(text: str, detections: Sequence[Detection]) -> list[Dete
     longue ne reste couverte par la seule forme courte. L'élargissement est refusé s'il
     toucherait une autre détection.
     """
-    folded = fold_same_length(text)
+    space = _space(text, view)
     forms = sorted(
         {
             form
@@ -205,7 +280,7 @@ def widen_organizations(text: str, detections: Sequence[Detection]) -> list[Dete
     for detection in detections:
         bounds = None
         if detection.entity_type == EntityType.ORGANIZATION and detection.source != Source.MANUAL:
-            bounds = _long_occurrence(text, folded, detection, forms)
+            bounds = _long_occurrence(space, detection, forms)
         if bounds is not None and not any(
             o is not detection and o.start < bounds[1] and bounds[0] < o.end for o in detections
         ):
@@ -221,30 +296,37 @@ def propagate(
     detections: Sequence[Detection],
     config: DetectionConfig,
     exclusion_spans: Sequence[tuple[int, int]] = (),
+    view: AnalysisView | None = None,
 ) -> list[Detection]:
     """Ajoute les autres occurrences des personnes et sociétés retenues.
 
     Paramètres : text, le texte analysé ; detections, la sortie de merge ; config, pour
-    savoir si les exclusions s'appliquent ; exclusion_spans, les passages exclus.
+    savoir si les exclusions s'appliquent ; exclusion_spans, les passages exclus ; view, la
+    vue d'analyse de text (construite ici si elle manque).
     Valeur retournée : detections et les occurrences ajoutées, triées et sans chevauchement.
     Une occurrence prend le type et le score de son entité d'origine ; elle est ignorée si
     elle chevauche une détection existante, se trouve dans un passage exclu, franchit
     l'une de ses bornes ou contient une référence juridique (cutting_spans) : dans
     "Tribunal judiciaire de Jean DUPONT", la forme courte "DUPONT" reste trouvée ensuite.
     Une société repérée sous sa forme courte est d'abord élargie (widen_organizations) ;
-    sa forme courte reste cherchée ailleurs dans le texte.
+    sa forme courte reste cherchée ailleurs dans le texte. Un alias explicitement défini
+    ("ci-après \u00ab BLX \u00bb") est cherché comme une forme de son entité, avec son type.
     """
-    widened = widen_organizations(text, widen_persons(text, detections, config, exclusion_spans))
-    folded = fold_same_length(text)
+    space = _space(text, view)
+    widened = _widen_persons(text, detections, config, exclusion_spans, space)
+    widened = widen_organizations(text, widened, space.view)
+    aliases = _alias_forms(text, widened)
+    widened = _retype_aliases(widened, aliases)
     occupied = [(d.start, d.end) for d in widened]
     added: list[Detection] = []
     # Les formes longues d'abord : "Jean DUPONT" doit être pris en entier avant "DUPONT".
     forms = _collect_variants([*widened, *detections])
+    for form, origin in aliases:
+        forms.setdefault(fold(form), (form, origin))
     variants = sorted(forms.items(), key=lambda i: (-len(i[0]), i[0]))
     for _key, (form, origin) in variants:
-        for match in _pattern(form).finditer(folded):
-            start, end = match.span()
-            if not matches_case(text[start:end], form):
+        for start, end, visible in space.find(form):
+            if not matches_case(visible, form):
                 continue
             if any(start < o_end and o_start < end for o_start, o_end in occupied):
                 continue

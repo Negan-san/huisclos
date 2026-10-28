@@ -8,7 +8,7 @@ Place dans le pipeline : validation de scripts/evaluate_robustness.py et du rapp
 
 import json
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
@@ -35,6 +35,14 @@ class FakeConfig:
     threshold: float = 0.5
     document_language: str = "fr"
     wide: bool = False
+
+
+@dataclass(frozen=True)
+class LegacyConfig:
+    """Configuration d'un code antérieur à A2 (référence G7) : aucun champ de langue."""
+
+    threshold: float = 0.3
+    spacy_model: str = "fr_core_news_md"
 
 
 # Valeurs repérées (texte, type, score). Le profil étroit ne voit que le prénom et la rue ;
@@ -197,12 +205,18 @@ def test_english_documents_use_document_language(tmp_path: Path) -> None:
 def test_english_refused_without_document_language_field(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    """Le DetectionConfig actuel n'a pas de champ de langue : refus clair avant détection."""
+    """Un code sans champ de langue (antérieur à A2) : refus clair avant détection.
+
+    Depuis A2, le DetectionConfig du projet porte document_language ; le refus reste
+    vérifié sur une configuration de référence qui ne le connaît pas.
+    """
+    assert "document_language" in {item.name for item in fields(PRESETS["hybrid"])}
 
     def forbidden(*_: object) -> list[Detection]:
         raise AssertionError("aucune détection ne doit avoir lieu")
 
-    api = SimpleNamespace(**vars(FAKE_API) | {"presets": PRESETS, "detect": forbidden})
+    legacy = {"hybrid": LegacyConfig()}
+    api = SimpleNamespace(**vars(FAKE_API) | {"presets": legacy, "detect": forbidden})
     corpus = write_corpus(tmp_path / "dev_en.jsonl", "en")
     plan = write_plan(tmp_path / "plan.json", "en", hybrid={"preset": "hybrid", "threshold": 0.3})
     assert pilot.main(arguments(corpus, plan, tmp_path / "o"), api) == 2

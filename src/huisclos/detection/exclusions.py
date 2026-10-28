@@ -1,6 +1,7 @@
 """Liste d'exclusions : juridictions, institutions, textes, acronymes et mots courants.
 
-Entrées : le fichier data/exclusions_fr.txt et un texte à analyser.
+Entrées : data/exclusions_fr.txt, complété par data/exclusions_en.txt pour un document
+anglais, et un texte à analyser.
 Sorties : les positions (début, fin) des passages à ne jamais signaler comme personne,
 société ou lieu, et le jeu d'acronymes connus.
 Place dans le pipeline : filtre appliqué après la détection (detection.exclusions), avant la
@@ -13,6 +14,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
+from huisclos.detection.languages import profile
 from huisclos.models import Detection, EntityType
 
 DEFAULT_PATH = Path(__file__).resolve().parents[3] / "data" / "exclusions_fr.txt"
@@ -45,7 +47,18 @@ _FIELD_LABEL = re.compile(
     r"(?m)(?:^[ \t]*|(?<=[;.])[ \t]*)(?P<label>(?i:"
     r"courriel(?:[ \t]+personnel)?|e-?mail|objet|r[eé]f\.?|r[eé]f[eé]rence|"
     r"t[eé]l\.?|t[eé]l[eé]phone|pi[eè]ce[ \t]+jointe|copie|de|[aà]|"
-    r"num[eé]ro[ \t]+(?:portalis|de[ \t]+parquet)|rg))[ \t]*:"
+    r"num[eé]ro[ \t]+(?:portalis|de[ \t]+parquet)|rg|"
+    r"subject|re|from|to|cc|bcc|attachments?|phone|mobile|fax|date|"
+    r"(?:our|your)[ \t]+ref(?:erence)?\.?))[ \t]*:"
+)
+# Libellés de procédure sans deux-points ("N° RG", "N° Portalis") : jamais un nom (D-AF-A2-4).
+_PROCEDURE_LABEL = re.compile(
+    r"(?i)(?<!\w)n[°o]\.?[ \t]*(?:rg|portalis|de[ \t]+parquet|de[ \t]+pourvoi)(?!\w)"
+)
+# Abréviation d'une citation publiée de la Cour de cassation ("Cass. soc.", "Cass. 2e civ.").
+_COURT_CITATION = re.compile(
+    r"(?<!\w)Cass\.(?:[ \t]+(?:(?:1re|[1-3]e|[1-3]ème)[ \t]+)?"
+    r"(?:soc|civ|com|crim|req|ass\.[ \t]*pl[ée]n|ch\.[ \t]*mixte)\.?)?"
 )
 
 
@@ -66,6 +79,7 @@ class ExclusionList:
         found = sorted(
             [m.span() for pattern in self.patterns for m in pattern.finditer(text)]
             + [match.span("label") for match in _FIELD_LABEL.finditer(text)]
+            + [m.span() for p in (_PROCEDURE_LABEL, _COURT_CITATION) for m in p.finditer(text)]
         )
         merged: list[tuple[int, int]] = []
         for start, end in found:
@@ -161,6 +175,21 @@ def load_exclusions(path: Path | str | None = None) -> ExclusionList:
     """
     target = DEFAULT_PATH if path is None else Path(path)
     return _load(str(target.resolve()))
+
+
+@lru_cache(maxsize=4)
+def load_exclusions_for(language: str) -> ExclusionList:
+    """Charge les exclusions d'une langue de document, avec cache par langue.
+
+    Paramètre : language, fr ou en.
+    Valeur retournée : pour le français, la liste par défaut ; pour l'anglais, la liste
+    française complétée de data/exclusions_en.txt, car un document anglais peut citer une
+    juridiction ou une institution française.
+    """
+    files = profile(language).exclusion_files
+    if files == (DEFAULT_PATH,):
+        return load_exclusions()
+    return parse_exclusions("\n".join(path.read_text(encoding="utf-8") for path in files))
 
 
 def is_legal_reference(passage: str) -> bool:
