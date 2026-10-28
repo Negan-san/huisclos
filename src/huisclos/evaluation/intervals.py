@@ -38,6 +38,65 @@ def percentile(values: Sequence[float], probability: float) -> float:
     return ordered[left] + (ordered[right] - ordered[left]) * (position - left)
 
 
+def draw_indices(size: int) -> list[list[int]]:
+    """Renvoie les 2 000 tirages de size indices de documents, avec remise, graine 45.
+
+    random.choices sans poids tire floor(random() * n) : tirer des indices donne la même
+    suite de documents que bootstrap_intervals. Les mêmes tirages servent aux intervalles
+    marginaux et aux différences appariées de deux profils mesurés sur les mêmes documents.
+    """
+    if size < 1:
+        raise ValueError("Au moins un document est nécessaire au rééchantillonnage.")
+    rng = random.Random(BOOTSTRAP_SEED)
+    indices = range(size)
+    return [rng.choices(indices, k=size) for _ in range(BOOTSTRAP_DRAWS)]
+
+
+def defined_interval(values: Sequence[float | None]) -> dict[str, float | int | None]:
+    """Renvoie les percentiles 2,5 et 97,5 des tirages définis et compte les autres.
+
+    Un tirage sans dénominateur n'a pas de valeur : il est écarté et compté, jamais remplacé
+    par zéro. Sans aucun tirage défini, les bornes valent None (not applicable).
+    """
+    defined = [value for value in values if value is not None]
+    return {
+        "lower": percentile(defined, 0.025) if defined else None,
+        "upper": percentile(defined, 0.975) if defined else None,
+        "undefined_draws": len(values) - len(defined),
+    }
+
+
+def paired_differences(
+    values: dict[str, dict[tuple[str, str], list[float | None]]],
+    estimates: dict[str, dict[tuple[str, str], float | None]],
+    comparisons: Sequence[Sequence[str]],
+) -> list[dict[str, Any]]:
+    """Renvoie les différences candidat moins référence, calculées tirage par tirage.
+
+    values donne, par profil et par (stade, mesure), la valeur de chacun des mêmes tirages
+    de documents ; estimates donne la valeur sur tous les documents. Un tirage où l'une des
+    deux valeurs manque est écarté et compté. excludes_zero dit si l'intervalle apparié
+    exclut zéro ; les intervalles marginaux seuls ne permettent pas cette conclusion.
+    """
+    rows = []
+    for candidate, reference in comparisons:
+        for key, samples in values[candidate].items():
+            differences = [
+                None if first is None or second is None else first - second
+                for first, second in zip(samples, values[reference][key], strict=True)
+            ]
+            first, second = estimates[candidate][key], estimates[reference][key]
+            interval = defined_interval(differences)
+            lower, upper = interval["lower"], interval["upper"]
+            rows.append(
+                {"candidate": candidate, "reference": reference, "stage": key[0], "metric": key[1]}
+                | {"estimate": None if first is None or second is None else first - second}
+                | interval
+                | {"excludes_zero": None if lower is None else lower > 0 or upper < 0}
+            )
+    return rows
+
+
 def document_counts(
     documents: Sequence[CorpusDocument], predictions: Sequence[Sequence[Detection]]
 ) -> list[Counts]:

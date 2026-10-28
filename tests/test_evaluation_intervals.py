@@ -15,7 +15,10 @@ from huisclos.evaluation.intervals import (
     BOOTSTRAP_SEED,
     INTERVAL_METRICS,
     bootstrap_intervals,
+    defined_interval,
     document_counts,
+    draw_indices,
+    paired_differences,
     percentile,
 )
 from huisclos.evaluation.metrics import Counts
@@ -108,3 +111,59 @@ def test_invalid_bootstrap_inputs() -> None:
         bootstrap_intervals([], [])
     with pytest.raises(ValueError):
         bootstrap_intervals([document(0, ())], [])
+
+
+def test_draw_indices_reproduce_the_historical_draws() -> None:
+    """Les indices tirés sélectionnent exactement les documents de bootstrap_intervals."""
+    documents = [document(0, (3, 3, 3)), document(1, (9,)), document(2, (2, 2))]
+    predictions = [[detection(0, 3)], [detection(0, 4)], []]
+    state = random.getstate()
+    draws = draw_indices(len(documents))
+    assert random.getstate() == state
+    assert draws == draw_indices(len(documents))
+    assert len(draws) == BOOTSTRAP_DRAWS and all(len(draw) == 3 for draw in draws)
+    counts = document_counts(documents, predictions)
+    samples = {name: [] for name in INTERVAL_METRICS}
+    for draw in draws:
+        total = Counts(
+            **{
+                key: sum(getattr(counts[i], key) for i in draw)
+                for key in Counts.__dataclass_fields__
+            }
+        )
+        for name in INTERVAL_METRICS:
+            samples[name].append(total.scores()[name])
+    result = bootstrap_intervals(documents, predictions)
+    for name in INTERVAL_METRICS:
+        assert result[name]["lower"] == percentile(samples[name], 0.025)
+        assert result[name]["upper"] == percentile(samples[name], 0.975)
+    with pytest.raises(ValueError):
+        draw_indices(0)
+
+
+def test_defined_interval_drops_and_counts_undefined_draws() -> None:
+    """Un tirage sans dénominateur est écarté et compté, jamais remplacé par zéro."""
+    interval = defined_interval([None, 0.0, 1.0, None])
+    assert interval["lower"] == pytest.approx(0.025)
+    assert interval["upper"] == pytest.approx(0.975)
+    assert interval["undefined_draws"] == 2
+    assert defined_interval([None, None]) == {"lower": None, "upper": None, "undefined_draws": 2}
+
+
+def test_paired_differences_use_the_same_draws() -> None:
+    """L'écart se calcule tirage par tirage ; un tirage incomplet est écarté et compté."""
+    key = ("pseudonymization", "leaked_character_rate")
+    values = {"a": {key: [0.5, 0.0, None]}, "b": {key: [0.1, 0.2, 0.3]}}
+    estimates = {"a": {key: 0.4}, "b": {key: 0.1}}
+    [row] = paired_differences(values, estimates, [["a", "b"]])
+    assert (row["candidate"], row["reference"], row["stage"], row["metric"]) == ("a", "b", *key)
+    assert row["estimate"] == pytest.approx(0.3)
+    assert row["lower"] == pytest.approx(percentile([0.4, -0.2], 0.025))
+    assert row["upper"] == pytest.approx(percentile([0.4, -0.2], 0.975))
+    assert (row["undefined_draws"], row["excludes_zero"]) == (1, False)
+    same = paired_differences(values, estimates, [["b", "b"]])[0]
+    assert (same["lower"], same["upper"], same["excludes_zero"]) == (0.0, 0.0, False)
+    [shifted] = paired_differences(
+        {"a": {key: [0.5, 0.6]}, "b": {key: [0.1, 0.1]}}, estimates, [["a", "b"]]
+    )
+    assert shifted["excludes_zero"] is True
