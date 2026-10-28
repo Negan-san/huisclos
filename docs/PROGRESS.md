@@ -14,6 +14,13 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 22:40 | FIX7 | Ligne d'état unique au-dessus de l'en-tête | Claude Code, Opus 5.5
+- Fait : la pastille "Public demo" ou "Local processing" et la mention RGPD quittent la rangée du logo et rejoignent la ligne fine au-dessus de l'en-tête (status_strip_html, classes hc-strip, hc-strip-demo, hc-strip-local) ; l'en-tête de marque prend toute la largeur. Clé app.demo_badge supprimée, règles CSS hc-trust retirées, style.css à 399 lignes.
+- Tests : tests de l'en-tête et de la ligne de démonstration adaptés (mode, mention RGPD hors du bloc de marque) ; référence "Recital 26" de la page Method lue dans la page elle-même. Suite complète 1747 passed ; Ruff check/format et style conformes. Captures Edge headless démo et local (bureau, 390 px), serveur arrêté.
+- Décisions : D-FIX7-1.
+- Reste et risques : en démonstration, la ligne passe sur deux lignes courtes sous 1100 px environ ; captures du guide inchangées.
+- Suite : publication demandée (main en avance rapide, push main et dev, sans tag) ; S61.
+
 ### 2026-10-28 22:15 | FIX6 | Evaluation hors navigation, Method & limits détaillée, ligne de démo fine | Claude Code, Opus 5.5
 - Fait : page Evaluation retirée de la barre (visibility="hidden"), ouverte par le lien "See the detailed results" en bas de Method & limits. Method & limits réécrite pour un lecteur sans formation technique : quinze sections (résumé, schéma et lecture, exemple commenté fictif, étapes détaillées, données sortantes, IA hybride, langues, technologies, humain, types, lexique, droit, limites, bonnes pratiques, méthode de test). Textes EN/FR répartis dans method.py, method_guide.py et method_glossary.py. Bandeau "Public demo" remplacé par une ligne fine (hc-demo-strip). USER_GUIDE et DEPLOYMENT alignés.
 - Tests : tests/test_method_page.py (ordre des sections, exemple sans nom réel envoyé, technologies, lexique, page masquée et lien, version française) ; tests de la ligne de démo adaptés. Suite complète 1747 passed après réduction d'une ligne de style.css (limite stricte < 400 de test_gate7) ; Ruff check/format et style conformes (15 avertissements connus). Rendu vérifié par capture Edge headless, serveur arrêté.

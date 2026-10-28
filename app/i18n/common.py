@@ -16,7 +16,6 @@ EN: dict[str, str] = {
         "model; it puts the real values back into the answer."
     ),
     "app.local_badge": "Local processing",
-    "app.demo_badge": "Public demo",
     "demo.banner": (
         "Public demo: use fictitious data only. To process real client files, install HuisClos"
         " on your computer (see the user guide)."
@@ -131,7 +130,6 @@ FR: dict[str, str] = {
         "modèle ; elle rétablit les vraies valeurs dans la réponse."
     ),
     "app.local_badge": "Traitement local",
-    "app.demo_badge": "Démonstration publique",
     "demo.banner": (
         "Démonstration publique : utilisez uniquement des données fictives. Pour traiter de "
         "vrais dossiers clients, installez HuisClos sur votre ordinateur (voir le guide "

@@ -89,8 +89,12 @@ def test_app_starts_with_header_and_steps() -> None:
     brand = next(b.value for b in app.get("html") if 'class="hc-brand"' in b.value)
     assert '<h1 class="hc-wordmark">HuisClos</h1>' in brand
     assert "Use generative AI on client files" in brand
-    assert any("Pseudonymization is not anonymization" in text for text in texts(app))
-    assert any(":material/lock:" in text and "Local processing" in text for text in texts(app))
+    # Mode de traitement et mention RGPD dans la ligne d'état, hors de la rangée du logo.
+    strip = status_strips(app)
+    assert len(strip) == 1 and strip[0].startswith('<div class="hc-strip hc-strip-local"')
+    assert "<strong>Local processing</strong>" in strip[0]
+    assert "Pseudonymization is not anonymization" in strip[0]
+    assert "Pseudonymization is not anonymization" not in brand
     current = current_step(app)
     assert '<span class="hc-step-name">Import</span>' in current
     assert t("steps.state.current") in current
@@ -243,24 +247,29 @@ def test_public_demo_banner_follows_the_environment(
     monkeypatch.setenv("HUISCLOS_PUBLIC_DEMO", value)
     app = start()
     assert not app.exception
-    banners = demo_strips(app)
+    banners = [block for block in status_strips(app) if "hc-strip-demo" in block]
     assert bool(banners) is expected
     if expected:
-        # Une ligne fine, et non plus un bandeau d'alerte qui repousse l'en-tête.
-        assert banners[0].startswith('<p class="hc-demo-strip" role="note">Public demo')
+        # Une ligne fine qui porte aussi la mention RGPD, et non plus un bandeau d'alerte
+        # suivi d'une pastille à côté du logo.
+        assert banners[0].startswith(
+            '<div class="hc-strip hc-strip-demo" role="note"><strong>Public demo'
+        )
         assert "use fictitious data only" in banners[0]
         assert "install HuisClos on your computer (see the user guide)" in banners[0]
+        assert "Pseudonymization is not anonymization" in banners[0]
+        assert "Local processing" not in banners[0]
         assert not [w for w in app.warning if "Public demo" in w.value]
 
 
-def demo_strips(app: AppTest) -> list[str]:
-    """Renvoie les blocs HTML de la ligne de démonstration publique."""
-    return [block.value for block in app.get("html") if "hc-demo-strip" in block.value]
+def status_strips(app: AppTest) -> list[str]:
+    """Renvoie les blocs HTML de la ligne d'état placée au-dessus de l'en-tête."""
+    return [block.value for block in app.get("html") if 'class="hc-strip ' in block.value]
 
 
 def test_no_banner_without_the_variable() -> None:
     app = start()
-    assert not demo_strips(app)
+    assert not [block for block in status_strips(app) if "hc-strip-demo" in block]
     assert not [w for w in app.warning if "Public demo" in w.value]
 
 

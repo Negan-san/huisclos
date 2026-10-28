@@ -63,7 +63,7 @@ def test_method_page_sections_in_reading_order() -> None:
     assert len(app.get("graphviz_chart")) == 1
     assert [s.value for s in app.main.subheader] == SECTIONS
     text = page_text(app)
-    for reference in ("71-1130", "66-5", "226-13", "4(5)", "recital 26", "5(1)(c)", "Art. 32"):
+    for reference in ("71-1130", "66-5", "226-13", "4(5)", "Recital 26", "5(1)(c)", "Art. 32"):
         assert reference in text
     legend = next(h.value for h in app.get("html") if "hc-legend" in h.value)
     assert all(style.label in legend for style in ENTITY_STYLES.values())

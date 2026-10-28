@@ -51,6 +51,7 @@
 /* La police du système est fixée par le thème (.streamlit/config.toml) ; seuls les blocs
    HTML de HuisClos la reprennent ici. Les icônes gardent leur propre police. */
 .hc-brand,
+.hc-strip,
 .hc-stepper,
 .hc-document,
 .hc-legend {
@@ -90,14 +91,24 @@ textarea:focus-visible,
     outline: 2px solid var(--hc-accent);
     outline-offset: 2px;
 }
-/* Ligne de la démonstration publique : fine et discrète, pour laisser la place au logo. */
-.hc-demo-strip {
-    margin: 0;
+/* Ligne d'état fine au-dessus de l'en-tête : mode de traitement, puis mention RGPD. */
+.hc-strip {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--hc-space-1) var(--hc-space-4);
     padding: var(--hc-space-1) var(--hc-space-3);
-    color: var(--hc-warning);
-    background: var(--hc-warning-soft);
     border-radius: var(--hc-radius-sm);
     font-size: var(--hc-text-xs);
+    line-height: 1.5;
+}
+.hc-strip-local {
+    color: var(--hc-primary);
+    background: var(--hc-primary-soft);
+}
+.hc-strip-demo {
+    color: var(--hc-warning);
+    background: var(--hc-warning-soft);
 }
 /* En-tête de marque : mot-symbole, accroche, pastille de traitement local, mention RGPD. */
 .st-key-hc-header {
@@ -154,17 +165,6 @@ textarea:focus-visible,
     color: var(--hc-muted);
     font-size: var(--hc-text-sm);
     line-height: 1.4;
-}
-.st-key-hc-trust [data-testid="stMarkdownContainer"] p {
-    margin: 0;
-}
-.st-key-hc-trust {
-    align-items: flex-end;
-}
-.st-key-hc-trust [data-testid="stCaptionContainer"] p {
-    color: var(--hc-muted);
-    font-size: var(--hc-text-xs);
-    text-align: right;
 }
 /* Titres de section : surtitre en petites capitales pour les groupes de réglages. */
 .hc-overline {

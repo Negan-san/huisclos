@@ -1,4 +1,4 @@
-"""Éléments communs de la charte : feuille de style, en-tête, ligne de démo, étapes, types.
+"""Éléments communs de la charte : feuille de style, ligne d'état, en-tête, étapes, types.
 
 Entrées : app/assets/style.css, les textes de app.i18n et l'état de session.
 Sorties : fonctions d'affichage appelées par streamlit_app.py et par les pages, et le
@@ -116,38 +116,36 @@ def is_public_demo() -> bool:
 
 
 def render_header(hero: bool = False) -> None:
-    """Affiche la ligne de démonstration éventuelle puis l'en-tête de marque.
+    """Affiche la ligne d'état fine puis l'en-tête de marque sur toute la largeur.
 
-    À gauche, le logo, le nom et l'accroche ; à droite, la pastille "Local processing" (icône
-    de cadenas) et la mention juridique. La pastille rappelle la garantie principale de l'outil
-    sur chaque page. Avec hero, l'en-tête d'accueil agrandit le logo et ajoute la description
-    de l'outil ; streamlit_app.py le demande seulement à l'étape Import de la première page.
+    La ligne d'état porte le mode de traitement (local, ou démonstration publique) et la
+    mention juridique ; elle est placée au-dessus de l'en-tête pour laisser au logo, au nom,
+    à l'accroche et à la description toute la largeur. Avec hero, l'en-tête d'accueil agrandit
+    le logo et ajoute la description ; streamlit_app.py le demande seulement à l'étape Import
+    de la première page.
     """
-    demo = is_public_demo()
-    if demo:
-        st.html(demo_strip_html())
-    with st.container(key="hc-header", horizontal=True, vertical_alignment="center"):
+    st.html(status_strip_html(is_public_demo()))
+    with st.container(key="hc-header"):
         # Un seul bloc HTML pour le logo, le nom et l'accroche : deux composants empilés dans
         # une rangée se chevauchent, car Streamlit réserve à un titre moins que sa hauteur.
         st.html(_brand_html(hero))
-        with st.container(key="hc-trust", width="content", horizontal_alignment="right"):
-            # Sur la démonstration publique, le texte est traité sur un serveur distant :
-            # la pastille ne doit pas promettre un traitement local.
-            if demo:
-                st.badge(t("app.demo_badge"), icon=":material/science:", color="orange")
-            else:
-                st.badge(t("app.local_badge"), icon=":material/lock:", color="primary")
-            st.caption(t("app.legal_note"))
 
 
-def demo_strip_html() -> str:
-    """Ligne fine et discrète de la démonstration publique, au-dessus de l'en-tête.
+def status_strip_html(demo: bool) -> str:
+    """Ligne fine et discrète au-dessus de l'en-tête : mode de traitement et mention RGPD.
 
-    Elle remplace l'ancien bandeau d'alerte, trop haut, qui repoussait le logo et la
-    description. Le message reste écrit en entier et porte role="note" ; la pastille
-    "Public demo" de l'en-tête répète l'information sur chaque page.
+    Sur la démonstration publique, le texte est traité sur un serveur distant : la ligne dit
+    de n'utiliser que des données fictives et ne promet pas de traitement local. Ailleurs,
+    elle rappelle le traitement local. Le texte porte l'information, la couleur ne fait que
+    la souligner ; role="note" la signale aux lecteurs d'écran.
     """
-    return f'<p class="hc-demo-strip" role="note">{html.escape(t("demo.banner"))}</p>'
+    mode = "demo" if demo else "local"
+    message = t("demo.banner") if demo else t("app.local_badge")
+    return (
+        f'<div class="hc-strip hc-strip-{mode}" role="note">'
+        f"<strong>{html.escape(message)}</strong>"
+        f"<span>{html.escape(t('app.legal_note'))}</span></div>"
+    )
 
 
 def _brand_html(hero: bool) -> str:
