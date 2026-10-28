@@ -110,7 +110,7 @@ textarea:focus-visible,
     color: var(--hc-warning);
     background: var(--hc-warning-soft);
 }
-/* En-tête de marque : mot-symbole, accroche, pastille de traitement local, mention RGPD. */
+/* En-tête de marque sur toute la largeur : logo, mot-symbole, accroche et description. */
 .st-key-hc-header {
     padding-bottom: var(--hc-space-4);
     margin-bottom: var(--hc-space-2);
@@ -154,7 +154,6 @@ textarea:focus-visible,
     font-size: var(--hc-text-base);
 }
 .hc-description {
-    max-width: 68ch;
     margin: var(--hc-space-2) 0 0;
     color: var(--hc-muted);
     font-size: var(--hc-text-sm);

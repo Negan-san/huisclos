@@ -14,6 +14,13 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 22:55 | FIX8 | Description de l'accueil sur toute la largeur | Claude Code, Opus 5.5
+- Fait : la limite de 68 caractères de .hc-description est retirée ; la description de l'en-tête d'accueil occupe toute la largeur libérée par FIX7. Commentaire de l'en-tête corrigé (plus de pastille à droite).
+- Tests : test_app_design, test_app_smoke, test_gate7 et test_method_page verts (changement de CSS seul) ; Ruff check/format et style conformes. Capture Edge headless, serveur arrêté.
+- Décisions : aucune.
+- Reste et risques : docs/video/SCRIPT.md, modifié par une autre session en cours, est laissé hors de ce commit.
+- Suite : publication demandée (main en avance rapide, push main et dev, sans tag) ; S61.
+
 ### 2026-10-28 22:40 | FIX7 | Ligne d'état unique au-dessus de l'en-tête | Claude Code, Opus 5.5
 - Fait : la pastille "Public demo" ou "Local processing" et la mention RGPD quittent la rangée du logo et rejoignent la ligne fine au-dessus de l'en-tête (status_strip_html, classes hc-strip, hc-strip-demo, hc-strip-local) ; l'en-tête de marque prend toute la largeur. Clé app.demo_badge supprimée, règles CSS hc-trust retirées, style.css à 399 lignes.
 - Tests : tests de l'en-tête et de la ligne de démonstration adaptés (mode, mention RGPD hors du bloc de marque) ; référence "Recital 26" de la page Method lue dans la page elle-même. Suite complète 1747 passed ; Ruff check/format et style conformes. Captures Edge headless démo et local (bureau, 390 px), serveur arrêté.
