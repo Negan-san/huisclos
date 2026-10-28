@@ -229,8 +229,10 @@ No score guarantees anonymity or zero leakage; alerts alone mask nothing.
 - [User guide](docs/USER_GUIDE.md): installation, workflow, settings, troubleshooting.
 - [Local models](docs/LOCAL_MODELS.md): optional packages, pinned model files outside the
   repository, licences, development observations and fallback.
-- Method report (METHOD_REPORT.md), architecture (ARCHITECTURE.md) and credits (CREDITS.md):
-  added to `docs/` before submission.
+- [Method report](docs/METHOD_REPORT.md) and [architecture](docs/ARCHITECTURE.md), also as
+  Word documents ([method report](docs/HuisClos-Method-Report.docx),
+  [architecture](docs/HuisClos-Architecture.docx)), and the
+  [presentation](docs/HuisClos-Presentation.pptx); [credits](docs/CREDITS.md).
 - [Prompt log](docs/PROMPTS.md): the prompts given to the coding agents.
 - [Deployment](docs/DEPLOYMENT.md), [decisions](docs/DECISIONS.md) (in French) and
   [contributions](docs/CONTRIBUTIONS.md).

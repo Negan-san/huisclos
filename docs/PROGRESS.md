@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 22:53 | DOC1 | Word, présentation et kit mis à jour | Claude Code, Opus 5.5
+- Fait : fusion lane-b (S72 a88f11d) en avance rapide sans conflit. docs/HuisClos-Method-Report.docx (10 pages) et docs/HuisClos-Architecture.docx (8 pages), éditions Word fidèles aux .md S71 : page de titre, sommaire mis à jour par Word, en-têtes, pagination, tableaux, figures natives (pipeline, frontières, G8R2). docs/HuisClos-Presentation.pptx : 14 diapositives anglaises 16:9 avec notes, graphiques natifs G8R2, captures fictives existantes. README relie les deux rapports, les Word, la présentation et CREDITS.md.
+- Preuve : aucun chiffre nouveau ; G8R2 930c414 courant, G8 test/C3 historiques sur e3d13bd, gain de couverture non significatif, réserves EN conservées ; réponse d'IA de la diapositive 4 annoncée comme illustrative. Générateurs python-pptx/python-docx hors dépôt (environnement jetable du dossier temporaire, paquets publics téléchargés pour ce seul usage), aucune dépendance du projet modifiée.
+- Tests : garde FIX3R, 1783 passed en 230,95 s, zéro ouverture réservée refusée ; Ruff check/format conformes ; check_style 0 erreur, 15 avertissements connus ; git diff --check conforme. Contrôle visuel de chaque diapositive et page par export PowerPoint/Word ; texte des trois fichiers sans tiret cadratin, points de suspension, guillemets typographiques ni formule interdite. Validateur pptx : seul échec, schéma Dublin Core distant non téléchargeable.
+- Décisions : aucune.
+- Risques : captures d'une version antérieure de l'interface (légende sur la diapositive 7) ; police Cambria/Calibri attendue chez le lecteur ; fichiers binaires non relus par check_style ; RESEARCH.md toujours absent.
+- Suite : ZIP du kit reconstruit depuis ce commit par scripts/build_toolkit.py dans dist/ (ancien ZIP 362cd0f3 conservé), main avancé sur dev et push de main et dev sans tag, à la demande de l'utilisateur.
+
 ### 2026-10-28 23:20 | S72 | Crédits et journal des prompts | Codex, modèle exact non exposé
 - Fait : veille locale jusqu'au commit S71 fa518d2, piste A propre et contrôles verts attestés ; fusion dev en avance rapide. CREDITS.md en anglais : 22 dépendances directes, versions installées, licences et sources locales, verrou de 109 paquets distingué, modèles et données externes, corpus CC BY 4.0 attesté par corpus/README.md.
 - Provenance : PROMPTS.md conserve les occurrences et relances historiques, ajoute H0 et S72, rattache chaque entrée du journal à une référence versionnée ou à une reconstruction signalée ; S61 réalisée conservée, fiche révisée distincte de l'original indisponible. Modèles inconnus non déduits du plan.
