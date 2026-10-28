@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .venv/
+.venv-toolkit/
 .pytest_cache/
 .ruff_cache/
 
@@ -14,3 +15,4 @@ __pycache__/
 # Sorties locales
 *.mp4
 results/tmp/
+dist/

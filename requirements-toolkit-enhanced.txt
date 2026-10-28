@@ -1,0 +1,7 @@
+# Pile neuronale facultative du kit, sans outils de développement.
+-r requirements.txt
+transformers==5.16.1
+huggingface-hub==1.9.2
+tokenizers==0.23.3
+sentencepiece==0.2.2
+gliner==0.2.29

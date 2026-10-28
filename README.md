@@ -38,6 +38,13 @@ FR/US/UK formats and their limits; a document language is not a nationality or j
 
 ## Quick start
 
+For the shareable Windows/macOS toolkit, start with [START_HERE.md](START_HERE.md)
+(French and English). Extract the ZIP and open `Start-HuisClos-Windows.bat` or
+`Start-HuisClos-macOS.command`. The first launch offers Standard or optional local Enhanced
+models, installs them in `.venv-toolkit` and opens the app on this computer. Python 3.12
+64-bit must be installed first. Later launches reuse the installation. English remains
+experimental, and English Enhanced is not recommended. Full macOS installation is untested.
+
 You need Python 3.12 and an internet connection for the installation only. The step-by-step
 version, written for non-specialists, is in the [user guide](docs/USER_GUIDE.md).
 
