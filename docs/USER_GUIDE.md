@@ -622,19 +622,21 @@ English. Choose the document language before the detection.
 
 ## 10. Reproducing the screenshots
 
-The eight PNGs were captured on the frozen A4 application (commit `dc5b041`), with Standard,
-threshold 0.30, the default twelve enabled types and French token labels. Chromium
-156.0.8078.4 ran headless at 1920 x 1080, device scale 1, with a light theme. Playwright
-1.64.1 was already installed
-in a temporary environment outside the repository; neither project packages nor application
+The eight PNGs were captured again on 29 October 2026 (session DOC2), on commit `cda17bd`,
+whose application code is identical to FIX8 (`69d9267`): logo, status line and navigation
+without the Evaluation tab are those of the current interface. Settings: Standard, threshold
+0.30, the default twelve enabled types and French token labels. Microsoft Edge 156.0.4314.50,
+driven by Playwright 1.64.1 from a temporary environment outside the repository, ran headless
+at 1920 x 1080, device scale 1, with a light theme; neither project packages nor application
 files were changed. The local server listened only on `127.0.0.1:8599`, usage statistics were
-off, Enhanced models were offline and the Mistral connector was not configured. Browser
-requests to external hosts were blocked. The browser was closed and Streamlit was stopped
-after capture; no server is needed to read these images.
+off, Enhanced was not selected and the Mistral connector was not configured. Browser requests
+to external hosts were blocked; none was attempted. The browser was closed and Streamlit was
+stopped after capture; no server is needed to read these images.
 
-The session tools (`serve.py`, `base_capture.py`, `capture.py`) and the PNG SHA-256 inventory
-are archived outside the repository in `pilotage/post_g7_assets/benchmarks/A5/`. They use the
-already installed Playwright environment; they do not install anything or change the app.
+The session tools (`serve.py`, `base_capture.py`, `capture.py`) are the A5 tools, adapted to
+the current navigation and to Edge. They and the PNG SHA-256 inventory are archived outside
+the repository in `pilotage/post_g7_assets/benchmarks/DOC2/`; the earlier A5 captures and
+tools stay in `benchmarks/A5/`. The tools do not install anything or change the app.
 
 To reproduce manually, start a local installation on port 8599 and follow these steps.
 All texts below are invented for this guide, not client files or evaluation documents.

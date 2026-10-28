@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 23:09 | DOC2 | Captures récentes dans la présentation, les Word et le guide | Claude Code, Opus 5.5
+- Fait : application lancée en local, headless, sur 127.0.0.1:8599 (statistiques coupées, Standard, connecteur absent), parcours fictif de la section 10 du guide rejoué par les outils A5 adaptés (Edge 156.0.4314.50 via Playwright 1.64.1, Evaluation ouverte depuis Method & limits) ; serveur arrêté proprement, port fermé. Huit PNG de docs/screenshots remplacés par l'interface actuelle (logo, ligne d'état, navigation sans onglet Evaluation) ; code applicatif identique à FIX8 69d9267.
+- Livrables : présentation, diapositive 3 avec trois vignettes réelles (Import, Review, Restore), diapositive 7 avec Review et alerte du contrôle final, mention de version ancienne retirée ; Word architecture et rapport de méthode avec deux captures chacun (Review, contrôle final), figures renumérotées, tableaux courts gardés d'un bloc. USER_GUIDE section 10 : nouvelle provenance des captures.
+- Tests : garde FIX3R, 1783 passed en 212,30 s, zéro ouverture réservée refusée ; Ruff check/format conformes ; check_style 0 erreur, 15 avertissements connus ; git diff --check conforme. Contrôle visuel de chaque diapositive et page modifiées ; aucune requête externe du navigateur, aucune exception Streamlit pendant le parcours FR/EN.
+- Décisions : aucune.
+- Risques : outils de capture et inventaire SHA-256 archivés hors dépôt (pilotage/post_g7_assets/benchmarks/DOC2/), Playwright installé dans un environnement jetable du dossier temporaire ; vignettes de la diapositive 3 réduites, à lire comme illustrations.
+- Suite : ZIP du kit reconstruit depuis ce commit (ZIP cda17bd0 remplacé, ancien 362cd0f3 conservé), main avancé sur dev et push de main et dev sans tag.
+
 ### 2026-10-28 22:53 | DOC1 | Word, présentation et kit mis à jour | Claude Code, Opus 5.5
 - Fait : fusion lane-b (S72 a88f11d) en avance rapide sans conflit. docs/HuisClos-Method-Report.docx (10 pages) et docs/HuisClos-Architecture.docx (8 pages), éditions Word fidèles aux .md S71 : page de titre, sommaire mis à jour par Word, en-têtes, pagination, tableaux, figures natives (pipeline, frontières, G8R2). docs/HuisClos-Presentation.pptx : 14 diapositives anglaises 16:9 avec notes, graphiques natifs G8R2, captures fictives existantes. README relie les deux rapports, les Word, la présentation et CREDITS.md.
 - Preuve : aucun chiffre nouveau ; G8R2 930c414 courant, G8 test/C3 historiques sur e3d13bd, gain de couverture non significatif, réserves EN conservées ; réponse d'IA de la diapositive 4 annoncée comme illustrative. Générateurs python-pptx/python-docx hors dépôt (environnement jetable du dossier temporaire, paquets publics téléchargés pour ce seul usage), aucune dépendance du projet modifiée.
