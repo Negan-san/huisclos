@@ -1,0 +1,3 @@
+Command: C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Scripts\python.exe -m ruff check .
+Exit: 0
+All checks passed!

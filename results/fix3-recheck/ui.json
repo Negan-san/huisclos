@@ -1,0 +1,128 @@
+{
+  "fr-RuntimeError-fresh": {
+    "checks": {
+      "correct_message": true,
+      "review_kept": true,
+      "no_exception": true,
+      "no_pseudo_result": true,
+      "no_restore_result": true,
+      "messages_clean": true,
+      "logs_clean": true,
+      "stderr_clean": true,
+      "stdout_clean": true
+    },
+    "passed": true,
+    "retry": false,
+    "error_type": "RuntimeError",
+    "ui_language": "fr",
+    "message_key": "review.error.substitution",
+    "captured_log_characters": 0,
+    "captured_stderr_characters": 252,
+    "previous_result_retained": false
+  },
+  "fr-ValueError-fresh": {
+    "checks": {
+      "correct_message": true,
+      "review_kept": true,
+      "no_exception": true,
+      "no_pseudo_result": true,
+      "no_restore_result": true,
+      "messages_clean": true,
+      "logs_clean": true,
+      "stderr_clean": true,
+      "stdout_clean": true
+    },
+    "passed": true,
+    "retry": false,
+    "error_type": "ValueError",
+    "ui_language": "fr",
+    "message_key": "review.error.pseudonymize",
+    "captured_log_characters": 0,
+    "captured_stderr_characters": 0,
+    "previous_result_retained": false
+  },
+  "fr-RuntimeError-retry": {
+    "checks": {
+      "correct_message": true,
+      "review_kept": true,
+      "no_exception": true,
+      "no_pseudo_result": false,
+      "no_restore_result": true,
+      "messages_clean": true,
+      "logs_clean": true,
+      "stderr_clean": true,
+      "stdout_clean": true
+    },
+    "passed": false,
+    "retry": true,
+    "error_type": "RuntimeError",
+    "ui_language": "fr",
+    "message_key": "review.error.substitution",
+    "captured_log_characters": 0,
+    "captured_stderr_characters": 0,
+    "previous_result_retained": true
+  },
+  "en-RuntimeError-fresh": {
+    "checks": {
+      "correct_message": true,
+      "review_kept": true,
+      "no_exception": true,
+      "no_pseudo_result": true,
+      "no_restore_result": true,
+      "messages_clean": true,
+      "logs_clean": true,
+      "stderr_clean": true,
+      "stdout_clean": true
+    },
+    "passed": true,
+    "retry": false,
+    "error_type": "RuntimeError",
+    "ui_language": "en",
+    "message_key": "review.error.substitution",
+    "captured_log_characters": 0,
+    "captured_stderr_characters": 0,
+    "previous_result_retained": false
+  },
+  "en-ValueError-fresh": {
+    "checks": {
+      "correct_message": true,
+      "review_kept": true,
+      "no_exception": true,
+      "no_pseudo_result": true,
+      "no_restore_result": true,
+      "messages_clean": true,
+      "logs_clean": true,
+      "stderr_clean": true,
+      "stdout_clean": true
+    },
+    "passed": true,
+    "retry": false,
+    "error_type": "ValueError",
+    "ui_language": "en",
+    "message_key": "review.error.pseudonymize",
+    "captured_log_characters": 0,
+    "captured_stderr_characters": 0,
+    "previous_result_retained": false
+  },
+  "en-RuntimeError-retry": {
+    "checks": {
+      "correct_message": true,
+      "review_kept": true,
+      "no_exception": true,
+      "no_pseudo_result": false,
+      "no_restore_result": true,
+      "messages_clean": true,
+      "logs_clean": true,
+      "stderr_clean": true,
+      "stdout_clean": true
+    },
+    "passed": false,
+    "retry": true,
+    "error_type": "RuntimeError",
+    "ui_language": "en",
+    "message_key": "review.error.substitution",
+    "captured_log_characters": 0,
+    "captured_stderr_characters": 0,
+    "previous_result_retained": true
+  }
+}

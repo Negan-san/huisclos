@@ -1,0 +1,363 @@
+FIX3R: full test collection; corpus roundtrip restricted to dev by session policy
+........................................................................ [  4%]
+........................................................................ [  8%]
+........................................................................ [ 12%]
+........................................................................ [ 16%]
+........................................................................ [ 20%]
+........................................................................ [ 25%]
+...............................................................FFFFFFFF. [ 29%]
+........................................................................ [ 33%]
+........................................................................ [ 37%]
+........................................................................ [ 41%]
+........................................................................ [ 46%]
+........................................................................ [ 50%]
+........................................................................ [ 54%]
+........................................................................ [ 58%]
+........................................................................ [ 62%]
+........................................................................ [ 66%]
+........................................................................ [ 71%]
+........................................................................ [ 75%]
+........................................................................ [ 79%]
+........................................................................ [ 83%]
+........................................................................ [ 87%]
+........................................................................ [ 92%]
+........................................................................ [ 96%]
+................................................................         [100%]FIX3R reserved opens refused: 8
+
+================================== FAILURES ===================================
+_________________________ test_lot4_source_format[19] _________________________
+
+number = 19
+
+    @pytest.mark.parametrize("number", range(19, 27))
+    def test_lot4_source_format(number: int) -> None:
+        """Vérifie les contraintes A5 sur chaque nouvelle source du lot 4."""
+        path = SOURCE_DIR / f"doc_{number}.md"
+>       assert b"\r" not in path.read_bytes()
+                            ^^^^^^^^^^^^^^^^^
+
+tests\test_corpus_lot4.py:21:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1019: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+event = 'open'
+arguments = ('C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b\\corpus\\source\\doc_19.md', 'r', 32896)
+
+    def guard(event: str, arguments: tuple[Any, ...]) -> None:
+        """Refuse toute ouverture du corpus hors dev et english_dev, sans lire son contenu."""
+        if event != "open" or not isinstance(arguments[0], (str, bytes, os.PathLike)):
+            return
+        path = Path(os.fsdecode(arguments[0])).resolve()
+        if not path.is_relative_to(ROOT / "corpus"):
+            return
+        relative = path.relative_to(ROOT / "corpus").as_posix()
+        if relative == "dev.jsonl" or relative.startswith("english_dev/"):
+            return
+        DENIED.append("reserved_open")
+>       raise PermissionError("FIX3R: reserved corpus access forbidden")
+E       PermissionError: FIX3R: reserved corpus access forbidden
+
+results\fix3-recheck\guarded_pytest.py:30: PermissionError
+_________________________ test_lot4_source_format[20] _________________________
+
+number = 20
+
+    @pytest.mark.parametrize("number", range(19, 27))
+    def test_lot4_source_format(number: int) -> None:
+        """Vérifie les contraintes A5 sur chaque nouvelle source du lot 4."""
+        path = SOURCE_DIR / f"doc_{number}.md"
+>       assert b"\r" not in path.read_bytes()
+                            ^^^^^^^^^^^^^^^^^
+
+tests\test_corpus_lot4.py:21:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1019: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+event = 'open'
+arguments = ('C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b\\corpus\\source\\doc_20.md', 'r', 32896)
+
+    def guard(event: str, arguments: tuple[Any, ...]) -> None:
+        """Refuse toute ouverture du corpus hors dev et english_dev, sans lire son contenu."""
+        if event != "open" or not isinstance(arguments[0], (str, bytes, os.PathLike)):
+            return
+        path = Path(os.fsdecode(arguments[0])).resolve()
+        if not path.is_relative_to(ROOT / "corpus"):
+            return
+        relative = path.relative_to(ROOT / "corpus").as_posix()
+        if relative == "dev.jsonl" or relative.startswith("english_dev/"):
+            return
+        DENIED.append("reserved_open")
+>       raise PermissionError("FIX3R: reserved corpus access forbidden")
+E       PermissionError: FIX3R: reserved corpus access forbidden
+
+results\fix3-recheck\guarded_pytest.py:30: PermissionError
+_________________________ test_lot4_source_format[21] _________________________
+
+number = 21
+
+    @pytest.mark.parametrize("number", range(19, 27))
+    def test_lot4_source_format(number: int) -> None:
+        """Vérifie les contraintes A5 sur chaque nouvelle source du lot 4."""
+        path = SOURCE_DIR / f"doc_{number}.md"
+>       assert b"\r" not in path.read_bytes()
+                            ^^^^^^^^^^^^^^^^^
+
+tests\test_corpus_lot4.py:21:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1019: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+event = 'open'
+arguments = ('C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b\\corpus\\source\\doc_21.md', 'r', 32896)
+
+    def guard(event: str, arguments: tuple[Any, ...]) -> None:
+        """Refuse toute ouverture du corpus hors dev et english_dev, sans lire son contenu."""
+        if event != "open" or not isinstance(arguments[0], (str, bytes, os.PathLike)):
+            return
+        path = Path(os.fsdecode(arguments[0])).resolve()
+        if not path.is_relative_to(ROOT / "corpus"):
+            return
+        relative = path.relative_to(ROOT / "corpus").as_posix()
+        if relative == "dev.jsonl" or relative.startswith("english_dev/"):
+            return
+        DENIED.append("reserved_open")
+>       raise PermissionError("FIX3R: reserved corpus access forbidden")
+E       PermissionError: FIX3R: reserved corpus access forbidden
+
+results\fix3-recheck\guarded_pytest.py:30: PermissionError
+_________________________ test_lot4_source_format[22] _________________________
+
+number = 22
+
+    @pytest.mark.parametrize("number", range(19, 27))
+    def test_lot4_source_format(number: int) -> None:
+        """Vérifie les contraintes A5 sur chaque nouvelle source du lot 4."""
+        path = SOURCE_DIR / f"doc_{number}.md"
+>       assert b"\r" not in path.read_bytes()
+                            ^^^^^^^^^^^^^^^^^
+
+tests\test_corpus_lot4.py:21:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1019: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+event = 'open'
+arguments = ('C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b\\corpus\\source\\doc_22.md', 'r', 32896)
+
+    def guard(event: str, arguments: tuple[Any, ...]) -> None:
+        """Refuse toute ouverture du corpus hors dev et english_dev, sans lire son contenu."""
+        if event != "open" or not isinstance(arguments[0], (str, bytes, os.PathLike)):
+            return
+        path = Path(os.fsdecode(arguments[0])).resolve()
+        if not path.is_relative_to(ROOT / "corpus"):
+            return
+        relative = path.relative_to(ROOT / "corpus").as_posix()
+        if relative == "dev.jsonl" or relative.startswith("english_dev/"):
+            return
+        DENIED.append("reserved_open")
+>       raise PermissionError("FIX3R: reserved corpus access forbidden")
+E       PermissionError: FIX3R: reserved corpus access forbidden
+
+results\fix3-recheck\guarded_pytest.py:30: PermissionError
+_________________________ test_lot4_source_format[23] _________________________
+
+number = 23
+
+    @pytest.mark.parametrize("number", range(19, 27))
+    def test_lot4_source_format(number: int) -> None:
+        """Vérifie les contraintes A5 sur chaque nouvelle source du lot 4."""
+        path = SOURCE_DIR / f"doc_{number}.md"
+>       assert b"\r" not in path.read_bytes()
+                            ^^^^^^^^^^^^^^^^^
+
+tests\test_corpus_lot4.py:21:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1019: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+event = 'open'
+arguments = ('C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b\\corpus\\source\\doc_23.md', 'r', 32896)
+
+    def guard(event: str, arguments: tuple[Any, ...]) -> None:
+        """Refuse toute ouverture du corpus hors dev et english_dev, sans lire son contenu."""
+        if event != "open" or not isinstance(arguments[0], (str, bytes, os.PathLike)):
+            return
+        path = Path(os.fsdecode(arguments[0])).resolve()
+        if not path.is_relative_to(ROOT / "corpus"):
+            return
+        relative = path.relative_to(ROOT / "corpus").as_posix()
+        if relative == "dev.jsonl" or relative.startswith("english_dev/"):
+            return
+        DENIED.append("reserved_open")
+>       raise PermissionError("FIX3R: reserved corpus access forbidden")
+E       PermissionError: FIX3R: reserved corpus access forbidden
+
+results\fix3-recheck\guarded_pytest.py:30: PermissionError
+_________________________ test_lot4_source_format[24] _________________________
+
+number = 24
+
+    @pytest.mark.parametrize("number", range(19, 27))
+    def test_lot4_source_format(number: int) -> None:
+        """Vérifie les contraintes A5 sur chaque nouvelle source du lot 4."""
+        path = SOURCE_DIR / f"doc_{number}.md"
+>       assert b"\r" not in path.read_bytes()
+                            ^^^^^^^^^^^^^^^^^
+
+tests\test_corpus_lot4.py:21:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1019: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+event = 'open'
+arguments = ('C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b\\corpus\\source\\doc_24.md', 'r', 32896)
+
+    def guard(event: str, arguments: tuple[Any, ...]) -> None:
+        """Refuse toute ouverture du corpus hors dev et english_dev, sans lire son contenu."""
+        if event != "open" or not isinstance(arguments[0], (str, bytes, os.PathLike)):
+            return
+        path = Path(os.fsdecode(arguments[0])).resolve()
+        if not path.is_relative_to(ROOT / "corpus"):
+            return
+        relative = path.relative_to(ROOT / "corpus").as_posix()
+        if relative == "dev.jsonl" or relative.startswith("english_dev/"):
+            return
+        DENIED.append("reserved_open")
+>       raise PermissionError("FIX3R: reserved corpus access forbidden")
+E       PermissionError: FIX3R: reserved corpus access forbidden
+
+results\fix3-recheck\guarded_pytest.py:30: PermissionError
+_________________________ test_lot4_source_format[25] _________________________
+
+number = 25
+
+    @pytest.mark.parametrize("number", range(19, 27))
+    def test_lot4_source_format(number: int) -> None:
+        """Vérifie les contraintes A5 sur chaque nouvelle source du lot 4."""
+        path = SOURCE_DIR / f"doc_{number}.md"
+>       assert b"\r" not in path.read_bytes()
+                            ^^^^^^^^^^^^^^^^^
+
+tests\test_corpus_lot4.py:21:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1019: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+event = 'open'
+arguments = ('C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b\\corpus\\source\\doc_25.md', 'r', 32896)
+
+    def guard(event: str, arguments: tuple[Any, ...]) -> None:
+        """Refuse toute ouverture du corpus hors dev et english_dev, sans lire son contenu."""
+        if event != "open" or not isinstance(arguments[0], (str, bytes, os.PathLike)):
+            return
+        path = Path(os.fsdecode(arguments[0])).resolve()
+        if not path.is_relative_to(ROOT / "corpus"):
+            return
+        relative = path.relative_to(ROOT / "corpus").as_posix()
+        if relative == "dev.jsonl" or relative.startswith("english_dev/"):
+            return
+        DENIED.append("reserved_open")
+>       raise PermissionError("FIX3R: reserved corpus access forbidden")
+E       PermissionError: FIX3R: reserved corpus access forbidden
+
+results\fix3-recheck\guarded_pytest.py:30: PermissionError
+_________________________ test_lot4_source_format[26] _________________________
+
+number = 26
+
+    @pytest.mark.parametrize("number", range(19, 27))
+    def test_lot4_source_format(number: int) -> None:
+        """Vérifie les contraintes A5 sur chaque nouvelle source du lot 4."""
+        path = SOURCE_DIR / f"doc_{number}.md"
+>       assert b"\r" not in path.read_bytes()
+                            ^^^^^^^^^^^^^^^^^
+
+tests\test_corpus_lot4.py:21:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1019: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1013: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+event = 'open'
+arguments = ('C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b\\corpus\\source\\doc_26.md', 'r', 32896)
+
+    def guard(event: str, arguments: tuple[Any, ...]) -> None:
+        """Refuse toute ouverture du corpus hors dev et english_dev, sans lire son contenu."""
+        if event != "open" or not isinstance(arguments[0], (str, bytes, os.PathLike)):
+            return
+        path = Path(os.fsdecode(arguments[0])).resolve()
+        if not path.is_relative_to(ROOT / "corpus"):
+            return
+        relative = path.relative_to(ROOT / "corpus").as_posix()
+        if relative == "dev.jsonl" or relative.startswith("english_dev/"):
+            return
+        DENIED.append("reserved_open")
+>       raise PermissionError("FIX3R: reserved corpus access forbidden")
+E       PermissionError: FIX3R: reserved corpus access forbidden
+
+results\fix3-recheck\guarded_pytest.py:30: PermissionError
+============================== warnings summary ===============================
+..\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491
+  C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+..\huisclos\.venv\Lib\site-packages\_pytest\cacheprovider.py:469
+  C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\_pytest\cacheprovider.py:469: PytestCacheWarning: cache could not write path C:\Users\nasci\Documents\Coding Project\Assignment\huisclos-b\.pytest_cache\v\cache\nodeids: [Errno 13] Permission denied: 'C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b\\.pytest_cache\\v\\cache\\nodeids'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+..\huisclos\.venv\Lib\site-packages\_pytest\cacheprovider.py:423
+  C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\_pytest\cacheprovider.py:423: PytestCacheWarning: could not create cache path C:\Users\nasci\Documents\Coding Project\Assignment\huisclos-b\.pytest_cache\v\cache\lastfailed: [WinError 5] Accès refusé: 'C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b\\.pytest_cache\\v\\cache'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_corpus_lot4.py::test_lot4_source_format[19] - PermissionErr...
+FAILED tests/test_corpus_lot4.py::test_lot4_source_format[20] - PermissionErr...
+FAILED tests/test_corpus_lot4.py::test_lot4_source_format[21] - PermissionErr...
+FAILED tests/test_corpus_lot4.py::test_lot4_source_format[22] - PermissionErr...
+FAILED tests/test_corpus_lot4.py::test_lot4_source_format[23] - PermissionErr...
+FAILED tests/test_corpus_lot4.py::test_lot4_source_format[24] - PermissionErr...
+FAILED tests/test_corpus_lot4.py::test_lot4_source_format[25] - PermissionErr...
+FAILED tests/test_corpus_lot4.py::test_lot4_source_format[26] - PermissionErr...
+8 failed, 1712 passed, 3 warnings in 184.39s (0:03:04)

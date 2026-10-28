@@ -1,0 +1,334 @@
+{
+  "fr-text-file": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true,
+      "separate_file_token": true
+    },
+    "passed": true,
+    "orders": 6,
+    "detections": 3,
+    "expected": 3,
+    "groups": 2,
+    "language": "fr",
+    "token_style": "fr"
+  },
+  "fr-acronym-file": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true,
+      "separate_file_token": true
+    },
+    "passed": true,
+    "orders": 6,
+    "detections": 3,
+    "expected": 3,
+    "groups": 2,
+    "language": "fr",
+    "token_style": "fr"
+  },
+  "fr-two-files": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true,
+      "separate_file_token": true
+    },
+    "passed": true,
+    "orders": 2,
+    "detections": 2,
+    "expected": 2,
+    "groups": 2,
+    "language": "fr",
+    "token_style": "fr"
+  },
+  "fr-file-only": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true
+    },
+    "passed": true,
+    "orders": 1,
+    "detections": 1,
+    "expected": 1,
+    "groups": 1,
+    "language": "fr",
+    "token_style": "fr"
+  },
+  "fr-adjacent": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true
+    },
+    "passed": true,
+    "orders": 2,
+    "detections": 2,
+    "expected": 2,
+    "groups": 2,
+    "language": "fr",
+    "token_style": "fr"
+  },
+  "fr-english-tokens": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true,
+      "separate_file_token": true,
+      "english_labels": true
+    },
+    "passed": true,
+    "orders": 6,
+    "detections": 3,
+    "expected": 3,
+    "groups": 2,
+    "language": "fr",
+    "token_style": "en"
+  },
+  "fr-known": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true,
+      "loaded_token_reused": false
+    },
+    "passed": false,
+    "orders": 6,
+    "detections": 3,
+    "expected": 3,
+    "groups": 2,
+    "language": "fr",
+    "token_style": "fr"
+  },
+  "fr-control-person": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true
+    },
+    "passed": true,
+    "orders": 2,
+    "detections": 2,
+    "expected": 2,
+    "groups": 1,
+    "language": "fr",
+    "token_style": "fr"
+  },
+  "fr-control-org": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true
+    },
+    "passed": true,
+    "orders": 2,
+    "detections": 2,
+    "expected": 2,
+    "groups": 1,
+    "language": "fr",
+    "token_style": "fr"
+  },
+  "fr-control-email": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true
+    },
+    "passed": true,
+    "orders": 1,
+    "detections": 1,
+    "expected": 1,
+    "groups": 1,
+    "language": "fr",
+    "token_style": "fr"
+  },
+  "en-text-file": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true,
+      "separate_file_token": true
+    },
+    "passed": true,
+    "orders": 6,
+    "detections": 3,
+    "expected": 3,
+    "groups": 2,
+    "language": "en",
+    "token_style": "fr"
+  },
+  "en-acronym-file": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true,
+      "separate_file_token": true
+    },
+    "passed": true,
+    "orders": 6,
+    "detections": 3,
+    "expected": 3,
+    "groups": 2,
+    "language": "en",
+    "token_style": "fr"
+  },
+  "en-two-files": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true,
+      "separate_file_token": true
+    },
+    "passed": true,
+    "orders": 2,
+    "detections": 2,
+    "expected": 2,
+    "groups": 2,
+    "language": "en",
+    "token_style": "fr"
+  },
+  "en-file-only": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true
+    },
+    "passed": true,
+    "orders": 1,
+    "detections": 1,
+    "expected": 1,
+    "groups": 1,
+    "language": "en",
+    "token_style": "fr"
+  },
+  "en-adjacent": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true
+    },
+    "passed": true,
+    "orders": 2,
+    "detections": 2,
+    "expected": 2,
+    "groups": 2,
+    "language": "en",
+    "token_style": "fr"
+  },
+  "en-english-tokens": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true,
+      "separate_file_token": true,
+      "english_labels": false
+    },
+    "passed": false,
+    "orders": 6,
+    "detections": 3,
+    "expected": 3,
+    "groups": 2,
+    "language": "en",
+    "token_style": "en"
+  },
+  "en-known": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true,
+      "loaded_token_reused": false
+    },
+    "passed": false,
+    "orders": 6,
+    "detections": 3,
+    "expected": 3,
+    "groups": 2,
+    "language": "en",
+    "token_style": "fr"
+  },
+  "en-control-person": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true
+    },
+    "passed": true,
+    "orders": 2,
+    "detections": 2,
+    "expected": 2,
+    "groups": 1,
+    "language": "en",
+    "token_style": "fr"
+  },
+  "en-control-org": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true
+    },
+    "passed": true,
+    "orders": 2,
+    "detections": 2,
+    "expected": 2,
+    "groups": 1,
+    "language": "en",
+    "token_style": "fr"
+  },
+  "en-control-email": {
+    "checks": {
+      "original_values_absent": true,
+      "exact_restore": true,
+      "occurrence_count": true,
+      "occurrences_aligned": true,
+      "deterministic": true
+    },
+    "passed": true,
+    "orders": 1,
+    "detections": 1,
+    "expected": 1,
+    "groups": 1,
+    "language": "en",
+    "token_style": "fr"
+  }
+}

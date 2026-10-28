@@ -1,0 +1,30 @@
+{
+  "fr": {
+    "checks": {
+      "two_entries_share_spelling": true,
+      "full_name_keeps_token": true,
+      "surname_gets_new_token": true,
+      "distinct_people_distinct_tokens": true,
+      "same_document_no_confusion": true,
+      "mixed_tolerant": true,
+      "exact_both": true,
+      "no_leak": true
+    },
+    "passed": true,
+    "method": "controlled_automatic_detections"
+  },
+  "en": {
+    "checks": {
+      "two_entries_share_spelling": true,
+      "full_name_keeps_token": true,
+      "surname_gets_new_token": true,
+      "distinct_people_distinct_tokens": true,
+      "same_document_no_confusion": true,
+      "mixed_tolerant": true,
+      "exact_both": true,
+      "no_leak": true
+    },
+    "passed": true,
+    "method": "controlled_automatic_detections"
+  }
+}

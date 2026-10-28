@@ -1,0 +1,7 @@
+Command: C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Scripts\python.exe C:\Users\nasci\Documents\Coding Project\Assignment\huisclos-b\results\fix3-recheck\recheck_fix3.py worker
+Exit: 0
+{"section": "worker", "rows": 2, "output": "worker.json"}
+
+C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+
+  warnings.warn(

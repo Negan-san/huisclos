@@ -1,0 +1,18 @@
+{
+  "fr": {
+    "documents": 1,
+    "detections": 3,
+    "occurrences": 3,
+    "passed": true,
+    "network_blocked": true,
+    "final_check_available": true
+  },
+  "en": {
+    "documents": 1,
+    "detections": 3,
+    "occurrences": 3,
+    "passed": true,
+    "network_blocked": true,
+    "final_check_available": true
+  }
+}

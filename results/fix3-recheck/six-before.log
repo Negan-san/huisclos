@@ -1,0 +1,503 @@
+Command: C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Scripts\python.exe -m pytest -q tests/test_fix2.py::test_same_value_in_text_and_file_name_is_pseudonymized tests/test_fix2.py::test_review_pseudonymizes_a_name_repeated_in_a_file_name tests/test_tokens.py::test_same_text_in_two_groups_takes_the_token_of_its_position tests/test_case_memory.py::test_name_also_in_a_file_name_loses_token_continuity_when_the_surname_returns
+Exit: 1
+FFFFFF                                                                   [100%]
+
+================================== FAILURES ===================================
+
+__________ test_same_value_in_text_and_file_name_is_pseudonymized[0] __________
+
+
+
+case = 0
+
+
+
+    @pytest.mark.parametrize("case", range(3))
+
+    def test_same_value_in_text_and_file_name_is_pseudonymized(case: int) -> None:
+
+        """Chaque mention est remplacée et la restauration exacte rend le texte d'origine."""
+
+        text, detections = file_name_cases()[case]
+
+>       result = pseudonymize(text, detections)
+
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+tests\test_fix2.py:73:
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+src\huisclos\pseudonymize\tokens.py:233: in pseudonymize
+
+    output, occurrences = _substitute(text, ordered, groups)
+
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src\huisclos\pseudonymize\tokens.py:164: in _substitute
+
+    tables = _token_tables(text, groups)
+
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+
+text = 'M. Lucien FALVERAC conteste. M. FALVERAC signe. Pièce : conclusions_FALVERAC.pdf.'
+
+groups = (EntityGroup(group_id=1, entity_type=<EntityType.PERSON: 'PERSON'>, canonical='Lucien FALVERAC', variants=('FALVERAC',...N'>, canonical='FALVERAC', variants=('FALVERAC',), token='[PERSONNE_2]', mention_spans=((68, 76),), ambiguous_with=()))
+
+
+
+    def _token_tables(text: str, groups: Sequence[EntityGroup]) -> dict[str, dict[str, str]]:
+
+        """Table (type, texte exact de la mention) vers jeton, pour l'opérateur de presidio.
+
+
+
+        L'opérateur ne reçoit que le texte de la mention ; la table suffit car deux mentions
+
+        de même type et de même texte ont la même clé, donc le même groupe.
+
+        """
+
+        tables: dict[str, dict[str, str]] = {}
+
+        for group in groups:
+
+            table = tables.setdefault(group.entity_type.value, {})
+
+            for start, end in group.mention_spans:
+
+                mention = text[start:end]
+
+                if table.setdefault(mention, group.token) != group.token:
+
+>                   raise RuntimeError(f"mention rattachée à deux groupes : {mention!r}")
+
+E                   RuntimeError: mention rattachée à deux groupes : 'FALVERAC'
+
+
+
+src\huisclos\pseudonymize\tokens.py:140: RuntimeError
+
+__________ test_same_value_in_text_and_file_name_is_pseudonymized[1] __________
+
+
+
+case = 1
+
+
+
+    @pytest.mark.parametrize("case", range(3))
+
+    def test_same_value_in_text_and_file_name_is_pseudonymized(case: int) -> None:
+
+        """Chaque mention est remplacée et la restauration exacte rend le texte d'origine."""
+
+        text, detections = file_name_cases()[case]
+
+>       result = pseudonymize(text, detections)
+
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+tests\test_fix2.py:73:
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+src\huisclos\pseudonymize\tokens.py:233: in pseudonymize
+
+    output, occurrences = _substitute(text, ordered, groups)
+
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src\huisclos\pseudonymize\tokens.py:164: in _substitute
+
+    tables = _token_tables(text, groups)
+
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+
+text = 'Mr Nolan FALVERICK disputes. Mr FALVERICK signs. Exhibit: statement_FALVERICK.pdf.'
+
+groups = (EntityGroup(group_id=1, entity_type=<EntityType.PERSON: 'PERSON'>, canonical='Nolan FALVERICK', variants=('FALVERICK'...>, canonical='FALVERICK', variants=('FALVERICK',), token='[PERSONNE_2]', mention_spans=((68, 77),), ambiguous_with=()))
+
+
+
+    def _token_tables(text: str, groups: Sequence[EntityGroup]) -> dict[str, dict[str, str]]:
+
+        """Table (type, texte exact de la mention) vers jeton, pour l'opérateur de presidio.
+
+
+
+        L'opérateur ne reçoit que le texte de la mention ; la table suffit car deux mentions
+
+        de même type et de même texte ont la même clé, donc le même groupe.
+
+        """
+
+        tables: dict[str, dict[str, str]] = {}
+
+        for group in groups:
+
+            table = tables.setdefault(group.entity_type.value, {})
+
+            for start, end in group.mention_spans:
+
+                mention = text[start:end]
+
+                if table.setdefault(mention, group.token) != group.token:
+
+>                   raise RuntimeError(f"mention rattachée à deux groupes : {mention!r}")
+
+E                   RuntimeError: mention rattachée à deux groupes : 'FALVERICK'
+
+
+
+src\huisclos\pseudonymize\tokens.py:140: RuntimeError
+
+__________ test_same_value_in_text_and_file_name_is_pseudonymized[2] __________
+
+
+
+case = 2
+
+
+
+    @pytest.mark.parametrize("case", range(3))
+
+    def test_same_value_in_text_and_file_name_is_pseudonymized(case: int) -> None:
+
+        """Chaque mention est remplacée et la restauration exacte rend le texte d'origine."""
+
+        text, detections = file_name_cases()[case]
+
+>       result = pseudonymize(text, detections)
+
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+tests\test_fix2.py:73:
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+src\huisclos\pseudonymize\tokens.py:233: in pseudonymize
+
+    output, occurrences = _substitute(text, ordered, groups)
+
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src\huisclos\pseudonymize\tokens.py:164: in _substitute
+
+    tables = _token_tables(text, groups)
+
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+
+text = 'La société Brivane Logistique SAS (ci-après « BL ») conteste. Pièce : contrat_BL_2024.pdf.'
+
+groups = (EntityGroup(group_id=1, entity_type=<EntityType.ORGANIZATION: 'ORGANIZATION'>, canonical='Brivane Logistique SAS', va... 'ORGANIZATION'>, canonical='BL', variants=('BL',), token='[SOCIETE_B]', mention_spans=((78, 80),), ambiguous_with=()))
+
+
+
+    def _token_tables(text: str, groups: Sequence[EntityGroup]) -> dict[str, dict[str, str]]:
+
+        """Table (type, texte exact de la mention) vers jeton, pour l'opérateur de presidio.
+
+
+
+        L'opérateur ne reçoit que le texte de la mention ; la table suffit car deux mentions
+
+        de même type et de même texte ont la même clé, donc le même groupe.
+
+        """
+
+        tables: dict[str, dict[str, str]] = {}
+
+        for group in groups:
+
+            table = tables.setdefault(group.entity_type.value, {})
+
+            for start, end in group.mention_spans:
+
+                mention = text[start:end]
+
+                if table.setdefault(mention, group.token) != group.token:
+
+>                   raise RuntimeError(f"mention rattachée à deux groupes : {mention!r}")
+
+E                   RuntimeError: mention rattachée à deux groupes : 'BL'
+
+
+
+src\huisclos\pseudonymize\tokens.py:140: RuntimeError
+
+__________ test_review_pseudonymizes_a_name_repeated_in_a_file_name ___________
+
+
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000154EDC19BB0>
+
+
+
+    def test_review_pseudonymizes_a_name_repeated_in_a_file_name(
+
+        monkeypatch: pytest.MonkeyPatch,
+
+    ) -> None:
+
+        """Le parcours Standard FR atteint Restore avec un nom repris dans un nom de fichier."""
+
+        from streamlit.testing.v1 import AppTest
+
+
+
+        from app import i18n
+
+
+
+        monkeypatch.setenv(i18n.STRICT_ENV, "1")
+
+        monkeypatch.delenv("HUISCLOS_PUBLIC_DEMO", raising=False)
+
+        text = file_name_cases()[0][0]
+
+        app = AppTest.from_file(ROOT / "streamlit_app.py", default_timeout=120).run()
+
+        app.radio(key="document_language").set_value("fr").run()
+
+        app.text_area(key="paste_widget").set_value(text).run()
+
+        app.button(key="detect").click().run()
+
+        assert app.session_state["step"] == "review"
+
+        app.button(key="review_pseudonymize").click().run()
+
+        assert not app.exception
+
+>       assert app.session_state["step"] == "restore"
+
+E       AssertionError: assert 'review' == 'restore'
+
+E
+
+E         - restore
+
+E         + review
+
+
+
+tests\test_fix2.py:219: AssertionError
+
+---------------------------- Captured stderr call -----------------------------
+
+2026-10-28 19:37:36.598 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+
+2026-10-28 19:37:42.332 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+
+2026-10-28 19:37:42.332 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+
+________ test_same_text_in_two_groups_takes_the_token_of_its_position _________
+
+
+
+    def test_same_text_in_two_groups_takes_the_token_of_its_position() -> None:
+
+        # D-FIX3-1 : le nom de fichier forme son propre groupe (D-AF-A2-7) ; le jeton est
+
+        # retrouvé par la position de la mention, pas par son texte.
+
+        # Une mention manuelle est validée et rejoindrait le groupe courant : source repérée.
+
+        text = "M. DUPONT signe la pièce conclusions_DUPONT.pdf, puis M. DUPONT relit."
+
+        detections = mentions(text, ("DUPONT", P), ("DUPONT", P), ("DUPONT", P))
+
+        detections[1] = replace(detections[1], source=Source.PROPAGATION)
+
+>       result = pseudonymize(text, detections, created_at=FIXED_TIME)
+
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+tests\test_tokens.py:159:
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+src\huisclos\pseudonymize\tokens.py:233: in pseudonymize
+
+    output, occurrences = _substitute(text, ordered, groups)
+
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src\huisclos\pseudonymize\tokens.py:164: in _substitute
+
+    tables = _token_tables(text, groups)
+
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+
+text = 'M. DUPONT signe la pièce conclusions_DUPONT.pdf, puis M. DUPONT relit.'
+
+groups = (EntityGroup(group_id=1, entity_type=<EntityType.PERSON: 'PERSON'>, canonical='DUPONT', variants=('DUPONT',), token='[...ERSON'>, canonical='DUPONT', variants=('DUPONT',), token='[PERSONNE_2]', mention_spans=((37, 43),), ambiguous_with=()))
+
+
+
+    def _token_tables(text: str, groups: Sequence[EntityGroup]) -> dict[str, dict[str, str]]:
+
+        """Table (type, texte exact de la mention) vers jeton, pour l'opérateur de presidio.
+
+
+
+        L'opérateur ne reçoit que le texte de la mention ; la table suffit car deux mentions
+
+        de même type et de même texte ont la même clé, donc le même groupe.
+
+        """
+
+        tables: dict[str, dict[str, str]] = {}
+
+        for group in groups:
+
+            table = tables.setdefault(group.entity_type.value, {})
+
+            for start, end in group.mention_spans:
+
+                mention = text[start:end]
+
+                if table.setdefault(mention, group.token) != group.token:
+
+>                   raise RuntimeError(f"mention rattachée à deux groupes : {mention!r}")
+
+E                   RuntimeError: mention rattachée à deux groupes : 'DUPONT'
+
+
+
+src\huisclos\pseudonymize\tokens.py:140: RuntimeError
+
+_ test_name_also_in_a_file_name_loses_token_continuity_when_the_surname_returns _
+
+
+
+    def test_name_also_in_a_file_name_loses_token_continuity_when_the_surname_returns() -> None:
+
+        # D-FIX3-2 : le nom de fichier garde son jeton (D-AF-A2-7), donc la table porte deux
+
+        # entrées pour "FALVERAC". Le nom seul a alors deux candidats et reçoit un jeton neuf :
+
+        # continuité perdue, mais ni fuite ni confusion entre deux personnes.
+
+        first = "M. Lucien FALVERAC conteste. M. FALVERAC signe. Pièce : conclusions_FALVERAC.pdf."
+
+        detections = mentions(first, ("Lucien FALVERAC", P), ("FALVERAC", P), ("FALVERAC", P))
+
+        detections[2] = replace(detections[2], source=Source.PROPAGATION)
+
+>       table = pseudonymize(first, detections, created_at=FIXED_TIME).mapping
+
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+tests\test_case_memory.py:170:
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+src\huisclos\pseudonymize\tokens.py:233: in pseudonymize
+
+    output, occurrences = _substitute(text, ordered, groups)
+
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src\huisclos\pseudonymize\tokens.py:164: in _substitute
+
+    tables = _token_tables(text, groups)
+
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+
+text = 'M. Lucien FALVERAC conteste. M. FALVERAC signe. Pièce : conclusions_FALVERAC.pdf.'
+
+groups = (EntityGroup(group_id=1, entity_type=<EntityType.PERSON: 'PERSON'>, canonical='Lucien FALVERAC', variants=('FALVERAC',...N'>, canonical='FALVERAC', variants=('FALVERAC',), token='[PERSONNE_2]', mention_spans=((68, 76),), ambiguous_with=()))
+
+
+
+    def _token_tables(text: str, groups: Sequence[EntityGroup]) -> dict[str, dict[str, str]]:
+
+        """Table (type, texte exact de la mention) vers jeton, pour l'opérateur de presidio.
+
+
+
+        L'opérateur ne reçoit que le texte de la mention ; la table suffit car deux mentions
+
+        de même type et de même texte ont la même clé, donc le même groupe.
+
+        """
+
+        tables: dict[str, dict[str, str]] = {}
+
+        for group in groups:
+
+            table = tables.setdefault(group.entity_type.value, {})
+
+            for start, end in group.mention_spans:
+
+                mention = text[start:end]
+
+                if table.setdefault(mention, group.token) != group.token:
+
+>                   raise RuntimeError(f"mention rattachée à deux groupes : {mention!r}")
+
+E                   RuntimeError: mention rattachée à deux groupes : 'FALVERAC'
+
+
+
+src\huisclos\pseudonymize\tokens.py:140: RuntimeError
+
+============================== warnings summary ===============================
+
+..\..\..\..\..\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491
+
+  C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+
+    warnings.warn(
+
+
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+=========================== short test summary info ===========================
+
+FAILED tests/test_fix2.py::test_same_value_in_text_and_file_name_is_pseudonymized[0]
+
+FAILED tests/test_fix2.py::test_same_value_in_text_and_file_name_is_pseudonymized[1]
+
+FAILED tests/test_fix2.py::test_same_value_in_text_and_file_name_is_pseudonymized[2]
+
+FAILED tests/test_fix2.py::test_review_pseudonymizes_a_name_repeated_in_a_file_name
+
+FAILED tests/test_tokens.py::test_same_text_in_two_groups_takes_the_token_of_its_position
+
+FAILED tests/test_case_memory.py::test_name_also_in_a_file_name_loses_token_continuity_when_the_surname_returns
+
+6 failed, 1 warning in 16.16s

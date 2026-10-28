@@ -1,0 +1,6 @@
+Command: C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Scripts\python.exe C:\Users\nasci\Documents\Coding Project\Assignment\huisclos-b\results\fix3-recheck\recheck_fix3.py ui
+Exit: 1
+{"section": "ui", "rows": 6, "output": "ui.json"}
+C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+2026-10-28 19:51:34.799 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.

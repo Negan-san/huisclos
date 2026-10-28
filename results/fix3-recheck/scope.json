@@ -1,0 +1,20 @@
+{
+  "base": "ae5dfe97ed8236bfa7a00aac4daefbd8074ccd7b",
+  "fix": "bbfc6c12f069808c05b678faafc3024514c6ae77",
+  "files": [
+    "app/i18n/workflow_review.py",
+    "app/steps/review_step.py",
+    "docs/DECISIONS.md",
+    "docs/PROGRESS.md",
+    "docs/PROMPTS.md",
+    "src/huisclos/pseudonymize/tokens.py",
+    "tests/test_case_memory.py",
+    "tests/test_fix2.py",
+    "tests/test_tokens.py"
+  ],
+  "before_blob": "48df79d5dc19bed0549a3688e161ae2edc7d44a0",
+  "patch_blob": "ea94c160dced2c6b001cd1e2fd0f3ae98f15f00f",
+  "expected_amended_blob": "a2d698a980c21481c454e543759cca9d6e6b00d1",
+  "actual_blob": "a2d698a980c21481c454e543759cca9d6e6b00d1",
+  "equal": true
+}

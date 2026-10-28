@@ -1,0 +1,8 @@
+{
+  "old_exit": 1,
+  "fixed_exit": 0,
+  "expected_count": 6,
+  "corpus_excluded": true,
+  "outside_repository": true,
+  "worktree_removed": true
+}

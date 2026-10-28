@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 19:50 | FIX3R | Recontrôle indépendant de FIX3, NO-GO | Codex
+- Fait : arbre initial propre, fusion dev en avance rapide vers bbfc6c1. Neuf fichiers exacts ; blob tokens.py égal au patch FIX2 plus la seule ligne de docstring. Six régressions rouges avec tokens.py de ae5dfe9, vertes avec FIX3 ; worktree externe sans corpus supprimé. Vingt cas Standard FR/EN requis passent, six témoins inclus ; invariants Presidio, mémoire contrôlée et worker G8 fictif conformes. Preuves dans results/fix3-recheck/report.md.
+- Tests : 1720 passed, aucun xfail, sous garde de lecture ; seule la fixture roundtrip est limitée à dev pour respecter l'interdit sur test. Ruff check/format OK ; check_style 0 erreur, 15 avertissements connus ; diff --check OK. Premier garde trop large : huit sources dev refusées, journal conservé. Sondes supplémentaires : masquage FR supplémentaire dans un nom de fichier numérique, sans fuite ni correction de détection.
+- Reste à faire : FIX3R-01, résultat précédent conservé après Restore, retour à Review et substitution forcée en échec ; reproduit en AppTest FR et EN. Premier échec sans résultat antérieur et ValueError conformes, messages et journaux sans mention.
+- Décisions : D-FIX3R-1 ; NO-GO FIX3. D-FIX3-2 recevable dans sa portée limitée ; exemple _token_tables du harnais obsolète mais non bloquant.
+- Risques ou blocages : pseudo_result reste égal au résultat précédent après un nouvel échec ; aucun envoi ni fuite démontré. Aucun src/, app/, tests/, scripts/, corpus ou paquet modifié ; aucune donnée réservée ouverte ou hachée, aucune mesure réservée, tag, push ni R8.
+- Prochaine session : correction autorisée de l'invalidation du résultat après erreur, puis recontrôle indépendant. Mesure challenge non autorisée à ce stade ; NO-GO global maintenu.
+
 ### 2026-10-28 19:35 | FIX3 | Correction de FIX2-01 et message de Review | Claude Code, Opus 5.5
 - Fait : lane-b (FIX2R ae5dfe9) fusionné en avance rapide. results/fix2/proposed_fix2_01.patch appliqué sans retouche dans pseudonymize/tokens.py : jeton retrouvé par la position de la mention, une clé presidio par groupe. Quatre xfail stricts retirés de tests/test_fix2.py ; nouveaux tests : deux jetons pour une même écriture (test_tokens), effet sur la mémoire de dossier (test_case_memory), message de Review en cas d'erreur de substitution, AppTest FR et EN. Les six tests de non-régression échouent sur le code antérieur.
 - Tests : pytest 1720 passed, aucun xfail ; Ruff check et format OK ; check_style 0 erreur, 15 avertissements connus ; diff --check OK.

@@ -1,0 +1,10 @@
+Command: C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Scripts\python.exe -m pytest -q tests/test_fix2.py::test_same_value_in_text_and_file_name_is_pseudonymized tests/test_fix2.py::test_review_pseudonymizes_a_name_repeated_in_a_file_name tests/test_tokens.py::test_same_text_in_two_groups_takes_the_token_of_its_position tests/test_case_memory.py::test_name_also_in_a_file_name_loses_token_continuity_when_the_surname_returns
+Exit: 0
+......                                                                   [100%]
+============================== warnings summary ===============================
+..\..\..\..\..\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491
+  C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+6 passed, 1 warning in 16.53s

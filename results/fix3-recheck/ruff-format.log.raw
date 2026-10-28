@@ -1,0 +1,3 @@
+Command: C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Scripts\python.exe -m ruff format --check .
+Exit: 0
+296 files already formatted

@@ -1,0 +1,1366 @@
+Command: git diff --cached --check
+Exit: 2
+results/fix3-recheck/invariants.log:1: trailing whitespace.
++Command: C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Scripts\python.exe C:\Users\nasci\Documents\Coding Project\Assignment\huisclos-b\results\fix3-recheck\recheck_fix3.py invariants
+
+results/fix3-recheck/invariants.log:2: trailing whitespace.
++Exit: 0
+
+results/fix3-recheck/invariants.log:3: trailing whitespace.
++{"section": "invariants", "rows": 2, "output": "invariants.json"}
+
+
+results/fix3-recheck/invariants.log:4: trailing whitespace.
++C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+
+
+results/fix3-recheck/invariants.log:5: trailing whitespace.
++  warnings.warn(
+
+
+results/fix3-recheck/memory.log:1: trailing whitespace.
++Command: C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Scripts\python.exe C:\Users\nasci\Documents\Coding Project\Assignment\huisclos-b\results\fix3-recheck\recheck_fix3.py memory
+
+results/fix3-recheck/memory.log:2: trailing whitespace.
++Exit: 0
+
+results/fix3-recheck/memory.log:3: trailing whitespace.
++{"section": "memory", "rows": 2, "output": "memory.json"}
+
+
+results/fix3-recheck/memory.log:4: trailing whitespace.
++C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+
+
+results/fix3-recheck/memory.log:5: trailing whitespace.
++  warnings.warn(
+
+
+results/fix3-recheck/pipeline.log:1: trailing whitespace.
++Command: C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Scripts\python.exe C:\Users\nasci\Documents\Coding Project\Assignment\huisclos-b\results\fix3-recheck\recheck_fix3.py pipeline
+
+results/fix3-recheck/pipeline.log:2: trailing whitespace.
++Exit: 1
+
+results/fix3-recheck/pipeline.log:3: trailing whitespace.
++{"section": "pipeline", "rows": 22, "output": "pipeline.json"}
+
+
+results/fix3-recheck/pipeline.log:4: trailing whitespace.
++C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+
+
+results/fix3-recheck/pipeline.log:5: trailing whitespace.
++  warnings.warn(
+
+
+results/fix3-recheck/pytest.log:1: trailing whitespace.
++Command: C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Scripts\python.exe C:\Users\nasci\Documents\Coding Project\Assignment\huisclos-b\results\fix3-recheck\guarded_pytest.py -q
+
+results/fix3-recheck/pytest.log:2: trailing whitespace.
++Exit: 0
+
+results/fix3-recheck/pytest.log:3: trailing whitespace.
++FIX3R: full test collection; corpus roundtrip restricted to dev by session policy
+
+
+results/fix3-recheck/pytest.log:4: trailing whitespace.
++........................................................................ [  4%]
+
+
+results/fix3-recheck/pytest.log:5: trailing whitespace.
++........................................................................ [  8%]
+
+
+results/fix3-recheck/pytest.log:6: trailing whitespace.
++........................................................................ [ 12%]
+
+
+results/fix3-recheck/pytest.log:7: trailing whitespace.
++........................................................................ [ 16%]
+
+
+results/fix3-recheck/pytest.log:8: trailing whitespace.
++........................................................................ [ 20%]
+
+
+results/fix3-recheck/pytest.log:9: trailing whitespace.
++........................................................................ [ 25%]
+
+
+results/fix3-recheck/pytest.log:10: trailing whitespace.
++........................................................................ [ 29%]
+
+
+results/fix3-recheck/pytest.log:11: trailing whitespace.
++........................................................................ [ 33%]
+
+
+results/fix3-recheck/pytest.log:12: trailing whitespace.
++........................................................................ [ 37%]
+
+
+results/fix3-recheck/pytest.log:13: trailing whitespace.
++........................................................................ [ 41%]
+
+
+results/fix3-recheck/pytest.log:14: trailing whitespace.
++........................................................................ [ 46%]
+
+
+results/fix3-recheck/pytest.log:15: trailing whitespace.
++........................................................................ [ 50%]
+
+
+results/fix3-recheck/pytest.log:16: trailing whitespace.
++........................................................................ [ 54%]
+
+
+results/fix3-recheck/pytest.log:17: trailing whitespace.
++........................................................................ [ 58%]
+
+
+results/fix3-recheck/pytest.log:18: trailing whitespace.
++........................................................................ [ 62%]
+
+
+results/fix3-recheck/pytest.log:19: trailing whitespace.
++........................................................................ [ 66%]
+
+
+results/fix3-recheck/pytest.log:20: trailing whitespace.
++........................................................................ [ 71%]
+
+
+results/fix3-recheck/pytest.log:21: trailing whitespace.
++........................................................................ [ 75%]
+
+
+results/fix3-recheck/pytest.log:22: trailing whitespace.
++........................................................................ [ 79%]
+
+
+results/fix3-recheck/pytest.log:23: trailing whitespace.
++........................................................................ [ 83%]
+
+
+results/fix3-recheck/pytest.log:24: trailing whitespace.
++........................................................................ [ 87%]
+
+
+results/fix3-recheck/pytest.log:25: trailing whitespace.
++........................................................................ [ 92%]
+
+
+results/fix3-recheck/pytest.log:26: trailing whitespace.
++........................................................................ [ 96%]
+
+
+results/fix3-recheck/pytest.log:27: trailing whitespace.
++................................................................         [100%]FIX3R reserved opens refused: 0
+
+
+results/fix3-recheck/pytest.log:28: trailing whitespace.
++
+
+
+results/fix3-recheck/pytest.log:29: trailing whitespace.
++============================== warnings summary ===============================
+
+
+results/fix3-recheck/pytest.log:30: trailing whitespace.
++..\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491
+
+
+results/fix3-recheck/pytest.log:31: trailing whitespace.
++  C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+
+
+results/fix3-recheck/pytest.log:32: trailing whitespace.
++    warnings.warn(
+
+
+results/fix3-recheck/pytest.log:33: trailing whitespace.
++
+
+
+results/fix3-recheck/pytest.log:34: trailing whitespace.
++..\huisclos\.venv\Lib\site-packages\_pytest\cacheprovider.py:469
+
+
+results/fix3-recheck/pytest.log:35: trailing whitespace.
++  C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\_pytest\cacheprovider.py:469: PytestCacheWarning: could not create cache path C:\Users\nasci\Documents\Coding Project\Assignment\huisclos-b\.pytest_cache\v\cache\nodeids: [WinError 5] Accès refusé: 'C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b\\.pytest_cache\\v\\cache'
+
+
+results/fix3-recheck/pytest.log:36: trailing whitespace.
++    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+
+results/fix3-recheck/pytest.log:37: trailing whitespace.
++
+
+
+results/fix3-recheck/pytest.log:38: trailing whitespace.
++-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+
+results/fix3-recheck/pytest.log:39: trailing whitespace.
++1720 passed, 2 warnings in 187.58s (0:03:07)
+
+
+results/fix3-recheck/six-after.log:1: trailing whitespace.
++Command: C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Scripts\python.exe -m pytest -q tests/test_fix2.py::test_same_value_in_text_and_file_name_is_pseudonymized tests/test_fix2.py::test_review_pseudonymizes_a_name_repeated_in_a_file_name tests/test_tokens.py::test_same_text_in_two_groups_takes_the_token_of_its_position tests/test_case_memory.py::test_name_also_in_a_file_name_loses_token_continuity_when_the_surname_returns
+
+results/fix3-recheck/six-after.log:2: trailing whitespace.
++Exit: 0
+
+results/fix3-recheck/six-after.log:3: trailing whitespace.
++......                                                                   [100%]
+
+
+results/fix3-recheck/six-after.log:4: trailing whitespace.
++============================== warnings summary ===============================
+
+
+results/fix3-recheck/six-after.log:5: trailing whitespace.
++..\..\..\..\..\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491
+
+
+results/fix3-recheck/six-after.log:6: trailing whitespace.
++  C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+
+
+results/fix3-recheck/six-after.log:7: trailing whitespace.
++    warnings.warn(
+
+
+results/fix3-recheck/six-after.log:8: trailing whitespace.
++
+
+
+results/fix3-recheck/six-after.log:9: trailing whitespace.
++-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+
+results/fix3-recheck/six-after.log:10: trailing whitespace.
++6 passed, 1 warning in 16.53s
+
+
+results/fix3-recheck/six-before.log:1: trailing whitespace.
++Command: C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Scripts\python.exe -m pytest -q tests/test_fix2.py::test_same_value_in_text_and_file_name_is_pseudonymized tests/test_fix2.py::test_review_pseudonymizes_a_name_repeated_in_a_file_name tests/test_tokens.py::test_same_text_in_two_groups_takes_the_token_of_its_position tests/test_case_memory.py::test_name_also_in_a_file_name_loses_token_continuity_when_the_surname_returns
+
+results/fix3-recheck/six-before.log:2: trailing whitespace.
++Exit: 1
+
+results/fix3-recheck/six-before.log:3: trailing whitespace.
++FFFFFF                                                                   [100%]
+
+
+results/fix3-recheck/six-before.log:4: trailing whitespace.
++================================== FAILURES ===================================
+
+
+results/fix3-recheck/six-before.log:5: trailing whitespace.
++__________ test_same_value_in_text_and_file_name_is_pseudonymized[0] __________
+
+
+results/fix3-recheck/six-before.log:6: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:7: trailing whitespace.
++case = 0
+
+
+results/fix3-recheck/six-before.log:8: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:9: trailing whitespace.
++    @pytest.mark.parametrize("case", range(3))
+
+
+results/fix3-recheck/six-before.log:10: trailing whitespace.
++    def test_same_value_in_text_and_file_name_is_pseudonymized(case: int) -> None:
+
+
+results/fix3-recheck/six-before.log:11: trailing whitespace.
++        """Chaque mention est remplacée et la restauration exacte rend le texte d'origine."""
+
+
+results/fix3-recheck/six-before.log:12: trailing whitespace.
++        text, detections = file_name_cases()[case]
+
+
+results/fix3-recheck/six-before.log:13: trailing whitespace.
++>       result = pseudonymize(text, detections)
+
+
+results/fix3-recheck/six-before.log:14: trailing whitespace.
++                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+results/fix3-recheck/six-before.log:15: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:16: trailing whitespace.
++tests\test_fix2.py:73:
+
+
+results/fix3-recheck/six-before.log:17: trailing whitespace.
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+results/fix3-recheck/six-before.log:18: trailing whitespace.
++src\huisclos\pseudonymize\tokens.py:233: in pseudonymize
+
+
+results/fix3-recheck/six-before.log:19: trailing whitespace.
++    output, occurrences = _substitute(text, ordered, groups)
+
+
+results/fix3-recheck/six-before.log:20: trailing whitespace.
++                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+results/fix3-recheck/six-before.log:21: trailing whitespace.
++src\huisclos\pseudonymize\tokens.py:164: in _substitute
+
+
+results/fix3-recheck/six-before.log:22: trailing whitespace.
++    tables = _token_tables(text, groups)
+
+
+results/fix3-recheck/six-before.log:23: trailing whitespace.
++             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+results/fix3-recheck/six-before.log:24: trailing whitespace.
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+results/fix3-recheck/six-before.log:25: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:26: trailing whitespace.
++text = 'M. Lucien FALVERAC conteste. M. FALVERAC signe. Pièce : conclusions_FALVERAC.pdf.'
+
+
+results/fix3-recheck/six-before.log:27: trailing whitespace.
++groups = (EntityGroup(group_id=1, entity_type=<EntityType.PERSON: 'PERSON'>, canonical='Lucien FALVERAC', variants=('FALVERAC',...N'>, canonical='FALVERAC', variants=('FALVERAC',), token='[PERSONNE_2]', mention_spans=((68, 76),), ambiguous_with=()))
+
+
+results/fix3-recheck/six-before.log:28: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:29: trailing whitespace.
++    def _token_tables(text: str, groups: Sequence[EntityGroup]) -> dict[str, dict[str, str]]:
+
+
+results/fix3-recheck/six-before.log:30: trailing whitespace.
++        """Table (type, texte exact de la mention) vers jeton, pour l'opérateur de presidio.
+
+
+results/fix3-recheck/six-before.log:31: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:32: trailing whitespace.
++        L'opérateur ne reçoit que le texte de la mention ; la table suffit car deux mentions
+
+
+results/fix3-recheck/six-before.log:33: trailing whitespace.
++        de même type et de même texte ont la même clé, donc le même groupe.
+
+
+results/fix3-recheck/six-before.log:34: trailing whitespace.
++        """
+
+
+results/fix3-recheck/six-before.log:35: trailing whitespace.
++        tables: dict[str, dict[str, str]] = {}
+
+
+results/fix3-recheck/six-before.log:36: trailing whitespace.
++        for group in groups:
+
+
+results/fix3-recheck/six-before.log:37: trailing whitespace.
++            table = tables.setdefault(group.entity_type.value, {})
+
+
+results/fix3-recheck/six-before.log:38: trailing whitespace.
++            for start, end in group.mention_spans:
+
+
+results/fix3-recheck/six-before.log:39: trailing whitespace.
++                mention = text[start:end]
+
+
+results/fix3-recheck/six-before.log:40: trailing whitespace.
++                if table.setdefault(mention, group.token) != group.token:
+
+
+results/fix3-recheck/six-before.log:41: trailing whitespace.
++>                   raise RuntimeError(f"mention rattachée à deux groupes : {mention!r}")
+
+
+results/fix3-recheck/six-before.log:42: trailing whitespace.
++E                   RuntimeError: mention rattachée à deux groupes : 'FALVERAC'
+
+
+results/fix3-recheck/six-before.log:43: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:44: trailing whitespace.
++src\huisclos\pseudonymize\tokens.py:140: RuntimeError
+
+
+results/fix3-recheck/six-before.log:45: trailing whitespace.
++__________ test_same_value_in_text_and_file_name_is_pseudonymized[1] __________
+
+
+results/fix3-recheck/six-before.log:46: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:47: trailing whitespace.
++case = 1
+
+
+results/fix3-recheck/six-before.log:48: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:49: trailing whitespace.
++    @pytest.mark.parametrize("case", range(3))
+
+
+results/fix3-recheck/six-before.log:50: trailing whitespace.
++    def test_same_value_in_text_and_file_name_is_pseudonymized(case: int) -> None:
+
+
+results/fix3-recheck/six-before.log:51: trailing whitespace.
++        """Chaque mention est remplacée et la restauration exacte rend le texte d'origine."""
+
+
+results/fix3-recheck/six-before.log:52: trailing whitespace.
++        text, detections = file_name_cases()[case]
+
+
+results/fix3-recheck/six-before.log:53: trailing whitespace.
++>       result = pseudonymize(text, detections)
+
+
+results/fix3-recheck/six-before.log:54: trailing whitespace.
++                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+results/fix3-recheck/six-before.log:55: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:56: trailing whitespace.
++tests\test_fix2.py:73:
+
+
+results/fix3-recheck/six-before.log:57: trailing whitespace.
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+results/fix3-recheck/six-before.log:58: trailing whitespace.
++src\huisclos\pseudonymize\tokens.py:233: in pseudonymize
+
+
+results/fix3-recheck/six-before.log:59: trailing whitespace.
++    output, occurrences = _substitute(text, ordered, groups)
+
+
+results/fix3-recheck/six-before.log:60: trailing whitespace.
++                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+results/fix3-recheck/six-before.log:61: trailing whitespace.
++src\huisclos\pseudonymize\tokens.py:164: in _substitute
+
+
+results/fix3-recheck/six-before.log:62: trailing whitespace.
++    tables = _token_tables(text, groups)
+
+
+results/fix3-recheck/six-before.log:63: trailing whitespace.
++             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+results/fix3-recheck/six-before.log:64: trailing whitespace.
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+results/fix3-recheck/six-before.log:65: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:66: trailing whitespace.
++text = 'Mr Nolan FALVERICK disputes. Mr FALVERICK signs. Exhibit: statement_FALVERICK.pdf.'
+
+
+results/fix3-recheck/six-before.log:67: trailing whitespace.
++groups = (EntityGroup(group_id=1, entity_type=<EntityType.PERSON: 'PERSON'>, canonical='Nolan FALVERICK', variants=('FALVERICK'...>, canonical='FALVERICK', variants=('FALVERICK',), token='[PERSONNE_2]', mention_spans=((68, 77),), ambiguous_with=()))
+
+
+results/fix3-recheck/six-before.log:68: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:69: trailing whitespace.
++    def _token_tables(text: str, groups: Sequence[EntityGroup]) -> dict[str, dict[str, str]]:
+
+
+results/fix3-recheck/six-before.log:70: trailing whitespace.
++        """Table (type, texte exact de la mention) vers jeton, pour l'opérateur de presidio.
+
+
+results/fix3-recheck/six-before.log:71: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:72: trailing whitespace.
++        L'opérateur ne reçoit que le texte de la mention ; la table suffit car deux mentions
+
+
+results/fix3-recheck/six-before.log:73: trailing whitespace.
++        de même type et de même texte ont la même clé, donc le même groupe.
+
+
+results/fix3-recheck/six-before.log:74: trailing whitespace.
++        """
+
+
+results/fix3-recheck/six-before.log:75: trailing whitespace.
++        tables: dict[str, dict[str, str]] = {}
+
+
+results/fix3-recheck/six-before.log:76: trailing whitespace.
++        for group in groups:
+
+
+results/fix3-recheck/six-before.log:77: trailing whitespace.
++            table = tables.setdefault(group.entity_type.value, {})
+
+
+results/fix3-recheck/six-before.log:78: trailing whitespace.
++            for start, end in group.mention_spans:
+
+
+results/fix3-recheck/six-before.log:79: trailing whitespace.
++                mention = text[start:end]
+
+
+results/fix3-recheck/six-before.log:80: trailing whitespace.
++                if table.setdefault(mention, group.token) != group.token:
+
+
+results/fix3-recheck/six-before.log:81: trailing whitespace.
++>                   raise RuntimeError(f"mention rattachée à deux groupes : {mention!r}")
+
+
+results/fix3-recheck/six-before.log:82: trailing whitespace.
++E                   RuntimeError: mention rattachée à deux groupes : 'FALVERICK'
+
+
+results/fix3-recheck/six-before.log:83: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:84: trailing whitespace.
++src\huisclos\pseudonymize\tokens.py:140: RuntimeError
+
+
+results/fix3-recheck/six-before.log:85: trailing whitespace.
++__________ test_same_value_in_text_and_file_name_is_pseudonymized[2] __________
+
+
+results/fix3-recheck/six-before.log:86: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:87: trailing whitespace.
++case = 2
+
+
+results/fix3-recheck/six-before.log:88: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:89: trailing whitespace.
++    @pytest.mark.parametrize("case", range(3))
+
+
+results/fix3-recheck/six-before.log:90: trailing whitespace.
++    def test_same_value_in_text_and_file_name_is_pseudonymized(case: int) -> None:
+
+
+results/fix3-recheck/six-before.log:91: trailing whitespace.
++        """Chaque mention est remplacée et la restauration exacte rend le texte d'origine."""
+
+
+results/fix3-recheck/six-before.log:92: trailing whitespace.
++        text, detections = file_name_cases()[case]
+
+
+results/fix3-recheck/six-before.log:93: trailing whitespace.
++>       result = pseudonymize(text, detections)
+
+
+results/fix3-recheck/six-before.log:94: trailing whitespace.
++                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+results/fix3-recheck/six-before.log:95: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:96: trailing whitespace.
++tests\test_fix2.py:73:
+
+
+results/fix3-recheck/six-before.log:97: trailing whitespace.
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+results/fix3-recheck/six-before.log:98: trailing whitespace.
++src\huisclos\pseudonymize\tokens.py:233: in pseudonymize
+
+
+results/fix3-recheck/six-before.log:99: trailing whitespace.
++    output, occurrences = _substitute(text, ordered, groups)
+
+
+results/fix3-recheck/six-before.log:100: trailing whitespace.
++                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+results/fix3-recheck/six-before.log:101: trailing whitespace.
++src\huisclos\pseudonymize\tokens.py:164: in _substitute
+
+
+results/fix3-recheck/six-before.log:102: trailing whitespace.
++    tables = _token_tables(text, groups)
+
+
+results/fix3-recheck/six-before.log:103: trailing whitespace.
++             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+results/fix3-recheck/six-before.log:104: trailing whitespace.
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+results/fix3-recheck/six-before.log:105: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:106: trailing whitespace.
++text = 'La société Brivane Logistique SAS (ci-après « BL ») conteste. Pièce : contrat_BL_2024.pdf.'
+
+
+results/fix3-recheck/six-before.log:107: trailing whitespace.
++groups = (EntityGroup(group_id=1, entity_type=<EntityType.ORGANIZATION: 'ORGANIZATION'>, canonical='Brivane Logistique SAS', va... 'ORGANIZATION'>, canonical='BL', variants=('BL',), token='[SOCIETE_B]', mention_spans=((78, 80),), ambiguous_with=()))
+
+
+results/fix3-recheck/six-before.log:108: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:109: trailing whitespace.
++    def _token_tables(text: str, groups: Sequence[EntityGroup]) -> dict[str, dict[str, str]]:
+
+
+results/fix3-recheck/six-before.log:110: trailing whitespace.
++        """Table (type, texte exact de la mention) vers jeton, pour l'opérateur de presidio.
+
+
+results/fix3-recheck/six-before.log:111: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:112: trailing whitespace.
++        L'opérateur ne reçoit que le texte de la mention ; la table suffit car deux mentions
+
+
+results/fix3-recheck/six-before.log:113: trailing whitespace.
++        de même type et de même texte ont la même clé, donc le même groupe.
+
+
+results/fix3-recheck/six-before.log:114: trailing whitespace.
++        """
+
+
+results/fix3-recheck/six-before.log:115: trailing whitespace.
++        tables: dict[str, dict[str, str]] = {}
+
+
+results/fix3-recheck/six-before.log:116: trailing whitespace.
++        for group in groups:
+
+
+results/fix3-recheck/six-before.log:117: trailing whitespace.
++            table = tables.setdefault(group.entity_type.value, {})
+
+
+results/fix3-recheck/six-before.log:118: trailing whitespace.
++            for start, end in group.mention_spans:
+
+
+results/fix3-recheck/six-before.log:119: trailing whitespace.
++                mention = text[start:end]
+
+
+results/fix3-recheck/six-before.log:120: trailing whitespace.
++                if table.setdefault(mention, group.token) != group.token:
+
+
+results/fix3-recheck/six-before.log:121: trailing whitespace.
++>                   raise RuntimeError(f"mention rattachée à deux groupes : {mention!r}")
+
+
+results/fix3-recheck/six-before.log:122: trailing whitespace.
++E                   RuntimeError: mention rattachée à deux groupes : 'BL'
+
+
+results/fix3-recheck/six-before.log:123: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:124: trailing whitespace.
++src\huisclos\pseudonymize\tokens.py:140: RuntimeError
+
+
+results/fix3-recheck/six-before.log:125: trailing whitespace.
++__________ test_review_pseudonymizes_a_name_repeated_in_a_file_name ___________
+
+
+results/fix3-recheck/six-before.log:126: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:127: trailing whitespace.
++monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000154EDC19BB0>
+
+
+results/fix3-recheck/six-before.log:128: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:129: trailing whitespace.
++    def test_review_pseudonymizes_a_name_repeated_in_a_file_name(
+
+
+results/fix3-recheck/six-before.log:130: trailing whitespace.
++        monkeypatch: pytest.MonkeyPatch,
+
+
+results/fix3-recheck/six-before.log:131: trailing whitespace.
++    ) -> None:
+
+
+results/fix3-recheck/six-before.log:132: trailing whitespace.
++        """Le parcours Standard FR atteint Restore avec un nom repris dans un nom de fichier."""
+
+
+results/fix3-recheck/six-before.log:133: trailing whitespace.
++        from streamlit.testing.v1 import AppTest
+
+
+results/fix3-recheck/six-before.log:134: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:135: trailing whitespace.
++        from app import i18n
+
+
+results/fix3-recheck/six-before.log:136: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:137: trailing whitespace.
++        monkeypatch.setenv(i18n.STRICT_ENV, "1")
+
+
+results/fix3-recheck/six-before.log:138: trailing whitespace.
++        monkeypatch.delenv("HUISCLOS_PUBLIC_DEMO", raising=False)
+
+
+results/fix3-recheck/six-before.log:139: trailing whitespace.
++        text = file_name_cases()[0][0]
+
+
+results/fix3-recheck/six-before.log:140: trailing whitespace.
++        app = AppTest.from_file(ROOT / "streamlit_app.py", default_timeout=120).run()
+
+
+results/fix3-recheck/six-before.log:141: trailing whitespace.
++        app.radio(key="document_language").set_value("fr").run()
+
+
+results/fix3-recheck/six-before.log:142: trailing whitespace.
++        app.text_area(key="paste_widget").set_value(text).run()
+
+
+results/fix3-recheck/six-before.log:143: trailing whitespace.
++        app.button(key="detect").click().run()
+
+
+results/fix3-recheck/six-before.log:144: trailing whitespace.
++        assert app.session_state["step"] == "review"
+
+
+results/fix3-recheck/six-before.log:145: trailing whitespace.
++        app.button(key="review_pseudonymize").click().run()
+
+
+results/fix3-recheck/six-before.log:146: trailing whitespace.
++        assert not app.exception
+
+
+results/fix3-recheck/six-before.log:147: trailing whitespace.
++>       assert app.session_state["step"] == "restore"
+
+
+results/fix3-recheck/six-before.log:148: trailing whitespace.
++E       AssertionError: assert 'review' == 'restore'
+
+
+results/fix3-recheck/six-before.log:149: trailing whitespace.
++E
+
+
+results/fix3-recheck/six-before.log:150: trailing whitespace.
++E         - restore
+
+
+results/fix3-recheck/six-before.log:151: trailing whitespace.
++E         + review
+
+
+results/fix3-recheck/six-before.log:152: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:153: trailing whitespace.
++tests\test_fix2.py:219: AssertionError
+
+
+results/fix3-recheck/six-before.log:154: trailing whitespace.
++---------------------------- Captured stderr call -----------------------------
+
+
+results/fix3-recheck/six-before.log:155: trailing whitespace.
++2026-10-28 19:37:36.598 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+
+
+results/fix3-recheck/six-before.log:156: trailing whitespace.
++2026-10-28 19:37:42.332 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+
+
+results/fix3-recheck/six-before.log:157: trailing whitespace.
++2026-10-28 19:37:42.332 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+
+
+results/fix3-recheck/six-before.log:158: trailing whitespace.
++________ test_same_text_in_two_groups_takes_the_token_of_its_position _________
+
+
+results/fix3-recheck/six-before.log:159: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:160: trailing whitespace.
++    def test_same_text_in_two_groups_takes_the_token_of_its_position() -> None:
+
+
+results/fix3-recheck/six-before.log:161: trailing whitespace.
++        # D-FIX3-1 : le nom de fichier forme son propre groupe (D-AF-A2-7) ; le jeton est
+
+
+results/fix3-recheck/six-before.log:162: trailing whitespace.
++        # retrouvé par la position de la mention, pas par son texte.
+
+
+results/fix3-recheck/six-before.log:163: trailing whitespace.
++        # Une mention manuelle est validée et rejoindrait le groupe courant : source repérée.
+
+
+results/fix3-recheck/six-before.log:164: trailing whitespace.
++        text = "M. DUPONT signe la pièce conclusions_DUPONT.pdf, puis M. DUPONT relit."
+
+
+results/fix3-recheck/six-before.log:165: trailing whitespace.
++        detections = mentions(text, ("DUPONT", P), ("DUPONT", P), ("DUPONT", P))
+
+
+results/fix3-recheck/six-before.log:166: trailing whitespace.
++        detections[1] = replace(detections[1], source=Source.PROPAGATION)
+
+
+results/fix3-recheck/six-before.log:167: trailing whitespace.
++>       result = pseudonymize(text, detections, created_at=FIXED_TIME)
+
+
+results/fix3-recheck/six-before.log:168: trailing whitespace.
++                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+results/fix3-recheck/six-before.log:169: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:170: trailing whitespace.
++tests\test_tokens.py:159:
+
+
+results/fix3-recheck/six-before.log:171: trailing whitespace.
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+results/fix3-recheck/six-before.log:172: trailing whitespace.
++src\huisclos\pseudonymize\tokens.py:233: in pseudonymize
+
+
+results/fix3-recheck/six-before.log:173: trailing whitespace.
++    output, occurrences = _substitute(text, ordered, groups)
+
+
+results/fix3-recheck/six-before.log:174: trailing whitespace.
++                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+results/fix3-recheck/six-before.log:175: trailing whitespace.
++src\huisclos\pseudonymize\tokens.py:164: in _substitute
+
+
+results/fix3-recheck/six-before.log:176: trailing whitespace.
++    tables = _token_tables(text, groups)
+
+
+results/fix3-recheck/six-before.log:177: trailing whitespace.
++             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+results/fix3-recheck/six-before.log:178: trailing whitespace.
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+results/fix3-recheck/six-before.log:179: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:180: trailing whitespace.
++text = 'M. DUPONT signe la pièce conclusions_DUPONT.pdf, puis M. DUPONT relit.'
+
+
+results/fix3-recheck/six-before.log:181: trailing whitespace.
++groups = (EntityGroup(group_id=1, entity_type=<EntityType.PERSON: 'PERSON'>, canonical='DUPONT', variants=('DUPONT',), token='[...ERSON'>, canonical='DUPONT', variants=('DUPONT',), token='[PERSONNE_2]', mention_spans=((37, 43),), ambiguous_with=()))
+
+
+results/fix3-recheck/six-before.log:182: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:183: trailing whitespace.
++    def _token_tables(text: str, groups: Sequence[EntityGroup]) -> dict[str, dict[str, str]]:
+
+
+results/fix3-recheck/six-before.log:184: trailing whitespace.
++        """Table (type, texte exact de la mention) vers jeton, pour l'opérateur de presidio.
+
+
+results/fix3-recheck/six-before.log:185: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:186: trailing whitespace.
++        L'opérateur ne reçoit que le texte de la mention ; la table suffit car deux mentions
+
+
+results/fix3-recheck/six-before.log:187: trailing whitespace.
++        de même type et de même texte ont la même clé, donc le même groupe.
+
+
+results/fix3-recheck/six-before.log:188: trailing whitespace.
++        """
+
+
+results/fix3-recheck/six-before.log:189: trailing whitespace.
++        tables: dict[str, dict[str, str]] = {}
+
+
+results/fix3-recheck/six-before.log:190: trailing whitespace.
++        for group in groups:
+
+
+results/fix3-recheck/six-before.log:191: trailing whitespace.
++            table = tables.setdefault(group.entity_type.value, {})
+
+
+results/fix3-recheck/six-before.log:192: trailing whitespace.
++            for start, end in group.mention_spans:
+
+
+results/fix3-recheck/six-before.log:193: trailing whitespace.
++                mention = text[start:end]
+
+
+results/fix3-recheck/six-before.log:194: trailing whitespace.
++                if table.setdefault(mention, group.token) != group.token:
+
+
+results/fix3-recheck/six-before.log:195: trailing whitespace.
++>                   raise RuntimeError(f"mention rattachée à deux groupes : {mention!r}")
+
+
+results/fix3-recheck/six-before.log:196: trailing whitespace.
++E                   RuntimeError: mention rattachée à deux groupes : 'DUPONT'
+
+
+results/fix3-recheck/six-before.log:197: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:198: trailing whitespace.
++src\huisclos\pseudonymize\tokens.py:140: RuntimeError
+
+
+results/fix3-recheck/six-before.log:199: trailing whitespace.
++_ test_name_also_in_a_file_name_loses_token_continuity_when_the_surname_returns _
+
+
+results/fix3-recheck/six-before.log:200: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:201: trailing whitespace.
++    def test_name_also_in_a_file_name_loses_token_continuity_when_the_surname_returns() -> None:
+
+
+results/fix3-recheck/six-before.log:202: trailing whitespace.
++        # D-FIX3-2 : le nom de fichier garde son jeton (D-AF-A2-7), donc la table porte deux
+
+
+results/fix3-recheck/six-before.log:203: trailing whitespace.
++        # entrées pour "FALVERAC". Le nom seul a alors deux candidats et reçoit un jeton neuf :
+
+
+results/fix3-recheck/six-before.log:204: trailing whitespace.
++        # continuité perdue, mais ni fuite ni confusion entre deux personnes.
+
+
+results/fix3-recheck/six-before.log:205: trailing whitespace.
++        first = "M. Lucien FALVERAC conteste. M. FALVERAC signe. Pièce : conclusions_FALVERAC.pdf."
+
+
+results/fix3-recheck/six-before.log:206: trailing whitespace.
++        detections = mentions(first, ("Lucien FALVERAC", P), ("FALVERAC", P), ("FALVERAC", P))
+
+
+results/fix3-recheck/six-before.log:207: trailing whitespace.
++        detections[2] = replace(detections[2], source=Source.PROPAGATION)
+
+
+results/fix3-recheck/six-before.log:208: trailing whitespace.
++>       table = pseudonymize(first, detections, created_at=FIXED_TIME).mapping
+
+
+results/fix3-recheck/six-before.log:209: trailing whitespace.
++                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+results/fix3-recheck/six-before.log:210: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:211: trailing whitespace.
++tests\test_case_memory.py:170:
+
+
+results/fix3-recheck/six-before.log:212: trailing whitespace.
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+results/fix3-recheck/six-before.log:213: trailing whitespace.
++src\huisclos\pseudonymize\tokens.py:233: in pseudonymize
+
+
+results/fix3-recheck/six-before.log:214: trailing whitespace.
++    output, occurrences = _substitute(text, ordered, groups)
+
+
+results/fix3-recheck/six-before.log:215: trailing whitespace.
++                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+results/fix3-recheck/six-before.log:216: trailing whitespace.
++src\huisclos\pseudonymize\tokens.py:164: in _substitute
+
+
+results/fix3-recheck/six-before.log:217: trailing whitespace.
++    tables = _token_tables(text, groups)
+
+
+results/fix3-recheck/six-before.log:218: trailing whitespace.
++             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+results/fix3-recheck/six-before.log:219: trailing whitespace.
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+
+results/fix3-recheck/six-before.log:220: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:221: trailing whitespace.
++text = 'M. Lucien FALVERAC conteste. M. FALVERAC signe. Pièce : conclusions_FALVERAC.pdf.'
+
+
+results/fix3-recheck/six-before.log:222: trailing whitespace.
++groups = (EntityGroup(group_id=1, entity_type=<EntityType.PERSON: 'PERSON'>, canonical='Lucien FALVERAC', variants=('FALVERAC',...N'>, canonical='FALVERAC', variants=('FALVERAC',), token='[PERSONNE_2]', mention_spans=((68, 76),), ambiguous_with=()))
+
+
+results/fix3-recheck/six-before.log:223: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:224: trailing whitespace.
++    def _token_tables(text: str, groups: Sequence[EntityGroup]) -> dict[str, dict[str, str]]:
+
+
+results/fix3-recheck/six-before.log:225: trailing whitespace.
++        """Table (type, texte exact de la mention) vers jeton, pour l'opérateur de presidio.
+
+
+results/fix3-recheck/six-before.log:226: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:227: trailing whitespace.
++        L'opérateur ne reçoit que le texte de la mention ; la table suffit car deux mentions
+
+
+results/fix3-recheck/six-before.log:228: trailing whitespace.
++        de même type et de même texte ont la même clé, donc le même groupe.
+
+
+results/fix3-recheck/six-before.log:229: trailing whitespace.
++        """
+
+
+results/fix3-recheck/six-before.log:230: trailing whitespace.
++        tables: dict[str, dict[str, str]] = {}
+
+
+results/fix3-recheck/six-before.log:231: trailing whitespace.
++        for group in groups:
+
+
+results/fix3-recheck/six-before.log:232: trailing whitespace.
++            table = tables.setdefault(group.entity_type.value, {})
+
+
+results/fix3-recheck/six-before.log:233: trailing whitespace.
++            for start, end in group.mention_spans:
+
+
+results/fix3-recheck/six-before.log:234: trailing whitespace.
++                mention = text[start:end]
+
+
+results/fix3-recheck/six-before.log:235: trailing whitespace.
++                if table.setdefault(mention, group.token) != group.token:
+
+
+results/fix3-recheck/six-before.log:236: trailing whitespace.
++>                   raise RuntimeError(f"mention rattachée à deux groupes : {mention!r}")
+
+
+results/fix3-recheck/six-before.log:237: trailing whitespace.
++E                   RuntimeError: mention rattachée à deux groupes : 'FALVERAC'
+
+
+results/fix3-recheck/six-before.log:238: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:239: trailing whitespace.
++src\huisclos\pseudonymize\tokens.py:140: RuntimeError
+
+
+results/fix3-recheck/six-before.log:240: trailing whitespace.
++============================== warnings summary ===============================
+
+
+results/fix3-recheck/six-before.log:241: trailing whitespace.
++..\..\..\..\..\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491
+
+
+results/fix3-recheck/six-before.log:242: trailing whitespace.
++  C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+
+
+results/fix3-recheck/six-before.log:243: trailing whitespace.
++    warnings.warn(
+
+
+results/fix3-recheck/six-before.log:244: trailing whitespace.
++
+
+
+results/fix3-recheck/six-before.log:245: trailing whitespace.
++-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+
+results/fix3-recheck/six-before.log:246: trailing whitespace.
++=========================== short test summary info ===========================
+
+
+results/fix3-recheck/six-before.log:247: trailing whitespace.
++FAILED tests/test_fix2.py::test_same_value_in_text_and_file_name_is_pseudonymized[0]
+
+
+results/fix3-recheck/six-before.log:248: trailing whitespace.
++FAILED tests/test_fix2.py::test_same_value_in_text_and_file_name_is_pseudonymized[1]
+
+
+results/fix3-recheck/six-before.log:249: trailing whitespace.
++FAILED tests/test_fix2.py::test_same_value_in_text_and_file_name_is_pseudonymized[2]
+
+
+results/fix3-recheck/six-before.log:250: trailing whitespace.
++FAILED tests/test_fix2.py::test_review_pseudonymizes_a_name_repeated_in_a_file_name
+
+
+results/fix3-recheck/six-before.log:251: trailing whitespace.
++FAILED tests/test_tokens.py::test_same_text_in_two_groups_takes_the_token_of_its_position
+
+
+results/fix3-recheck/six-before.log:252: trailing whitespace.
++FAILED tests/test_case_memory.py::test_name_also_in_a_file_name_loses_token_continuity_when_the_surname_returns
+
+
+results/fix3-recheck/six-before.log:253: trailing whitespace.
++6 failed, 1 warning in 16.16s
+
+
+results/fix3-recheck/style.log:1: trailing whitespace.
++Command: C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Scripts\python.exe scripts/check_style.py
+
+results/fix3-recheck/style.log:2: trailing whitespace.
++Exit: 0
+
+results/fix3-recheck/style.log:3: trailing whitespace.
++src/huisclos/detection/merge.py:1:1: avertissement C7 365 lignes, au-delà de 300
+
+
+results/fix3-recheck/style.log:4: trailing whitespace.
++src/huisclos/detection/organization_bounds.py:1:1: avertissement C7 343 lignes, au-delà de 300
+
+
+results/fix3-recheck/style.log:5: trailing whitespace.
++src/huisclos/detection/patterns.py:1:1: avertissement C7 393 lignes, au-delà de 300
+
+
+results/fix3-recheck/style.log:6: trailing whitespace.
++src/huisclos/detection/person_heuristics.py:1:1: avertissement C7 304 lignes, au-delà de 300
+
+
+results/fix3-recheck/style.log:7: trailing whitespace.
++src/huisclos/detection/pipeline.py:1:1: avertissement C7 344 lignes, au-delà de 300
+
+
+results/fix3-recheck/style.log:8: trailing whitespace.
++src/huisclos/detection/propagation.py:1:1: avertissement C7 343 lignes, au-delà de 300
+
+
+results/fix3-recheck/style.log:9: trailing whitespace.
++src/huisclos/evaluation/coverage_reports.py:1:1: avertissement C7 366 lignes, au-delà de 300
+
+
+results/fix3-recheck/style.log:10: trailing whitespace.
++src/huisclos/evaluation/reports.py:1:1: avertissement C7 359 lignes, au-delà de 300
+
+
+results/fix3-recheck/style.log:11: trailing whitespace.
++src/huisclos/evaluation/run.py:1:1: avertissement C7 334 lignes, au-delà de 300
+
+
+results/fix3-recheck/style.log:12: trailing whitespace.
++src/huisclos/pseudonymize/grouping.py:1:1: avertissement C7 400 lignes, au-delà de 300
+
+
+results/fix3-recheck/style.log:13: trailing whitespace.
++src/huisclos/pseudonymize/outbound_check.py:1:1: avertissement C7 335 lignes, au-delà de 300
+
+
+results/fix3-recheck/style.log:14: trailing whitespace.
++app/i18n/workflow_import.py:1:1: avertissement C7 351 lignes, au-delà de 300
+
+
+results/fix3-recheck/style.log:15: trailing whitespace.
++app/pages/evaluation.py:1:1: avertissement C7 398 lignes, au-delà de 300
+
+
+results/fix3-recheck/style.log:16: trailing whitespace.
++app/steps/restore_check.py:1:1: avertissement C7 336 lignes, au-delà de 300
+
+
+results/fix3-recheck/style.log:17: trailing whitespace.
++app/steps/restore_step.py:1:1: avertissement C7 377 lignes, au-delà de 300
+
+
+results/fix3-recheck/style.log:18: trailing whitespace.
++Total : 0 erreur(s), 15 avertissement(s)
+
+
+results/fix3-recheck/ui.log:1: trailing whitespace.
++Command: C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Scripts\python.exe C:\Users\nasci\Documents\Coding Project\Assignment\huisclos-b\results\fix3-recheck\recheck_fix3.py ui
+
+results/fix3-recheck/ui.log:2: trailing whitespace.
++Exit: 1
+
+results/fix3-recheck/ui.log:3: trailing whitespace.
++{"section": "ui", "rows": 6, "output": "ui.json"}
+
+
+results/fix3-recheck/ui.log:4: trailing whitespace.
++C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+
+
+results/fix3-recheck/ui.log:5: trailing whitespace.
++  warnings.warn(
+
+
+results/fix3-recheck/ui.log:6: trailing whitespace.
++2026-10-28 19:51:34.799 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+
+
+results/fix3-recheck/worker.log:1: trailing whitespace.
++Command: C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Scripts\python.exe C:\Users\nasci\Documents\Coding Project\Assignment\huisclos-b\results\fix3-recheck\recheck_fix3.py worker
+
+results/fix3-recheck/worker.log:2: trailing whitespace.
++Exit: 0
+
+results/fix3-recheck/worker.log:3: trailing whitespace.
++{"section": "worker", "rows": 2, "output": "worker.json"}
+
+
+results/fix3-recheck/worker.log:4: trailing whitespace.
++C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+
+
+results/fix3-recheck/worker.log:5: trailing whitespace.
++  warnings.warn(

@@ -1,0 +1,22 @@
+{
+  "missing": {
+    "runtime_error": true,
+    "merge_disabled": true,
+    "site": {
+      "path": "src/huisclos/pseudonymize/tokens.py",
+      "function": "_substitute",
+      "line": 171
+    },
+    "current_function_located": true
+  },
+  "wrong-token": {
+    "runtime_error": true,
+    "merge_disabled": true,
+    "site": {
+      "path": "src/huisclos/pseudonymize/tokens.py",
+      "function": "_substitute",
+      "line": 176
+    },
+    "current_function_located": true
+  }
+}
