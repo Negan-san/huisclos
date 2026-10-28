@@ -29,6 +29,7 @@ from app.state import (
 )
 from app.ui_common import entity_label, is_public_demo
 from huisclos.config import (
+    PROFILE_ENHANCED,
     PROFILE_STANDARD,
     PROFILES,
     DetectionConfig,
@@ -178,7 +179,7 @@ def _render_document_settings() -> None:
         st.warning(t(f"sidebar.profile.notice.{reason}"))
     elif is_public_demo():
         st.caption(t("sidebar.profile.demo"))
-    elif document_language() != "fr":
+    elif selected_profile() == PROFILE_ENHANCED:
         st.caption(t("sidebar.profile.french_only"))
 
 

@@ -39,12 +39,15 @@ class Mention:
     margin: int
 
 
-def capacity(tokenizer: Any) -> int:
+def capacity(tokenizer: Any, max_tokens: int | None = None) -> int:
     """Nombre de jetons de texte qu'une fenêtre peut contenir, jetons spéciaux déduits.
 
     Lève ValueError si le tokenizer ne laisse aucune place au texte.
     """
-    limit = min(MODEL_LIMIT, tokenizer.model_max_length) - tokenizer.num_special_tokens_to_add()
+    limit = min(MODEL_LIMIT, tokenizer.model_max_length)
+    if max_tokens is not None:
+        limit = min(limit, max_tokens)
+    limit -= tokenizer.num_special_tokens_to_add()
     if limit < 1:
         raise ValueError("La limite du tokenizer ne laisse aucune place au texte.")
     return limit
@@ -68,19 +71,22 @@ def _token_starts(text: str, tokenizer: Any) -> list[int]:
     return [int(start) for start, _ in encoded["offset_mapping"]]
 
 
-def overlapping_windows(text: str, tokenizer: Any, overlap: int = OVERLAP_TOKENS) -> list[Window]:
+def overlapping_windows(
+    text: str, tokenizer: Any, overlap: int = OVERLAP_TOKENS, *, max_tokens: int | None = None
+) -> list[Window]:
     """Découpe text en fenêtres de capacité respectée qui se recouvrent de overlap jetons.
 
     Les fenêtres sont contiguës ou recouvrantes, de 0 à len(text) : tout caractère est
     analysé. Chaque fenêtre est retokenisée seule ; si un découpage différent à sa frontière
     dépasse la capacité, elle est réduite jeton par jeton, sans relire le reste du texte.
-    Le recouvrement est plafonné à la moitié de la capacité pour garantir la progression.
+    max_tokens borne la fenêtre sans modifier le tokenizer partagé. Le recouvrement est
+    plafonné à la moitié de la capacité pour garantir la progression.
     Exemple : 1 000 jetons, capacité 510, recouvrement 64 : fenêtres de jetons [0, 510),
     [446, 956) et [892, 1000).
     """
     if not text:
         return []
-    size = capacity(tokenizer)
+    size = capacity(tokenizer, max_tokens)
     overlap = max(0, min(overlap, size // 2))
     starts = _token_starts(text, tokenizer)
     count = len(starts)

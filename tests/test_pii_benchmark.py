@@ -29,6 +29,8 @@ class CharacterTokenizer:
 
     def __call__(self, text: str, **kwargs: Any) -> dict[str, Any]:
         """Renvoie des positions exactes sans chercher les mentions dans le texte."""
+        if isinstance(text, list):
+            return {"input_ids": [list(range(sum(len(word) for word in row))) for row in text]}
         return {
             "input_ids": list(range(len(text))),
             "offset_mapping": [(n, n + 1) for n in range(len(text))],
@@ -41,7 +43,12 @@ class FakeModel:
     def __init__(self) -> None:
         """Expose le contrat minimal du modèle installé, sans dépendance neuronale."""
         self.config = SimpleNamespace(max_len=384)
-        self.data_processor = SimpleNamespace(words_splitter=lambda text: text.split())
+        self.data_processor = SimpleNamespace(
+            words_splitter=lambda text: [
+                (m.group(), m.start(), m.end()) for m in re.finditer(r"\S+", text)
+            ],
+            prepare_inputs=lambda texts, labels: (texts, [0]),
+        )
         self.calls: list[dict[str, Any]] = []
 
     def __call__(self, text: str) -> list[dict[str, Any]]:

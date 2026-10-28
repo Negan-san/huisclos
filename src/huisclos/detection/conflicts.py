@@ -55,11 +55,33 @@ def with_span(
     return replace(detection, start=start, end=end, text=text[start:end], **changes)
 
 
-def strip_borders(text: str, start: int, end: int) -> tuple[int, int]:
-    """Retire espaces et ponctuation aux deux bords de [start, end)."""
-    while start < end and (text[start].isspace() or text[start] in BORDER_PUNCTUATION):
+def strip_borders(
+    text: str, start: int, end: int, *, preserve_parentheses: bool = False
+) -> tuple[int, int]:
+    """Retire les bordures de [start, end) et retourne ses nouvelles positions.
+
+    preserve_parentheses garde les paires internes d'un téléphone : sa parenthèse
+    d'indicatif fait partie de la valeur. Les parenthèses sans partenaire sont retirées.
+    """
+    paired: set[int] = set()
+    openings: list[int] = []
+    if preserve_parentheses:
+        for index in range(start, end):
+            if text[index] == "(":
+                openings.append(index)
+            elif text[index] == ")" and openings:
+                paired.update((openings.pop(), index))
+    while (
+        start < end
+        and start not in paired
+        and (text[start].isspace() or text[start] in BORDER_PUNCTUATION)
+    ):
         start += 1
-    while end > start and (text[end - 1].isspace() or text[end - 1] in BORDER_PUNCTUATION):
+    while (
+        end > start
+        and end - 1 not in paired
+        and (text[end - 1].isspace() or text[end - 1] in BORDER_PUNCTUATION)
+    ):
         end -= 1
     return start, end
 
@@ -82,7 +104,12 @@ def free_parts(
         cursor = max(cursor, blocker_end)
     if cursor < detection.end:
         parts.append((cursor, min(detection.end, len(text))))
-    trimmed = [strip_borders(text, start, end) for start, end in parts]
+    trimmed = [
+        strip_borders(
+            text, start, end, preserve_parentheses=detection.entity_type == EntityType.PHONE
+        )
+        for start, end in parts
+    ]
     return [
         with_span(text, detection, start, end)
         for start, end in trimmed

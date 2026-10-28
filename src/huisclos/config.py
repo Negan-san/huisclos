@@ -59,6 +59,8 @@ class DetectionConfig:
     threshold: float = field(default_factory=default_threshold)
     spacy_model: str = "fr_core_news_md"
     document_language: str = "fr"
+    use_gliner: bool = False
+    gliner_threshold: float = 0.70
 
     def __post_init__(self) -> None:
         """Refuse un seuil, une langue ou un modèle incohérents.
@@ -69,6 +71,8 @@ class DetectionConfig:
         """
         if not 0.0 <= self.threshold <= 1.0:
             raise ValueError(f"threshold doit être compris entre 0 et 1, reçu {self.threshold}")
+        if not 0.0 <= self.gliner_threshold <= 1.0:
+            raise ValueError("gliner_threshold doit être compris entre 0 et 1")
         language = check_language(self.document_language)
         model = default_model_for(language, self.spacy_model)
         if model_language(model) != language:
@@ -86,16 +90,17 @@ PRESETS: dict[str, DetectionConfig] = {
     "hybrid_no_propagation": replace(_HYBRID, use_propagation=False),
     "hybrid": _HYBRID,
     "hybrid_camembert": replace(_HYBRID, use_camembert=True),
+    "hybrid_gliner": replace(_HYBRID, use_gliner=True),
 }
 
 # Profils de l'interface (D-AF-A3-1) : Standard reprend hybrid, Enhanced y ajoute le
-# CamemBERT local, pour les seuls documents français tant que A4 n'a rien intégré d'autre.
+# CamemBERT local en français et GLiNER local en anglais (expérimental avant G8).
 PROFILE_STANDARD = "standard"
 PROFILE_ENHANCED = "enhanced"
 PROFILES = (PROFILE_STANDARD, PROFILE_ENHANCED)
 PROFILE_LANGUAGES: dict[str, tuple[str, ...]] = {
     PROFILE_STANDARD: ("fr", "en"),
-    PROFILE_ENHANCED: ("fr",),
+    PROFILE_ENHANCED: ("fr", "en"),
 }
 
 # Modèle CamemBERT validé en A1 (docs/LOCAL_MODELS.md) : dépôt et révision figée. Le cache
@@ -110,7 +115,7 @@ def profile_unavailable(profile: str, document_language: str, public_demo: bool)
     Paramètres : profile, standard ou enhanced ; document_language, fr ou en ; public_demo,
     vrai sur la démonstration publique, où le modèle lourd est interdit (D-14).
     Valeur retournée : "unknown", "public_demo", "language" ou None.
-    Exemple : profile_unavailable("enhanced", "en", False) == "language".
+    Exemple : profile_unavailable("enhanced", "en", True) == "public_demo".
     """
     if profile not in PROFILES:
         return "unknown"
@@ -128,7 +133,7 @@ def profile_config(
 
     Paramètres : profile, standard ou enhanced ; document_language, fr ou en ; public_demo,
     vrai sur la démonstration publique.
-    Valeur retournée : hybrid dans la langue du document, avec CamemBERT pour Enhanced. Lève
+    Valeur retournée : hybrid, avec CamemBERT FR ou GLiNER EN pour Enhanced. Lève
     ValueError si le profil n'est pas disponible : aucun repli silencieux vers un autre profil.
     """
     reason = profile_unavailable(profile, document_language, public_demo)
@@ -136,5 +141,8 @@ def profile_config(
         raise ValueError(f"profil {profile!r} indisponible pour {document_language} : {reason}")
     # Le modèle spaCy par défaut suit la langue du document (D-AF-A2-1).
     return replace(
-        _HYBRID, use_camembert=profile == PROFILE_ENHANCED, document_language=document_language
+        _HYBRID,
+        use_camembert=profile == PROFILE_ENHANCED and document_language == "fr",
+        use_gliner=profile == PROFILE_ENHANCED and document_language == "en",
+        document_language=document_language,
     )

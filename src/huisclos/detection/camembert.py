@@ -5,18 +5,79 @@ Sorties : résultats Presidio aux positions du texte original, avec leurs probab
 Place dans le pipeline : source statistique facultative, avant fusion et propagation.
 """
 
+import hashlib
+import json
 import os
 from functools import lru_cache
+from pathlib import Path
 from typing import Any
 
 from presidio_analyzer import EntityRecognizer, RecognizerResult
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
+from huisclos.config import CAMEMBERT_REPO, CAMEMBERT_REVISION
 from huisclos.detection.windows import best_views, mention, overlapping_windows
 from huisclos.models import Source
 
 MODEL_NAME = "Jean-Baptiste/camembert-ner"
 LABEL_MAPPING = {"PER": "PERSON", "ORG": "ORGANIZATION", "LOC": "LOCATION"}
+PACKAGE_FILES = {
+    "config.json": "17ec2dd3a642bfc839f3f94bd5ba2e996700aa69b06b3937b0e80b458b962207",
+    "model.safetensors": "decc811bc764b0e94f1adc16b37a127300201eb8b5e4b733a89185d68b9d81c9",
+    "sentencepiece.bpe.model": "988bc5a00281c6d210a5d34bd143d0363741a432fefe741bf71e61b1869d4314",
+    "special_tokens_map.json": "645708b160268d79dbc31bc05bc93f77fda8dfd45dc806b5c3a86e17cfcc5a7a",
+    "tokenizer_config.json": "a47e711439fb76c78b60929e8baa3a487a36b476c01886934d5dd2ec5d0c8f8f",
+}
+
+
+@lru_cache(maxsize=32)
+def _package_digest(path: str, size: int, modified: int) -> str:
+    """Calcule le SHA-256 d'un fichier par version locale, sans conserver de texte."""
+    with Path(path).open("rb") as handle:
+        return hashlib.file_digest(handle, "sha256").hexdigest()
+
+
+def local_package() -> str | None:
+    """Vérifie le paquet explicite A1 ; None signifie utiliser le cache historique.
+
+    HUISCLOS_MODELS_DIR permet un chargement autonome avec caches Hugging Face vides.
+    Un paquet explicitement demandé mais incomplet est refusé sans repli vers le cache.
+    """
+    from huisclos.detection.pipeline import ModelUnavailableError
+
+    location = os.environ.get("HUISCLOS_MODELS_DIR")
+    if not location:
+        return None
+    root = Path(location).resolve()
+    folder = root / "models" / "camembert_ner"
+    try:
+        entry = json.loads((root / "manifest.json").read_text(encoding="utf-8"))["models"][
+            "camembert_ner"
+        ]
+        if (entry["repo"], entry["revision"]) != (CAMEMBERT_REPO, CAMEMBERT_REVISION):
+            raise ModelUnavailableError("revision")
+        for name, expected in PACKAGE_FILES.items():
+            path = folder / name
+            stat = path.stat()
+            if _package_digest(str(path), stat.st_size, stat.st_mtime_ns) != expected:
+                raise ModelUnavailableError("revision")
+    except (OSError, KeyError, TypeError, ValueError) as error:
+        raise ModelUnavailableError("missing") from error
+    return str(folder)
+
+
+def package_identity() -> str:
+    """Identifie le chemin explicite et ses fichiers sans charger ni valider un modèle."""
+    location = os.environ.get("HUISCLOS_MODELS_DIR")
+    if not location:
+        return "huggingface_cache"
+    root = Path(location).resolve()
+    stamps = {}
+    for name in PACKAGE_FILES:
+        path = root / "models" / "camembert_ner" / name
+        stat = path.stat() if path.is_file() else None
+        stamps[name] = (stat.st_size, stat.st_mtime_ns) if stat else None
+    return json.dumps({"root": str(root), "files": stamps}, sort_keys=True)
 
 
 def check_vocabulary(tokenizer: Any, model: Any) -> None:
@@ -50,11 +111,12 @@ def load_pipeline() -> Any:
             "CamemBERT nécessite les dépendances locales de requirements-transformers.txt."
         ) from error
     try:
+        location = local_package() or MODEL_NAME
         tokenizer = AutoTokenizer.from_pretrained(
-            MODEL_NAME, local_files_only=True, trust_remote_code=False
+            location, revision=CAMEMBERT_REVISION, local_files_only=True, trust_remote_code=False
         )
         model = AutoModelForTokenClassification.from_pretrained(
-            MODEL_NAME, local_files_only=True, trust_remote_code=False
+            location, revision=CAMEMBERT_REVISION, local_files_only=True, trust_remote_code=False
         )
     except OSError as error:
         raise RuntimeError(

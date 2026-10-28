@@ -54,6 +54,7 @@ def test_source_values() -> None:
         "propagation",
         "manual",
         "case_table",
+        "ner_gliner",
     ]
 
 

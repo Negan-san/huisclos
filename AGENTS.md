@@ -5,7 +5,7 @@ En cas de conflit, ce fichier prime sur tout autre document du dépôt, sauf con
 
 ## 1. Objectif
 
-HuisClos est une application Streamlit qui pseudonymise localement des documents juridiques français avant leur envoi à un LLM, puis restaure les vraies valeurs dans la réponse.
+HuisClos est une application Streamlit qui pseudonymise localement des documents juridiques français et anglais avant leur envoi à un LLM, puis restaure les vraies valeurs dans la réponse. Les profils après G7 restent expérimentaux avant la validation bilingue G8.
 Accroche : "Use generative AI on client files without breaching professional secrecy."
 Devoir de groupe noté (cours Advanced AI Algorithms). Gel des fonctionnalités : mercredi 28 octobre 2026, 23h59. Dépôt : jeudi 29 octobre 2026 (Paris).
 
@@ -19,7 +19,7 @@ Devoir de groupe noté (cours Advanced AI Algorithms). Gel des fonctionnalités 
 
 ## 3. Pipeline
 
-1. Texte -> io.readers -> détection : detection.patterns, detection.person_heuristics, detection.ner (option detection.camembert).
+1. Texte -> io.readers -> détection : règles et spaCy selon document_language (fr/en), detection.person_heuristics ; option locale detection.camembert en français ou detection.gliner en anglais. La langue du document est indépendante de la langue UI et des jetons.
 2. -> detection.exclusions -> detection.merge -> detection.propagation -> revue humaine (app/).
 3. -> pseudonymize.grouping -> pseudonymize.tokens -> texte pseudonymisé et table de correspondance.
 4. Réponse du LLM + table -> pseudonymize.reidentify -> texte restauré -> io.writers.
@@ -39,7 +39,7 @@ Devoir de groupe noté (cours Advanced AI Algorithms). Gel des fonctionnalités 
 ## 5. Types d'entités, jetons et spans
 
 - Types (src/huisclos/models.py) : PERSON, ORGANIZATION, ADDRESS, EMAIL, PHONE, IBAN, NIR, SIREN, SIRET, BIRTH_DATE, CASE_NUMBER, LOCATION (désactivé par défaut), CUSTOM.
-- Sources : checksum, pattern, heuristic, ner_spacy, ner_camembert, propagation, manual. Chaque RecognizerResult porte recognition_metadata["huisclos_source"] = valeur de Source.
+- Sources : checksum, pattern, heuristic, ner_spacy, ner_camembert, ner_gliner, propagation, manual, case_table. Chaque RecognizerResult porte recognition_metadata["huisclos_source"] = valeur de Source.
 - Jetons FR par défaut : [PERSONNE_1], [SOCIETE_A], [ADRESSE_1], [EMAIL_1], [TELEPHONE_1], [IBAN_1], [NIR_1], [SIREN_1], [SIRET_1], [DATE_NAISSANCE_1], [DOSSIER_1], [LIEU_1], [AUTRE_1].
 - Jetons EN en option : PERSON, COMPANY, ADDRESS, EMAIL, PHONE, IBAN, NIR, SIREN, SIRET, BIRTH_DATE, CASE, PLACE, OTHER.
 - Spans : civilités et libellés ("né le", "RG n°", "SIRET") hors du span ; forme juridique accolée dans le span d'une société ; une adresse = un span du numéro à la ville ; aucun chevauchement après fusion ; Detection.text == texte[start:end].
@@ -62,6 +62,8 @@ Appeler l'interpréteur par son chemin, noté PY ci-dessous :
 - Sous Windows, définir PYTHONUTF8=1 dans l'environnement.
 
 Codex travaille sans réseau : aucune installation de paquet. Si un paquet manque, l'écrire dans le compte rendu et contourner sans lui ou s'arrêter sur ce point.
+
+Installation locale bilingue : requirements.txt comprend fr_core_news_md et en_core_web_sm 3.8.0. Les dépendances neuronales restent facultatives (requirements-transformers.txt, requirements-enhanced.txt et requirements-enhanced-lock.txt). Préparer les poids hors application avec scripts/prepare_local_models.py et déclarer HUISCLOS_MODELS_DIR ; détails et repli dans docs/LOCAL_MODELS.md. Dérogation A4 seulement : l'utilisateur a explicitement autorisé Codex à installer les paquets publics et à réaliser les choix initialement confiés à Claude ; aucun réseau ajouté à l'exécution de l'application.
 
 ## 7. Protocole de session (obligatoire)
 
@@ -110,6 +112,7 @@ Contexte presque plein : s'arrêter proprement, consigner l'état dans docs/PROG
 - Ne jamais lire en entier corpus/*.jsonl ni data/ : lire une plage de lignes ou passer par un script.
 - corpus/test.jsonl et les sources du split test sont réservés à l'évaluation : ne pas les ouvrir, ne pas ajuster une règle d'après leur contenu ; seuls les scripts les lisent. Seule exception : la session de rédaction du corpus (C1), qui ne touche à aucun code.
 - Même règle pour le split challenge (corpus/challenge.jsonl, sources chl_*.md), rédigé à l'aveugle après le gel des règles de S14 : seule la session qui le rédige (C2) l'ouvre ; seules les gates le mesurent.
+- corpus/english_dev est réservé au réglage, pas à une validation aveugle. Le nouveau corpus/blind_post_g7 FR/EN et ses sources sont réservés à C3 pour leur rédaction après gel A4, puis à G8 pour la mesure ; les agents de code ne les ouvrent jamais manuellement et ne règlent aucune logique d'après leurs résultats.
 - *.mapping.json, .streamlit/secrets.toml et .env sont ignorés par git.
 
 ## 12. Git

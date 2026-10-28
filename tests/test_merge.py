@@ -57,6 +57,44 @@ def test_rule1_keeps_civility_inside_organization() -> None:
     assert texts(merge(text, raw, CONFIG)) == [("Maître Conseil SAS", EntityType.ORGANIZATION)]
 
 
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("(202) 555-0186", "(202) 555-0186"),
+        (' "(202) 555-0186", ', "(202) 555-0186"),
+        ("+44 (0)20 7946 0123", "+44 (0)20 7946 0123"),
+        ("(202) 555-0186)", "(202) 555-0186"),
+        ("((202) 555-0186", "(202) 555-0186"),
+        ("(202 555-0186", "202 555-0186"),
+        ("202 555-0186)", "202 555-0186"),
+        (" ;, ", None),
+    ],
+)
+def test_phone_trim_preserves_paired_parentheses(value: str, expected: str | None) -> None:
+    """Garde l'indicatif entier, retire les bordures et refuse un span vide."""
+    raw = [det(value, value, EntityType.PHONE, source=Source.PATTERN)]
+    result = merge(value, raw, CONFIG)
+    assert [d.text for d in result] == ([] if expected is None else [expected])
+
+
+def test_phone_fragment_preserves_parentheses_after_conflict() -> None:
+    """Un identifiant prioritaire ne fait pas perdre la parenthèse du téléphone restant."""
+    text = "AB12 (202) 555-0186"
+    raw = [det(text, text, EntityType.PHONE), det(text, "AB12", EntityType.CUSTOM)]
+    assert texts(merge(text, raw, CONFIG)) == [
+        ("AB12", EntityType.CUSTOM),
+        ("(202) 555-0186", EntityType.PHONE),
+    ]
+
+
+def test_name_trim_still_removes_parentheses() -> None:
+    """La protection des parenthèses reste limitée aux téléphones."""
+    text = "(Agathe Vernois)"
+    assert texts(merge(text, [det(text, text, EntityType.PERSON)], CONFIG)) == [
+        ("Agathe Vernois", EntityType.PERSON)
+    ]
+
+
 def test_exclusions_also_apply_to_fragments_left_by_a_structured_value() -> None:
     """Le retrait d'une coordonnée ne doit pas laisser un libellé classé comme nom."""
     text = "Courriel testeur@example.org"

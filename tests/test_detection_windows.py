@@ -52,6 +52,18 @@ class PieceTokenizer:
         return encoded
 
 
+def test_window_limit_preserves_native_tokenizer_capacity() -> None:
+    """La fenêtre peut être plus courte sans réduire la place native pour les labels GLiNER."""
+    tokenizer = PieceTokenizer(max_length=512)
+    text = "abcdefgh " * 80
+    windows = overlapping_windows(text, tokenizer, overlap=4, max_tokens=18)
+    assert len(windows) > 1
+    assert tokenizer.model_max_length == 512
+    assert windows[0].start == 0 and windows[-1].end == len(text)
+    assert all(len(tokenizer(w.text)["input_ids"]) + 2 <= 18 for w in windows)
+    assert all(a.end >= b.start for a, b in zip(windows, windows[1:], strict=False))
+
+
 class WholeNameModel:
     """Faux pipeline : un nom n'est reconnu que s'il est entier dans le texte reçu.
 

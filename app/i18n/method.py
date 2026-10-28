@@ -125,14 +125,16 @@ EN: dict[str, str] = {
         "not a country or a court system."
     ),
     "method.languages.profiles": (
-        "**Profiles.** Standard uses rules, spaCy and propagation in both languages. Enhanced "
-        "local detection adds the CamemBERT model, for French documents only and only in a "
-        "local installation; the model is never downloaded by the application."
+        "**Profiles.** Standard uses rules, spaCy and propagation in both languages. "
+        "Enhanced adds CamemBERT for French or GLiNER for English, in a local "
+        "installation only. Models are never downloaded by the application. Both "
+        "post-G7 profiles remain experimental until bilingual gate G8."
     ),
     "method.languages.limits": (
-        "**Limits.** The published measures cover French documents only. English support uses "
-        "a small spaCy model and has no published measure yet; read every English result "
-        "with extra care."
+        "**Limits.** Published evaluation tables remain historical French measures. "
+        "English uses a small spaCy model; local dev comparisons are documented in "
+        "LOCAL_MODELS.md and do not validate generalisation. Review every result; "
+        "bilingual blind validation is pending G8."
     ),
     "method.disclaimer": "Decision-support tool, not legal advice.",
 }
@@ -264,15 +266,18 @@ FR: dict[str, str] = {
         "une langue n'est ni un pays ni un système judiciaire."
     ),
     "method.languages.profiles": (
-        "**Profils.** Standard utilise les règles, spaCy et la propagation dans les deux "
-        "langues. La détection locale renforcée ajoute le modèle CamemBERT, pour les documents "
-        "français seulement et en installation locale seulement ; l'application ne télécharge "
-        "jamais le modèle."
+        "**Profils.** Standard associe r\u00e8gles, spaCy et propagation dans les deux "
+        "langues. Le profil renforc\u00e9 ajoute CamemBERT en fran\u00e7ais ou GLiNER en "
+        "anglais, en installation locale seulement. Aucun mod\u00e8le n'est "
+        "t\u00e9l\u00e9charg\u00e9 par "
+        "l'application. Les profils apr\u00e8s G7 restent exp\u00e9rimentaux avant la gate "
+        "bilingue G8."
     ),
     "method.languages.limits": (
-        "**Limites.** Les mesures publiées ne portent que sur des documents français. Le "
-        "support de l'anglais repose sur un petit modèle spaCy et n'a encore aucune mesure "
-        "publiée : relisez chaque résultat anglais avec une attention particulière."
+        "**Limites.** Les tableaux publi\u00e9s restent des mesures fran\u00e7aises "
+        "historiques. L'anglais utilise un petit mod\u00e8le spaCy ; les comparaisons dev "
+        "locales d\u00e9crites dans LOCAL_MODELS.md ne valident pas la g\u00e9n\u00e9ralisation. "
+        "Relisez chaque r\u00e9sultat ; la validation bilingue aveugle attend G8."
     ),
     "method.disclaimer": "Outil d'aide à la décision, sans valeur de conseil juridique.",
 }

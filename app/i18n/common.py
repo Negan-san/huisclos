@@ -54,8 +54,9 @@ EN: dict[str, str] = {
     "sidebar.profile.standard": "Standard",
     "sidebar.profile.enhanced": "Enhanced local detection",
     "sidebar.profile.help": (
-        "Standard: rules, spaCy and propagation. Enhanced adds the local CamemBERT model, for "
-        "French documents only: slower, loaded on first use, local installation only."
+        "Standard: rules, spaCy and propagation. Enhanced adds CamemBERT for French "
+        "or GLiNER for English. Local installation only; slower and experimental "
+        "until gate G8."
     ),
     "sidebar.profile.notice.public_demo": (
         "Enhanced detection is not available on the public demo. Standard is used."
@@ -65,7 +66,7 @@ EN: dict[str, str] = {
     ),
     "sidebar.profile.notice.unknown": "Unknown detection profile. Standard is used.",
     "sidebar.profile.demo": "Enhanced detection is offered in a local installation only.",
-    "sidebar.profile.french_only": "Enhanced detection covers French documents only for now.",
+    "sidebar.profile.french_only": ("Enhanced detection is experimental until bilingual gate G8."),
     "sidebar.group.detection": "Detection",
     "sidebar.group.tokens": "Tokens",
     "sidebar.group.interface": "Interface",
@@ -85,6 +86,19 @@ EN: dict[str, str] = {
     ),
     "sidebar.reset.yes": "Yes, reset",
     "sidebar.reset.cancel": "Cancel",
+    "import.error.model.local_missing": (
+        "The validated local GLiNER package is missing or incomplete. Nothing was "
+        "downloaded. Choose Standard or follow docs/LOCAL_MODELS.md."
+    ),
+    "import.error.model.local_dependency": (
+        "English Enhanced needs the exact optional packages from "
+        "requirements-enhanced.txt. Nothing was downloaded. Choose Standard or "
+        "install the validated option."
+    ),
+    "import.error.model.local_revision": (
+        "The GLiNER files or revisions differ from the validated package. Nothing was "
+        "downloaded. Restore the validated package or choose Standard."
+    ),
 }
 
 FR: dict[str, str] = {
@@ -141,9 +155,9 @@ FR: dict[str, str] = {
     "sidebar.profile.standard": "Standard",
     "sidebar.profile.enhanced": "Détection locale renforcée",
     "sidebar.profile.help": (
-        "Standard : règles, spaCy et propagation. Le profil renforcé ajoute le modèle local "
-        "CamemBERT, pour les documents français seulement : plus lent, chargé au premier usage, "
-        "installation locale seulement."
+        "Standard : r\u00e8gles, spaCy et propagation. Le profil renforc\u00e9 ajoute CamemBERT "
+        "en fran\u00e7ais ou GLiNER en anglais. Installation locale seulement ; plus lent "
+        "et exp\u00e9rimental avant G8."
     ),
     "sidebar.profile.notice.public_demo": (
         "La détection renforcée n'est pas disponible sur la démonstration publique. Le profil "
@@ -156,7 +170,7 @@ FR: dict[str, str] = {
     "sidebar.profile.notice.unknown": "Profil de détection inconnu. Standard est utilisé.",
     "sidebar.profile.demo": "La détection renforcée n'est proposée qu'en installation locale.",
     "sidebar.profile.french_only": (
-        "La détection renforcée ne couvre que les documents français pour le moment."
+        "La d\u00e9tection renforc\u00e9e reste exp\u00e9rimentale avant la gate bilingue G8."
     ),
     "sidebar.group.detection": "Détection",
     "sidebar.group.tokens": "Jetons",
@@ -177,4 +191,19 @@ FR: dict[str, str] = {
     ),
     "sidebar.reset.yes": "Oui, réinitialiser",
     "sidebar.reset.cancel": "Annuler",
+    "import.error.model.local_missing": (
+        "Le paquet local GLiNER valid\u00e9 manque ou est incomplet. Rien n'a \u00e9t\u00e9 "
+        "t\u00e9l\u00e9charg\u00e9. Choisissez Standard ou consultez docs/LOCAL_MODELS.md."
+    ),
+    "import.error.model.local_dependency": (
+        "Le profil anglais renforc\u00e9 exige les paquets exacts de "
+        "requirements-enhanced.txt. Rien n'a \u00e9t\u00e9 t\u00e9l\u00e9charg\u00e9. "
+        "Choisissez Standard ou "
+        "installez l'option valid\u00e9e."
+    ),
+    "import.error.model.local_revision": (
+        "Les fichiers ou r\u00e9visions GLiNER diff\u00e8rent du paquet valid\u00e9. "
+        "Rien n'a \u00e9t\u00e9 "
+        "t\u00e9l\u00e9charg\u00e9. R\u00e9tablissez le paquet valid\u00e9 ou choisissez Standard."
+    ),
 }

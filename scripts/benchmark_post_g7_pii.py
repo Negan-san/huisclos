@@ -24,16 +24,11 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
+
+from huisclos.detection.pii_labels import LABELS  # noqa: E402
+
 ASSETS = ROOT.parent / "pilotage/post_g7_assets"
 GRID = (0.3, 0.5, 0.7)
-LABELS = {
-    "person": "PERSON",
-    "organization": "ORGANIZATION",
-    "address": "ADDRESS",
-    "email": "EMAIL",
-    "phone number": "PHONE",
-    "date of birth": "BIRTH_DATE",
-}
 ANONYM = {
     "NOM_PERSONNE": "PERSON",
     "PRENOM_PERSONNE": "PERSON",
@@ -180,7 +175,7 @@ def load_backend(name: str, manifest: dict[str, Any]) -> tuple[Any, Any, dict[st
             device=-1,
         )
         mapping = CAM if name == "camembert_ner" else ANONYM
-    tokenizer.model_max_length = 256
+    tokenizer.model_max_length = 512 if name == "gliner_multi_pii_v1" else 256
     identity["tokenizer_vocab"] = tokenizer.vocab_size
     return model, tokenizer, mapping, identity
 
@@ -195,10 +190,15 @@ def proposals(text: str, backend: tuple[Any, Any, dict[str, str], Any], gliner: 
 
     model, tokenizer, mapping, _ = backend
     view, found = build_view(text), []
-    for index, window in enumerate(overlapping_windows(view.text, tokenizer)):
+    for index, window in enumerate(
+        overlapping_windows(view.text, tokenizer, max_tokens=256 if gliner else None)
+    ):
         if gliner:
             if len(list(model.data_processor.words_splitter(window.text))) > model.config.max_len:
                 raise ValueError("Fenêtre GLiNER tronquée.")
+            from huisclos.detection.gliner import validate_window
+
+            validate_window(model, tokenizer, window.text)
             items = model.predict_entities(
                 window.text, list(mapping), threshold=min(GRID), flat_ner=False, multi_label=True
             )

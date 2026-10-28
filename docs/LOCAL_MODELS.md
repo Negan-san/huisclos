@@ -1,9 +1,10 @@
 # Local models and study environments
 
 This page records the local models and Python environments prepared in session A1 (28 October
-2026) for the bilingual work after gate G7. Since session A3, the application uses only the
-existing CamemBERT model, through the Enhanced profile described below; the other models are not
-used by the application. The deployed configuration and `requirements*.txt` are unchanged. Model files and environments live
+2026), and the A4 integration after gate G7. Standard supports French and English. Enhanced
+retains CamemBERT for French and adds GLiNER for English, locally and optionally. These post-G7
+profiles remain experimental until bilingual gate G8. Historical A1/A3 records below are preserved;
+the current installation, migration and measurements are in the A4 section. Model files and environments live
 outside the repository, in `pilotage/post_g7_assets/` next to the project folder, and are never
 committed.
 
@@ -94,7 +95,7 @@ PYTHONUTF8=1 "<candidate_python>" <B3 experiment script>
 Model folders are under `post_g7_assets/models/<name>`. A model missing from the manifest or
 marked `unavailable` must be reported as such, never replaced by a download at run time.
 
-## Use in the application (session A3)
+## Historical application configuration (session A3)
 
 The sidebar offers two detection profiles, independent of the interface language and of the token
 style:
@@ -118,5 +119,180 @@ for it.
 The identity of the models (document language, spaCy model and installed version, CamemBERT
 repository and revision) is part of the detection fingerprint: changing the profile, the document
 language or the installed model makes the earlier review and final check stale. The English
-profile has no CamemBERT equivalent until session A4 integrates a multilingual model; the French
+profile had no Enhanced equivalent in A3. A4 adds GLiNER, as described below; the French
 CamemBERT is never used for an English document.
+
+## Historical A4 preflight, before installation permission
+
+The Codex preflight on 28 October 2026 verified all 20 recorded model files, package origins
+inside each respective venv, unchanged installed freezes and successful `pip check` in all three
+environments. Evidence is outside the repository in
+`benchmarks/A4/preflight-codex-20261028T135415Z.json`. The A1 freeze hashes describe UTF-8 text
+normalised to LF; Windows files use CRLF, so their byte hashes differ. Both hashes are recorded
+in the preflight; the historical manifest and freezes were preserved. Future records made by
+`describe_environment` hash the bytes read back from the written file, with LF and CRLF
+regression tests, so their hashes can be checked directly against the file.
+
+`en_core_web_sm` was absent from the shared project venv. A4 requires its installation even
+if no new neural backend is selected. The session prompt forbids Codex package installation and
+assigns dependency migration decisions to Claude. Integration and the final profile choice remain
+pending; no package, model, environment or requirement was changed by this preflight. A4 is not
+frozen at that point. The user then explicitly authorised Codex to perform the tasks assigned to
+Claude, including installation and architecture choices. The continuation below supersedes this
+temporary block.
+
+## A4 retained profiles and migration
+
+| Document | Standard, default | Enhanced, optional local profile |
+| --- | --- | --- |
+| French | rules, checksums, fr_core_news_md 3.8.0, propagation | Standard plus existing CamemBERT, revision ef35fe77 |
+| English | rules, checksums, en_core_web_sm 3.8.0, propagation | Standard plus GLiNER multi PII v1, revision 1fcf13e8, cutoff 0.70 |
+
+No Anonym-IA runtime backend is retained. The French development set is saturated: Anonym-IA,
+GLiNER and their union provide no coverage gain against Standard or existing CamemBERT. The
+existing French option is kept as required by A4, without a new recommendation from this dev.
+GLiNER is retained only as an optional English reinforcement; Standard remains the default in
+both languages. No heavy profile is allowed in the public demo.
+
+The shared venv now matches the A1 candidate exactly: Transformers 5.16.1, huggingface-hub 1.9.2,
+GLiNER 0.2.29, torch 2.14.1+cpu, tokenizers 0.23.3, sentencepiece 0.2.2, spaCy 3.8.18 and both spaCy
+models 3.8.0. Only the English model was added to the light requirements. Torch, Transformers
+and GLiNER remain optional. The two obsolete Hub 2.x packages, httpx2/httpcore2, were removed;
+all other package versions match the baseline plus English. No constraint was bypassed.
+
+Before migration, the independent G7 checkout at 422a2cd passed 1229 tests under baseline_python;
+the candidate passed the integrated suite. `pip check`, the normal resolver dry runs and the
+shared installation all passed. The complete portable lock is `requirements-enhanced-lock.txt`
+(Python 3.12.10, Windows CPU); its SHA-256 is
+`f14dc46242cb69f46764df772b32eea3a8a021dbb839ae9fd0bd284249dd35dc`.
+The shared freeze, normalised LF, is
+`65204dcb4cd892eca279356d9e858660f52c8c8ebc85a7e8730e852e023bbce7`, identical to the A1 candidate
+text freeze. Full evidence is in `post_g7_assets/benchmarks/A4/migration.json` and the adjacent
+resolver, install and test logs. The historical A1 manifest, locks and snapshots were preserved.
+
+### Local installation
+
+For Standard, install `requirements.txt` (or `requirements-dev.txt` for development). For the
+local heavy option, use the full lock in a separate venv:
+
+```
+PY -m pip install -r requirements-enhanced-lock.txt
+PY -m pip check
+```
+
+Alternatively, install the CPU torch wheel from the index stated in requirements-transformers.txt,
+then `PY -m pip install -r requirements-enhanced.txt`. The full lock is the reproducible reference;
+do not install with `--no-deps`. Preserve the light environment when creating an enhanced one.
+
+Prepare a package outside the repository, before starting the application:
+
+```
+PY scripts/prepare_local_models.py fetch --assets <folder> --models camembert_ner gliner_multi_pii_v1 mdeberta_v3_base
+```
+
+Set `HUISCLOS_MODELS_DIR` to that folder. For the current development machine, it is
+`C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7_assets`.
+The folder must contain `manifest.json` and the model subfolders written by the preparation tool.
+Download requests contain model identifiers only, never a document or a mapping table.
+Anonym-IA is unnecessary for the retained runtime profiles.
+
+GLiNER checks the two repository identities and immutable revisions, all five required files
+and their pinned SHA-256 before loading. The backbone vocabulary, capacity and span width are
+also checked. The encoder keeps its native 512-token limit; the 256-token text window does not
+reduce that limit. Every prepared label prompt plus text is encoded without truncation and
+checked against 512 before prediction. It uses CPU, six fixed labels (person, organization, address, email, phone number,
+date of birth), 256-subtoken windows including specials and a 64-subtoken overlap. No generic
+date or city is requested. It produces its own `ner_gliner` source before canonical projection
+and the common merge; invalid offsets, scores or span text stop processing. No document is
+truncated and no component is silently promoted into a complete address.
+
+CamemBERT also accepts the explicit package, with its five file hashes checked, and loads the
+immutable revision explicitly. Without HUISCLOS_MODELS_DIR it keeps the historical Hugging Face
+cache behaviour. An explicitly incomplete package fails, without falling back to that cache.
+GLiNER uses the explicit package or `<home>/.cache/huisclos`, never a remote model identifier.
+
+The GLiNER runtime folder contains a temporary local copy of its configuration pointing to the
+local backbone and a link (or copy) of the official weights; it is removed after loading. Official
+snapshots are unchanged. The only persistent cache holds engines. Model files, revisions,
+package versions and the backend cutoff enter the fingerprints and archived registration.
+Missing files or incompatible versions stop detection visibly, without download or profile fallback.
+
+### Integrated development comparison and limitations
+
+Two independent repetitions per profile, CPU, same thresholds, source hashes and paired B1
+bootstrap (2000 draws, seed 45). Reports are outside the repository in
+`benchmarks/A4/validation_v3/integrated_{fr,en}_{1,2}/`; the replayed full candidate matrix is in
+`benchmarks/A4/matrix_v2/`. G7 outputs and historical metrics were not overwritten.
+
+| Dev | Profile | Fully covered | Leaked characters | Non-sensitive masked |
+| --- | --- | ---: | ---: | ---: |
+| FR, 20 documents | Standard, Enhanced and G7 comparators | 311/311 | 0/6701 | 7/34777 |
+| EN, 8 documents | Standard | 124/136 | 105/2553 | 48/12864 |
+| EN, 8 documents | Enhanced GLiNER | 126/136 | 63/2553 | 48/12864 |
+
+English point estimates meet the predeclared engineering criterion. Partial precision changes
+from 0.9313 to 0.9323; full coverage gains 0.014706 [0; 0.032473], leakage changes by -0.016451
+[-0.037632; 0] and over-masking by 0 [0; 0]. All three paired intervals include
+zero: no significance or generalisation claim is made. The B3-01 phone correction accounts for
+one additional covered entity and one less leaked character in each English profile versus B3.
+
+Final check does not mask anything. On this dev it raises no English Standard alert despite
+12 exposed entities. English Enhanced raises 29 alerts, one on a visible reference and 28
+elsewhere, with 10 entities still exposed. This is a substantial review burden, not an independent
+validation. GLiNER keeps its validated 0.70 cutoff in final check; only the main detection
+threshold drops from 0.30 to 0.10. French Enhanced raises two alerts outside references.
+
+GLiNER needs roughly 2.8 GiB resident memory in the local probes; this is far above Standard EN.
+The short two-document CPU probe, including imports, models and restoration, took about
+16 seconds with two torch threads. These measurements are observations, not latency guarantees.
+`PY scripts/measure_memory.py --enhanced --language en` compares the retained local profiles;
+its RSS readings are snapshots, not sampled peaks. B3 contains independent full-lot cost records.
+
+Both production backends passed fresh-process tests with empty HF caches, sockets/DNS blocked,
+two stable-token documents, JSON reloading and a mixed restored reply. Removing CamemBERT's
+vocabulary or GLiNER's backbone vocabulary fails before inference; caches stay empty. Candidate
+and shared evidence is in `package-{candidate,shared}-final.json` and the adjacent logs.
+
+The GLiNER import emits the installed torch.jit.script deprecation warning. Transformers also
+emits a generic Mistral-regex warning for the local DeBERTa tokenizer: inspection of its installed
+code shows that a config without transformers_version triggers that branch even for DeBERTa.
+No Mistral regex patch was applied to this SentencePiece model. The warning is preserved in logs;
+offset validity and actual development outputs were tested rather than inferred from that message.
+
+The small fictional dev sets do not validate new documents. Long English private-reference
+wordings outside the bounded rules remain a known coverage limit. Human review is required.
+Only G8 may measure reserved corpora and decide the bilingual validation after the A4 freeze.
+
+### Reproducible fallback
+
+Standard needs neither Torch, Transformers nor GLiNER; selecting it is an explicit user action.
+The autonomous A1 baseline and its full lock remain under `post_g7_assets/envs/`, with the original
+G7 model snapshots and the independent checkout `reference_g7` at 422a2cd. Run that checkout with
+baseline_python to reproduce G7; it does not import shared-venv packages.
+To rebuild the reference, create a separate Python 3.12.10 venv and resolve the preserved
+`baseline_lock.txt` with the CPU torch index and the archived English wheel, then run pip check
+and the G7 suite. Restoring the old neural stack in an environment requires removing optional
+GLiNER before installing the baseline lock, since its Transformers constraint is incompatible.
+Keep the validated enhanced venv and its lock when using a separate baseline; no worker or
+service is needed for either profile.
+
+### Truncation correction before the final freeze
+
+A4 found that setting the shared GLiNER tokenizer limit to 256 also truncated its internal
+label prompt plus text. A new synthetic 242-word case reproduces 261 encoded tokens being cut
+to 256. The final backend A4.2 separates the 256-token text windows from the native 512-token
+encoder and checks the complete prepared input. Regression tests cover both limits and refusal
+of an overflowing prompt.
+
+The earlier A4 matrix and validation_v2 reports, and the GLiNER prototype observations in B3,
+are historical experiments with that limitation; they are not the evidence for adoption.
+The corrected full matrix is matrix_v2 and the real integrated comparisons are validation_v3.
+Their two repetitions agree and their source hashes are registered. No label, threshold or
+reserved-corpus result was used to compensate for the fix. The final profiles still use 0.30
+and GLiNER 0.70, selected on dev only. The original reports are preserved.
+
+The final provenance report is benchmarks/A4/integration-summary.json, SHA-256
+`8f2bcf99aac29f0d6904b7806168bab564c948ea862244fc0214bb383e67f5ff`. It includes actual
+model identities, revisions, dependency versions, source hashes and the unchanged B1 metrics.
+The retained runtime manifest is retained-runtime-final.json, SHA-256
+`3e3e8fefcbe59f057e199f558dd1a634d6ebf2c103f35b9df524ee21ae5c5416`.

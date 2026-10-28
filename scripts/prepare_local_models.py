@@ -235,7 +235,7 @@ def describe_environment(python: Path, assets: Path, key: str) -> dict[str, Any]
         "interpreter": str(python),
         "python": version,
         "freeze": str(freeze_path),
-        "freeze_sha256": hashlib.sha256(freeze.encode("utf-8")).hexdigest(),
+        "freeze_sha256": hashlib.sha256(freeze_path.read_bytes()).hexdigest(),
         "key_versions": {name: pins.get(name) for name in watched},
         "spacy_models": [line.split(" @ ")[0] for line in freeze.splitlines() if "_core_" in line],
         "pip_check": "ok" if check.returncode == 0 else check.stdout.strip(),

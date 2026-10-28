@@ -6,6 +6,10 @@ Place dans le pipeline : affichage local, juste avant l'envoi du message pseudon
 """
 
 EN: dict[str, str] = {
+    "check.neural_threshold": (
+        "English Enhanced keeps the validated GLiNER cutoff of 0.70 for this check. "
+        "The lower main threshold cannot reveal candidates the models never proposed."
+    ),
     "check.heading": "Final check",
     "check.intro": (
         "Before anything leaves your computer, HuisClos checks the exact message: the "
@@ -83,6 +87,11 @@ EN: dict[str, str] = {
 }
 
 FR: dict[str, str] = {
+    "check.neural_threshold": (
+        "Le profil anglais renforc\u00e9 conserve le seuil GLiNER valid\u00e9 de 0,70 pour "
+        "ce contr\u00f4le. Le seuil principal abaiss\u00e9 ne r\u00e9v\u00e8le pas les "
+        "candidats que les mod\u00e8les n'ont jamais propos\u00e9s."
+    ),
     "check.heading": "Contrôle final",
     "check.intro": (
         "Avant que quoi que ce soit ne quitte votre poste, HuisClos contrôle le message exact : "

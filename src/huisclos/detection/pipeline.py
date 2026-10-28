@@ -48,10 +48,13 @@ def get_nlp_engine(model_name: str, language: str = LANGUAGE) -> NlpEngine:
 # tournerait sur un texte illisible (D-AF-A1-3).
 CAMEMBERT_FILES = ("config.json", "sentencepiece.bpe.model", "model.safetensors")
 MODEL_ERRORS: dict[str, str] = {
-    "dependency": "L'option CamemBERT n'est pas installée (requirements-transformers.txt, D-06).",
-    "missing": "La révision validée de CamemBERT manque du cache local ; aucun téléchargement.",
-    "revision": "Le cache local de CamemBERT désigne une autre révision que celle validée en A1.",
+    "dependency": "Les dépendances exactes du profil local sont absentes ou incompatibles.",
+    "missing": "Le paquet local du modèle est absent ou incomplet ; aucun téléchargement.",
+    "revision": "Le paquet local du modèle ne correspond pas à la révision validée.",
     "public_demo": "Le profil renforcé est interdit sur la démonstration publique (D-14).",
+    "local_dependency": "La pile exacte GLiNER est absente ou incompatible.",
+    "local_missing": "Le paquet local GLiNER est absent ou incomplet.",
+    "local_revision": "Les révisions ou empreintes locales GLiNER ne sont pas celles validées.",
 }
 
 
@@ -77,6 +80,11 @@ def check_camembert_snapshot() -> str:
     """
     if importlib.util.find_spec("transformers") is None:
         raise ModelUnavailableError("dependency")
+    from huisclos.detection.camembert import local_package
+
+    folder = local_package()
+    if folder is not None:
+        return folder
     try:
         from huggingface_hub import try_to_load_from_cache
     except ImportError:
@@ -110,8 +118,22 @@ def model_identity(config: DetectionConfig) -> str:
     """
     parts = [config.document_language]
     parts.append(f"spacy={config.spacy_model}=={_package_version(config.spacy_model)}")
+    parts.append(
+        f"spacy_engine={_package_version('spacy')};presidio={_package_version('presidio-analyzer')}"
+    )
     if config.use_camembert:
+        from huisclos.detection.camembert import package_identity
+
+        parts.append(f"local_package={package_identity()}")
+        parts.extend(
+            f"{name}={_package_version(name)}"
+            for name in ("transformers", "torch", "tokenizers", "huggingface-hub", "sentencepiece")
+        )
         parts.append(f"camembert={CAMEMBERT_REPO}@{CAMEMBERT_REVISION}")
+    if config.use_gliner:
+        from huisclos.detection.gliner import identity
+
+        parts.append(f"gliner={identity()}")
     return ";".join(parts)
 
 
@@ -230,12 +252,20 @@ def _analyze(text: str, view: AnalysisView, config: DetectionConfig) -> list[Det
     analysé aussi : ses candidats sont gardés, sauf ceux qui touchent un caractère réécrit
     par la vue, dont la lecture d'origine est bruitée (D-AF-A2-5).
     """
+    if config.use_camembert:
+        check_camembert_snapshot()
     analyzer = analyzer_for(config)
     language = config.document_language
     results = analyzer.analyze(text=view.text, language=language)
+    if config.use_gliner:
+        from huisclos.detection.gliner import analyze
+
+        results.extend(analyze(view.text, config.gliner_threshold))
     candidates = [d for d in (_projected(text, view, r) for r in results) if d is not None]
     if not view.is_legacy:
         legacy = analyzer.analyze(text=text.translate(LEGACY), language=language)
+        if config.use_gliner:
+            legacy.extend(analyze(text.translate(LEGACY), config.gliner_threshold))
         original = (to_detection(text, r) for r in legacy)
         candidates += [
             d for d in original if d is not None and not view.touches_change(d.start, d.end)

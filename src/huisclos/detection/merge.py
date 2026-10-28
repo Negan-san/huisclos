@@ -71,7 +71,12 @@ def trim(text: str, detection: Detection) -> Detection | None:
     Valeur retournée : la détection rognée, ou None s'il ne reste rien.
     Exemple : "M. Dupont," devient "Dupont" (D-09, la civilité reste visible).
     """
-    start, end = strip_borders(text, detection.start, detection.end)
+    start, end = strip_borders(
+        text,
+        detection.start,
+        detection.end,
+        preserve_parentheses=detection.entity_type == EntityType.PHONE,
+    )
     if (
         detection.entity_type in _LINE_BOUND_TYPES
         and detection.source != Source.HEURISTIC

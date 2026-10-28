@@ -57,12 +57,15 @@ def test_profiles_by_document_language() -> None:
     enhanced = profile_config("enhanced", "fr")
     assert enhanced == PRESETS["hybrid_camembert"]
     assert enhanced.use_patterns and enhanced.use_spacy and enhanced.use_propagation
+    enhanced_en = profile_config("enhanced", "en")
+    assert enhanced_en.use_gliner and not enhanced_en.use_camembert
+    assert enhanced_en.gliner_threshold == 0.70
 
 
 @pytest.mark.parametrize(
     "profile, language, demo, reason",
     [
-        ("enhanced", "en", False, "language"),
+        ("enhanced", "en", False, None),
         ("enhanced", "fr", True, "public_demo"),
         ("gliner", "fr", False, "unknown"),
         ("standard", "en", True, None),
@@ -242,12 +245,12 @@ def test_public_demo_ignores_an_old_heavy_session_value(
     assert any("not available on the public demo" in item.value for item in app.sidebar.warning)
 
 
-def test_enhanced_profile_falls_back_visibly_for_an_english_document() -> None:
+def test_enhanced_profile_remains_selected_for_an_english_document() -> None:
     app = AppTest.from_file(APP_PATH, default_timeout=TIMEOUT).run()
     app.radio(key="detection_profile").set_value("enhanced").run()
     app.radio(key="document_language").set_value("en").run()
-    assert app.session_state["detection_profile"] == "standard"
-    assert any("French documents only" in item.value for item in app.sidebar.warning)
+    assert app.session_state["detection_profile"] == "enhanced"
+    assert any("experimental" in item.value for item in app.sidebar.caption)
 
 
 def test_missing_enhanced_model_shows_a_clear_error_without_fallback(
@@ -291,13 +294,34 @@ def test_changed_setting_revokes_review_and_check_but_keeps_the_source() -> None
     assert app.session_state["outbound_send_authorization"] is None
 
 
+def test_missing_english_backend_stops_without_fallback(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Une option GLiNER absente refuse la détection et conserve le profil choisi."""
+    from huisclos.detection import gliner
+
+    def absent() -> None:
+        """Simule un paquet local incomplet avant tout chargement lourd."""
+        raise ModelUnavailableError("local_missing")
+
+    monkeypatch.setattr(gliner, "prepare", absent)
+    app = AppTest.from_file(APP_PATH, default_timeout=TIMEOUT).run()
+    app.radio(key="document_language").set_value("en").run()
+    app.radio(key="detection_profile").set_value("enhanced").run()
+    app.text_area(key="paste_widget").set_value(ENGLISH).run()
+    app.button(key="detect").click().run()
+    assert not app.exception
+    assert app.session_state["step"] == "import"
+    assert app.session_state["detections"] is None
+    assert app.session_state["detection_profile"] == "enhanced"
+    assert any("GLiNER package is missing" in item.value for item in app.error)
+
+
 def test_method_and_evaluation_pages_state_the_supported_languages() -> None:
     app = AppTest.from_file(APP_PATH, default_timeout=TIMEOUT).run()
     app = app.switch_page("app/pages/method.py").run()
     assert "Document languages" in [item.value for item in app.main.subheader]
     method = " ".join(item.value for item in app.main.markdown)
     assert "French and English documents" in method
-    assert "no published measure yet" in method
+    assert "bilingual blind validation is pending G8" in method
     app = app.switch_page("app/pages/evaluation.py").run()
     assert not app.exception
     assert any("historical measures on French documents" in item.value for item in app.info)

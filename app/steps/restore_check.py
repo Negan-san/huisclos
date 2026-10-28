@@ -327,6 +327,8 @@ def render_final_check(outcome: CheckOutcome) -> None:
     with st.container(key="hc-card-check"):
         st.subheader(t("check.heading"), anchor=False)
         st.caption(t("check.intro"))
+        if build_config().use_gliner:
+            st.caption(t("check.neural_threshold"))
         _render_policy()
         _render_notice(outcome.message.document)
         if _render_status(outcome):

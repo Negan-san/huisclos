@@ -46,8 +46,12 @@ def prepare_engine(config: DetectionConfig) -> AnalyzerEngine:
     garde aussi son résultat en mémoire. Lève ModelUnavailableError("public_demo") si la
     démonstration publique demande le modèle lourd, quelle que soit la valeur de session.
     """
-    if config.use_camembert and is_public_demo():
+    if (config.use_camembert or config.use_gliner) and is_public_demo():
         raise ModelUnavailableError("public_demo")
+    if config.use_gliner:
+        from huisclos.detection.gliner import prepare
+
+        prepare()
     return _cached_analyzer(
         config.use_patterns,
         config.use_heuristics,

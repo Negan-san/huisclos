@@ -138,3 +138,75 @@ Mesure AF-A2 du 28 octobre 2026 en mode dev, hors dépôt, baseline_python, seui
 - Fuite par type, fixtures FR avant : adresses 149, personnes 37, procédure 30, naissance 18 caractères ; après : zéro pour chaque type.
 - Différences appariées sur les fixtures FR (après moins avant) : couverture complète +0,2321 [0,1111 ; 0,4286], fuite -0,2074 [-0,3529 ; -0,1729], intervalles qui excluent zéro ; précision +0,1404 et rappel +0,1429, intervalles qui touchent zéro. Critère d'ingénierie rempli pour Standard et Enhanced. Trois documents écrits dans la même session que les règles : ce n'est pas une mesure de généralisation.
 - Anglais : aucune référence antérieure. Restent une signature sans civilité manquée par en_core_web_sm (16 caractères), la parenthèse d'un indicatif rognée par la fusion (1 caractère) et une personne lue comme société, masquée. Ces chiffres ne valident pas le support anglais : le dev EN de B2 puis C3 en décideront.
+
+## 12. Gel A4 avant C3
+
+Cette section fixe la configuration finale après intégration réelle, sans changer les métriques,
+les marges ni les résultats historiques. Aucune mesure réservée n'a été effectuée en A4.
+Les profils après G7 restent expérimentaux avant le verdict bilingue de G8.
+
+| Langue du document | Standard | Enhanced local | Seuil principal | Seuil propre au renfort |
+| --- | --- | --- | ---: | ---: |
+| fr | règles, checksums, fr_core_news_md 3.8.0, propagation | Standard + CamemBERT existant | 0,30 | probabilités CamemBERT soumises au seuil principal |
+| en | règles, checksums, en_core_web_sm 3.8.0, propagation | Standard + GLiNER multi PII v1 | 0,30 | GLiNER 0,70 |
+
+- Standard reste le défaut ; Enhanced est facultatif, local seulement, refusé en démonstration publique. Aucun modèle français ne sert à valider l'anglais.
+- Anonym-IA et l'union Anonym-IA/GLiNER ne sont pas retenus en FR : aucune réduction de fuite ni hausse de couverture sur dev contre Standard ou CamemBERT. Conformément à A4, le CamemBERT existant est conservé sans lui attribuer de nouveau gain sur ce dev saturé. Pas de troisième modèle.
+- GLiNER EN est retenu comme option : sur le pipeline intégré, couverture 124/136 vers 126/136, fuite 105/2553 vers 63/2553, surmasquage 48 vers 48 caractères ; précision partielle 0,9313 vers 0,9323. Le critère ponctuel B1 est rempli ; les intervalles appariés incluent zéro. Le coût et les 28 alertes hors références au contrôle final sont publiés dans LOCAL_MODELS.md, sans les compter comme des protections.
+- Le seuil EN 0,30 est confirmé par le balayage dev B3 rejoué sur le code intégré, F2 partiel maximal puis minimum à égalité. Le seuil GLiNER 0,70 est confirmé par sa grille 0,30/0,50/0,70 ; aucun choix après un résultat aveugle ne sera permis.
+- Labels GLiNER figés : `person`, `organization`, `address`, `email`, `phone number`, `date of birth`, vers les six types existants. Pas de ville seule ni de date ordinaire. Source `ner_gliner`, positions absolues validées, projection canonique puis fusion et propagation communes ; aucun champ de la table JSON n'est changé.
+- Fenêtres : CamemBERT 512 jetons avec spéciaux ; GLiNER 256 avec spéciaux, capacité interne 384 mots et largeur 12 mots ; recouvrement 64 pour les deux. Refus de troncature. Les composants d'adresse Anonym-IA ne sont pas intégrés et ne fondent aucune revendication de couverture.
+- Contrôle final : seuil principal abaissé à 0,10, GLiNER maintenu à 0,70. Toute modification de ces paramètres, des versions, du profil ou des fichiers invalide les résultats et autorisations de l'interface. Une alerte ne masque rien.
+
+Pile locale validée : Python 3.12.10, Transformers 5.16.1, huggingface-hub 1.9.2, GLiNER 0.2.29,
+torch 2.14.1+cpu, tokenizers 0.23.3, sentencepiece 0.2.2, spaCy 3.8.18, Presidio analyzer et
+anonymizer 2.2.366. Les deux modèles spaCy sont en 3.8.0. Le verrou complet et les instructions
+de repli figurent dans requirements-enhanced-lock.txt et LOCAL_MODELS.md ; les paquets lourds
+restent hors de requirements.txt. Les snapshots et la référence G7 A1 sont préservés.
+
+Révisions immuables :
+
+| Modèle | Révision |
+| --- | --- |
+| Jean-Baptiste/camembert-ner | ef35fe7767c1dad71f5c853838cdd80d0b3441ed |
+| urchade/gliner_multi_pii-v1 | 1fcf13e85f4eef5394e1fcd406cf2ca9ea82351d |
+| microsoft/mdeberta-v3-base, configuration et tokenizer seulement | a0484667b22365f84929a935b5e50a51f71f159d |
+
+Plans finaux hors dépôt, dans `pilotage/post_g7_assets/benchmarks/A4/`, en UTF-8 LF :
+
+- `frozen_fr.json`, SHA-256 `7fd554ae608eb5e3231a9663ee7fe8f6b3303bfe42adb5e4559d2bc43ffbb453` ; Standard actuel contre G7 hybrid, Enhanced actuel contre G7 hybrid_camembert, puis Enhanced contre Standard. Référence autonome : checkout 422a2cd et baseline_python A1, seuil 0,30.
+- `frozen_en.json`, SHA-256 `ce2af6dec9f395b7c26ad5e924ba5b4762451d939a2aa749197585301708fdd1` ; Enhanced (`hybrid_gliner`) contre Standard (`hybrid`), langue en. Aucune référence anglaise G7 inventée.
+- `retained-runtime-final.json` consigne les labels, seuils, versions, révisions et empreintes de tous les fichiers des modèles retenus, l'identité du paquet et le verrou. Il complète les plans B1 sans leur ajouter de clé non admise.
+- Le préenregistrement des comparaisons intégrées est `validation_v3/integrated_registration.json`, SHA-256 `074f1f89277cb9e945a64cc6172aae2de780522b82ef7507d97bfc0a968b317f`. Les deux répétitions réelles FR et EN sont identiques pour métriques, couverture, contrôle et intervalles. Les plans finaux ont les mêmes paramètres que ces plans de mesure ; seules les fins de ligne sont normalisées LF.
+- La grille dev rejouée est archivée dans `matrix/`, plan SHA-256 `ca3e3482f78d80475d0e17e991f62d19c9176943f3d013d9b2982c70e9329d1b`. Les adaptateurs expérimentaux Anonym-IA/GLiNER servent à cette grille, pas au runtime. Les rapports intégrés utilisent les vrais backends de production, sans injection de candidats ni simulation de revue.
+
+Le critère G8 reste celui de la section 6 : fuite strictement plus faible, couverture entière
+strictement plus élevée, précision partielle au moins référence moins 0,02 et surmasquage au plus
+référence plus 0,01. Bootstrap apparié de 2000 tirages, graine 45 ; publication séparée FR/EN,
+CUSTOM/LOCATION à part, pas de moyenne bilingue ni de significativité déduite d'intervalles
+marginaux. Le coût du contrôle final est publié séparément.
+
+G8 devra vérifier les empreintes et l'égalité des seuils avant la première mesure réservée, puis
+mesurer les profils prévus, sans les profils FR GLiNER expérimentaux rejetés. La langue du document
+est fixée par le plan, indépendamment de l'interface. Déclarer HUISCLOS_MODELS_DIR comme décrit
+dans LOCAL_MODELS.md avant les mesures Enhanced ; un paquet absent interrompt la mesure.
+Les rapports B1 restent compatibles avec les champs historiques de results.json.
+
+Pour reproduire les mesures CPU, fixer OMP_NUM_THREADS=2, MKL_NUM_THREADS=2 et
+TOKENIZERS_PARALLELISM=false avant le lancement de Python ; les sondes confirment deux threads
+Torch. Le runtime reste hors ligne (HF_HUB_OFFLINE=1 et TRANSFORMERS_OFFLINE=1). Ces paramètres
+et le paquet explicite sont conservés pour G8, sans nouveau réglage après un résultat aveugle.
+
+Le commit final A4 et son empreinte de logique seront enregistrés par `post_g7.py finish A4`.
+C3 rédigera ensuite le nouveau lot FR/EN à l'aveugle, sans lire la logique ni les résultats ; seul
+G8 mesurera les corpus réservés. Aucune logique ne doit changer pendant A5/C3 et aucun seuil,
+label, modèle, comparateur ou marge ne doit être rechoisi après un résultat aveugle.
+
+Le runtime final A4.2 distingue la fenêtre GLiNER de 256 jetons de son encodeur natif de
+512 jetons et vérifie le prompt entier avant inférence. Les premiers essais avec une limite
+interne de 256 sont conservés mais remplacés par validation_v3 et matrix_v2. La preuve
+fictive de troncature et son correctif figurent dans truncation-proof.json. Le manifeste
+retained-runtime-final.json porte le SHA-256
+`3e3e8fefcbe59f057e199f558dd1a634d6ebf2c103f35b9df524ee21ae5c5416` ; le rapport de
+provenance integration-summary.json porte
+`8f2bcf99aac29f0d6904b7806168bab564c948ea862244fc0214bb383e67f5ff`.

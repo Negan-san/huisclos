@@ -178,7 +178,12 @@ def test_offline_loading_and_cache(monkeypatch: pytest.MonkeyPatch) -> None:
         assert len(calls) == 2
         assert all(name == camembert.MODEL_NAME for name, _ in calls)
         assert all(
-            options == {"local_files_only": True, "trust_remote_code": False}
+            options
+            == {
+                "revision": camembert.CAMEMBERT_REVISION,
+                "local_files_only": True,
+                "trust_remote_code": False,
+            }
             for _, options in calls
         )
         assert os.environ["HF_HUB_OFFLINE"] == "1"
@@ -222,6 +227,43 @@ def test_hybrid_does_not_import_transformers() -> None:
         check=False,
     )
     assert completed.returncode == 0, completed.stderr
+
+
+def test_explicit_package_is_verified_and_never_falls_back(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, no_network: None
+) -> None:
+    """Le paquet explicite accepte ses octets vérifiés puis refuse un vocabulaire manquant."""
+    import hashlib
+    import json
+
+    from huisclos.detection.pipeline import ModelUnavailableError
+
+    folder = tmp_path / "models" / "camembert_ner"
+    folder.mkdir(parents=True)
+    data = b"fictitious vocabulary"
+    (folder / "vocabulary").write_bytes(data)
+    monkeypatch.setenv("HUISCLOS_MODELS_DIR", str(tmp_path))
+    monkeypatch.setattr(
+        camembert, "PACKAGE_FILES", {"vocabulary": hashlib.sha256(data).hexdigest()}
+    )
+    (tmp_path / "manifest.json").write_text(
+        json.dumps(
+            {
+                "models": {
+                    "camembert_ner": {
+                        "repo": camembert.MODEL_NAME,
+                        "revision": camembert.CAMEMBERT_REVISION,
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    assert camembert.local_package() == str(folder)
+    (folder / "vocabulary").unlink()
+    with pytest.raises(ModelUnavailableError) as error:
+        camembert.local_package()
+    assert error.value.code == "missing"
 
 
 def test_missing_cache_fails_offline(monkeypatch: pytest.MonkeyPatch) -> None:

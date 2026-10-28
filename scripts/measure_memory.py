@@ -1,6 +1,6 @@
 """Mesure la mémoire résidente et les durées de la détection, sur CPU, dans un même processus.
 
-Entrée : la démo fictive data/samples/demo_case_fr.txt, sans affichage de son contenu.
+Entrée : la démo fictive française ou un court exemple anglais, sans afficher son contenu.
 Sortie : un tableau Markdown ; par défaut, la configuration déployée (hybrid) au démarrage,
 après la première détection et après dix détections ; avec --camembert, la comparaison D-06.
 Place dans le pipeline : mesure hors application, pour D-05 (mémoire du cloud) et D-S44-1.
@@ -21,10 +21,11 @@ os.environ["TRANSFORMERS_OFFLINE"] = "1"
 
 import streamlit  # noqa: E402, F401  (chargé comme dans l'application, pour un démarrage fidèle)
 
-from huisclos.config import PRESETS  # noqa: E402
+from huisclos.config import profile_config  # noqa: E402
 from huisclos.detection.pipeline import analyzer_for, detect  # noqa: E402
 
 SAMPLE = ROOT / "data" / "samples" / "demo_case_fr.txt"
+SAMPLE_EN = "Mr Adrian KELLAWAY works for Bramblewick Partners Ltd. Phone: (202) 555-0186."
 # Limite basse annoncée pour Community Cloud (D-05) : la mesure doit rester en dessous.
 TARGET_MIB = 1024
 REPEATS = 10
@@ -35,7 +36,7 @@ def rss_mib(process: psutil.Process) -> float:
     return process.memory_info().rss / 1024**2
 
 
-def measure_deployed(text: str) -> list[tuple[str, float, float]]:
+def measure_deployed(text: str, language: str = "fr") -> list[tuple[str, float, float]]:
     """Mesure la configuration hybrid comme dans l'application.
 
     Paramètre : text, le cas d'exemple.
@@ -45,7 +46,7 @@ def measure_deployed(text: str) -> list[tuple[str, float, float]]:
     """
     process = psutil.Process()
     rows = [("startup", 0.0, rss_mib(process))]
-    config = PRESETS["hybrid"]
+    config = profile_config("standard", language)
     started = perf_counter()
     count = len(detect(text, config))
     rows.append((f"first detection ({count} entities)", perf_counter() - started, rss_mib(process)))
@@ -56,9 +57,9 @@ def measure_deployed(text: str) -> list[tuple[str, float, float]]:
     return rows
 
 
-def print_deployed(text: str) -> None:
+def print_deployed(text: str, language: str = "fr") -> None:
     """Affiche le tableau de la configuration déployée et la comparaison à la cible."""
-    rows = measure_deployed(text)
+    rows = measure_deployed(text, language)
     print("| Step | Duration s | RSS MiB |")
     print("| --- | ---: | ---: |")
     for step, seconds, mib in rows:
@@ -68,11 +69,11 @@ def print_deployed(text: str) -> None:
     print(f"\nPeak RSS {peak:.1f} MiB, {verdict} the {TARGET_MIB} MiB target.")
 
 
-def print_camembert(text: str) -> None:
-    """Affiche RSS et durées après chargement puis détection, sans puis avec CamemBERT.
+def print_profiles(text: str, language: str = "fr") -> None:
+    """Affiche RSS et durées après chargement puis détection de Standard et Enhanced.
 
     Les modèles restent en mémoire entre les lignes : la seconde inclut spaCy et
-    CamemBERT, comme lors d'une activation de l'option dans une session locale.
+    le renfort de la langue, comme lors de son activation dans une session locale.
     """
     process = psutil.Process()
     print(
@@ -80,10 +81,14 @@ def print_camembert(text: str) -> None:
         "Détection s | RSS finale Mio | Entités |"
     )
     print("| --- | ---: | ---: | ---: | ---: | ---: |")
-    for name in ("hybrid", "hybrid_camembert"):
-        config = PRESETS[name]
+    for name in ("standard", "enhanced"):
+        config = profile_config(name, language)
         started = perf_counter()
         analyzer_for(config)
+        if config.use_gliner:
+            from huisclos.detection.gliner import prepare
+
+            prepare()
         load_seconds = perf_counter() - started
         loaded_mib = rss_mib(process)
         started = perf_counter()
@@ -101,12 +106,14 @@ def main() -> None:
     parser.add_argument(
         "--camembert", action="store_true", help="compare hybrid and hybrid_camembert (D-06)"
     )
+    parser.add_argument("--enhanced", action="store_true", help="compare Standard and Enhanced")
+    parser.add_argument("--language", choices=("fr", "en"), default="fr")
     args = parser.parse_args()
-    text = SAMPLE.read_text(encoding="utf-8")
-    if args.camembert:
-        print_camembert(text)
+    text = SAMPLE.read_text(encoding="utf-8") if args.language == "fr" else SAMPLE_EN
+    if args.camembert or args.enhanced:
+        print_profiles(text, args.language)
     else:
-        print_deployed(text)
+        print_deployed(text, args.language)
 
 
 if __name__ == "__main__":

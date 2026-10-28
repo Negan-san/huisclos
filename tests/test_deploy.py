@@ -21,7 +21,9 @@ ROOT = Path(__file__).resolve().parent.parent
 REQUIREMENTS = ROOT / "requirements.txt"
 APP_FILES = [ROOT / "streamlit_app.py", *sorted((ROOT / "app").rglob("*.py"))]
 # Une ligne épinglée : "nom==version" ou "nom @ https://.../fichier.whl".
-PINNED = re.compile(r"^[A-Za-z0-9_.\-\[\]]+(==[0-9][^\s;]*| @ https://\S+\.whl)$")
+PINNED = re.compile(
+    r"^[A-Za-z0-9_.\-\[\]]+(==[0-9][^\s;]*| @ https://\S+\.whl(?:#sha256=[0-9a-f]{64})?)$"
+)
 DISK_WRITE_METHODS = {"write_text", "write_bytes", "mkdir", "makedirs", "touch", "save"}
 # Mode d'ouverture en écriture, pour open(chemin, "w") comme pour Path.open("a").
 WRITE_MODE = re.compile(r"^[rbt]*[wax+][rwabxt+]*$")
@@ -62,6 +64,7 @@ def test_requirements_exclude_heavy_libraries() -> None:
     assert names
     assert "torch" not in names
     assert "transformers" not in names
+    assert "gliner" not in names
 
 
 def test_every_requirement_is_pinned() -> None:
@@ -72,6 +75,13 @@ def test_every_requirement_is_pinned() -> None:
 def test_pinned_pattern_rejects_loose_lines() -> None:
     for line in ("streamlit", "streamlit>=1.0", "spacy~=3.8", "model @ https://x/y.tar.gz"):
         assert not PINNED.match(line)
+
+
+def test_pinned_model_hash_must_be_complete() -> None:
+    """Un wheel avec empreinte complète reste épinglé, une empreinte tronquée est refusée."""
+    wheel = "en_core_web_sm @ https://example.org/en_core_web_sm-3.8.0.whl"
+    assert PINNED.fullmatch(wheel + "#sha256=" + "a" * 64)
+    assert not PINNED.fullmatch(wheel + "#sha256=abc")
 
 
 def test_write_mode_pattern() -> None:

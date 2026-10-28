@@ -1,0 +1,3 @@
+# Renfort local facultatif : CamemBERT FR et GLiNER EN ; jamais en mode public.
+-r requirements-transformers.txt
+gliner==0.2.29

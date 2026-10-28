@@ -45,6 +45,7 @@ class Source(str, Enum):  # noqa: UP042 (contrat exigé : str + Enum)
     # Ajout de S24 (D-S24-1) : valeur retrouvée grâce à une table de correspondance, celle
     # d'un document précédent du dossier ou celle du document lors du contrôle final.
     CASE_TABLE = "case_table"
+    NER_GLINER = "ner_gliner"
 
 
 @dataclass(frozen=True)
