@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 08:33 | C2 | Jeu challenge rédigé à l'aveugle (lot 5) | Claude Code, Opus 5.5
+- Fait : première étape 0 arrêtée sur l'ImportError de la fusion 859a36f (S14 x S36), diagnostic remis à l'humain, correction par F1. Reprise : fusion de lane-b (S45, bdc0eb5) sans conflit, 1151 passed. Huit sources chl_01 à chl_08 (split challenge, 275 à 491 mots, 19 à 30 annotations, 203 entités) et docs/prompts/corpus_lot_5.md (conditions, couverture, trois difficultés ajoutées : noms dans les noms de fichiers, diminutifs et surnoms, sigles repris après la raison sociale ; conventions ; aucune valeur des sources). corpus/challenge.jsonl et corpus/stats.md construits ; dev.jsonl et test.jsonl inchangés.
+- Rédaction à l'aveugle : lus seulement AGENTS.md, PROGRESS.md, corpus/README.md, doc_01.md et l'annexe A5 ; ni src/, ni tests/, ni results/, ni doc_07 à doc_26, ni D-S14. Aucun code modifié : le builder acceptait déjà le split challenge, repli inutile.
+- Relecture A5 : script de contrôle (valeurs annotées restées en clair, civilités dans les spans, volumes) sans écart ; build_corpus.py --check vert au premier cycle (35 documents).
+- Tests : pytest 1151 passed ; ruff check et format : OK (174 fichiers) ; check_style : 0 erreur, 5 avertissements de longueur connus.
+- Décisions : aucune. Risques : un seul auteur pour les huit documents ; quelques conventions discutables (particule dans le span, poste téléphonique hors du span, noms annotés dans des noms de fichiers) décrites dans corpus_lot_5.md, à appliquer telles quelles par G7.
+- Suite : G7 mesure le challenge avec gate-5 et le code actuel ; les sources chl_*.md restent fermées aux agents de code.
+
 ### 2026-10-28 08:15 | F1 | Correctifs de tests après la fusion de S14 et S36 | Claude Code, Opus 5.5
 - Cause : la fusion 859a36f réunit des tests écrits de chaque côté sans se voir. S14 importait find_occurrences depuis review_step, que S36 avait déplacé dans review_decisions (échec dès la collecte). Deux tests de cartes de S36 (test_app_review.py) supposaient la détection d'avant S14 : depuis S14, "Courriel" n'est plus une société et "4471-B" est détecté comme CUSTOM, donc 14 entités mais 12 types au lieu de 11, et l'ajout manuel de "4471-B" ne crée plus d'entité.
 - Fait : import corrigé dans test_app_flow.py ; nombre de types attendu passé à 12 ; ajout manuel du second test fait sur la référence de commande "442007036", laissée en clair par la détection, ce qui garde l'intention du test (une entité de plus, pas de nouveau type). Trois docstrings aux accents remplacés par "?" (venues de S14) réécrites. Aucun fichier de app/ ni de src/ modifié.
