@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 23:59 | PLAN71 | Prompts immédiats et vidéo IA externalisée | Codex, GPT-6
+- Fait : prompts S71/S72 autonomes et identiques aux fiches du masterplan, lançables dans cet ordre sans attendre la vidéo ; sources G8R2/R8, réserves EN, licences attestées et journaux non reconstruits comme verbatim.
+- Vidéo : tâches S61/S6A/H6/G6 retirées du plan actif, plan dédié docs/video/MASTER_PLAN.md avec étapes, prompts, chaîne freemium sourcée et remise au camarade ; S61 adaptée, 620 mots, sept blocs, 41 plans et cible 4:45. Voix synthétique, reconstitution annoncée et réponse illustrative ; capture réelle pilotée par IA en alternative identifiée.
+- Tests : vérifications documentaires ponctuelles hors dépôt conformes (prompts, mots, continuité, durée prévue, liens et blocs) ; pytest sous garde FIX3R : 1783 passed en 274,94 s, zéro ouverture réservée refusée ; Ruff check/format et diff conformes, style sans erreur et quinze avertissements préexistants. Avertissements torch et cache pytest connus ; premier lancement sans journal arrêté, résultat final issu du lancement journalisé hors dépôt.
+- Décisions : D-PLAN71-1 ; documentation et production vidéo découplées, vidéo toujours exigée pour le dépôt du devoir. Métadonnées publiques des outils consultées sur sources officielles, aucune donnée du projet envoyée à un outil de production.
+- Reste et risques : lancer réellement S71 puis S72, valider les états illustrés, quotas/droits/export sur le compte du camarade et produire la vidéo ; aucun rendu, voix ou nouvelle validation applicative revendiqués. Recherche juridique/marché toujours absente ; aucune affirmation nouvelle ajoutée.
+- Périmètre et suite : fusion dev déjà à jour, neuf documents uniquement ; aucun code, corpus réservé, résultat, paquet, pilote, push ou tag. Commit PLAN71, puis prompt S71 sur piste A et S72 sur piste B après son commit.
+
 ### 2026-10-28 22:53 | TK1 | Kit source et installation Windows/macOS | Codex, GPT-6
 - Fait : dev contenait déjà lane-b ; dossier B avancé sur de75183 avant travaux. Lanceurs .bat et .command, environnement .venv-toolkit, guide START_HERE bilingue et lien README ; choix initial Standard, Enhanced FR ou Enhanced FR/EN, reprise, diagnostic hors ligne, port local et ouverture du navigateur. Aucun changement de src/, app/, détection, seuil ou corpus.
 - Distribution : constructeur ZIP depuis les seuls chemins Git autorisés du commit, manifeste des fichiers et SHA-256 ; 246 fichiers lors de la recette de l'arbre indexé. Poids Enhanced téléchargés seulement sur choix du destinataire, révisions et empreintes vérifiées, puis sondes hors ligne avant reçu ; dépendances facultatives sans outils de développement, PyTorch natif sur Mac. Secrets, environnements, corpus et fichiers de travail exclus.

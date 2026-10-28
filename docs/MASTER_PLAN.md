@@ -1,6 +1,6 @@
 # HuisClos : master plan
 
-Export Markdown du document « HuisClos : master plan » (claude.ai), cinq onglets mis bout à bout : Plan, Fiches 0-2, Fiches 3-5, Fiches 6-7, Annexes. Le parcours post-G7 ci-dessous est la révision active du 28 octobre 2026 ; les calendriers et fiches antérieurs sont archivés. AGENTS.md et les demandes explicites de session priment.
+Export Markdown du document « HuisClos : master plan » (claude.ai), cinq onglets mis bout à bout : Plan, Fiches 0-2, Fiches 3-5, Fiches 6-7, Annexes. Révision active : S71 puis S72 sont lançables immédiatement. La vidéo est externalisée dans docs/video/MASTER_PLAN.md ; les calendriers et fiches antérieurs sont archivés. AGENTS.md et les demandes explicites de session priment.
 
 
 
@@ -12,26 +12,26 @@ Export Markdown du document « HuisClos : master plan » (claude.ai), cinq ongle
 
 ## 1. Synthèse
 
-Le plan initial est complété après G7 par un parcours bilingue français/anglais sur deux pistes. Les lots A1 à R8 ci-dessous s'ajoutent aux travaux déjà réalisés ; l'anglais documentaire est une exigence de livraison. Gel des fonctionnalités le mercredi 28 à 23h59, vidéo finale le jeudi 29 à 16h00, dépôt visé avant 21h59.
+Le plan initial est complété après G7 par un parcours bilingue français/anglais sur deux pistes. Les lots A1 à R8 ci-dessous s'ajoutent aux travaux déjà réalisés ; l'anglais documentaire est une exigence de livraison. Gel des fonctionnalités le mercredi 28 à 23h59, dépôt visé le jeudi 29 avant 21h59. La vidéo reste un livrable du devoir, confié à un camarade dans [son plan autonome](video/MASTER_PLAN.md).
 
 1. Produit : application Streamlit qui détecte localement les données identifiantes d'un dossier juridique en français ou en anglais (exigence post-G7), les fait valider par l'utilisateur, les remplace par des jetons stables, puis restaure les vraies valeurs dans la réponse du LLM.
 2. Détection hybride : motifs avec clés de contrôle (NIR, SIREN, SIRET, IBAN), heuristiques de personnes, NER spaCy via Presidio, propagation des occurrences, liste d'exclusions.
 3. Preuve de qualité : précision, rappel, F1 et F2 par type, taux de fuite, comparaison motifs / NER / hybride, jeu de test réservé que les agents ne lisent jamais.
 4. Traitement local démontré par un test qui bloque tout accès réseau pendant le pipeline complet.
-5. Organisation : Graciano seul pilote Claude Code (piste A : Sonnet par défaut, Opus pour S13, S21, S22) et Codex (piste B : motifs, entrées-sorties, évaluation, toutes les gates).
+5. Organisation : Graciano pilote Claude Code (piste A : Sonnet par défaut, Opus pour S13, S21, S22) et Codex (piste B : motifs, entrées-sorties, évaluation, toutes les gates).
 6. Le quota Claude est la contrainte principale : chaque session Claude a une alternative Codex, et le corpus, la recherche et les brouillons passent par ChatGPT.
-7. Révision post-G7 : Faker reste hors périmètre ; GLiNER et Anonym-IA V2 deviennent des candidats évalués, seuls ou combinés. Le support des documents FR/EN est obligatoire. S6A/avatar est coupée pour préserver la validation ; un renfort ou une migration sans gain démontré est abandonné sans retirer le socle bilingue.
-8. Livrables : dépôt GitHub public, application en ligne (démo fictive), vidéo de 4 min 45, README, guide utilisateur, rapport de méthode, CREDITS.md, PROMPTS.md.
+7. Révision post-G7 : Faker reste hors périmètre ; GLiNER et Anonym-IA V2 deviennent des candidats évalués, seuls ou combinés. Le support des documents FR/EN est obligatoire. un renfort ou une migration sans gain démontré est abandonné sans retirer le socle bilingue.
+8. Livrables : dépôt GitHub public, application en ligne (démo fictive), README, guide utilisateur, rapport de méthode, CREDITS.md, PROMPTS.md.
 9. Les fiches de session, avec leurs prompts prêts à copier, sont dans les onglets suivants ; les fichiers de démarrage du dépôt sont dans l'onglet Annexes.
 
 ## 2. Hypothèses retenues
 
-Quatorze hypothèses comblent les champs vides ou ambigus ; une seule change l'architecture du travail : Graciano exécute seul, avec deux agents en parallèle.
+Hypothèses initiales conservées, équipe actualisée : Graciano pilote le dépôt et un camarade prend la vidéo en charge.
 
 | N° | Paramètre | Hypothèse retenue | Conséquence |
 | --- | --- | --- | --- |
 | H-01 | Début effectif | Mardi 27 octobre, 14h00 (Paris) | Tout le calendrier glisse d'autant si le départ change ; les durées restent valables |
-| H-02 | Équipe | « Tout le travail sera fait par moi » : Graciano exécute seul ; les autres membres ne sont pas sollicités (relecture facultative) | Un seul humain supervise deux agents ; les pistes humaines s'enchaînent entre deux lancements de session |
+| H-02 | Équipe | Graciano pilote le dépôt ; un camarade réalise la vidéo selon le plan autonome | Un seul humain supervise deux agents ; les pistes humaines s'enchaînent entre deux lancements de session |
 | H-03 | Disponibilité | Mardi 14h-23h30, mercredi 8h-24h, jeudi 8h-22h, repas déduits | Environ 34 h utiles |
 | H-04 | Quota | Offre Claude inconnue ; Claude Code affiche l'usage du plan par `/usage` (fenêtre de 5 h et fenêtre de 7 jours) ; Codex et ChatGPT relèvent d'un abonnement OpenAI distinct | Opus limité à S13, S21, S22 ; corpus, recherche et brouillons via ChatGPT |
 | H-05 | Postes | Windows 11 avec VS Code et Git for Windows (poste principal) ; le Mac sert de second poste de test d'installation | Commandes données en PowerShell et en bash |
@@ -45,19 +45,19 @@ Quatorze hypothèses comblent les champs vides ou ambigus ; une seule change l'a
 | H-13 | Codex | Codex tourne dans son bac à sable par défaut, sans accès réseau | Toute installation de paquet est faite par l'humain ou par Claude Code |
 | H-14 | Correcteurs | Les pairs exécutent au mieux l'appli en ligne et lisent le README | Le README et l'appli en ligne portent la démonstration, l'installation locale reste documentée |
 
-## 3. Bilan de charge
+## 3. Charge restante de la piste applicative
 
-Le plan tient avec environ 8 h de marge humaine (23 %), à une condition : faire tourner Claude Code et Codex en parallèle sur des fichiers distincts. Le goulot n'est pas le temps des agents mais l'attention d'un seul superviseur et le quota Claude.
+La charge vidéo sort de ce plan. S61 est réalisée et transmise au camarade.
 
-| Poste | Heures | Détail |
-| --- | --- | --- |
-| Piste A, Claude Code | 16,0 | Sonnet 10,25 h (S01, S12, S31, S32, S33, S51, S52, S61, S71) ; Opus 4,25 h (S13, S21, S22) ; réserve de corrections 1,5 h |
-| Piste B, Codex | 14,25 | Développement 6,5 h (S11, S41, S23, S42, S43, S72) ; gates 4,5 h (G0 à G5, GF) ; options 3,25 h (S34, S44, S6A) |
-| Humain, charge | 26,25 | Amorçage 0,7 ; corpus 3,0 ; recherche 2,0 ; supervision des sessions 4,5 ; recettes des gates 3,0 ; déploiement et second poste 1,0 ; vidéo 8,25 ; option vidéo S6A 0,75 ; relecture de la documentation 1,5 ; dépôt 1,0 ; journal des contributions 0,5 |
-| Humain, disponible | 34,25 | Mardi 8,75 ; mercredi 14,0 ; jeudi 11,5 |
-| Marge humaine | 8,0 | Absorbe une gate ratée par jour ou une session à refaire |
+| Travail | Responsable | Budget indicatif | Prérequis |
+| --- | --- | --- | --- |
+| S71, rapport et architecture | Piste A, Claude Code ou Codex | 90 min | Maintenant, sources R8/G8R2 disponibles |
+| S72, crédits et prompts | Piste B, Codex | 45 min | Commit S71 intégré ; aucune attente vidéo |
+| GF, audit documentaire et technique | Piste B | 60 min | S71 et S72 |
+| RF et S73, recette et dépôt | Responsable du dépôt | Créneaux conservés | Audit conforme et réception des livrables externes |
 
-Les durées d'agents sont des cibles de dimensionnement, pas des mesures : une session qui dépasse sa cible de plus de 50 % s'arrête proprement (état consigné dans PROGRESS.md) et reprend dans une conversation neuve.
+Ne pas écrire simultanément dans les journaux partagés ; lancer S71 puis S72.
+La vidéo conserve sa propre échéance dans [son plan](video/MASTER_PLAN.md).
 
 ### Règles de quota Claude
 
@@ -71,10 +71,12 @@ Les durées d'agents sont des cibles de dimensionnement, pas des mesures : une s
 ### Ligne de coupe
 
 - **Appliquée dès le plan** : GLiNER (types sur mesure, bénéfice faible face à la saisie manuelle) et Faker (pseudonymes réalistes, qui compliquent la réidentification et brouillent la démo).
-- **Conditionnelle**, déclenchée par une gate en retard de plus d'1 h ou un quota Claude au-delà de 80 %, dans cet ordre : option vidéo S6A (Remotion, avatar), connecteur Mistral, CamemBERT (option locale S44), export .docx, bascule FR/EN, entrée PDF. CamemBERT est inséré après Mistral car il nourrit le critère « au-delà du cours » mais exige l'installation de PyTorch.
-- **Jamais coupé** : détection hybride, revue humaine, jetons cohérents, réidentification, évaluation chiffrée, application en ligne, vidéo, guide utilisateur.
+- **Conditionnelle**, déclenchée par une gate en retard de plus d'1 h ou un quota Claude au-delà de 80 %, dans cet ordre : connecteur Mistral, CamemBERT (option locale S44), export .docx, bascule FR/EN, entrée PDF. CamemBERT est inséré après Mistral car il nourrit le critère « au-delà du cours » mais exige l'installation de PyTorch.
+- **Jamais coupé** : détection hybride, revue humaine, jetons cohérents, réidentification, évaluation chiffrée, application en ligne, guide utilisateur. La vidéo du devoir reste obligatoire dans le plan externe.
 
 ## 4. Matrice critère, preuve, phase
+
+Les 30 points vidéo sont suivis uniquement dans [le plan vidéo](video/MASTER_PLAN.md).
 
 Chaque point de la grille (100) a une preuve visible par un correcteur pressé ; les exigences hors grille de la consigne sont listées en bas du tableau.
 
@@ -84,11 +86,6 @@ Chaque point de la grille (100) a une preuve visible par un correcteur pressé ;
 | Pertinence marché (10) | Problème du secret professionnel et du RGPD, recommandation du CNB, tableau concurrentiel, cible cabinets français et services RH | H2, S71 (sections 1 à 3), vidéo 0:00-1:05 et 3:45-4:20 |
 | Reproductibilité (10) | Dépôt public, versions épinglées, installation testée sur un second poste, évaluation déterministe en une commande, appli en ligne | S01, S51, S52, G5 |
 | Concepts du cours (10) | Seuil choisi par F2 (coût asymétrique), écran de revue (humain dans la boucle), pipeline règles plus NER (IA hybride), modèles pré-entraînés (transfert), onglet Evaluation (mesure) | S31, S43, S71, vidéo 3:00-3:45 |
-| Clarté (10) | Script en sept blocs titrés, sous-titres, intertitres à l'écran | S61, H6 |
-| Concision (5) | Budget de 650 mots environ, aucune redite entre démo et « sous le capot » | S61, G6 |
-| Délivrance (5) | Voix humaine, répétition chronométrée, démo sans temps mort | H6 |
-| Qualité de production (5) | Export 1080p, son sans saturation, suppression du bruit, cadrage constant | H6, G6 |
-| Respect de la durée (5) | Cible 4:45 ; fenêtre acceptée 4:30 à 5:30 (5 min plus ou moins 10 %) ; contrôle bloquant en G6 | S61, G6 |
 | Pertinence des informations d'appui (5) | README et rapport construits autour du parcours montré dans la vidéo | S52, S71 |
 | Profondeur de la recherche (5) | RESEARCH.md sourcé : textes, guide du CNB, CJUE C-413/23 P, lignes directrices 01/2025 du CEPD, concurrents, méthode d'évaluation | H2, S71 |
 | Qualité de la documentation (10) | README, USER\_GUIDE, METHOD\_REPORT, ARCHITECTURE avec glossaire, CREDITS, PROMPTS | S52, S71, S72, GF |
@@ -317,7 +314,7 @@ Deux pistes, un superviseur : Claude Code (piste A) porte la logique transversal
 | --- | --- | --- | --- |
 | Logique transversale : fusion, cohérence des jetons, réidentification | Opus 5.5 High | Les cas limites s'y propagent à tout le pipeline ; c'est là que le surcoût en quota rapporte | S13, S21, S22, corrections de gate sur ces modules |
 | Spécification claire : interface, documentation, déploiement, NER | Sonnet 5.5 High | La fiche fixe le comportement attendu ; meilleur rapport qualité-quota côté Claude | S01, S12, S31, S32, S33, S51, S52, S61, S71 |
-| Modules algorithmiques autonomes sur fichiers distincts | Codex, GPT 6.1 Sol High | Quota séparé, travail parallèle sans conflit, résultats faciles à vérifier par les tests | S11, S23, S41, S42, S43, S44, S34, S6A, S72 |
+| Modules algorithmiques autonomes sur fichiers distincts | Codex, GPT 6.1 Sol High | Quota séparé, travail parallèle sans conflit, résultats faciles à vérifier par les tests | S11, S23, S41, S42, S43, S44, S34, S72 |
 | Contrôle et revue croisée aux gates | Codex, GPT 6.1 Sol High | Un modèle d'une autre famille repère d'autres erreurs que l'auteur ; n'entame pas le quota Claude | G0 à G5, GF |
 | Méthodologie d'évaluation | Décidée dans ce plan (fiche S42) | Une fois la méthode fixée ici, son implémentation devient une spécification claire | S42 |
 
@@ -396,20 +393,20 @@ Heures de Paris, départ cible le mercredi 28 octobre 2026 à 11:30. Les crénea
 | Mer. 28/10 | 19:15-20:30 | A5 : guide, modèles et captures bilingues, sans logique (Sonnet Medium) | C3 : nouveau corpus aveugle FR/EN, conversation neuve (GPT High) | Parallèle ; attendre A4 |
 | Mer. 28/10 | 20:30-22:00 | Repos et lecture des comptes rendus ; aucune modification | G8 : contrôle indépendant FR/EN et mesures uniques (GPT High) | B seule ; attendre A5+C3 |
 | Mer. 28/10 | 22:00-22:40 | R8 : recette locale, publication seulement après GO (Sonnet Medium) | Repos | A seule ; G8 GO requis |
-| Mer. 28/10 | 22:40-23:25 | S61 : script/storyboard avec résultats FR/EN réellement validés (Sonnet High) | Repos | A seule |
-| Mer. 28/10 | 23:25-23:55 | Réserve ciblée et préparation de la démonstration ; pas de nouveau modèle | Corrections ciblées seulement si demandées ; pas de mesure répétée sans gate tracée | Seul, ou parallèle sur périmètres disjoints |
-| Mer. 28/10 | 23:59 | Gel des fonctionnalités et conservation de la version validée | Aucun développement | Gel impératif |
-| Jeu. 29/10 | 08:00-09:00 | Vous : répétition et narration ; agents au repos | Repos | Humain |
-| Jeu. 29/10 | 09:00-10:30 | S71 : rapport de méthode et architecture, résultats par langue | S72 : crédits, modèles/licences/versions et journal des prompts | Parallèle ; aucune fonctionnalité nouvelle |
-| Jeu. 29/10 | 10:30-14:00 | Corrections documentaires si nécessaires ; vous : tournage/montage | Repos ou vérification documentaire ciblée | Humain ; agents sur demande |
-| Jeu. 29/10 | 14:00-16:00 | Vous : contrôle G6 et export vidéo final | Repos | Humain |
-| Jeu. 29/10 | 17:30-18:30 | Repos | GF : contrôle final du dépôt | B seule |
-| Jeu. 29/10 | 18:30-19:00 | RF : recette finale et release si GF GO | Repos | A seule |
-| Jeu. 29/10 | 19:00-21:00 | Vous : paquet S73 et dépôt | Repos | Humain ; tampon jusqu'à 21:59 |
+| Dès cette révision | Maintenant | S71 : rapport et architecture, prompt ci-dessous | Attente du commit S71 | A seule, sans dépendance vidéo |
+| Dès S71 terminé | Sans attendre jeudi | Journaux stables | S72 : crédits et prompts, après fusion dev | B seule, sans dépendance vidéo |
+| Mer. 28/10 | 23:59 | Gel des fonctionnalités | Aucun développement | Documentation permise |
+| Jeu. 29/10 | Avant GF | Relecture des documents | Corrections documentaires autorisées | Aucune nouvelle mesure réservée |
+| Jeu. 29/10 | 17:30-18:30 | Repos | GF : audit du dépôt | B seule |
+| Jeu. 29/10 | 18:30-19:00 | RF si GF GO | Repos | A seule |
+| Jeu. 29/10 | 19:00-21:00 | Paquet S73 et dépôt, réception du lien vidéo | Repos | Marge jusqu'à 21:59 |
+
+S61 n'est pas à relancer. Le camarade suit [video/MASTER_PLAN.md](video/MASTER_PLAN.md),
+voix synthétique comprise. Le dépôt complet exige sa remise ; S71/S72 peuvent finir avant.
 
 Barrières effectives : A1+B1 -> A2+B2 -> A3+B3 -> A4 -> A5+C3 -> G8 -> R8. Les reçus de commits verts, pas l'heure seule, débloquent la suite. Une piste qui termine en avance attend l'autre. G8 NO-GO propose FIX (Claude), puis G8R (Codex neuf) ; cette correction utilise la réserve et ne repousse pas le gel.
 
-Priorité : vrai support FR/EN, fusion sans perte, revue/restauration et contrôle du contenu sortant. Modèles supplémentaires et migration sont des candidats, jamais une obligation de charger tous les outils. À 19:15, arrêter les nouvelles explorations : conserver le meilleur profil déjà testé par langue. Si EN ou une protection obligatoire ne fonctionne pas, signaler le point bloquant ; ne pas annoncer un support fictif. S6A/avatar est coupée de ce calendrier pour préserver validation et vidéo.
+Priorité : vrai support FR/EN, fusion sans perte, revue/restauration et contrôle du contenu sortant. Modèles supplémentaires et migration sont des candidats, jamais une obligation de charger tous les outils. À 19:15, arrêter les nouvelles explorations : conserver le meilleur profil déjà testé par langue. Si EN ou une protection obligatoire ne fonctionne pas, signaler le point bloquant ; ne pas annoncer un support fictif. La vidéo est sortie de ce calendrier et confiée au camarade.
 
 Commandes de pilotage : py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" ready ; planning ; card A1 ; card B1. Chaque prompt contient start/finish et recopie les suivants dans le chat. Les anciennes fiches AF1-AF5 séquentielles sont remplacées par ce parcours ; leur essai AF5 correspond maintenant à la préparation A1, au benchmark B3 et à la décision A4.
 
@@ -443,92 +440,27 @@ Tableau historique du plan initial. Les sessions actives après G7 et leurs dép
 | S51 | Déploiement et mesure de mémoire | Claude Code, Sonnet 5.5 High | 60 min | G3 | Fiches 3-5 |
 | S52 | README et guide utilisateur | Claude Code, Sonnet 5.5 High | 60 min | G3 (captures) | Fiches 3-5 |
 | G5 | Gate 5 | Codex + installation sur Mac | 45 + 30 min | S51, S52 | Fiches 3-5 |
-| S61 | Script et storyboard | Claude Code, Sonnet 5.5 High | 45 min | G4, G5, H2 | Fiches 6-7 |
-| S6A | Option : segments Remotion et avatar synchronisé | Codex + humain (Rhubarb, rendu) | 75 + 40 min | S61, G4 | Fiches 6-7 |
-| H6 | Démo : cas, répétition, tournage, montage, contrôle (6.2 à 6.4) | Humain, OBS, Clipchamp | 7 h | S61 | Fiches 6-7 |
-| G6 | Gate 6 (vidéo) | Humain + checklist | 30 min | H6 | Fiches 6-7 |
-| S71 | Rapport de méthode et ARCHITECTURE | Claude Code, Sonnet 5.5 High | 90 min | G5, H2 | Fiches 6-7 |
-| S72 | CREDITS et PROMPTS | Codex | 45 min | G5 | Fiches 6-7 |
-| GF | Gate finale | Codex + recette | 60 min | S71, S72, G6 | Fiches 6-7 |
+| S71 | Rapport de méthode et ARCHITECTURE | Claude Code ou Codex | 90 min | Maintenant, sources R8/G8R2 | Fiches 6-7 |
+| S72 | CREDITS et PROMPTS | Codex | 45 min | Commit S71 intégré | Fiches 6-7 |
+| GF | Gate finale | Codex + recette | 60 min | S71, S72 ; vidéo reçue séparément | Fiches 6-7 |
 | S73 | Paquet de dépôt et évaluations par les pairs | Humain | 75 min | GF | Fiches 6-7 |
 | H1 | Corpus de test fictif | Humain + ChatGPT | 3 h | H0 | Annexes A5 |
 | H2 | Recherche et cadre juridique | Humain + ChatGPT | 2 h | H0 | Annexes A6 |
 | H4 | Journal des contributions | Humain | 10 min par jour | Aucune | Annexes A3 |
 
-## 9. Pistes humaines et démo vidéo
+## 9. Pistes humaines et remise de la vidéo externe
 
-La présentation pèse 30 points sur 100 : elle reçoit 8 h 15 de travail humain, la plus grosse part du budget, et un script verrouillé à 650 mots environ pour tenir 4 min 45.
+| Piste | Livrable | Suivi |
+| --- | --- | --- |
+| H1 Corpus | Corpus fictifs et provenance | Historique ; aucun corpus réservé à rouvrir |
+| H2 Recherche | Sources disponibles pour S71 | Sans RESEARCH.md : limites documentées, aucune affirmation inventée |
+| H4 Contributions | Journal de contributions | Responsable du dépôt |
+| Vidéo externe | MP4, SRT, crédits et prompts réellement utilisés | Camarade, [plan autonome](video/MASTER_PLAN.md) |
 
-### 9.1 Pistes humaines
-
-| Piste | Livrable | Outil | Quand | Prompt |
-| --- | --- | --- | --- | --- |
-| H1 Corpus | 18 documents annotés et le cas de démo dans `corpus/source/` | ChatGPT, données fictives uniquement | Mardi 14:40-23:30 | Annexe A5 |
-| H2 Recherche | `docs/RESEARCH.md` (anglais) : cadre juridique sourcé, tableau concurrentiel, chiffres de marché sourcés, concepts du cours confirmés | ChatGPT avec recherche web, puis ouverture de chaque source citée | Mardi soir, mercredi matin | Annexe A6 |
-| H3 Script | Relecture à voix haute de `docs/video/SCRIPT.md` produit par S61 | Chronomètre | Mercredi 19:30 | Fiche S61 |
-| H4 Contributions | `docs/CONTRIBUTIONS.md` mis à jour chaque soir | Aucun | 10 min par jour | Annexe A3 |
-
-### 9.2 Déroulé de la vidéo
-
-| Temps | Bloc | Contenu | Mots | À l'écran |
-| --- | --- | --- | --- | --- |
-| 0:00-0:20 | Accroche | Un avocat, une échéance, la tentation de coller le dossier dans ChatGPT ; le dossier contient nom, NIR et adresse du client | 45 | Note de dossier fictive, données sensibles entourées |
-| 0:20-0:50 | Problème et cadre | Secret professionnel (loi du 31 décembre 1971, art. 66-5 ; Code pénal, art. 226-13), RGPD, guide du CNB de mars 2026 qui recommande de pseudonymiser avant l'IA générative | 70 | Références et source CNB à l'écran |
-| 0:50-1:05 | Nom et promesse | « Huis clos » : l'audience à portes fermées ; les données du client restent dans la pièce | 35 | Carton titre et accroche |
-| 1:05-3:00 | Démo en direct | Chargement du cas, détection, revue (juridiction exclue d'office, matricule ajouté à la main), pseudonymisation, passage dans ChatGPT, retour, restauration, export et avertissement sur la table | 270 | Appli en ligne, zooms sur la revue |
-| 3:00-3:45 | Sous le capot | Pipeline hybride (règles, clés de contrôle, NER pré-entraînée), jetons cohérents, test sans réseau, rappel et taux de fuite mesurés, seuil choisi par F2 | 105 | Schéma du pipeline, onglet Evaluation |
-| 3:45-4:20 | Valeur et concurrence | Valeur si l'usage se généralise (chiffres sourcés uniquement) ; positionnement face à Docuflair, Nymiz, Sentinel, PseudoShield | 80 | Tableau concurrentiel |
-| 4:20-4:45 | Limites et fin | Réidentification par le contexte, pseudonymisation n'est pas anonymisation, l'humain reste responsable ; liens GitHub et appli | 60 | Carton de fin |
-
-La fenêtre acceptée par la consigne va de 4:30 à 5:30 ; viser 4:45 laisse 15 secondes de marge de chaque côté.
-
-### 9.3 Chaîne d'outils
-
-| Usage | Outil retenu | Fonctions utilisées | Statut | Secours |
-| --- | --- | --- | --- | --- |
-| Script et storyboard | Claude Code Sonnet (S61), dépôt en contexte | Texte aligné sur la grille et sur les résultats réels | Sans objet | ChatGPT |
-| Capture d'écran | OBS Studio, libre et gratuit | 1920 x 1080, 30 images par seconde, un fichier par plan | À installer mardi soir | Enregistreur intégré à Clipchamp |
-| Narration | Voix de Graciano, micro-casque, pièce calme | Une prise par bloc | Sans objet | Voix de synthèse de Clipchamp |
-| Montage | Clipchamp (intégré à Windows 11, ou navigateur) | Export 1080p sans filigrane, sous-titres automatiques et export SRT, suppression des silences, réduction du bruit, musique libre de droits | Vérifié sur sources secondaires 2026 ; reconfirmer dans l'appli mercredi soir | Descript : offre gratuite limitée à 60 min de média par mois et export 720p ; suppression des hésitations listée dans les offres payantes |
-| Visuels | Segments Remotion (9.5), sinon Canva gratuit ou captures de l'appli | Carton titre, carton de fin, tableau concurrentiel | Fonctions gratuites à vérifier | PowerPoint exporté en image |
-| Démo LLM | ChatGPT, conversation préenregistrée sur le texte pseudonymisé fictif | Aucune fonction particulière | Sans objet | Le Chat de Mistral |
-
-CapCut est écarté : en 2026, les sources divergent sur la gratuité de ses sous-titres automatiques selon la plateforme et la région. Chaque texte donné à un outil (script, voix de synthèse éventuelle, prompts de visuels) est consigné dans `PROMPTS.md`.
-
-### 9.4 Règles de tournage
-
-- Navigateur en plein écran, zoom 125 %, thème clair, favoris masqués, notifications coupées (mode Concentration de Windows).
-- Appli en ligne réveillée 15 minutes avant (mise en veille après 12 h sans trafic).
-- Un fichier par plan du storyboard, nommé par numéro de plan (`03_review_reject.mp4`).
-- Narration enregistrée à part, bloc par bloc, puis calée au montage.
-- Aucune donnée réelle à l'écran, y compris dans les onglets, l'historique, la barre des tâches et les notifications.
-
-### 9.5 Option : segments animés par le code et avatar synchronisé
-
-Recommandation : Remotion pour quatre segments générés à partir des vrais résultats (carton titre, pipeline animé, graphique d'évaluation, carton de fin) et, seulement si l'essai de mercredi soir convainc, un petit avatar dessiné dont la bouche suit la voix enregistrée de Graciano grâce à Rhubarb Lip Sync. eSpeak NG reste un secours : une voix de synthèse coûterait sur le critère de délivrance.
-
-| Outil | Rôle | Licence et conditions | Verdict |
-| --- | --- | --- | --- |
-| Remotion | Vidéo écrite en React : cartons, schéma animé, graphique lu dans `results/`, avatar | Gratuit pour un individu, une organisation à but lucratif de 3 salariés au plus ou un organisme sans but lucratif ; licence entreprise au-delà ; changement annoncé avec la version 5.0 (vérifié) | Retenu (option S6A), usage individuel dans le cadre du cours ; un usage commercial par un cabinet de plus de 3 salariés exigerait une licence entreprise |
-| Rhubarb Lip Sync 1.14.0 | Calcule, à partir d'un enregistrement et du texte dit, la suite horodatée des formes de bouche, export JSON ; reconnaissance anglaise ou phonétique | Licence MIT et binaires Windows et macOS à confirmer sur la page des versions | Retenu pour l'avatar : la bouche suit la vraie voix |
-| eSpeak NG | Synthèse vocale libre, plus de 100 langues, texte converti en phonèmes avec hauteur et durée | GPL v3 ou ultérieure ; Windows 8 et plus (vérifié) | Secours seulement, si la narration humaine est impossible : voix robotique ; chaîne texte, puis WAV, puis Rhubarb |
-| Motion Canvas, Manim | Animations par le code | À vérifier | Non retenus : Remotion couvre le besoin, en React, que les agents maîtrisent |
-| Avatars en ligne (HeyGen, Synthesia, D-ID) | Présentateur généré | Offres gratuites limitées, à vérifier ; voix et visage confiés à un tiers | Non retenus : coût, filigrane possible, et contradiction avec le message de confidentialité du produit |
-| Visages parlants (SadTalker, Wav2Lip, LivePortrait) | Animation photoréaliste | Licences variables, certaines non commerciales (à vérifier) ; carte graphique quasi indispensable | Non retenus : installation et rendu trop lents sans GPU |
-
-**Chaîne retenue**
-
-1. Narration humaine enregistrée bloc par bloc en WAV (Audacity, gratuit, pour la conversion si l'enregistreur produit un autre format), comme prévu en 6.3.
-2. Rhubarb sur chaque bloc qui montre l'avatar, avec le texte du bloc, export JSON (options exactes à lire avec `rhubarb --help`).
-3. Projet Remotion dans `video/`, hors de l'application : TitleCard, PipelineAnimation, EvaluationChart (données lues dans `results/`), EndCard et Narrator (avatar 2D original, bouche pilotée par le JSON de Rhubarb).
-4. Rendu MP4 1080p de chaque segment, importé dans Clipchamp comme un plan du storyboard.
-
-**Garde-fous**
-
-- Avatar limité à l'accroche et à la conclusion, en incrustation, 45 secondes au plus ; personnage original, sans ressemblance avec une personne ou un personnage existant.
-- Essai mercredi 23:20 sur 5 secondes de voix test : si le rendu synchronisé n'est pas obtenu ou paraît amateur, l'avatar est abandonné et seuls les segments de données restent ; en dernier recours, cartons faits dans Clipchamp.
-- Codex n'a pas le réseau : l'humain installe Node.js, crée le projet, lance `npm install` et `npx remotion browser ensure` (navigateur de rendu installé dans `node_modules`, vérifié) avant la session S6A.
-- Les prompts donnés pour ces segments vont dans `PROMPTS.md`, au titre des outils d'IA utilisés pour la vidéo.
+Fabrication, outils freemium, voix et contrôle sur 30 points sont dans le plan
+vidéo. SCRIPT et STORYBOARD S61 sont conservés et adaptés. S71/S72 déclarent
+la vidéo externe encore à produire, sans citer les outils conseillés comme
+déjà utilisés. Le lien et les usages attestés seront intégrés à sa remise.
 
 ## 10. Mode d'emploi des onglets
 
@@ -538,8 +470,8 @@ Ce premier onglet sert à piloter ; les quatre suivants servent à exécuter, un
 | --- | --- | --- |
 | Fiches 0-2 | H0, S01, G0, S11, S12, S13, G1 (avec le prompt de correction ciblée), S21, S22, S23, G2 | Mardi et mercredi matin |
 | Fiches 3-5 | S31, S32, S33, G3, S34, S41, S42, S43, S44, G4, S51, S52, G5 | Mardi soir (S41) et mercredi |
-| Fiches 6-7 | S61, S6A (option), H6 (6.2 à 6.4), G6, S71, S72, GF, S73 | Mercredi soir et jeudi |
-| Annexes | A1 AGENTS.md, A2 CLAUDE.md, A3 modèles de suivi et décisions D-01 à D-18, A4 spécification de `check_style.py`, A5 corpus et prompt de génération, A6 prompt de recherche, A7 prompts vidéo, A8 registre des risques, A9 checklist de dépôt, sources | H0 puis à la demande |
+| Fiches 6-7 | S71, S72, GF, S73 ; vidéo dans son plan autonome | Mercredi soir et jeudi |
+| Annexes | A1 AGENTS.md, A2 CLAUDE.md, A3 modèles de suivi et décisions D-01 à D-18, A4 spécification de `check_style.py`, A5 corpus et prompt de génération, A6 prompt de recherche, A7 renvoi au plan vidéo autonome, A8 registre des risques, A9 checklist de dépôt, sources | H0 puis à la demande |
 
 Règles d'usage :
 
@@ -934,7 +866,7 @@ Contexte : HuisClos pseudonymise localement des documents juridiques français. 
 
 Lis : AGENTS.md ; docs/PROGRESS.md (entrées S11 à S13) ; docs/DECISIONS.md ; puis src/huisclos/models.py, config.py, text_utils.py, detection/*.py, data/exclusions_fr.txt, scripts/detect_cli.py, tests/fixtures/mini_case_fr.txt, tests/fixtures/mini_case_expected.json et les tests correspondants.
 
-1. Contrôles automatiques : git status propre ; PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py.
+1. Contrôles automatiques : git status propre ; PY results/fix3-recheck/guarded_pytest.py -q tests ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py.
 2. Scénario : PY scripts/detect_cli.py tests/fixtures/mini_case_fr.txt --config hybrid, puis --config patterns_only et --config ner_only ; compare au fichier attendu ; mesure le temps sur un texte de 50 000 caractères obtenu en répétant mini_case.
 3. Revue croisée, en cherchant activement :
    - expressions régulières à retour arrière excessif (adresse, personnes) : teste une ligne de 5 000 caractères sans espace et une longue suite de mots capitalisés ;
@@ -1173,7 +1105,7 @@ Contexte : HuisClos pseudonymise localement des documents juridiques français. 
 
 Lis : AGENTS.md ; docs/PROGRESS.md (entrées S21 à S23) ; docs/DECISIONS.md ; src/huisclos/models.py ; src/huisclos/pseudonymize/*.py ; src/huisclos/io/*.py ; scripts/roundtrip_cli.py ; les tests correspondants ; tests/fixtures/llm_response_altered.txt. Ne lis pas le contenu du corpus.
 
-1. Contrôles automatiques : git status propre ; PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py.
+1. Contrôles automatiques : git status propre ; PY results/fix3-recheck/guarded_pytest.py -q tests ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py.
 2. Scénario : PY scripts/roundtrip_cli.py tests/fixtures/mini_case_fr.txt (code de sortie 0) ; même commande avec --llm tests/fixtures/llm_response_altered.txt (aucune forme connue laissée, jeton inconnu signalé) ; lecture d'un .docx et d'un .pdf fabriqués à la volée.
 3. Revue, en cherchant activement : jeton partagé par deux personnes distinctes ; nom seul rattaché malgré deux candidats ; numérotation non déterministe ; occurrences décalées ; expression de restauration qui capture PERSONNE_1 dans PERSONNE_12 ou restaure une phrase ordinaire ; table JSON insuffisante pour restaurer ; lecture .docx qui oublie en-têtes ou tableaux ; code d'erreur sans test ; fichier ouvert sans encoding="utf-8".
 4. Corrige les écarts simples, en trois cycles au plus. Un défaut de logique dans grouping.py, tokens.py ou reidentify.py va dans le rapport avec un test xfail.
@@ -1392,7 +1324,7 @@ Contexte : HuisClos pseudonymise localement des documents juridiques français. 
 
 Lis : AGENTS.md (sections 2, 9, 10) ; docs/PROGRESS.md (entrées S31 à S33 et S43) ; streamlit_app.py ; tout app/ ; tests/test_app_*.py ; tests/test_highlight.py.
 
-1. Contrôles automatiques : git status propre ; PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py.
+1. Contrôles automatiques : git status propre ; PY results/fix3-recheck/guarded_pytest.py -q tests ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py.
 2. Scénario AppTest de bout en bout sur le cas d'exemple : chargement, détection, rejet d'un groupe, ajout manuel, pseudonymisation, restauration d'une réponse aux jetons altérés, présence des téléchargements, remise à zéro. Ajoute-le à tests/test_app_flow.py s'il n'existe pas.
 3. Revue, en cherchant activement :
    - tout usage de st.html ou de unsafe_allow_html sur une donnée qui n'est pas passée par html.escape ;
@@ -1641,7 +1573,7 @@ Contexte : HuisClos pseudonymise localement des documents juridiques français. 
 
 Lis : AGENTS.md (sections 2, 11) ; docs/PROGRESS.md (entrées S41 à S43) ; docs/DECISIONS.md (D-12, D-13) ; src/huisclos/evaluation/*.py ; scripts/run_evaluation.py ; scripts/build_corpus.py ; app/pages/evaluation.py ; corpus/stats.md ; results/summary.md. Ne lis ni corpus/test.jsonl ni les sources du split test.
 
-1. Contrôles automatiques : git status propre ; PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py.
+1. Contrôles automatiques : git status propre ; PY results/fix3-recheck/guarded_pytest.py -q tests ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py.
 2. Reproductibilité : PY scripts/build_corpus.py --check ; reconstruction du corpus dans un dossier temporaire et comparaison octet pour octet ; nouvelle exécution de PY scripts/run_evaluation.py --split dev et comparaison des CSV (identiques).
 3. Revue de méthode : appariements exact et partiel conformes ; fuite calculée tous types confondus ; seuil choisi par F2 sur dev, le plus bas à égalité ; aucune trace d'ajustement sur test (historique git des sessions, contenu des tests) ; valeurs de l'onglet lues dans les fichiers.
 4. Mesure finale : PY scripts/run_evaluation.py --split test, une seule fois, au seuil retenu ; date, commit et résultats consignés dans docs/PROGRESS.md.
@@ -1808,7 +1740,7 @@ Contexte : HuisClos pseudonymise localement des documents juridiques français. 
 
 Lis : AGENTS.md ; docs/PROGRESS.md (entrées S51, S52) ; README.md ; docs/USER_GUIDE.md ; docs/DEPLOYMENT.md ; requirements*.txt ; .gitignore ; scripts/measure_memory.py ; tests/test_deploy.py.
 
-1. Contrôles automatiques : git status propre ; PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py.
+1. Contrôles automatiques : git status propre ; PY results/fix3-recheck/guarded_pytest.py -q tests ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py.
 2. Cohérence documentaire : chaque commande du guide correspond à un fichier ou une option qui existe ; chaque libellé de bouton cité existe dans app/i18n/ ; chaque chiffre du README figure dans results/summary.md ; chaque lien interne pointe vers un fichier existant ; captures référencées présentes.
 3. Hygiène du dépôt : aucun secret dans les fichiers suivis (recherche de key, token, secret, password) ; aucun *.mapping.json, .env ni secrets.toml suivi ; aucune adresse e-mail hors example.com et example.org dans corpus/, tests/ et data/ ; aucun fichier suivi de plus de 5 Mo.
 4. Corrige les écarts simples (documentation, .gitignore), en trois cycles au plus.
@@ -1859,7 +1791,6 @@ Ce tableau est conservé pour l'historique ; ne pas l'utiliser après G7. Le cal
 | | 12:15 | R7 recette navigateur, captures, tag gate-7, push (Sonnet 5.5 Medium, 30 min) | - | seul |
 | | 13:30 | S53 README et guide (Sonnet 5.5 Medium, 45 min) | - | seul |
 | | 14:30 | S61 script et storyboard (Sonnet 5.5 High, 45 min) | - | seul |
-| | 15:30-21:45 | Réserve : corrections après la répétition | S6A option (Remotion, avatar) | PARALLÈLE |
 | | 23:59 | Gel : tag v1.0-freeze (Haiku 5.5) | - | seul |
 | Jeudi | 09:00 | S71 rapport de méthode | S72 crédits et prompts | PARALLÈLE |
 | | 17:30 | - | GF gate finale | seul |
@@ -2130,7 +2061,7 @@ Contexte : HuisClos pseudonymise localement des documents juridiques français. 
 
 Lis : AGENTS.md ; docs/PROGRESS.md (entrées depuis G5) ; docs/DECISIONS.md (D-S36-*, D-S14-*, D-S45-*, D-S24-*, D-G4bisfix-1) ; git diff --stat gate-5..HEAD (à défaut, depuis le dernier commit G5) ; puis les seuls fichiers que tes contrôles exigent. N'ouvre ni corpus/test.jsonl, ni corpus/challenge.jsonl, ni leurs sources : seuls les scripts les lisent, et tes audits n'affichent que des comptes.
 
-1. Contrôles automatiques : git status propre ; PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py ; git diff --check.
+1. Contrôles automatiques : git status propre ; PY results/fix3-recheck/guarded_pytest.py -q tests ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py ; git diff --check.
 2. Points de G5 : si G5 a rendu NO-GO, vérifie que ses points ouverts sont corrigés.
 3. Surajustement (méthode D-G4bisfix-1, comptes seulement) : valeurs littérales ajoutées par S14 dans src/ et data/ ; aucune correspondance spécifique dans les spans annotés de test et de challenge. Ordre : le commit C2 est postérieur au dernier commit S14 et ne touche ni src/ ni tests/, hors le repli prévu dans scripts/build_corpus.py.
 4. Interface (S36, S24, S45) : AppTest de chaque page en anglais et en français ; aucun http:// ni https:// dans app/ (CSS et HTML injecté) ; html.escape sur tout texte de l'utilisateur ; couleur doublée d'un libellé ; contrastes testés ; fichiers sous 400 lignes ; libellés de boutons cités par README.md et docs/USER_GUIDE.md présents dans app/i18n/.
@@ -2203,7 +2134,7 @@ A possède les modifications difficiles de détection, langue, offsets, parcours
 
 Le programme externe pilotage/post_g7.py ne lance aucun agent et ne modifie pas Git. start réserve une piste, finish vérifie dossier/branche/commit/arbre propre et enregistre un reçu atomique. Les deux fins d'une vague sont requises avant la suivante. Chaque agent recopie ensuite les prompts complets fournis par le pilote dans le chat, avec piste/outils/dossier. A1 et B1 se lancent ensemble. C3 et G8 exigent des conversations neuves.
 
-Commandes : `py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" ready` pour les prompts lançables ; `planning` pour le tableau ; `card A1` ou `card B1` pour une fiche autorisée. suite.py --planning, G7 --go et la fin de R7 redirigent vers ce parcours ; S53 est absorbée par A5. Après R8, reprise de S61 et du calendrier vidéo/dépôt. Aucune publication pendant cette session de planification ; la recette R8 n'autorise tag/push qu'après tous les GO prévus par AGENTS section 12.
+Commandes : `py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" ready` pour les prompts lançables ; `planning` pour le tableau ; `card A1` ou `card B1` pour une fiche autorisée. suite.py --planning, G7 --go et la fin de R7 redirigent vers ce parcours ; S53 est absorbée par A5. Après R8, S71 puis S72 immédiatement ; vidéo externalisée, échéance du dépôt conservée. Aucune publication pendant cette session de planification ; la recette R8 n'autorise tag/push qu'après tous les GO prévus par AGENTS section 12.
 
 Les copies externes de chaque prompt sont identiques aux blocs versionnés ci-dessous. Un reçu conserve l'empreinte du prompt exécuté ; ne pas modifier les consignes après démarrage d'un lot sans signaler ce changement.
 
@@ -2780,7 +2711,7 @@ Après synchronisation du commit validé B, lire verdict et limites. NO-GO ou br
 Vérifier Evaluation et guide cohérents avec résultats et profils retenus, sans revendiquer la sécurité absolue. Tout outil auxiliaire reste dans un venv temporaire hors dépôt ; serveur/navigateur arrêtés proprement. Une nouvelle erreur de logique est signalée, pas corrigée discrètement après la gate.
 Entrée R8 détaillée et commit "R8 : recette finale du parcours bilingue". Si tous les contrôles et verdicts sont GO, sans quitter dev : git fetch . dev:main (avance rapide seulement), git tag gate-8 main, git push origin main dev --tags. Si gate-8 existe déjà, vérifier son commit : même commit, ne pas le recréer ; commit différent, arrêter et signaler sans modifier de tag.
 Vérifier le redéploiement de la démo publique (HTTP 200 et cas fictifs FR/EN au profil Standard léger), dix minutes maximum, sans activer de poids lourds en ligne. Compléter le compte rendu par un commit documentaire sans nouveau push si nécessaire. Une panne de déploiement est consignée et bloque la validation R8, sans prétendre que la version en ligne a été vérifiée.
-Une fois la recette terminée, le pilote fournit S61 (script/storyboard) et le retour au calendrier vidéo/dépôt. Le gel à 23:59 reste impératif. Aucun nouveau développement après ce gel.
+S61 est terminée ; lancer S71 puis S72 avec les prompts actuels, sans utiliser le pilote pour relancer la vidéo. Le gel à 23:59 reste impératif. Aucun nouveau développement après ce gel.
 
 Règles communes de clôture :
 - PYTHONUTF8=1 ; utiliser l'interpréteur du projet par son chemin : .venv/Scripts/python.exe sur A ; ../huisclos/.venv/Scripts/python.exe sur B. Pour A2/A3 et les contrôles généraux B3, utiliser baseline_python du manifeste A1, aux versions actuelles plus spaCy EN, y compris pour la suite complète. Réserver candidate_python aux expériences explicites B3, puis aux contrôles après modification des requirements A4. Pour les autres lots, conserver le PY habituel, puis le PY validé après A4. Ne pas changer le venv partagé pendant les vagues parallèles ; seule A4 peut appliquer une migration validée.
@@ -2792,256 +2723,209 @@ Règles communes de clôture :
 Pilotage, après le compte rendu et le commit : exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" finish R8. Recopier intégralement sa sortie dans le chat, sans résumer ni modifier ; chaque partie de --- PROMPT À COLLER --- à --- FIN --- dans son propre bloc de code. Elle donne le prochain prompt, la piste, le dossier et le mode seul/parallèle. Si le pilote dit ATTENDRE, ne pas anticiper la vague suivante. En cas de blocage réel avant commit : py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" blocked R8 --reason "motif court sans contenu sensible", puis recopier la sortie.
 ```
 
-# Fiches des phases 6 et 7
+# Fiches de la documentation finale et du dépôt
 
-Ces fiches couvrent la vidéo (30 points de la grille), la documentation d'appui (20 points) et le dépôt, de mercredi 19:30 à jeudi 21:59. Après le gel du mercredi 23:59, seules les corrections sont permises.
-
-## S61. Script et storyboard de la vidéo
-
-- **Objectif et livrable** : `docs/video/SCRIPT.md` (anglais, 600 à 680 mots, sept blocs minutés) et `docs/video/STORYBOARD.md` (un plan par action visible, liste de tournage, correspondance avec la grille).
-- **Modèle** : Claude Code, Sonnet 5.5 High, car le texte doit reprendre les libellés exacts de l'appli et les résultats réels, que l'agent lit dans le dépôt. Alternative : ChatGPT avec le prompt A7-1 de l'onglet Annexes et le README collé.
-- **Durée cible** : 45 min, mercredi 19:30-20:15 ; relecture à voix haute par Graciano, chronomètre en main.
-- **Fichiers** : à lire, la liste du prompt ; à créer, les deux fichiers ; à ne pas toucher, le reste.
-- **Critères d'acceptation** : 600 à 680 mots ; durées qui somment 4:45 ; chaque chiffre issu de `results/summary.md` ou de `docs/RESEARCH.md` ; chaque critère de présentation servi par au moins un plan.
-- **Risques et repli** : lecture à voix haute au-delà de 4:55, alors couper d'abord dans « Under the hood » et « Value », jamais dans la démo.
-
-```text
-[HuisClos] Session S61 : script et storyboard de la vidéo
-Piste A, Claude Code, Sonnet 5.5 High. Durée cible : 45 minutes.
-
-Contexte
-HuisClos est terminé et en ligne. Il reste la vidéo de démonstration : 5 minutes au plus, plus ou moins 10 % (fenêtre de 4:30 à 5:30), cible 4:45, narration en anglais par une voix humaine. Elle est notée sur 30 points : clarté 10, concision 5, délivrance 5, qualité de production 5, respect de la durée 5. Elle doit expliquer le but de l'application, justifier son nom et montrer la valeur créée si son usage se généralisait.
-
-Lis : AGENTS.md (sections 1, 2, 10) ; README.md ; results/summary.md ; results/challenge_comparison.md ; l'entrée S14 de docs/PROGRESS.md ; docs/RESEARCH.md ; app/i18n/ (libellés exacts des boutons) ; les 40 premières lignes de data/samples/demo_case_fr.txt.
-
-À créer : docs/video/SCRIPT.md et docs/video/STORYBOARD.md, en anglais. À ne pas toucher : le reste.
-
-SCRIPT.md
-- Sept blocs minutés :
-  0:00-0:20 Hook : un avocat, une échéance, un dossier de licenciement qui contient le nom, le NIR et l'adresse du client.
-  0:20-0:50 Problem and rules : secret professionnel (loi du 31 décembre 1971, art. 66-5 ; Code pénal, art. 226-13), RGPD, guide du CNB de mars 2026 qui recommande de pseudonymiser avant l'IA générative.
-  0:50-1:05 Name and promise : "huis clos", l'audience à portes fermées ; les données du client restent dans la pièce.
-  1:05-3:00 Live demo : Load sample case, détection, revue (juridiction laissée en clair d'office, ajout manuel d'un élément non détecté : le matricule, ou l'élément indiqué par le compte rendu de S14), pseudonymisation, contrôle final (Final check), passage dans ChatGPT, retour, restauration, export et avertissement sur la table ; une phrase sur la mémoire de dossier.
-  3:00-3:45 Under the hood : pipeline hybride (clés de contrôle, heuristiques, NER pré-entraînée), jetons cohérents, test sans réseau, résultats repris de results/summary.md, seuil choisi par F2 parce qu'un nom oublié coûte plus qu'un masquage en trop ; jeu challenge écrit à l'aveugle après le gel des règles, avant/après historique repris de results/challenge_comparison.md. Après G8, utiliser aussi results/gate8/ et ses verdicts par langue ; distinguer langue UI, document et jetons, montrer brièvement EN et ne présenter que les profils réellement validés.
-  3:45-4:20 Value and competition : valeur si l'usage se généralise (chiffres seulement s'ils figurent avec une source dans docs/RESEARCH.md) ; positionnement face à Docuflair, Nymiz, Sentinel et PseudoShield.
-  4:20-4:45 Limits and close : réidentification par le contexte, pseudonymisation n'est pas anonymisation, l'humain reste responsable ; liens vers l'appli et le dépôt.
-- Budget : 600 à 680 mots ; pour chaque bloc, nombre de mots et durée calculée à 140 mots par minute ; total en tête du fichier.
-- Phrases courtes, faites pour l'oral ; aucun terme technique sans explication ; prononciation indiquée : HuisClos se dit "wee-kloh" ; aucune formule creuse ni superlatif.
-- Aucun chiffre ni fait qui ne vienne de results/summary.md ou de docs/RESEARCH.md ; la source figure entre crochets en fin de phrase et ne se lit pas.
-
-STORYBOARD.md
-- Tableau : numéro de plan, début et fin, image (appli, ChatGPT, carton, schéma), action exacte à l'écran (bouton cliqué, avec son libellé), texte à l'écran, phrase de narration correspondante, son.
-- Un plan par action visible ; zooms sur la revue et sur la restauration ; carton titre et carton de fin décrits (nom, accroche, adresse de l'appli, adresse du dépôt).
-- Liste de tournage : fichiers à capturer dans l'ordre, nommés par numéro de plan (exemple : 03_review_reject.mp4).
-- Tableau final : critère de la grille et plans qui le servent.
-
-Contrôle : un script Python ponctuel, non commité, compte les mots par bloc.
-
-Déroulé imposé
-a. Lis les fichiers listés, rien d'autre.
-b. Présente un plan de 10 lignes au plus, puis enchaîne sans attendre.
-c. Rédige les deux fichiers ; compte les mots ; lance PY -m pytest -q.
-d. Lance PY scripts/check_style.py.
-e. Mets à jour docs/PROGRESS.md et docs/PROMPTS.md, puis commit "S61 : script et storyboard de la vidéo".
-f. Termine par un compte rendu de 5 lignes au plus : fait, tests, reste à faire, risques, suite.
-```
-
-## S6A. Option : segments vidéo générés par le code et avatar synchronisé
-
-- **Objectif et livrable** : projet Remotion dans `video/` qui rend en MP4 1080p un carton titre, un pipeline animé, un graphique d'évaluation lu dans `results/`, un carton de fin et, si l'essai convainc, un avatar narrateur dont la bouche suit la voix enregistrée (Rhubarb Lip Sync). Contexte et choix des outils : section 9.5 de l'onglet Plan.
-- **Modèle** : Codex, GPT 6.1 Sol High, car le projet est autonome (dossier séparé de l'application), en React et TypeScript, et la piste B est en réserve mercredi soir. Alternative : Claude Code Sonnet 5.5 High si le quota le permet.
-- **Durée cible** : 75 min d'agent, mercredi 22:05-23:20 ; 20 min de préparation humaine à 21:45 ; 20 min de rendu jeudi 09:00 après la narration.
-- **Fichiers** : à lire, la liste du prompt ; à créer ou modifier, `video/` et `.gitignore` ; à ne pas toucher, l'application.
-- **Critères d'acceptation** : cinq compositions qui se rendent ; chiffres du graphique lus dans les CSV ; décalage entre son et bouche inférieur à une image ; README de `video/` avec les commandes exactes.
-- **Risques et repli** : rendu bloqué par le bac à sable de Codex (lancement du navigateur de rendu), alors Codex écrit le code et l'humain lance les rendus ; avatar peu convaincant à 23:20, alors abandon de l'avatar seul ; projet qui ne démarre pas à 22:30, alors abandon de S6A et cartons faits dans Clipchamp (première ligne de la coupe conditionnelle).
-
-**Préparation humaine (mercredi 21:45-22:05, avec réseau)**
-
-```powershell
-node --version                     # Node.js LTS ; installer depuis nodejs.org si absent (version minimale à vérifier sur remotion.dev)
-npx create-video@latest video      # dans le dépôt, modèle vide ; commande à vérifier sur remotion.dev
-cd video
-npm install
-npx remotion browser ensure        # installe le navigateur de rendu dans node_modules
-# Rhubarb Lip Sync 1.14.0 : archive Windows de la page des versions GitHub, décompressée hors du dépôt, par exemple C:\tools\rhubarb
-# Prise de voix test de 5 à 10 secondes, en WAV, enregistrée dans video\public\test.wav
-C:\tools\rhubarb\rhubarb.exe -f json -o public\test.json public\test.wav
-```
-
-**Rendu final (jeudi 09:00-09:20)** : Rhubarb sur `hook.wav` et `close.wav` avec leur texte (option de fichier de dialogue), copie dans `video/public/`, puis une commande `npx remotion render` par composition, selon `video/README.md`.
-
-```text
-[HuisClos] Session S6A (option) : segments vidéo générés par le code et avatar synchronisé
-Piste B, Codex, GPT 6.1 Sol High. Durée cible : 75 minutes.
-
-Contexte
-HuisClos est une application de pseudonymisation locale de documents juridiques ; sa vidéo de démonstration (4 min 45, en anglais) est montée dans Clipchamp. Cette session produit, dans un projet Remotion séparé (dossier video/, hors de l'application), des segments vidéo générés par le code à partir des vrais résultats du projet, et un avatar narrateur dont la bouche suit la voix humaine enregistrée. L'humain a créé le projet (modèle vide), lancé npm install et npx remotion browser ensure, installé Rhubarb Lip Sync, et déposé dans video/public/ un enregistrement test (test.wav) et ses formes de bouche (test.json, format JSON de Rhubarb). Tu travailles sans réseau : n'installe aucun paquet ; si un paquet manque, dis-le et contourne sans lui.
-
-Lis : AGENTS.md (sections 1, 2, 10) ; docs/video/STORYBOARD.md ; results/summary.md ; les en-têtes de results/metrics_by_type.csv et de results/threshold_sweep.csv ; video/package.json ; les fichiers de video/src/ créés par le modèle ; les 30 premières lignes de video/public/test.json.
-Avant d'écrire, lis dans video/node_modules les signatures des API Remotion que tu utilises (Composition, AbsoluteFill, Sequence, composant audio, useCurrentFrame, useVideoConfig, interpolate, spring, staticFile) : la version installée fait foi.
-
-À créer ou modifier : video/src/ (racine, compositions, composants) ; video/src/config.ts (adresses de l'appli et du dépôt, à compléter par l'humain) ; video/scripts/csv_to_json.mjs (copie des CSV de results/ en JSON dans video/public/) ; video/README.md (anglais : rôle, commandes de rendu, licence Remotion) ; .gitignore (video/node_modules, video/out).
-À ne pas toucher : l'application (src/, app/), results/, corpus/.
-
-Compositions, toutes en 1920 x 1080 à 30 images par seconde, palette de l'application (encre #1B1F24, primaire #1F3A5F, fonds #FFFFFF et #F4F5F7), police système, aucun dégradé, aucun emoji :
-1. TitleCard, 5 s : "HuisClos", l'accroche "Use generative AI on client files without breaching professional secrecy." et "Huis clos: a hearing behind closed doors." ; apparition sobre.
-2. PipelineAnimation, 15 à 20 s : les étapes apparaissent l'une après l'autre (document, détection hybride, revue humaine, jetons, LLM externe, restauration) ; la table de correspondance reste visiblement sur le poste ; libellés en anglais.
-3. EvaluationChart, 15 à 20 s : barres de rappel par configuration (patterns_only, ner_only, hybrid), puis courbe du F2 selon le seuil avec le seuil retenu marqué ; toutes les valeurs lues dans les JSON issus de results/, aucun chiffre tapé à la main.
-4. EndCard, 6 s : nom, accroche, adresses de l'appli en ligne et du dépôt lues dans config.ts.
-5. Narrator, durée de l'audio : avatar 2D original et sobre (visage stylisé de juriste, sans ressemblance avec une personne ou un personnage existant), dessiné en SVG ; bouche aux formes A à F, G, H et X de Rhubarb, choisie à chaque image d'après mouthCues (start, end, value) ; clignement des yeux discret ; audio joué en synchronisation ; fond uni ou transparent pour l'incrustation ; paramètres : fichier audio et fichier JSON, pour servir aux blocs hook, close et au test.
-
-Contrôles : vérification des types (npx tsc --noEmit) sans erreur ; image fixe de chaque composition (npx remotion still) ; rendu MP4 de TitleCard et d'un Narrator de 5 secondes sur test.wav et test.json dans video/out/ (npx remotion render) ; décalage entre son et bouche inférieur à une image. Si le lancement du navigateur de rendu est bloqué par ton bac à sable, écris les commandes exactes dans video/README.md et dis-le dans le compte rendu : l'humain lancera les rendus.
-
-Critères d'acceptation : cinq compositions qui s'affichent et se rendent ; chiffres du graphique issus des CSV ; README de video/ avec les commandes exactes ; aucune modification hors de video/ et de .gitignore.
-
-Déroulé imposé
-a. Lis les fichiers listés, rien d'autre.
-b. Présente un plan de 10 lignes au plus, puis enchaîne sans attendre.
-c. Implémente ; lance la vérification des types, les images fixes et les rendus de test.
-d. Lance PY scripts/check_style.py.
-e. Mets à jour docs/PROGRESS.md et docs/PROMPTS.md, puis commit "S6A : segments vidéo Remotion et avatar".
-f. Termine par un compte rendu de 5 lignes au plus : fait, rendus, reste à faire, risques, suite.
-```
-
-**Go / no-go de l'avatar (mercredi 23:20, 5 min)** : regarder le rendu test au casque ; GO si la bouche suit la voix sans décalage visible et si l'avatar paraît sobre et professionnel ; sinon, seuls les segments de données sont gardés et le storyboard revient à la voix seule sur l'appli.
-
-## H6. Démo : cas, répétition, tournage, montage, contrôle (6.2 à 6.4)
-
-- **Objectif et livrable** : vidéo MP4 1080p de 4:45 environ, sous-titres anglais (fichier SRT), copie de secours.
-- **Responsable et outils** : Graciano ; OBS Studio pour la capture, Clipchamp pour la narration, le montage, les sous-titres et la musique ; ChatGPT pour la séquence de démo.
-- **Durée cible** : environ 7 h, de mercredi 20:15 à jeudi 15:00.
-- **Risques et repli** : appli en ligne lente au tournage, alors réveil 15 min avant et prise refaite ; voix fatiguée, alors narration jeudi 08:00 et voix de synthèse de Clipchamp en dernier recours ; export trop lourd pour la plateforme, alors export 1080p à débit réduit et 720p en secours.
-
-### 6.2 Cas de démonstration et répétition (mercredi 20:15-21:45)
-
-1. Ouvrir `data/samples/demo_case_fr.txt` et vérifier la présence de : nom du client sous trois formes, NIR, date de naissance, adresse, téléphone, e-mail, matricule interne (« matricule n° 4471-B », qu'aucun reconnaisseur ne détecte : il servira à l'ajout manuel), employeur avec SIREN et SIRET, nom du gérant, collègue témoin, numéro RG devant le Conseil de prud'hommes de Nanterre, article L. 1232-6 du Code du travail, date d'entretien préalable, IBAN.
-2. Dérouler le parcours sur l'appli en ligne en suivant le storyboard, deux fois, chronomètre en main ; cible : 1 min 55 pour le bloc de démo.
-3. Préparer la séquence ChatGPT dans une conversation dédiée nommée « HuisClos demo », avec le prompt ci-dessous ; garder la réponse obtenue pour le tournage (pas d'attente à l'écran) ; copier le prompt dans `docs/PROMPTS.md`.
-4. Noter dans `docs/PROGRESS.md` les écarts constatés (libellé peu clair, lenteur, détection manquante) ; ils alimentent le créneau de corrections de 20:15 à 21:45.
-
-```text
-Here is a pseudonymized French employment case file. Keep every bracketed token exactly as written, for example [PERSONNE_1]; do not change, translate or invent tokens.
-Draft a structured outline of submissions before the French employment tribunal (conseil de prud'hommes) contesting this dismissal for gross misconduct. Use the facts of the file, cite the relevant articles of the French Labour Code, and answer in French.
-
-<coller ici le texte pseudonymisé>
-```
-
-### 6.3 Tournage et montage (jeudi 08:00-14:00)
-
-1. **Narration (08:00-09:00)** : micro-casque, pièce calme ; lire `SCRIPT.md` sur un second écran ; une prise par bloc, deux si nécessaire ; enregistrement dans Clipchamp (enregistrement audio) ou l'Enregistreur vocal de Windows.
-2. **Captures (09:00-10:30)** : OBS en 1920 x 1080, 30 images par seconde, sortie MP4 ; capture de la fenêtre du navigateur ; un fichier par plan du storyboard ; règles de tournage de la section 9.4 de l'onglet Plan.
-3. **Montage (10:30-14:00, pause 12:30)** : projet Clipchamp 16:9 ; narration puis plans dans l'ordre du storyboard ; suppression des silences ; réduction du bruit sur la voix ; zooms sur la revue et la restauration ; carton titre et carton de fin ; musique de la bibliothèque libre de droits de Clipchamp, nettement sous la voix ; sous-titres automatiques en anglais, puis correction des noms propres (HuisClos, Presidio, spaCy, CNB, GDPR) ; export 1080p et export des sous-titres en SRT.
-4. Consigner dans `docs/PROMPTS.md` tout texte donné à un outil d'IA (voix de synthèse éventuelle, génération de visuels).
-
-### 6.4 Contrôle qualité (jeudi 14:00-15:00)
-
-Visionnage complet sur l'écran d'un ordinateur portable, au casque puis sur les haut-parleurs, avec la checklist de la gate 6 ; facultatif : prompt de contrôle A7-3 (onglet Annexes) appliqué au fichier SRT. Corrections jusqu'à 15:45 ; export final avant 16:00.
-
-## G6. Gate 6 : vidéo
-
-- **Contrôleur** : Graciano, 30 min, jeudi 14:30-15:00, avec la checklist ci-dessous ; facultatif : prompt A7-3 appliqué au fichier SRT dans ChatGPT ou Claude (Sonnet).
-
-* [ ] Durée entre 4:30 et 5:30, idéalement 4:45 à 10 secondes près, lue dans les propriétés du fichier exporté.
-* [ ] Nom HuisClos et son explication dans la première minute ; accroche lisible à l'écran.
-* [ ] Démo sur l'appli en ligne, bandeau de démo visible ; aucune donnée réelle à l'écran, ni dans les onglets, ni dans les notifications.
-* [ ] Chaque chiffre dit ou affiché figure dans `results/summary.md` ; chaque référence juridique affichée est exacte.
-* [ ] Valeur si l'usage se généralise, positionnement face aux concurrents et limites présents.
-* [ ] Voix intelligible et sans saturation ; musique nettement sous la voix ; aucun bruit de clavier dominant.
-* [ ] Sous-titres anglais synchronisés, noms propres corrects.
-* [ ] Image en 1920 x 1080, texte lisible sur un écran de portable, aucun curseur parasite ni fenêtre étrangère.
-* [ ] Fichier MP4 (H.264), taille compatible avec la plateforme de dépôt (limite à vérifier sur la plateforme), copie de secours sur un second support.
-
-**Go / no-go** : GO si toutes les cases sont cochées ; la durée hors fenêtre est bloquante, sans exception.
-
-**En cas d'échec** : refaire seulement le bloc fautif (narration ou plan) ; au-delà de 5:15, couper dans « Under the hood » puis « Value » avant de toucher à la démo ; export final au plus tard à 16:00 (T-8 h), quitte à livrer une version moins finie mais conforme.
+S71 puis S72 sont lançables maintenant, sans attente vidéo. Voir [le plan vidéo externe](video/MASTER_PLAN.md).
 
 ## S71. Rapport de méthode et architecture vulgarisée
 
-- **Objectif et livrable** : `docs/METHOD_REPORT.md` (2 500 à 3 500 mots) et `docs/ARCHITECTURE.md` (1 500 à 2 000 mots, glossaire), en anglais.
-- **Modèle** : Claude Code, Sonnet 5.5 High, car la qualité de rédaction compte et toute la matière est déjà dans le dépôt (décisions, résultats, recherche). Alternative : Opus 5.5 High si le quota le permet encore jeudi matin, pour la section juridique.
-- **Durée cible** : 90 min, jeudi 09:00-10:30, pendant le tournage.
-- **Fichiers** : à lire, la liste du prompt ; à créer, les deux fichiers ; à ne pas toucher, le reste.
-- **Critères d'acceptation** : douze sections du rapport présentes ; chaque chiffre identique à `results/summary.md` ; chaque affirmation juridique sourcée ; glossaire complet.
-- **Risques et repli** : `docs/RESEARCH.md` incomplet, alors le rapport s'en tient aux sources de l'annexe A et du plan, et l'humain complète la section marché à 16:00.
+[Prompt autonome prêt à copier](prompts/S71_now.md).
 
 ```text
-[HuisClos] Session S71 : rapport de méthode et architecture vulgarisée
-Piste A, Claude Code, Sonnet 5.5 High. Durée cible : 90 minutes.
+[HuisClos] Session S71 : rapport de méthode et architecture, lancement immédiat
+Piste A, dossier huisclos, branche dev. Claude Code ou Codex, modèle disponible.
+La vidéo est confiée à un camarade : elle ne bloque pas cette session.
 
-Contexte
-HuisClos est terminé, en ligne et évalué. Il reste la documentation d'appui, notée sur 20 points : pertinence 5, profondeur de la recherche 5, qualité de la documentation 10. Deux documents en anglais : un rapport de méthode pour les correcteurs et une architecture vulgarisée qui permet à chaque membre du groupe d'expliquer le code.
+0. Lis AGENTS.md en entier, vérifie git status. Si l'arbre est propre,
+   git merge lane-b --no-edit ; conflit : arrête et signale-le, sans le résoudre.
+   Ne lance ni pilote post_g7.py ni autre fiche de session.
+1. Lis les trois premières entrées de docs/PROGRESS.md, docs/DECISIONS.md,
+   README.md, docs/USER_GUIDE.md, docs/LOCAL_MODELS.md,
+   docs/POST_G7_PROTOCOL.md, results/summary.md,
+   results/challenge_comparison.md, results/gate8/report.md,
+   results/gate8-recheck/report.md si présent, results/gate8-resume/report.md,
+   results/recette8/report.md et docs/PROMPTS.md.
+   Si docs/RESEARCH.md existe, lis-le ; sinon constate son absence sans bloquer.
+   Lis seulement les docstrings de module de src/huisclos/**/*.py, les schémas
+   de src/huisclos/models.py et les signatures publiques utiles du pipeline,
+   de la pseudonymisation, du contrôle sortant et des lecteurs/exporteurs.
+   Tu peux lire app/i18n/method*.py pour les références déjà affichées.
+   Lis results/fix3-recheck/guarded_pytest.py pour les contrôles autorisés.
+2. Présente un plan de dix lignes au plus et rédige sans attendre.
 
-Lis : AGENTS.md ; docs/PROGRESS.md (5 dernières entrées) ; docs/DECISIONS.md ; docs/RESEARCH.md ; results/summary.md ; les 30 premières lignes de results/results.json ; README.md ; la docstring de module de chaque fichier de src/huisclos/ (première docstring seulement).
+Fichiers autorisés en écriture : docs/METHOD_REPORT.md, docs/ARCHITECTURE.md,
+docs/PROGRESS.md, docs/PROMPTS.md ; docs/DECISIONS.md seulement si une décision
+documentaire nouvelle est nécessaire. Aucun code, résultat, corpus, README,
+masterplan, document vidéo ou fichier de dépendances à modifier.
 
-À créer : docs/METHOD_REPORT.md, docs/ARCHITECTURE.md. À ne pas toucher : le reste.
+Crée METHOD_REPORT.md en anglais, 2 500 à 3 500 mots, douze sections :
+1. Problem and users : besoin, avocats et juristes, extension RH présentée
+   comme hypothèse, aucun chiffre de marché inventé.
+2. Legal and ethical framework : références exactes déjà étayées dans les
+   documents lus ; secret professionnel, RGPD, distinction pseudonymisation/
+   anonymisation, table sensible. Lie les sources primaires disponibles.
+   Ne présente pas une URL comme une vérification juridique récente.
+   Sans RESEARCH.md probant, omets CNB 2026, statut final des lignes directrices
+   CEPD et interprétation CJUE non vérifiés ; explicite la recherche manquante.
+3. Market and alternatives : comparaison qualitative annoncée comme telle ;
+   concurrents nommés ou chiffres seulement si leurs sources sont disponibles.
+4. Solution and pipeline : Mermaid et choix justifiés avec décisions exactes.
+5. Evaluation : sépare dev, test historique, challenge et C3 FR/EN ; tailles,
+   types inclus/exclus, exact/partiel, F2, seuil, couverture complète, fuite,
+   surmasquage, bootstrap et limites. Conserve le registre G4, G4bis, G7, G8,
+   l'échec challenge, le diagnostic FIX2 et la reprise unique G8R2.
+   N'exécute aucune mesure pour compléter une cellule manquante.
+6. Course concepts applied : coût asymétrique, humain dans la boucle,
+   hybride, transfert et mesure, chacun relié à une fonction visible.
+7. Beyond the course : modèles facultatifs, fenêtres, projection Unicode,
+   regroupement, restauration tolérante, mémoire, contrôle des deux segments,
+   autorisation révoquée après modification, bootstrap apparié.
+8. Limits and ethics : omissions, contexte, qualité PDF/DOCX, absence d'OCR,
+   biais synthétiques, faux positifs, table, responsabilité et limites EN.
+9. Value if widely used : hypothèses qualitatives, coût de revue et étude de
+   temps encore nécessaire ; ni gain de productivité ni conformité garantis.
+10. Reproducibility : commandes locales Windows/macOS tirées du guide,
+    dépendances/modèles facultatifs préparés hors application. Sépare tests
+    ordinaires et évaluation réservée, qui exige une gate et son autorisation.
+    Une commande d'évaluation documentée n'est pas à exécuter dans S71.
+11. Use of AI tools : usages constatés seulement et renvoi à PROMPTS.md.
+    Vidéo externe entièrement produite avec IA et voix synthétique : prévue,
+    outils et résultat final à créditer après réception, pas déjà réalisée.
+12. References : fichiers et sources primaires effectivement disponibles.
 
-METHOD_REPORT.md (2 500 à 3 500 mots, sections numérotées)
-1. Problem and users : avocats, juristes, services RH ; usage de l'IA générative sur des dossiers.
-2. Legal and ethical framework : secret professionnel (loi n° 71-1130 du 31 décembre 1971, art. 66-5 ; Code pénal, art. 226-13) ; RGPD (art. 4(5), considérant 26, art. 5(1)(c), art. 32) ; guide du CNB de mars 2026 ; CJEU, 4 September 2025, EDPS v SRB, C-413/23 P (pseudonymised data are not personal data in every case and for every person ; the controller's information duty is assessed at collection, before transfer ; General Court judgment set aside and case referred back) ; EDPB Guidelines 01/2025 on pseudonymisation. Uniquement ce que docs/RESEARCH.md source.
-3. Market and competitors : tableau tiré de docs/RESEARCH.md ; angle de HuisClos (identifiants juridiques français, rappel mesuré et publié, code ouvert, traitement local, revue humaine).
-4. Solution and pipeline : schéma Mermaid, six étapes, choix techniques avec renvoi aux décisions D-xx.
-5. Evaluation : corpus (taille, types, split dev et test, génération puis relecture), appariements exact et partiel, F2, taux de fuite, comparaison des configurations, choix du seuil, résultats dev et test copiés de results/summary.md avec leur date ; toutes les mesures test (G4, G4bis, G7 et G8/G8R si exécutées), sans en cacher aucune ; résultats FR/EN séparés et limites des nouveaux modèles ; intervalles de confiance (D-S45-1) ; jeu challenge écrit à l'aveugle et comparaison avant/après (results/challenge_comparison.md, D-G7-1).
-6. Course concepts applied : coût asymétrique et seuil, humain dans la boucle, IA hybride, apprentissage par transfert, mesure de la performance ; pour chacun, l'endroit précis de l'appli où il se voit.
-7. Beyond the course : NER par transformeurs (résultat de D-S44-1, ou option non mesurée), regroupement des mentions, réidentification tolérante, comparaison chiffrée de configurations, mémoire de dossier et contrôle final (D-S24-*), intervalles par rééchantillonnage, évaluation à l'aveugle.
-8. Limits and ethics : réidentification par le contexte, erreurs de détection, jetons altérés, démo en ligne et données fictives, biais du corpus, responsabilité humaine, outil d'aide et non conseil juridique.
-9. Value if widely used : chiffres sourcés de docs/RESEARCH.md seulement, sinon raisonnement qualitatif annoncé comme tel.
-10. Reproducibility : commandes exactes d'installation, de test, de construction du corpus et d'évaluation.
-11. Use of AI tools : résumé (Claude Code, Codex, ChatGPT, outils vidéo) et renvoi à docs/PROMPTS.md.
-12. References : chaque source citée avec son adresse.
+Règles de preuve prioritaires : D-G8R2-1 et D-R8-1.
+- G8R2 : code 930c414, huit documents FR du challenge déjà connu, avant revue ;
+  Standard 157/190 entités entièrement couvertes, 325/3600 caractères exposés ;
+  Enhanced 170/190 et 218/3600 ; précision partielle 0,803922/0,801802 ;
+  surmasquage 366/379 caractères. Vérifie les valeurs dans le rapport source.
+- Gain de couverture non significatif : IC apparié touche zéro. Ne confonds
+  pas avec la réduction de fuite dont l'intervalle exclut zéro sur ce lot.
+- G8 test/C3 mesure e3d13bd : historique, pas validation du code courant.
+- Standard EN expérimental avec réserves fortes ; Enhanced EN expérimental
+  et non recommandé. Aucun GO bilingue complet, aucune garantie zéro fuite.
+- Une alerte ne masque rien ; cloud de démonstration et traitement local
+  sont distincts ; limites de continuité D-FIX3-2 conservées.
 
-ARCHITECTURE.md (1 500 à 2 000 mots) : vue d'ensemble pour un lecteur non informaticien ; trajet d'un document à travers les modules, avec une phrase fictive suivie étape par étape ; un paragraphe par module (rôle, entrées, sorties, fichier) ; où modifier quoi (ajouter un type d'entité, une exclusion, une langue d'interface) ; glossaire : NER, motif et expression régulière, clé de contrôle, Luhn, modulo 97, jeton, pseudonymisation, anonymisation, précision, rappel, F1, F2, taux de fuite, seuil, apprentissage par transfert, IA hybride, revue humaine, Streamlit, Presidio, spaCy.
+Crée ARCHITECTURE.md en anglais, 1 500 à 2 000 mots, pour un non-informaticien :
+trajet d'une phrase fictive inventée, Mermaid, frontières local/cloud/LLM,
+table séparée, familles de modules avec chemins, entrées et sorties,
+paramètres document/UI/jetons indépendants, profils et repli explicite,
+états périmés, gestion d'erreurs et où modifier quoi après le gel.
+Regroupe les modules proches pour respecter le budget de mots sans omettre
+les étapes. Glossaire : NER, regex, clé, Luhn, modulo 97, jeton, pseudonymisation,
+anonymisation, précision, rappel, F1/F2, fuite, couverture complète, surmasquage,
+seuil, transfert, hybride, revue, Streamlit, Presidio, spaCy et bootstrap.
 
-Contraintes : phrases courtes ; aucune formule creuse ; interdits de check_style ; aucun chiffre ni fait qui ne vienne des fichiers lus ; chaque affirmation juridique reprise de docs/RESEARCH.md avec sa source.
-
-Déroulé imposé
-a. Lis les fichiers listés, rien d'autre.
-b. Présente un plan de 10 lignes au plus, puis enchaîne sans attendre.
-c. Rédige ; vérifie chaque chiffre contre results/summary.md ; lance PY -m pytest -q.
-d. Lance PY scripts/check_style.py.
-e. Mets à jour docs/PROGRESS.md et docs/PROMPTS.md, puis commit "S71 : rapport de méthode et architecture".
-f. Termine par un compte rendu de 5 lignes au plus : fait, tests, reste à faire, risques, suite.
+Contraintes : aucun réseau, aucune installation, aucune lecture/empreinte de
+test, challenge, blind_post_g7 ou de leurs sources. Ne modifie pas les tests
+pour une rédaction seule. Contrôle ponctuel hors dépôt : mots par document,
+douze sections, chemins/liens locaux, provenance de chaque tableau.
+Sous Windows : PYTHONUTF8=1, PY=.venv/Scripts/python.exe.
+Lance PY results/fix3-recheck/guarded_pytest.py -q tests : suite existante,
+roundtrip limité à dev par la garde conservée, zéro accès réservé attendu.
+Puis PY -m ruff check ., PY -m ruff format --check .,
+PY scripts/check_style.py et git diff --check. N'ouvre aucun lanceur de gate.
+Si une dépendance manque ou une erreur préexistante est hors périmètre,
+consigne-la sans installer ni corriger l'application ; ne prétends pas vert.
+Mets à jour PROGRESS en tête et PROMPTS (référence à ce fichier, relances
+exactes, limites de preuve et vidéo encore externe). Commit unique :
+"S71 : rapport de méthode et architecture". Aucun push ni tag.
+Termine en cinq lignes au plus : fait, tests, reste, risques, suite S72.
 ```
 
 ## S72. Crédits et journal des prompts
 
-- **Objectif et livrable** : `docs/CREDITS.md` (dépendances, modèles, données, outils, licences) et `docs/PROMPTS.md` consolidé (une ligne par session, relances verbatim, autres outils).
-- **Modèle** : Codex, GPT 6.1 Sol High, car le travail est un inventaire mécanique à partir de fichiers locaux, sans réseau. Alternative : Claude Code Sonnet 5.5 High.
-- **Durée cible** : 45 min, jeudi 09:00-09:45.
-- **Fichiers** : à lire, la liste du prompt ; à créer ou modifier, `docs/CREDITS.md`, `docs/PROMPTS.md` ; à ne pas toucher, le reste.
-- **Critères d'acceptation** : chaque dépendance de `requirements.txt` citée avec sa licence ; chaque session de `PROGRESS.md` présente dans `PROMPTS.md`.
-- **Risques et repli** : licence d'un modèle introuvable hors ligne, alors mention « to verify on the model card » et vérification humaine à 16:00.
+[Prompt autonome prêt à copier](prompts/S72_now.md).
 
 ```text
-[HuisClos] Session S72 : crédits et journal des prompts
-Piste B, Codex, GPT 6.1 Sol High. Durée cible : 45 minutes.
+[HuisClos] Session S72 : crédits et journal des prompts, lancement immédiat
+Piste B, dossier huisclos-b, branche lane-b. Codex, modèle disponible.
+À lancer après le commit S71 pour intégrer ses documents et éviter les
+écritures simultanées dans les journaux. Aucune attente de la vidéo.
 
-Contexte
-HuisClos pseudonymise localement des documents juridiques français. AGENTS.md fait foi. La consigne exige de citer les paquets et les données utilisés, et de montrer où et comment les outils d'IA ont servi, prompts à l'appui. Tu travailles sans réseau ; pip-licenses est installé.
+0. Lis AGENTS.md en entier et vérifie git status. Si l'arbre est propre,
+   git merge dev --no-edit ; conflit : arrête et signale-le sans le résoudre.
+   Ne lance ni pilote ni autre session.
+1. Lis les trois entrées récentes de docs/PROGRESS.md puis les titres et les
+   lignes utiles à la provenance de toutes les autres entrées ; lis
+   docs/DECISIONS.md, docs/PROMPTS.md, docs/CONTRIBUTIONS.md,
+   requirements.txt, requirements-dev.txt, requirements-transformers.txt,
+   requirements-enhanced.txt et requirements-enhanced-lock.txt si présents,
+   LICENSE, corpus/README.md, docs/LOCAL_MODELS.md, docs/POST_G7_PROTOCOL.md,
+   README.md et les sections IA/références des documents S71 si présents.
+   Consulte docs/MASTER_PLAN.md et docs/prompts/ pour retrouver les prompts,
+   sauf le contenu des prompts de rédaction des lots réservés C3/challenge.
+   Leur chemin et la provenance déjà journalisée suffisent.
+   Lis les métadonnées installées des dépendances directes, les meta.json des
+   modèles fr_core_news_md et en_core_web_sm, et les seules fiches locales
+   des modèles CamemBERT/GLiNER/Anonym-IA explicitement étudiés en A1-A4.
+   Ne parcours ni caches de documents ni secrets, et ne charge pas les poids.
+   RESEARCH.md : si absent, le signaler, sans créer de source imaginaire.
+   Lis results/fix3-recheck/guarded_pytest.py pour les contrôles.
+2. Présente un plan de dix lignes au plus, puis rédige sans attendre.
 
-Lis : AGENTS.md ; docs/PROGRESS.md (en survol, titres des entrées) ; docs/PROMPTS.md ; requirements.txt ; requirements-dev.txt ; requirements-transformers.txt s'il existe ; corpus/README.md ; le fichier meta.json du modèle fr_core_news_md installé (licence) ; la fiche README du modèle Jean-Baptiste/camembert-ner dans le cache local, si elle existe.
+Écriture autorisée : docs/CREDITS.md, docs/PROMPTS.md, docs/PROGRESS.md ;
+docs/DECISIONS.md seulement si décision documentaire nouvelle nécessaire.
+Aucun autre fichier à modifier. Aucun réseau, paquet à installer, pilote,
+mesure, lecture ou empreinte de corpus réservé, push ou tag.
 
-À créer ou modifier : docs/CREDITS.md, docs/PROMPTS.md. À ne pas toucher : le reste.
+Crée CREDITS.md en anglais :
+- Dépendances directes : nom, version déclarée, version installée si
+  différente, licence exacte, URL, rôle et source locale du relevé.
+  Distingue socle, développement, options lourdes et verrou transitif.
+  pip-licenses seulement s'il existe déjà ; sinon importlib.metadata,
+  License-Expression, License, fichiers de licence et Project-URL.
+  Ne suppose ni sa présence ni que toutes les licences sont MIT.
+- Modèles : les deux spaCy 3.8.0, CamemBERT retenu FR, GLiNER option EN,
+  dépôts, révisions et licences réellement attestés ; Anonym-IA comme
+  candidat étudié et écarté, sans le présenter comme backend embarqué.
+  Distingue licence du code, des poids et des données d'entraînement.
+- Données : corpus fictifs créés pour le cours, usages documentés des outils
+  IA et relecture. Pas de lecture des textes ni des annotations réservés.
+  N'invente aucune licence du corpus : si l'attribution CC BY 4.0 n'est pas
+  établie par un fichier, écris "licence not documented" et consigne le point.
+  Les modèles préentraînés utilisent des données externes : ne prétends pas
+  que le projet n'a aucune dépendance envers des données externes.
+- Outils IA : outil/modèle, rôle, preuve dans les journaux ; modèles absents
+  de l'historique marqués inconnus, pas déduits du plan initial.
+- Vidéo : production externe confiée à un camarade, voix synthétique,
+  statut prévu/en cours ; ni Canva, Clipchamp, ElevenLabs ni autre outil
+  recommandé à créditer comme utilisé sans preuve remise par le camarade.
+  Signale la future annexe de crédits vidéo séparée ; S72 peut être terminée
+  sans cette vidéo. Distingue les lectures web de planification des usages
+  de production. Aucun rendu vidéo ni quota gratuit garanti.
+- Sources juridiques et marché : renvois aux références S71 et à RESEARCH
+  seulement s'il existe. Licence introuvable : "not verified locally",
+  avec le fichier ou la fiche à vérifier, sans fabriquer de conclusion.
 
-1. docs/CREDITS.md (anglais)
-- Tableau des dépendances directes : nom, version, licence, adresse du projet, usage dans HuisClos ; produit avec pip-licenses (format markdown, adresses incluses) puis filtré aux dépendances directes des fichiers requirements.
-- Modèles : fr_core_news_md (version et licence lues dans meta.json) ; camembert-ner (licence lue dans sa fiche locale, sinon "to verify on the model card").
-- Données : corpus fictif créé pour le projet, CC BY 4.0, généré avec ChatGPT puis relu ; aucun jeu de données externe.
-- Outils d'IA utilisés pour construire le projet : Claude Code (Opus 5.5, Sonnet 5.5), Codex (GPT 6.1 Sol), ChatGPT, outils vidéo ; renvoi à docs/PROMPTS.md.
-- Sources juridiques et de marché : renvoi à docs/RESEARCH.md.
-2. docs/PROMPTS.md
-- Une ligne par session de docs/PROGRESS.md (S01 à S73, gates, corrections) avec date, outil et modèle, référence au prompt dans docs/MASTER_PLAN.md et relances verbatim ; lignes manquantes ajoutées avec la mention "reconstructed from PROGRESS.md".
-- Section "Other AI tools" : corpus (prompts dans docs/prompts/), recherche, vidéo.
-- Paragraphe d'en-tête "How AI tools were used", six lignes au plus.
+Consolide PROMPTS.md en anglais sans écraser les lignes historiques :
+- En-tête "How AI tools were used", six lignes au plus.
+- Une entrée par occurrence de session du journal : date, ID, outil/modèle,
+  référence au prompt versionné et résultat réel. Ne fusionne pas deux
+  corrections qui partagent un ID. N'ajoute pas S73 ou une gate non exécutée.
+- Ajoute S71 si réalisé et conserve S61 comme travail déjà effectué.
+- Pour chaque manque : "reconstructed from PROGRESS.md". Ce résumé n'est
+  pas un verbatim : indique "original prompt unavailable" si introuvable.
+  Une fiche révisée aujourd'hui n'est pas l'original historique de S61.
+- Conserve les relances exactes disponibles. Ne reconstitue pas une citation
+  à partir d'un résumé et ne recopie aucune donnée réservée.
+- "Other AI tools" : corpus, recherche et vidéo, avec statut et preuves.
+  Prompts vidéo futurs : planifiés, pas soumis ; les traces de production
+  seront remises séparément avec le fichier vidéo.
+- Contrôle hors dépôt : chaque entrée de PROGRESS a une correspondance
+  dans PROMPTS, chaque dépendance directe est créditée ou explicitement
+  signalée comme licence non vérifiée ; noms, versions et liens cohérents.
 
-Critères d'acceptation : chaque dépendance de requirements.txt figure dans CREDITS.md avec sa licence ; chaque session du journal figure dans PROMPTS.md ; check_style vert sur CREDITS.md (PROMPTS.md est exclu des contrôles car il contient des prompts verbatim).
-
-Déroulé imposé
-a. Lis les fichiers listés, rien d'autre.
-b. Présente un plan de 10 lignes au plus, puis enchaîne sans attendre.
-c. Rédige ; lance PY -m pytest -q.
-d. Lance PY scripts/check_style.py.
-e. Mets à jour docs/PROGRESS.md, puis commit "S72 : crédits et journal des prompts".
-f. Termine par un compte rendu de 5 lignes au plus : fait, tests, reste à faire, risques, suite.
+Sous Windows : PYTHONUTF8=1 ; PY=../huisclos/.venv/Scripts/python.exe.
+Lance PY results/fix3-recheck/guarded_pytest.py -q tests, puis
+PY -m ruff check ., PY -m ruff format --check .,
+PY scripts/check_style.py, git diff --check. Ne lance aucune évaluation.
+Pas de tests nouveaux qui recopient les tableaux ; vérifications ponctuelles
+de complétude hors dépôt. Si un paquet manque, documente sans installation.
+Mets à jour PROGRESS en tête et ajoute la ligne S72 dans PROMPTS, avec la
+référence à ce fichier et les relances exactes. Commit unique :
+"S72 : crédits et journal des prompts". Aucun push ni tag.
+Compte rendu en cinq lignes au plus : fait, tests, reste, risques, suite.
 ```
 
 ## GF. Gate finale : audit avant dépôt
@@ -3057,12 +2941,12 @@ Contexte : HuisClos pseudonymise localement des documents juridiques français. 
 
 Lis : AGENTS.md ; docs/PROGRESS.md (10 dernières entrées) ; README.md ; les fichiers .md de docs/ sauf MASTER_PLAN.md et docs/prompts/ ; results/summary.md ; corpus/stats.md ; requirements.txt.
 
-1. Contrôles automatiques : git status propre ; PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py.
-2. Si les règles de détection ont changé après la gate 4 (voir docs/PROGRESS.md), lance une fois PY scripts/run_evaluation.py --split all, puis vérifie que le rapport publie les deux mesures test, datées.
+1. Contrôles automatiques : git status propre ; PY results/fix3-recheck/guarded_pytest.py -q tests ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py.
+2. Ne relance aucune évaluation réservée ni --split all. Vérifie le registre existant G4/G4bis/G7/G8/G8R2 et ses provenances. Toute nouvelle mesure exige une gate distincte explicitement autorisée.
 3. Cohérence : chiffres identiques entre results/summary.md, README.md, docs/METHOD_REPORT.md et l'onglet Evaluation ; chaque document cité par le README existe ; présence de tout ce qu'exige la consigne (but de l'appli, nom, valeur si l'usage se généralise, concepts du cours, apports au-delà du cours, prompts, crédits des paquets et des données, guide utilisateur) ; liens internes valides.
 4. Hygiène : aucun secret ; aucun *.mapping.json suivi ; aucune donnée réelle évidente ; aucun fichier suivi de plus de 5 Mo ; aucun TODO ; versions épinglées.
-5. Reproductibilité : PY scripts/build_corpus.py --check ; corpus reconstruit identique ; CSV d'évaluation dev identiques après une nouvelle exécution.
-6. Corrige les écarts simples, surtout de documentation, en trois cycles au plus.
+5. Reproductibilité : relire les preuves existantes et les commandes documentées, sans reconstruire ni ouvrir les corpus réservés, sans nouvelle détection ou mesure.
+6. Corrige les écarts simples, surtout de documentation, en trois cycles au plus. Consigne la réception vidéo externe comme acquise ou en attente ; S71/S72 restent indépendantes, le dépôt complet exige sa remise.
 
 Critères go / no-go
 - GO si tout est vert et cohérent.
@@ -3514,47 +3398,11 @@ Output: Markdown, with a final "Sources" list (title, publisher, date, URL).
 
 Points déjà vérifiés pour ce plan (à reprendre tels quels) : arrêt CJUE du 4 septembre 2025, C-413/23 P (arrêt du Tribunal annulé et affaire renvoyée ; des données pseudonymisées ne sont pas, dans tous les cas et pour toute personne, des données personnelles ; l'obligation d'information du responsable s'apprécie au moment de la collecte, avant la transmission) ; lignes directrices 01/2025 du CEPD adoptées le 16 janvier 2025 pour consultation, version finale publiée depuis (date à vérifier) ; liens de la section Sources de cet onglet.
 
-## A7. Prompts de la phase 6
+## A7. Vidéo externalisée
 
-### A7-1. Script (secours de S61, dans ChatGPT ou Claude)
-
-```text
-Tu rédiges le script d'une vidéo de démonstration de 4 minutes 45, en anglais, lue par une voix humaine. Produit : HuisClos, application qui pseudonymise localement les dossiers juridiques français avant leur envoi à un outil d'IA générative, puis restaure les vraies valeurs dans la réponse. Accroche : "Use generative AI on client files without breaching professional secrecy."
-
-Je colle ci-dessous le README, le résumé des résultats (results/summary.md) et la fiche de recherche (docs/RESEARCH.md). N'utilise aucun chiffre ni fait qui n'y figure pas.
-
-Structure imposée et durées : 0:00-0:20 hook (un avocat, une échéance, un dossier de licenciement avec nom, numéro de sécurité sociale et adresse) ; 0:20-0:50 problème et règles (secret professionnel, RGPD, guide du CNB de mars 2026) ; 0:50-1:05 nom et promesse ("huis clos", audience à portes fermées) ; 1:05-3:00 démo en direct (import, détection, revue avec un ajout manuel, pseudonymisation, passage dans ChatGPT, restauration, export) ; 3:00-3:45 sous le capot (pipeline hybride, jetons cohérents, traitement local, résultats, seuil choisi par F2 car un nom oublié coûte plus qu'un masquage en trop) ; 3:45-4:20 valeur si l'usage se généralise et concurrents ; 4:20-4:45 limites et conclusion.
-
-Contraintes : 600 à 680 mots au total ; nombre de mots et durée (140 mots par minute) indiqués pour chaque bloc ; phrases courtes faites pour l'oral ; aucun superlatif ni formule creuse ; pas de tiret cadratin ; prononciation de HuisClos indiquée : "wee-kloh".
-
-<coller ici README.md, results/summary.md et docs/RESEARCH.md>
-```
-
-### A7-2. Storyboard (secours de S61)
-
-```text
-À partir du script ci-dessous et des libellés exacts des boutons de l'application (liste collée après le script), produis le storyboard de la vidéo, en anglais, sous forme de tableau : numéro de plan, début et fin, image (appli, ChatGPT, carton, schéma), action exacte à l'écran (bouton cliqué, avec son libellé), texte affiché, phrase de narration correspondante, son. Un plan par action visible ; zooms sur l'écran de revue et sur la restauration ; carton titre et carton de fin décrits. Ajoute la liste de tournage (fichiers à capturer dans l'ordre, nommés par numéro de plan) et un tableau qui relie chaque critère de la grille (clarté, concision, délivrance, qualité de production, durée) aux plans qui le servent.
-
-<coller ici le script, puis les libellés des boutons>
-```
-
-### A7-3. Contrôle qualité du montage (gate 6)
-
-```text
-Tu contrôles la vidéo de démonstration d'une application avant son dépôt pour un devoir noté. Je te donne : la durée exacte du fichier exporté, ses sous-titres au format SRT, le script prévu et le résumé des résultats d'évaluation.
-
-Vérifie et rends un tableau "point, constat, correction proposée" :
-1. Durée dans la fenêtre de 4:30 à 5:30 (cible 4:45) ; durée réelle de chaque bloc, calculée sur les horodatages.
-2. Écarts entre le texte dit (SRT) et le script : phrases ajoutées, coupées ou modifiées.
-3. Chaque chiffre dit est identique à celui du résumé des résultats.
-4. Clarté : phrases de plus de 25 mots, jargon non expliqué, répétitions entre blocs.
-5. Présence : nom et explication du nom, but de l'application, valeur si l'usage se généralise, limites.
-6. Sous-titres : fautes, noms propres mal écrits (HuisClos, Presidio, spaCy, CNB, GDPR), lignes de plus de 42 caractères, affichage de moins d'une seconde.
-Termine par un verdict : prêt à déposer, ou liste ordonnée des corrections indispensables.
-
-Durée : <mm:ss>
-<coller ici le SRT, le script et results/summary.md>
-```
+Les anciens prompts de voix humaine et de tournage sont remplacés par
+[docs/video/MASTER_PLAN.md](video/MASTER_PLAN.md), avec chaîne freemium,
+prompts V1 à V6 et critères de remise. L'original S61 reste dans l'historique Git.
 
 ## A8. Registre des risques
 
@@ -3573,14 +3421,9 @@ Durée : <mm:ss>
 | Réidentification par le contexte | Moyenne | Élevé | Limite documentée, revue humaine, type LIEU activable | Rapport, page Method |
 | Données réelles collées dans l'appli en ligne | Faible | Très élevé | Bandeau de démo publique, README, guide (D-14) | Toute utilisation publique |
 | Donnée réelle dans le dépôt ou dans un outil d'IA | Faible | Très élevé | Corpus fictif, contrôles G5 et GF, `.gitignore` | Revue G5 |
-| Vidéo hors de la fenêtre de durée | Moyenne | Moyen | Budget de mots, répétition chronométrée, G6 bloquante | G6 |
-| Son de mauvaise qualité | Moyenne | Moyen | Micro-casque, réduction du bruit de Clipchamp, voix de synthèse en secours | Écoute en G6 |
-| Appli en veille au tournage ou pendant la correction | Élevée | Faible | Réveil avant le tournage ; mention dans le README | Page de réveil affichée |
 | Codex bloqué par son bac à sable sous Windows | Moyenne | Moyen | WSL, ou piste B sur le Mac | Échec de commande en G0 |
 | Fatigue d'un opérateur unique | Moyenne | Élevé | Gel à T-24 h, nuits protégées, marge de 8 h 45 | Retard de plus d'1 h sur une gate |
 | Téléversement lent ou refusé | Moyenne | Élevé | Essai à 18:30, version 720p, lien de téléchargement de secours | Échec d'envoi |
-| Fonction d'un outil vidéo devenue payante | Faible | Faible | Clipchamp vérifié ; Descript en secours ; sous-titres corrigés à la main | Vérification mercredi soir |
-| Option vidéo S6A (Remotion, avatar) qui dévore le temps du montage | Moyenne | Moyen | Essai de 5 secondes mercredi soir, abandon de l'avatar au premier blocage, segments de données conservés, cartons Clipchamp en secours ; licence gratuite de Remotion limitée à l'usage individuel ou aux structures de 3 salariés au plus | Go / no-go de mercredi 23:20 |
 
 ## A9. Checklist finale de dépôt
 
@@ -3606,7 +3449,7 @@ Durée : <mm:ss>
 
 **Vidéo**
 
-- [ ] MP4 1080p, durée entre 4:30 et 5:30, sous-titres, checklist G6 entièrement cochée.
+- [ ] Réception du paquet vidéo externe et de son contrôle V6 selon docs/video/MASTER_PLAN.md.
 
 **Dépôt**
 

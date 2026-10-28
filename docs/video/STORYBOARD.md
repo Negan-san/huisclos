@@ -1,12 +1,12 @@
-# HuisClos filming storyboard
+# HuisClos AI production storyboard
 
-Master duration: **4:45**. English human narration: **618 words**; use `SCRIPT.md` verbatim.
+Master duration: **4:45**. English synthetic narration: **620 words**; use `SCRIPT.md` verbatim.
 Narration continues over adjacent shots; the quoted phrases below are sync cues, not extra speech.
 Each row has one visible action or a single held view. All times are master-edit timecodes.
 
-## Recording setup
+## AI production setup
 
-- Film the public app at `https://huisclos.streamlit.app` with fictional data only, Standard,
+- Reconstruct verified views of the public app at `https://huisclos.streamlit.app` with fictional data only, Standard,
   English interface, French document and default French token labels. Use the local logo
   `app/assets/logo.svg` in the title and end cards; do not modify or regenerate it.
 - The public warning must remain legible in every app shot. Its exact text is
@@ -23,28 +23,33 @@ Each row has one visible action or a single held view. All times are master-edit
   `Client: Mr Pierre VERNOLAC. Email: pierre.vernolac@example.org.`
   This is a translated fragment of the fictional sample, not an evaluation corpus.
   Keep French token labels to make the separate settings visible. No Enhanced model is used online.
-- Rehearse the full review and message check before recording. If the final check has additional
-  alerts, record each actual decision as a separate insert in shot 21's time slot. Retiming must
-  use block 4's 13 seconds of holds, preserve all seven boundaries and keep the master at 4:45.
+- Validate the full review and message check before rendering. If verified states have additional
+  alerts, animate each decision as a separate insert in shot 21's time slot. Retiming must
+  use block 4's 12.14 seconds of holds, preserve all seven boundaries and keep the master at 4:45.
   Label inserts `21a_check_decision.mp4`, `21b_check_decision.mp4`, one decision per clip.
   Never substitute a ready-state frame for unresolved alerts. Follow the masking/edit/decision
   rules in `SCRIPT.md`; the exact acknowledgement is **I reviewed this mention in its context: keep it in clear**.
-- Use a readable desktop capture, restrained pointer movement, English captions and a consistent
-  microphone level. Record one human voice track; no synthesized voice or music is needed.
-  Hide account details, keys, notifications and unrelated browser tabs. Keep clicks quiet.
-- Capture a real ChatGPT exchange using only the checked fictional message, then retain its real
-  answer for Restore. Do not recreate an answer and present it as a live result. Shorten waiting
-  only with the visible caption **Waiting time shortened**. S61 creates these documents only.
+- Generate one original English synthetic voice, readable animated app views and English captions.
+  Keep **AI-generated reconstruction. Fictional data.** visible throughout the workflow.
+  Generate no account details, keys, notifications or unrelated browser tabs.
+- Plans 23-25 illustrate transfer and a prepared token-preserving answer, labelled
+  **Illustrative AI answer**. Use that same answer for Restore; never claim a live request.
+  Validate states against the app or trusted reference captures. If real AI-operated capture
+  is used instead, adapt the narration and use the mode B evidence rules in `MASTER_PLAN.md`.
 
 ## Shot table
 
+In mode A, each action below is an AI-generated animation of a verified state, not a live click.
+ChatGPT views are labelled illustrations. Only alternative mode B can show real captures.
+Use `MASTER_PLAN.md` for production steps, tools and evidence requirements.
+
 | Shot | Start | End | Image | Exact action | On-screen text | Narration sync cue | Sound |
 | ---: | --- | --- | --- | --- | --- | --- | --- |
-| 01 | 0:00 | 0:08 | App: prepared fictional sample | Hold on the dismissal note; no input action. | Fictional demo; deadline scenario | "A lawyer has a deadline." | Human voice; quiet room tone. |
+| 01 | 0:00 | 0:08 | App: prepared fictional sample | Hold on the dismissal note; no input action. | Fictional demo; deadline scenario | "A lawyer has a deadline." | Synthetic voice; quiet room tone. |
 | 02 | 0:08 | 0:20 | App: sample detail | Pan once across the client paragraph; leave public warning in frame. | Name / Home address / Social security number (NIR) | "Can we ask an AI tool for help while limiting what we disclose?" | Voice continues; no identifier read aloud. |
 | 03 | 0:20 | 0:33 | Legal card | Reveal the secrecy references as one card. | Law of 31 December 1971, art. 66-5; Penal Code, art. 226-13 | "French professional secrecy covers the case file." | Voice only. |
 | 04 | 0:33 | 0:50 | Legal card | Replace the secrecy card with the GDPR card. | GDPR art. 4(5), recital 26; Personal data; Separate mapping table | "The result remains personal data." | Voice, then short reading hold. |
-| 05 | 0:50 | 1:01 | Title card | Reveal the existing logo, name and tagline together. | HuisClos; Use generative AI on client files without breaching professional secrecy. | "HuisClos, pronounced wee-kloh, means a hearing behind closed doors." | Human voice; pronounce wee-kloh. |
+| 05 | 0:50 | 1:01 | Title card | Reveal the existing logo, name and tagline together. | HuisClos; Use generative AI on client files without breaching professional secrecy. | "HuisClos, pronounced wee-kloh, means a hearing behind closed doors." | Synthetic voice; pronounce wee-kloh. |
 | 06 | 1:01 | 1:05 | App: Import home header | Cut to the matching closed-door logo and header; no click. | Import; public warning | "keep client identities inside the room while preparing a text for AI." | Voice continues. |
 | 07 | 1:05 | 1:09 | App: Import | Click **Load sample case**. | Fictitious sample notice | "I choose Load sample case." | Voice; subdued click. |
 | 08 | 1:09 | 1:19 | App: settings and input | Hold on the already open sidebar; do not alter settings. | Language: English; Document language: French; Detection profile: Standard; Token style: French labels [PERSONNE_1] | "This public demo processes text on its server, so real files belong in a local installation." | Voice continues through the settings sentence. |
@@ -61,25 +66,25 @@ Each row has one visible action or a single held view. All times are master-edit
 | 19 | 2:03 | 2:07 | App: Final check close-up | Hold on the real instruction alert; do not dismiss it. | Final check; Location: your instruction. | "The final check flags it." | Voice; no alert sound added. |
 | 20 | 2:07 | 2:13 | App: instruction | Replace the entire instruction with the clean version from `SCRIPT.md`. | Summarize the dispute in three short English sentences. Keep every bracketed token exactly as written; do not change, translate or invent tokens. | "I remove it and read the complete message again." | Voice; quiet typing. |
 | 21 | 2:13 | 2:19 | App: refreshed Final check and message | Wait for the new check, then hold on its actual resolved status and both message segments. | Actual resolved check status; Check document AND instruction | "Edits require a new check before copying. An alert protects nothing until someone acts." | Voice; reading hold. |
-| 22 | 2:19 | 2:22 | App: checked message | Click the enabled copy control at the message's top right, as directed by **Use the copy button at the top right of the message.** | Copy only the checked message | "Only the checked message goes into ChatGPT by copy and paste." | Voice; subdued click. |
-| 23 | 2:22 | 2:27 | ChatGPT | Paste the checked message unchanged into the composer. | Fictional demo; No mapping table | "I request a short summary with unchanged tokens." | Voice; no message sound. |
-| 24 | 2:27 | 2:29 | ChatGPT | Press Enter to submit the fictional message. | Optional Mistral connector: off by default | "The optional Mistral connector stays off by default." | Voice; no connector action. |
-| 25 | 2:29 | 2:33 | ChatGPT: actual answer | Use the answer's copy control; retain unchanged tokens. | Waiting time shortened, only if the wait was cut | Transition into "I bring the answer back" | Human voice or brief room tone during the honest wait cut. |
-| 26 | 2:33 | 2:37 | App: Restore close-up | Paste the actual answer into **Answer from the AI tool**. | Restore the AI answer | "I bring the answer back and choose Restore." | Voice; quiet paste. |
+| 22 | 2:19 | 2:22 | App: checked message | Click the enabled copy control at the message's top right, as directed by **Use the copy button at the top right of the message.** | Copy only the checked message | "We illustrate copying the checked message into ChatGPT, without a live request." | Voice; subdued click. |
+| 23 | 2:22 | 2:27 | ChatGPT | Paste the checked message unchanged into the composer. | Fictional demo; No mapping table | "The prepared summary preserves each bracketed token unchanged." | Voice; no message sound. |
+| 24 | 2:27 | 2:29 | ChatGPT | Animate the checked message as an illustrative request; send nothing in mode A. | Optional Mistral connector: off by default | "The optional Mistral connector stays off by default." | Voice; no connector action. |
+| 25 | 2:29 | 2:33 | Illustrative AI answer view | Animate copying the labelled prepared answer; retain unchanged tokens. | Illustrative AI answer; no live request | Transition into "I bring an illustrative answer back" | Synthetic voice or brief room tone during the scene transition. |
+| 26 | 2:33 | 2:37 | App: Restore close-up | Illustrate pasting the prepared answer into **Answer from the AI tool**. | Restore the AI answer | "I bring an illustrative answer back and choose Restore." | Voice; quiet paste. |
 | 27 | 2:37 | 2:41 | App: Restore close-up | Click **Restore**. | Restored text | "The table replaces tokens with their values." | Voice; subdued click. |
 | 28 | 2:41 | 2:46 | App: restored answer close-up | Read and scroll the restored answer once. | Highlighted; type labels beside restored values | "I read the restored answer and export it." | Voice; reading hold. |
 | 29 | 2:46 | 2:49 | App: export | Click **Restored text (.docx)**. | Restored answer | Continuation of shot 28. | Voice; subdued click. |
-| 30 | 2:49 | 3:00 | App: mapping warning | Hold beside **Mapping table (.mapping.json)**; do not open or copy the table. | Sensitive file: it links tokens to real identities. Keep it on this computer. Never send it to an AI tool. | "That table links tokens to identities. Never send it to an AI tool. A saved case table helps reuse tokens across documents; continuity still needs checking." | Human voice. |
+| 30 | 2:49 | 3:00 | App: mapping warning | Hold beside **Mapping table (.mapping.json)**; do not open or copy the table. | Sensitive file: it links tokens to real identities. Keep it on this computer. Never send it to an AI tool. | "That table links tokens to identities. Never send it to an AI tool. A saved case table helps reuse tokens across documents; continuity still needs checking." | Synthetic voice. |
 | 31 | 3:00 | 3:07 | Pipeline diagram | Reveal the hybrid detection stage and its plain-language explanations together. | Built-in arithmetic checks; Expected text formats; Context rules; Model trained to label names | "Detection combines check digits, text patterns, name clues and pretrained entity recognition: a model that labels names." | Voice; no effects. |
 | 32 | 3:07 | 3:12 | Pipeline diagram | Reveal the local-processing boundary and separate table branch. | No-network test: local processing; Review -> tokens -> final check -> AI answer -> restore; Table stays separate | "A network blocking test checks local processing. Consistent tokens preserve references." | Voice. |
 | 33 | 3:12 | 3:28 | Method card | Reveal the threshold and blind-challenge explanation as one held card. | Threshold = cutoff; F2 favours fewer misses; Challenge written blind after freeze; G8R2 reuses that known set | "We chose the threshold, the cutoff for accepting proposed detections, using F two" | Voice continues through the blind-challenge sentence. |
 | 34 | 3:28 | 3:37 | Results card | Reveal the G8R2 French table from `SCRIPT.md`, with the two coverage cells highlighted by outlines and text. | Standard 157/190, 325/3600 leaked; Enhanced 170/190, 218/3600 leaked; Local FR option; Coverage gain not statistically significant | "Its French results are on screen. The coverage gain is not statistically significant. French Enhanced is a local option." | Voice; no counting sound. |
 | 35 | 3:37 | 3:39 | Historical code card | Replace the French table with the historical-code card. | G8: historical results, e3d13bd; Not a new validation of current code | "G8 results describe historical code." | Voice continues over the cut. |
-| 36 | 3:39 | 3:45 | App: prepared English session | Hold on the separate Standard English document view; no second workflow or Enhanced switch. | Document language: English; Standard EN: experimental, strong reservations; Enhanced EN: experimental, not recommended | "English Standard remains experimental with strong reservations; English Enhanced is experimental and not recommended." | Human voice. |
+| 36 | 3:39 | 3:45 | App: prepared English session | Hold on the separate Standard English document view; no second workflow or Enhanced switch. | Document language: English; Standard EN: experimental, strong reservations; Enhanced EN: experimental, not recommended | "English Standard remains experimental with strong reservations; English Enhanced is experimental and not recommended." | Synthetic voice. |
 | 37 | 3:45 | 3:58 | Qualitative comparison card | Reveal the proposed preparation workflow beside manual replacement, with no time or accuracy scale. | Qualitative proposal; Manual replacements / Reviewed consistent tokens | "The value case is qualitative. If this review became routine, legal teams could prepare AI requests without rebuilding every replacement by hand." | Voice. |
 | 38 | 3:58 | 4:09 | Value card | Reveal the review cost and responsibility caption. | Benefit to test: consistency; Cost: human review | "The tradeoff is time spent reviewing detections, context and the final answer." | Voice continues through the wider-use proposal. |
 | 39 | 4:09 | 4:20 | Evidence card | Reveal the evidence needed, without logos or named competitors. | Evidence needed: time study; sourced product comparison; independent assessment | "Testing time savings and comparing competing products would require separate evidence." | Voice continues through "Its usefulness needs independent assessment." |
-| 40 | 4:20 | 4:33 | Limits card | Reveal the context and validation limits together. | Context may identify; Pseudonymization is not anonymization; No zero-leakage guarantee; Measured French scope; No complete bilingual validation | "Context can still identify someone." | Human voice; steady pace. |
+| 40 | 4:20 | 4:33 | Limits card | Reveal the context and validation limits together. | Context may identify; Pseudonymization is not anonymization; No zero-leakage guarantee; Measured French scope; No complete bilingual validation | "Context can still identify someone." | Synthetic voice; steady pace. |
 | 41 | 4:33 | 4:45 | End card | Reveal and hold the existing logo, responsibilities and both addresses through the final frame. | Human review required; Public demo: fictitious data only; Real files: local installation; App: https://huisclos.streamlit.app; Code: https://github.com/Negan-san/huisclos | "Review every detection and the final answer. The human remains responsible. Try the public demo with fictional data, or inspect the code at the addresses on screen." | Voice ends cleanly; room tone to 4:45. |
 
 ## Sources and continuity
@@ -105,14 +110,14 @@ set cannot establish zero leakage. G8 on `e3d13bd` is historical; show no curren
 
 `docs/RESEARCH.md` is absent. Shots 37-39 are explicitly qualitative proposals; omit market numbers,
 named competitors, CNB-guide claims and claims of measured productivity or superiority.
-All cuts preserve the same French sample, review decisions, final checked message and real answer.
+All cuts preserve the same French sample, review decisions, final checked message and labelled illustrative answer.
 Unknown or altered tokens must be reviewed if they appear; retain the app's actual warning.
 Do not present any restored AI answer as legal advice ready to send to a client.
 
-## Shooting list in edit order
+## Render list in edit order
 
-These are planned capture filenames, not existing deliverables. Record the voice separately as
-`voice_en_human.wav`. Cards and diagrams can be exported with the same clip names for assembly.
+These are planned render filenames, not existing deliverables. Generate the voice separately as
+`voice_en_synthetic.wav`. Cards and diagrams can be exported with the same clip names for assembly.
 
 | Order | Planned file | Content |
 | ---: | --- | --- |
@@ -138,10 +143,10 @@ These are planned capture filenames, not existing deliverables. Record the voice
 | 20 | `20_instruction_correct.mp4` | Replace with the clean instruction. |
 | 21 | `21_message_check.mp4` | Actual refreshed status and complete message. |
 | 22 | `22_copy_message.mp4` | Copy checked message. |
-| 23 | `23_chatgpt_paste.mp4` | Paste unchanged message. |
-| 24 | `24_chatgpt_submit.mp4` | Submit fictional request. |
-| 25 | `25_chatgpt_answer.mp4` | Copy actual answer, with honest wait cut if needed. |
-| 26 | `26_restore_paste.mp4` | Paste actual answer into HuisClos. |
+| 23 | `23_chatgpt_paste.mp4` | Animate the unchanged checked message in the illustrated composer. |
+| 24 | `24_chatgpt_submit.mp4` | Animate an illustrative request; no live submission in mode A. |
+| 25 | `25_chatgpt_answer.mp4` | Animate the labelled illustrative answer; no live request claimed. |
+| 26 | `26_restore_paste.mp4` | Animate the same prepared answer in HuisClos. |
 | 27 | `27_restore_click.mp4` | Restore. |
 | 28 | `28_restore_review.mp4` | Read restored values and type labels. |
 | 29 | `29_export_docx.mp4` | Download restored text. |
@@ -165,10 +170,10 @@ in this documentation-only session. The optional English fragment is prepared in
 ## Final edit checks
 
 Confirm that the public warning survives every crop, Review and Restore are readable, every visible
-decision has its own clip, the corrected instruction is the one sent, and the received answer is the
+decision has its own clip, the corrected instruction is the one illustrated as the outgoing message, and the labelled illustrative answer is the
 one restored. Keep captions within the frame, source footers legible and the end addresses on screen
 for the last 12 seconds. The voice and action holds in `SCRIPT.md` total 4:45. Check actual export
-runtime and a human rehearsal before submission; no finished video or rehearsal is claimed by S61.
+runtime, TTS timing and human editorial review before submission; no finished video or rehearsal is claimed by S61.
 
 ## Rubric coverage
 
@@ -176,6 +181,6 @@ runtime and a human rehearsal before submission; no finished video or rehearsal 
 | --- | ---: | --- | --- |
 | Clarity | 10 | 01-08, 11-21, 27-36, 40-41 | Problem, legal limits, name, settings, visible human decisions, restoration and measured scope. |
 | Concision | 5 | 07-30, 34-39 | One French Standard workflow, one brief English view, one current results card, qualitative value case. |
-| Delivery | 5 | 01-41, especially 05, 12, 21, 30, 40 | Human English voice, wee-kloh pronunciation, short sentences and deliberate pauses. |
-| Production quality | 5 | 05-06, 11-15, 18-21, 26-30, 34, 41 | Existing branding, readable Review/Restore zooms, stable audio, visible warning, honest waiting cut and legible addresses. |
+| Delivery | 5 | 01-41, especially 05, 12, 21, 30, 40 | Synthetic English voice, wee-kloh pronunciation, short sentences and deliberate pauses. |
+| Production quality | 5 | 05-06, 11-15, 18-21, 26-30, 34, 41 | Existing branding, readable Review/Restore zooms, stable audio, visible warning, explicit reconstruction disclosure and legible addresses. |
 | Duration | 5 | 01-41 | Seven blocks from 0:00 to 4:45, checked after the actual export; allowed 4:30-5:30. |

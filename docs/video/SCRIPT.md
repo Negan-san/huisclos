@@ -1,9 +1,9 @@
 # HuisClos demonstration script
 
-Target runtime: **4:45 (285 seconds)**. Spoken budget: **618 words**, **4:24.86 of speech**
-at 140 words per minute, plus **20.14 seconds of reading/action holds**.
+Target runtime: **4:45 (285 seconds)**. Spoken budget: **620 words**, **4:25.71 of speech**
+at 140 words per minute, plus **19.29 seconds of reading/action holds**.
 Seven blocks include narration and short reading or action holds; their allocated durations total 4:45.
-Record an English human voice. Pronounce HuisClos **wee-kloh**. Read only the blockquotes.
+Generate an English synthetic voice; do not record a human narrator. Pronounce HuisClos **wee-kloh**. Read only the blockquotes.
 Sources in square brackets, headings, tables and production cues are silent.
 
 | Block | Timeline | Allocated duration | Spoken words | Speech at 140 wpm | Reading/action hold |
@@ -11,17 +11,21 @@ Sources in square brackets, headings, tables and production cues are silent.
 | 1. Hook | 0:00-0:20 | 20 s | 43 | 18.43 s | 1.57 s |
 | 2. Problem and rules | 0:20-0:50 | 30 s | 66 | 28.29 s | 1.71 s |
 | 3. Name and promise | 0:50-1:05 | 15 s | 32 | 13.71 s | 1.29 s |
-| 4. Live demo | 1:05-3:00 | 115 s | 238 | 102.00 s | 13.00 s |
+| 4. Guided demo | 1:05-3:00 | 115 s | 240 | 102.86 s | 12.14 s |
 | 5. Under the hood | 3:00-3:45 | 45 s | 103 | 44.14 s | 0.86 s |
 | 6. Value and competition | 3:45-4:20 | 35 s | 81 | 34.71 s | 0.29 s |
 | 7. Limits and close | 4:20-4:45 | 25 s | 55 | 23.57 s | 1.43 s |
-| Total | 0:00-4:45 | 285 s | 618 | 264.86 s | 20.14 s |
+| Total | 0:00-4:45 | 285 s | 620 | 265.71 s | 19.29 s |
 
 Timing convention: count whitespace-separated spoken words after removing source annotations.
 Hyphenated words count once. Say numbers as written in the narration; numeric result tables are visual only.
 Speech time is words multiplied by 60/140; the remaining time in each block is a planned hold.
 Displayed values are rounded; totals use the unrounded values.
-Rehearse against the allocated block boundaries, then export exactly 4:45; the permitted window is 4:30-5:30.
+Measure generated audio against the allocated block boundaries, then export exactly 4:45; the permitted window is 4:30-5:30.
+
+Production revision: synthetic narration and verified AI-generated reconstruction are the default.
+See `MASTER_PLAN.md` for the external workflow. This revision produces no audio or video
+and claims no newly executed app session. Original S61 provenance remains in the Git history.
 
 ## 1. Hook | 0:00-0:20
 
@@ -49,15 +53,15 @@ Silent title card: use the existing `app/assets/logo.svg`, **HuisClos**, and the
 **Use generative AI on client files without breaching professional secrecy.**
 Return to the matching Import header. The tagline is an aim, qualified by the limits in blocks 4 and 7.
 
-## 4. Live demo | 1:05-3:00
+## 4. Guided demo | 1:05-3:00
 
 > I choose Load sample case. This public demo processes text on its server, so real files belong in a local installation. We use Standard, with a French document. Interface language, document language and token labels are separate settings. [source: app/i18n/workflow_import.py, import.sample.button and import.privacy.demo; README.md, Confidentiality and What HuisClos does.]
 > I append an invented collection code, then detect sensitive data. In Review, coloured labels show each proposed value and its type. I read the whole document, including unmarked passages. [source: docs/PROGRESS.md, S14 demonstration note; app/i18n/workflow_review.py, review.intro and review.tag.*.]
 > For this fictional example, I uncheck the employer. Keeping a real employer visible could identify the client. Next, I add the collection code as Other identifier and choose Add and mask everywhere. [source: data/samples/demo_case_fr.txt, employer; app/i18n/workflow_review.py, review.column.mask.help and review.manual.*; README.md, Limits.]
 > Pseudonymize replaces accepted values with consistent labels. The same person keeps the same token within this document. [source: README.md, What HuisClos does and How it works.]
 > I check the document together with my instruction. I deliberately put the fictional client's name in the instruction. The final check flags it. I remove it and read the complete message again. Edits require a new check before copying. An alert protects nothing until someone acts. [source: results/recette8/report.md, local acceptance checks; app/i18n/workflow_check.py, check.intro and check.found.]
-> Only the checked message goes into ChatGPT by copy and paste. I request a short summary with unchanged tokens. The optional Mistral connector stays off by default. [source: README.md, Confidentiality; app/i18n/workflow_restore.py, restore.send.instruction.en; S61 session brief, Live demo.]
-> I bring the answer back and choose Restore. The table replaces tokens with their values. I read the restored answer and export it. [source: app/i18n/workflow_restore.py, restore.answer.* and restore.download.*.]
+> We illustrate copying the checked message into ChatGPT, without a live request. The prepared summary preserves each bracketed token unchanged. The optional Mistral connector stays off by default. [source: README.md, Confidentiality; app/i18n/workflow_restore.py, restore.send.instruction.en; S61 session brief, Live demo.]
+> I bring an illustrative answer back and choose Restore. The table replaces tokens with their values. I read the restored answer and export it. [source: app/i18n/workflow_restore.py, restore.answer.* and restore.download.*.]
 > That table links tokens to identities. Never send it to an AI tool. A saved case table helps reuse tokens across documents; continuity still needs checking. [source: README.md, What HuisClos does, Confidentiality and Limits.]
 
 Silent preparation and actions:
@@ -65,9 +69,9 @@ Silent preparation and actions:
 - Use `https://huisclos.streamlit.app`, English UI, French document, Standard, default French token labels.
   Keep the public demo warning visible, including in zooms. Never select Enhanced on this demo.
 - Load the sample, then append `Code de retrait : qx-74-zp.` in **Text to process**, in memory only.
-  S14 proposed this fictional value for a manual addition. Confirm during rehearsal that it remains
-  unmarked in the version being filmed; no fresh detector run was made for S61.
-  If already marked, stop that take and prepare another visibly unmarked fictional addition;
+  S14 proposed this fictional value for a manual addition. Confirm on the app or references that it remains
+  unmarked in the version being illustrated; no fresh detector run was made for S61.
+  If already marked, stop that scene and prepare another visibly unmarked fictional addition;
   do not present an existing detection as a miss. Leave the sample file unchanged.
 - Review every entity and unmarked passage. Uncheck **Mask** only for the invented
   `Atelier Martin des Nivelles SARL`. This is a teaching decision, with its disclosure risk stated aloud.
@@ -82,11 +86,14 @@ Silent preparation and actions:
   Wait for the refreshed check. Read both message segments. Resolve every remaining alert
   by masking a private value, editing the instruction, or making an explicit contextual decision
   using **I reviewed this mention in its context: keep it in clear**. Never send an unresolved alert.
-- Copy only the enabled, checked message with its top-right copy control. Paste it unchanged
-  into ChatGPT. Never paste the source text, a mapping table or additional identifiers.
-  No Mistral key, consent or send action is used. Capture an actual fictional exchange during filming;
-  S61 itself sends no request. Cut waiting time with a visible **Waiting time shortened** caption.
-- Paste the actual answer into **Answer from the AI tool**, click **Restore**, read the result,
+- Illustrate copying only the enabled, checked message with its top-right copy control and pasting
+  it unchanged into ChatGPT. Never show the source text, a mapping table or additional identifiers there.
+  No Mistral key, consent or send action is used. The default is an AI-generated reconstruction:
+  show **AI-generated reconstruction. Fictional data.** throughout the workflow.
+  Prepare a token-preserving answer labelled **Illustrative AI answer**; do not claim a live request.
+  Validate states against the app or trusted references before rendering.
+  For real AI-operated capture, adapt the narration and disclosures as described in `MASTER_PLAN.md`.
+- Illustrate pasting the labelled prepared answer into **Answer from the AI tool**, click **Restore**, read the result,
   then click **Restored text (.docx)**. Show the sensitive-file warning beside
   **Mapping table (.mapping.json)** without opening or exposing that table.
 - Mention case reuse over the table warning; a second French document is outside this timed take.

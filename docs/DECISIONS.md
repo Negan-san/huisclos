@@ -796,6 +796,13 @@ Proportions, seuil 0,30 ; intervalles bootstrap à 95 %. Les métriques exactes 
 - Demande directe de l'utilisateur après FIX6 : la pastille "Public demo" et la mention "Pseudonymization is not anonymization" partageaient la rangée du logo et de la description ; les joindre au bandeau.
 - Choix : une seule ligne fine au-dessus de l'en-tête, dans les deux modes, pour une mise en page identique : à gauche le mode en gras (texte complet de la démonstration publique, ou "Local processing"), à droite la mention RGPD ; retour à la ligne sur écran étroit. Couleurs d'avertissement de la charte en démonstration, bleu doux en local ; le texte porte l'information, role="note". La démonstration ne promet toujours pas de traitement local. La pastille séparée et sa clé app.demo_badge disparaissent ; l'icône de cadenas aussi, le mot "Local processing" restant écrit.
 
+## D-PLAN71-1 Documentation immédiate et vidéo externalisée
+
+- Contexte : l'utilisateur veut les prompts S71/S72 maintenant, retire la fabrication vidéo de la piste projet et la confie à un camarade, avec outils IA de préférence freemium et voix synthétiques.
+- Choix : S71 puis S72 sont lançables sans attendre la vidéo, séquentiellement pour protéger les journaux partagés. Prompts autonomes dans docs/prompts/S71_now.md et S72_now.md, repris dans MASTER_PLAN.md. Sources G8R2/R8 et réserves EN prioritaires ; aucune nouvelle mesure réservée.
+- Vidéo : plan autonome docs/video/MASTER_PLAN.md ; S61 conservée et adaptée, 620 mots, sept blocs et 41 plans. Mode de référence entièrement synthétique : reconstitution animée d'états vérifiés, annoncée comme telle, voix TTS et réponse illustrative explicitement libellée. Capture réelle pilotée par IA seulement comme alternative identifiée ; aucune simulation présentée comme preuve d'exécution.
+- Portée : retrait des anciennes tâches de tournage, voix humaine et avatar du plan actif ; la vidéo reste obligatoire pour le dépôt du devoir. Outils conseillés distincts des usages attestés ; crédits et prompts de production remis ultérieurement par le camarade. Aucune vidéo, synthèse vocale, session S71/S72 ou publication effectuée par cette planification.
+
 ## D-TK1-1 Kit source et installation locale Windows/macOS
 
 - Demande : réunir les pistes A/B et fournir aux camarades et collègues un kit avec code source, prérequis, installation et lancement simples sur Windows et macOS ; suivi explicite demandant le choix des modèles Enhanced pendant l'installation.
