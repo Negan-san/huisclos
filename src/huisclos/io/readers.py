@@ -11,8 +11,12 @@ from typing import Literal
 from unicodedata import normalize
 
 from docx import Document
+from docx.blkcntnr import BlockItemContainer
+from docx.document import Document as DocumentObject
 from docx.table import Table
 from pypdf import PdfReader
+
+from huisclos.io.read_quality import ReadQuality, docx_quality, pdf_quality
 
 SourceType = Literal["txt", "docx", "pdf", "paste"]
 ErrorCode = Literal[
@@ -37,14 +41,17 @@ class ReadResult:
     source_type: SourceType
     warnings: tuple[str, ...]
     char_count: int
+    quality: ReadQuality = ReadQuality()
 
 
 class DocumentReadError(Exception):
     """Signale une lecture refusée par un code que l'interface peut traduire."""
 
-    def __init__(self, code: ErrorCode) -> None:
+    def __init__(self, code: ErrorCode, quality: ReadQuality | None = None) -> None:
         """Conserve le code reçu sans inclure le contenu du document dans l'erreur."""
         self.code = code
+        self.quality = quality if quality is not None else ReadQuality()
+        self.warnings = self.quality.warning_codes()
         super().__init__(code)
 
 
@@ -58,14 +65,16 @@ def _result(
     source_type: SourceType,
     max_chars: int,
     warnings: tuple[str, ...] = (),
+    quality: ReadQuality | None = None,
 ) -> ReadResult:
     """Normalise le texte reçu et renvoie le résultat après contrôle de sa longueur."""
     text = _normalize_text(text)
+    quality = quality if quality is not None else ReadQuality(status="complete")
     if len(text) > max_chars:
         raise DocumentReadError("too_long")
     if not text.strip():
-        raise DocumentReadError("empty")
-    return ReadResult(text, source_type, warnings, len(text))
+        raise DocumentReadError("empty", quality)
+    return ReadResult(text, source_type, warnings, len(text), quality)
 
 
 def _read_txt(data: bytes) -> tuple[str, tuple[str, ...]]:
@@ -79,6 +88,14 @@ def _read_txt(data: bytes) -> tuple[str, tuple[str, ...]]:
             raise DocumentReadError("encoding") from exc
 
 
+def _container_lines(container: DocumentObject | BlockItemContainer) -> list[str]:
+    """Renvoie paragraphes et tableaux du conteneur reçu dans leur ordre XML."""
+    lines: list[str] = []
+    for block in container.iter_inner_content():
+        lines.extend(_table_lines(block) if isinstance(block, Table) else [block.text])
+    return lines
+
+
 def _table_lines(table: Table) -> list[str]:
     """Renvoie les lignes d'un tableau, avec chaque cellule fusionnée lue une fois."""
     lines: list[str] = []
@@ -90,22 +107,18 @@ def _table_lines(table: Table) -> list[str]:
             if cell._tc in seen_cells:
                 continue
             seen_cells.add(cell._tc)
-            parts = [cell.text]
-            for nested_table in cell.tables:
-                parts.extend(_table_lines(nested_table))
-            values.append("\n".join(parts))
+            values.append("\n".join(_container_lines(cell)))
         if values:
             lines.append(" | ".join(values))
     return lines
 
 
-def _read_docx(data: bytes) -> str:
+def _read_docx(data: bytes) -> tuple[str, ReadQuality]:
     """Extrait le corps, les tableaux et les en-têtes des octets DOCX reçus."""
     try:
+        quality = docx_quality(data)
         document = Document(BytesIO(data))
-        lines = [paragraph.text for paragraph in document.paragraphs]
-        for table in document.tables:
-            lines.extend(_table_lines(table))
+        lines = _container_lines(document)
         seen_headers: set[str] = set()
         for section in document.sections:
             # Les variantes première page et pages paires peuvent contenir des noms.
@@ -117,39 +130,36 @@ def _read_docx(data: bytes) -> str:
                 section.first_page_footer,
                 section.even_page_footer,
             ):
-                parts = [paragraph.text for paragraph in container.paragraphs]
-                for table in container.tables:
-                    parts.extend(_table_lines(table))
-                text = _normalize_text("\n".join(parts))
+                text = _normalize_text("\n".join(_container_lines(container)))
                 # Les sections partagent souvent la même définition d'en-tête.
                 if text.strip() and text not in seen_headers:
                     seen_headers.add(text)
                     lines.append(text)
-        return "\n".join(lines)
+        return "\n".join(lines), quality
     except Exception as exc:
         # Les fichiers mal formés provoquent des erreurs ZIP, XML ou de structure.
         raise DocumentReadError("docx_invalid") from exc
 
 
-def _read_pdf(data: bytes, max_chars: int) -> str:
-    """Extrait le texte natif des pages PDF et refuse le chiffrement ou les scans."""
+def _read_pdf(data: bytes, max_chars: int) -> tuple[str, ReadQuality]:
+    """Extrait le texte natif et signale les pages douteuses sans effectuer d'OCR."""
     try:
         reader = PdfReader(BytesIO(data))
         if reader.is_encrypted:
             raise DocumentReadError("pdf_encrypted")
         pages: list[str] = []
         char_count = 0
-        useful_count = 0
+        useful_counts: list[int] = []
         for page in reader.pages:
             text = _normalize_text(page.extract_text() or "")
             char_count += len(text) + (2 if pages else 0)
             if char_count > max_chars:
                 raise DocumentReadError("too_long")
-            useful_count += sum(char.isprintable() and not char.isspace() for char in text)
+            useful_counts.append(sum(char.isprintable() and not char.isspace() for char in text))
             pages.append(text)
-        if not pages or useful_count < 20 * len(pages):
-            raise DocumentReadError("pdf_no_text")
-        return "\n\n".join(pages)
+        if not any(useful_counts):
+            raise DocumentReadError("pdf_no_text", pdf_quality(useful_counts))
+        return "\n\n".join(pages), pdf_quality(useful_counts)
     except DocumentReadError:
         raise
     except Exception as exc:
@@ -178,8 +188,10 @@ def read_document(
         text, warnings = _read_txt(data)
         return _result(text, "txt", max_chars, warnings)
     if suffix == ".docx":
-        return _result(_read_docx(data), "docx", max_chars)
-    return _result(_read_pdf(data, max_chars), "pdf", max_chars)
+        text, quality = _read_docx(data)
+        return _result(text, "docx", max_chars, quality.warning_codes(), quality)
+    text, quality = _read_pdf(data, max_chars)
+    return _result(text, "pdf", max_chars, quality.warning_codes(), quality)
 
 
 def read_pasted_text(text: str, max_chars: int = MAX_CHARS) -> ReadResult:

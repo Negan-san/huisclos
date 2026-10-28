@@ -33,6 +33,7 @@ from app.steps.import_case import render_case_table
 from app.ui_common import entity_badge_html, is_public_demo, literal_markdown
 from huisclos.config import DetectionConfig
 from huisclos.detection.pipeline import detect
+from huisclos.io.read_quality import warning_parameters
 from huisclos.io.readers import DocumentReadError, read_document, read_pasted_text
 from huisclos.models import EntityType
 from huisclos.pseudonymize.case_memory import find_known
@@ -77,7 +78,7 @@ def _load_bytes(name: str, data: bytes) -> None:
         result = read_document(name, data)
     except DocumentReadError as error:
         st.session_state[KEY_READ_ERROR] = error.code
-        st.session_state[KEY_READ_WARNINGS] = ()
+        st.session_state[KEY_READ_WARNINGS] = error.warnings
         return
     _set_source(result.text, name, result.warnings)
 
@@ -138,8 +139,15 @@ def _render_source_feedback() -> None:
     code = st.session_state[KEY_READ_ERROR]
     if code:
         st.error(t(f"import.error.{code}"))
+        if st.session_state[KEY_SOURCE_TEXT].strip():
+            st.caption(t("import.error.previous_kept"))
     for warning in st.session_state[KEY_READ_WARNINGS]:
-        st.warning(t(f"import.warning.{warning}"))
+        warning_code, parameters = warning_parameters(warning)
+        st.warning(t(f"import.warning.{warning_code}", **parameters))
+    if any(
+        warning.startswith(("pdf_", "docx_")) for warning in st.session_state[KEY_READ_WARNINGS]
+    ):
+        st.caption(t("import.warning.extraction_scope"))
     text = st.session_state[KEY_SOURCE_TEXT]
     if not text.strip():
         st.info(t("import.empty"), icon=":material/upload_file:")

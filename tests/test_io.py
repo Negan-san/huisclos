@@ -110,10 +110,10 @@ def test_docx_body_table_headers_and_footers(tmp_path: Path) -> None:
     assert result.warnings == ()
     assert result.text.splitlines() == [
         "Paragraphe fictif",
-        "",
-        "",
         "Alpha | Beta",
         "Gamma | Delta",
+        "",
+        "",
         "Cabinet fictif, 12 rue des Nuages, 75001 Paris - 01 00 00 00 00",
         "Première page fictive",
         "Page paire fictive",
@@ -154,9 +154,9 @@ def test_pdf_two_pages(tmp_path: Path) -> None:
     assert result.char_count == len(result.text)
 
 
-@pytest.mark.parametrize("texts", [("",), ("Court",), ("a" * 39, ""), (" " * 30,)])
+@pytest.mark.parametrize("texts", [("",), (" " * 30,)])
 def test_pdf_without_enough_useful_text(tmp_path: Path, texts: tuple[str, ...]) -> None:
-    """Refuse le dessin seul et une moyenne inférieure à vingt caractères utiles."""
+    """Refuse uniquement une extraction entièrement dépourvue de texte utile."""
     path = _pdf_file(tmp_path, texts)
     with pytest.raises(DocumentReadError) as error:
         read_document(path.name, _read_file(path))
@@ -164,9 +164,11 @@ def test_pdf_without_enough_useful_text(tmp_path: Path, texts: tuple[str, ...]) 
 
 
 def test_pdf_useful_text_boundary(tmp_path: Path) -> None:
-    """Accepte exactement vingt caractères utiles par page en moyenne."""
+    """Accepte le texte disponible mais signale la page vide malgré une moyenne suffisante."""
     path = _pdf_file(tmp_path, ("a" * 40, ""))
-    assert read_document(path.name, _read_file(path)).text == "a" * 40 + "\n\n"
+    result = read_document(path.name, _read_file(path))
+    assert result.text == "a" * 40 + "\n\n"
+    assert result.warnings == ("pdf_empty_pages:2",)
 
 
 @pytest.mark.parametrize("password", ["secret-fictif", ""])

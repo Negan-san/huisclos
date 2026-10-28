@@ -23,6 +23,43 @@ Its authoring instructions and coverage are recorded in
 `docs/prompts/corpus_lot_4.md`. Evaluate this lot separately from earlier material
 when comparing changes. It is development material, including its difficult cases.
 
+## Separate English development set
+
+`corpus/english_dev/` contains eight fictional English documents authored before
+the bilingual rule freeze: two employment letters/emails, two commercial
+agreements, two case memoranda and two management minutes. Each has 250-450 words.
+US, UK and French matters appear in English; language does not determine country.
+This is tuning material, not blind validation, and does not validate English
+detection by its existence. It leaves the French development set and all reserved
+test/challenge files unchanged.
+
+The eight annotated sources are `english_dev/source/en_dev_01.md` through
+`en_dev_08.md`. `english_dev/manifest.json` records `dataset_id=english_dev_v1`,
+`language=en`, `split=dev`, conventions, source hashes, counts and limitations.
+`english_dev/dev.jsonl` uses the existing six-field document schema and exact
+Unicode spans; language and dataset metadata live in the separate manifest for
+compatibility with the existing corpus loader.
+
+```text
+PY scripts/build_english_dev.py
+PY scripts/build_english_dev.py --check
+```
+
+This independent builder reads only the English subfolder and calls no NER or
+detector. The construction functions are pure. `--check` validates sources and
+compares both outputs without writing. It checks offsets, annotation syntax,
+known repeated values, example.com/org emails, document lengths and genre counts;
+semantic exhaustiveness still requires editorial review.
+
+Annotations cover full names and shortened repeats, company legal forms, whole
+US/UK/French addresses, emails, US/UK/French phones, birth dates and private case
+references. Public institutions, statutes, legal article numbers, ordinary event
+dates and amounts remain unannotated. French IBAN, NIR, SIREN and SIRET examples
+use existing types; labelled internal employee/supplier IDs use CUSTOM. No SSN,
+UK NIN or foreign social-security type has been introduced. The manifest lists
+formats actually annotated, without asserting detector coverage. All details
+are invented; checksum validity does not establish assignment in real life.
+
 ## Source format
 
 Store one UTF-8 document in `corpus/source/<id>.md`:
