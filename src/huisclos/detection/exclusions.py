@@ -40,6 +40,13 @@ _PLACE = (
 )
 
 _PLACE_TOKEN = re.compile(r"(?<!\S)X(?!\S)")
+# Les libellés usuels sont ciblés : un nom propre suivi de deux-points reste sensible.
+_FIELD_LABEL = re.compile(
+    r"(?m)(?:^[ \t]*|(?<=[;.])[ \t]*)(?P<label>(?i:"
+    r"courriel(?:[ \t]+personnel)?|e-?mail|objet|r[eé]f\.?|r[eé]f[eé]rence|"
+    r"t[eé]l\.?|t[eé]l[eé]phone|pi[eè]ce[ \t]+jointe|copie|de|[aà]|"
+    r"num[eé]ro[ \t]+(?:portalis|de[ \t]+parquet)|rg))[ \t]*:"
+)
 
 
 @dataclass(frozen=True)
@@ -56,7 +63,10 @@ class ExclusionList:
         Valeur retournée : liste de (début, fin), fin exclue. Deux passages qui se chevauchent
         sont fusionnés ; un passage simplement voisin reste séparé.
         """
-        found = sorted(m.span() for pattern in self.patterns for m in pattern.finditer(text))
+        found = sorted(
+            [m.span() for pattern in self.patterns for m in pattern.finditer(text)]
+            + [match.span("label") for match in _FIELD_LABEL.finditer(text)]
+        )
         merged: list[tuple[int, int]] = []
         for start, end in found:
             if merged and start < merged[-1][1]:

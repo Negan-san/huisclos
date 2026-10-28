@@ -17,6 +17,10 @@ DASHES = frozenset("-\u2010\u2011\u2012\u2013\u2014\u2212")
 CIVILITIES = frozenset(
     {
         "m",
+        "mm",
+        "mmes",
+        "messieurs",
+        "mesdames",
         "mr",
         "mme",
         "mlle",

@@ -5,10 +5,23 @@ pseudonymisation. Pseudonymisation is not anonymisation. Human review remains
 necessary before sending text to a language model. Sources are authored separately
 from detection rules; character positions are computed by the builder.
 
-The target collection contains 12 development documents, 6 held-out test documents
+The collection contains 20 development documents, 6 held-out test documents
 and one demonstration document. Agents must never inspect test sources or
 `test.jsonl`, or tune detection using their contents. Only evaluation and corpus
 construction scripts may read them.
+
+The `challenge` split is reserved for gates in the same way as `test`. Its
+`chl_*.md` sources are authored independently after S14 freezes detection rules.
+Coding agents must not inspect those sources or `challenge.jsonl`, export their
+errors, or tune detection against them. Corpus authoring session C2 and gate
+evaluation scripts are the permitted consumers.
+
+Development sources doc_01 to doc_12 form lots 1 and 2; doc_19 to doc_26 form
+the difficult lot 4 (commissioner's report, email thread, judgment, insurance
+declaration, CSE meeting, power of attorney, services agreement and PDF extraction).
+Its authoring instructions and coverage are recorded in
+`docs/prompts/corpus_lot_4.md`. Evaluate this lot separately from earlier material
+when comparing changes. It is development material, including its difficult cases.
 
 ## Source format
 
@@ -25,8 +38,8 @@ Madame [[Alice BRUME|PERSON]] habite [[17 rue des Lanternes
 75012 Paris|ADDRESS]]. SIREN : [[{{SIREN#1}}|SIREN]].
 ```
 
-All four header fields are required, nonempty and unique. Splits are `dev`, `test`
-or `demo`. Each document ID must be unique across all sources. Header values are
+All four header fields are required, nonempty and unique. Splits are `dev`, `test`,
+`challenge` or `demo`. Each document ID must be unique across all sources. Header values are
 plain text, without YAML quoting. The body starts immediately after the closing
 header line; its whitespace is preserved. Annotations cannot nest or overlap.
 Use `[[value|TYPE]]` with exactly one separator and a nonempty value. Values may
@@ -81,6 +94,16 @@ PY -m pytest -q tests/test_corpus.py
 single demo document to `data/samples/demo_case_fr.txt`, without annotations.
 Optional `--source-dir`, `--output-dir` and `--demo-path` allow isolated builds.
 Explicit source paths override `--source-dir`.
+
+If challenge sources exist, the builder also writes `corpus/challenge.jsonl`
+and includes their counts in the statistics. It creates no challenge file when
+there are no challenge sources. Gate command `PY scripts/run_evaluation.py
+--split challenge` requires an existing `threshold.json` in its output folder,
+uses that saved development threshold without a sweep, and preserves existing
+development and test result rows. No challenge error file is exported. `all`
+retains its existing meaning, development followed by test only. The reserved
+loader in `evaluation.run` validates challenge through an isolated adapter;
+the common `load_split` API remains limited to development and test.
 
 JSONL documents are sorted by ID, with fields `id`, `doc_type`, `split`, `title`,
 `text`, `entities`. Each entity has `start`, `end`, `type`, `text`. Positions count

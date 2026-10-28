@@ -75,6 +75,7 @@ def test_registry_and_offline_contract(no_network: None) -> None:
         "BirthDateRecognizer",
         "CaseNumberRecognizer",
         "AddressRecognizer",
+        "LabeledIdentifierRecognizer",
     ]
     for recognizer in recognizers:
         assert recognizer.supported_language == "fr"

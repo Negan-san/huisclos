@@ -25,6 +25,7 @@ from huisclos.text_utils import (
 # Un nom de famille isolé de moins de 3 lettres ("Li", "Ba") masquerait trop de mots courts.
 MIN_SURNAME_LETTERS = 3
 _PROPAGATED_TYPES = frozenset({EntityType.PERSON, EntityType.ORGANIZATION})
+_PARTICLES = frozenset("de du des le la les van von der den".split())
 
 
 def _is_upper_word(word: str) -> bool:
@@ -47,6 +48,9 @@ def person_variants(name: str) -> set[str]:
         return variants
     upper = [_is_upper_word(word) for word in words]
     if any(upper) and not all(upper):
+        for index in range(len(words) - 2, -1, -1):
+            if upper[index + 1] and fold(words[index]) in _PARTICLES:
+                upper[index] = True
         surname = [w for w, is_upper in zip(words, upper, strict=True) if is_upper]
         given = [w for w, is_upper in zip(words, upper, strict=True) if not is_upper]
     else:
@@ -99,18 +103,66 @@ def _pattern(form: str) -> re.Pattern[str]:
 
 
 def matches_case(occurrence: str, form: str) -> bool:
-    """Dit si une occurrence respecte les majuscules de la forme cherchée.
+    """Accepte toute casse pour une forme connue de plusieurs mots.
 
-    Chaque mot à initiale majuscule dans la forme doit l'être dans l'occurrence, et le
-    premier mot de l'occurrence aussi : "petit" ne correspond jamais au nom "Petit".
+    Un nom isolé doit garder sa majuscule : le mot ordinaire "petit" reste lisible.
+    Les formes complètes en minuscules, sans accents ou coupées par des blancs sont
+    retrouvées par le même motif, avec leurs positions originales.
     """
     found, expected = occurrence.split(), form.split()
-    if len(found) != len(expected) or not is_capitalized_form(found[0]):
+    if len(found) != len(expected) or not found:
         return False
+    if len(found) > 1:
+        return True
     return all(
         is_capitalized_form(word) or not is_capitalized_form(model)
         for word, model in zip(found, expected, strict=True)
     )
+
+
+def widen_persons(
+    text: str,
+    detections: Sequence[Detection],
+    config: DetectionConfig,
+    exclusion_spans: Sequence[tuple[int, int]],
+) -> list[Detection]:
+    """Répare les occurrences d'une personne connue dont le NER n'a gardé qu'un fragment.
+
+    Les fragments de noms contenus sont absorbés. Toute autre entité, tout ajout
+    manuel ou toute exclusion traversée bloque l'élargissement. La valeur exacte
+    connue fournit le type et le score ; aucun nouveau nom n'est inventé.
+    """
+    folded = fold_same_length(text)
+    result = list(detections)
+    variants = _collect_variants(detections)
+    for _key, (form, origin) in sorted(variants.items(), key=lambda item: (-len(item[0]), item[0])):
+        if origin.entity_type != EntityType.PERSON:
+            continue
+        for match in _pattern(form).finditer(folded):
+            start, end = match.span()
+            if not matches_case(text[start:end], form):
+                continue
+            parts = [d for d in result if d.start < end and start < d.end]
+            if not parts or any(
+                d.source == Source.MANUAL
+                or d.entity_type not in _PROPAGATED_TYPES
+                or d.start < start
+                or end < d.end
+                for d in parts
+            ):
+                continue
+            if len(parts) == 1 and (parts[0].start, parts[0].end) == (start, end):
+                continue
+            candidate = Detection(
+                start, end, EntityType.PERSON, origin.score, Source.PROPAGATION, text[start:end]
+            )
+            if config.use_exclusions and (
+                is_excluded(candidate, exclusion_spans)
+                or cutting_spans(text, start, end, exclusion_spans)
+            ):
+                continue
+            result = [d for d in result if d not in parts] + [candidate]
+    return sorted(result, key=lambda d: (d.start, d.end))
 
 
 def _long_occurrence(
@@ -182,7 +234,7 @@ def propagate(
     Une société repérée sous sa forme courte est d'abord élargie (widen_organizations) ;
     sa forme courte reste cherchée ailleurs dans le texte.
     """
-    widened = widen_organizations(text, detections)
+    widened = widen_organizations(text, widen_persons(text, detections, config, exclusion_spans))
     folded = fold_same_length(text)
     occupied = [(d.start, d.end) for d in widened]
     added: list[Detection] = []

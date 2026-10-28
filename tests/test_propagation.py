@@ -184,3 +184,37 @@ def test_widening_never_overlaps_another_detection() -> None:
         "Verrerie",
         "Halbarde SARL",
     ]
+
+
+def test_full_lowercase_name_with_particles_and_line_breaks() -> None:
+    """Une forme connue est retrouvée en minuscules, sans accents et à travers une coupure."""
+    name = "Sélène de La ROCHEMONT"
+    variant = "selene\nde la rochemont"
+    text = f"Mme {name}. Puis {variant} confirme."
+    result = propagate(text, [det(text, name, EntityType.PERSON)], CONFIG)
+    assert found(text, result) == [name, variant]
+    assert result[-1].source == Source.PROPAGATION
+    assert result[-1].score == result[0].score
+    assert "de La ROCHEMONT" in person_variants(name)
+
+
+def test_known_full_person_repairs_ner_fragment_in_a_signature() -> None:
+    """Une signature fragmentée retrouve la forme complète connue sans collision."""
+    name = "Sélène O'Rivel"
+    text = f"Mme {name} confirme.\nCordialement,\n{name}"
+    tail = text.rindex("Rivel")
+    fragment = Detection(tail, len(text), EntityType.PERSON, 0.85, Source.NER_SPACY, "Rivel")
+    result = propagate(text, [det(text, name, EntityType.PERSON), fragment], CONFIG)
+    assert found(text, result) == [name, name]
+    assert all(d.text == text[d.start : d.end] for d in result)
+
+
+def test_widening_a_person_preserves_manual_and_structured_detections() -> None:
+    """Une forme connue ne recouvre ni décision humaine ni coordonnée structurée."""
+    name = "Sélène RONCIVAL"
+    text = name + ". " + name
+    position = text.rindex("Sélène")
+    manual = Detection(position, position + 6, EntityType.PERSON, 1.0, Source.MANUAL, "Sélène")
+    result = propagate(text, [det(text, name, EntityType.PERSON), manual], CONFIG)
+    assert manual in result
+    assert not any(d.start == position and d.end == len(text) for d in result)

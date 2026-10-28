@@ -15,6 +15,7 @@ from presidio_analyzer.nlp_engine import NlpArtifacts
 
 from huisclos.detection.exclusions import load_exclusions
 from huisclos.models import Source
+from huisclos.text_utils import CIVILITIES
 
 LANGUAGE: Final = "fr"
 CIVILITY_SCORE: Final = 0.80
@@ -32,7 +33,8 @@ _SPACE = "[ \u00a0\u202f]+"
 _TITLE_PIECE = rf"[{_UPPER}][{_LOWER}]+"
 _UPPER_PIECE = rf"[{_UPPER}]{{2,}}"
 _ANY_PIECE = rf"(?:{_TITLE_PIECE}|{_UPPER_PIECE})"
-_NAME_WORD = rf"(?:[{_UPPER}]{_APOSTROPHE})?{_ANY_PIECE}(?:-{_ANY_PIECE})*(?!\w)"
+_INITIALS = rf"[{_UPPER}]\.(?:-?[{_UPPER}]\.){{0,2}}"
+_NAME_WORD = rf"(?:{_INITIALS}|(?:[{_UPPER}]{_APOSTROPHE})?{_ANY_PIECE}(?:-{_ANY_PIECE})*)(?!\w)"
 _TITLE_WORD = rf"{_TITLE_PIECE}(?:-{_TITLE_PIECE})*(?!\w)"
 _UPPER_WORD = rf"{_UPPER_PIECE}(?:-{_UPPER_PIECE})*(?!\w)"
 
@@ -41,11 +43,14 @@ _CIVILITY = re.compile(
     r"|[Mm]aître|[Dd]octeur|[Pp]rofesseur)[ \u00a0\u202f]+"
 )
 _NAME_WORD_RE = re.compile(_NAME_WORD)
-_PARTICLE_RE = re.compile(rf"(?:(?:de|du|des|van|von|der|den){_SPACE}|d{_APOSTROPHE})")
+_PARTICLE = r"(?:de|du|des|van|von|der|den|[Ll]e|[Ll]a|les)"
+_PARTICLE_RE = re.compile(rf"(?:(?:{_PARTICLE}{_SPACE}){{1,4}}|d{_APOSTROPHE})")
 _SPACE_RE = re.compile(_SPACE)
+_NAME_SPACE_RE = re.compile(r"[ \u00a0\u202f\t]*(?:\r?\n)?[ \u00a0\u202f\t]*")
 
 _FIRST_UPPER = re.compile(
-    rf"(?<![\w'\u2019-])(?P<first>{_TITLE_WORD})(?P<upper>(?:{_SPACE}{_UPPER_WORD})+)"
+    rf"(?<![\w'\u2019-])(?P<first>{_TITLE_WORD}|{_INITIALS})"
+    rf"(?:{_SPACE}{_PARTICLE}){{0,4}}(?P<upper>(?:{_SPACE}{_UPPER_WORD})+)"
 )
 _UPPER_RUN = re.compile(rf"(?<![\w'\u2019-])(?P<upper>{_UPPER_WORD}(?:{_SPACE}{_UPPER_WORD})*)")
 _TITLE_WORD_RE = re.compile(_TITLE_WORD)
@@ -86,7 +91,7 @@ def _is_rejected(lead: str, upper_words: list[str], acronyms: frozenset[str]) ->
     upper_words sont les mots en majuscules (un acronyme connu, ou une suite de chiffres
     romains comme "IV", les écarte).
     """
-    if lead.lower() in COMMON_STARTERS:
+    if lead.lower() in COMMON_STARTERS or lead.lower().rstrip(".") in CIVILITIES:
         return True
     if any(word in acronyms for word in upper_words):
         return True
@@ -158,8 +163,10 @@ class CivilityPersonRecognizer(_PersonHeuristic):
                 continue
             end, count = first.end(), 1
             while count < self.MAX_WORDS:
-                spaces = _SPACE_RE.match(text, end)
-                following = self._word_at(text, spaces.end()) if spaces else None
+                spaces = _NAME_SPACE_RE.match(text, end)
+                following = (
+                    self._word_at(text, spaces.end()) if spaces and spaces.end() > end else None
+                )
                 if following is None:
                     break
                 end, count = following.end(), count + 1
@@ -178,7 +185,7 @@ class CivilityPersonRecognizer(_PersonHeuristic):
         lowered = word.group().lower()
         if lowered in _ARTICLES:
             return word if self._article_leads_name(text, word.end()) else None
-        if lowered in COMMON_STARTERS or word.group() in self.acronyms:
+        if lowered in COMMON_STARTERS or lowered in TITLE_WORDS or word.group() in self.acronyms:
             return None
         return word
 

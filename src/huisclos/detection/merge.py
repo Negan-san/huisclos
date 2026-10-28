@@ -12,6 +12,7 @@ from dataclasses import replace
 
 from huisclos.config import DetectionConfig
 from huisclos.detection.exclusions import EXCLUDABLE_TYPES, is_excluded, is_legal_reference
+from huisclos.detection.person_heuristics import COMMON_STARTERS
 from huisclos.models import Detection, EntityType, Source
 from huisclos.text_utils import CIVILITIES, LEGAL_FORMS, fold, fold_same_length
 
@@ -21,8 +22,8 @@ from huisclos.text_utils import CIVILITIES, LEGAL_FORMS, fold, fold_same_length
 TYPE_PRIORITY: tuple[EntityType, ...] = tuple(
     EntityType[name]
     for name in (
-        "IBAN NIR SIRET SIREN EMAIL PHONE CASE_NUMBER BIRTH_DATE "
-        "ADDRESS ORGANIZATION PERSON LOCATION CUSTOM"
+        "IBAN NIR CUSTOM SIRET SIREN EMAIL PHONE CASE_NUMBER BIRTH_DATE "
+        "ADDRESS ORGANIZATION PERSON LOCATION"
     ).split()
 )
 
@@ -105,7 +106,11 @@ def trim(text: str, detection: Detection) -> Detection | None:
     Exemple : "M. Dupont," devient "Dupont" (D-09, la civilité reste visible).
     """
     start, end = _strip_borders(text, detection.start, detection.end)
-    if detection.entity_type in _LINE_BOUND_TYPES and "\n" in text[start:end]:
+    if (
+        detection.entity_type in _LINE_BOUND_TYPES
+        and detection.source != Source.HEURISTIC
+        and "\n" in text[start:end]
+    ):
         start, end = _strip_borders(text, *_longest_line(text, start, end))
     if detection.entity_type == EntityType.PERSON and start < end:
         if fold(text[start:end]).rstrip(".") in CIVILITIES:
@@ -355,6 +360,17 @@ def merge(
     resolved: list[Detection] = []
     for cluster in _clusters(detections):
         resolved.extend(_resolve_conflicts(text, _union_same_type(text, cluster)))
+    if config.use_exclusions:
+        resolved = [
+            part for d in resolved for part in _subtract_exclusions(text, d, exclusion_spans)
+        ]
+        resolved = [
+            d
+            for d in resolved
+            if d.source == Source.MANUAL
+            or d.entity_type not in _NAME_TYPES
+            or fold(d.text).rstrip(".") not in COMMON_STARTERS
+        ]
     detections = join_adjacent(text, resolved)
     detections = sorted((d for d in detections if d.score >= config.threshold), key=_sort_key)
     check_output(text, detections)
