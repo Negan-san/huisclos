@@ -1,0 +1,12 @@
+{
+  "available": false,
+  "step": "staged Git blob comparison",
+  "error_type": "AssertionError",
+  "path": "results/gate8-recheck/final-checks.json",
+  "cause": "git hash-object without --no-filters differs from the raw staged blob under the local attributes",
+  "report_changed": false,
+  "raw_sha256_matches_committed_blob": true,
+  "reserved_measurements": 0,
+  "previous_index": "artifact-index-attempt1.json",
+  "next_check": "Record the actual staged blob and its SHA-256, retain the on-disk SHA-256 separately"
+}

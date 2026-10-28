@@ -1,0 +1,10 @@
+{
+  "available": false,
+  "step": "raw Git blob comparison",
+  "error_type": "AssertionError",
+  "path": "results/gate8/summarize.py",
+  "cause": "Windows checkout applies CRLF to this Python script; clean Git hash matches the G8 blob",
+  "report_changed": false,
+  "reserved_measurements": 0,
+  "next_check": "Compare clean hashes for Python scripts and raw bytes for every other G8 artifact; record both"
+}

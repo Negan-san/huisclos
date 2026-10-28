@@ -1,0 +1,14 @@
+........................................................................ [ 35%]
+........................................................................ [ 70%]
+.............................................................            [100%]
+============================== warnings summary ===============================
+..\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491
+  C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+..\huisclos\.venv\Lib\site-packages\_pytest\cacheprovider.py:469
+  C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\_pytest\cacheprovider.py:469: PytestCacheWarning: cache could not write path C:\Users\nasci\Documents\Coding Project\Assignment\huisclos-b\.pytest_cache\v\cache\nodeids: [Errno 13] Permission denied: 'C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b\\.pytest_cache\\v\\cache\\nodeids'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+205 passed, 2 warnings in 47.36s

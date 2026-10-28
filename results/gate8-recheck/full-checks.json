@@ -1,0 +1,55 @@
+{
+  "completed_at_utc": "2026-10-28T17:11:31.319645+00:00",
+  "checks": {
+    "pytest": {
+      "command": [
+        "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "exit_code": 0,
+      "log": "full-pytest.log"
+    },
+    "ruff_check": {
+      "command": [
+        "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos\\.venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "."
+      ],
+      "exit_code": 1,
+      "log": "full-ruff_check.log"
+    },
+    "ruff_format": {
+      "command": [
+        "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos\\.venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "."
+      ],
+      "exit_code": 0,
+      "log": "full-ruff_format.log"
+    },
+    "style": {
+      "command": [
+        "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos\\.venv\\Scripts\\python.exe",
+        "scripts/check_style.py"
+      ],
+      "exit_code": 0,
+      "log": "full-style.log"
+    },
+    "diff": {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log": "full-diff.log"
+    }
+  }
+}

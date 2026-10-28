@@ -1,0 +1,53 @@
+{
+  "completed_at_utc": "2026-10-28T17:13:11.904290+00:00",
+  "decision": "D-G8R-1",
+  "global": "NO-GO",
+  "freeze_commit": "37f98f15bd82ac2edf4c4d6ebe03d2ec0c58cb10",
+  "metrics_describe": "G8 measured HEAD e3d13bd; business trees identical to FIX",
+  "new_reserved_attempts": 0,
+  "registry": [
+    {
+      "session": "G8",
+      "split": "blind_fr",
+      "attempt": "gate8\\attempt_blind_fr.json",
+      "completed": true,
+      "g8r_action": "reuse"
+    },
+    {
+      "session": "G8",
+      "split": "blind_en",
+      "attempt": "gate8\\attempt_blind_en.json",
+      "completed": true,
+      "g8r_action": "reuse"
+    },
+    {
+      "session": "G8",
+      "split": "test",
+      "attempt": "gate8\\attempt_test.json",
+      "completed": true,
+      "g8r_action": "reuse"
+    },
+    {
+      "session": "G8",
+      "split": "challenge",
+      "attempt": "gate8\\attempt_challenge.json",
+      "completed": false,
+      "g8r_action": "keep unavailable; no retry"
+    }
+  ],
+  "historical_test_measurement_number": 4,
+  "c3_status": "previously measured holdout; no fresh blind validation",
+  "technical_workflow_controls": "GO for observed FR/EN controls",
+  "g8_01": "closed: exact predictions/substitutions survive early, middle and late final-check failures",
+  "worker_diagnostic": "verified at load, detection, pseudonymization and metadata; message excluded",
+  "fr_standard": "G8 gains retained; historical challenge validation remains open",
+  "fr_enhanced": "G8 point criterion retained; historical challenge validation remains open",
+  "en_standard": "experimental; 22/100 evaluated entities exposed before human review",
+  "en_enhanced": "NO-GO recommendation; frozen precision margin exceeded",
+  "english_precision_drop": 0.13486238532110095,
+  "english_precision_margin": 0.02,
+  "historical_challenge": "unavailable; root cause unknown; no causal link to G8-01 established",
+  "automatic_correction_measurement_loop": false,
+  "fallback": "Standard, full human review and manual additions; no anonymity guarantee",
+  "tag_or_push": false
+}

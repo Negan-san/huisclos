@@ -1,0 +1,23 @@
+{
+  "completed_at_utc": "2026-10-28T17:08:38.515176+00:00",
+  "checks": {
+    "targeted": {
+      "command": [
+        "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_gate8.py",
+        "tests/test_no_network.py",
+        "tests/test_mistral_client.py",
+        "tests/test_detection_profiles.py",
+        "tests/test_metamorphic_detection.py",
+        "tests/test_analysis_view.py",
+        "tests/test_gliner.py",
+        "tests/test_detection_windows.py"
+      ],
+      "exit_code": 0,
+      "log": "targeted-targeted.log"
+    }
+  }
+}

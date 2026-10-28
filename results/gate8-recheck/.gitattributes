@@ -1,0 +1,4 @@
+# Les rapports du recontrôle conservent les octets effectivement hachés.
+*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+*.log -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+*.md -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

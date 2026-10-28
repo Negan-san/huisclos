@@ -407,3 +407,75 @@ def test_worker_failure_names_only_stage_and_error_class(
 def test_forged_failure_detail_is_ignored(stdout: str) -> None:
     """Une sortie de worker inattendue n'est jamais recopiée dans le message d'échec."""
     assert gate8_measure.failure_detail(stdout) == ""
+
+
+@pytest.mark.parametrize("failure_index", (0, 1, 3))
+def test_recheck_outage_keeps_every_span_and_substitution(
+    failure_index: int, monkeypatch: pytest.MonkeyPatch, no_network: None
+) -> None:
+    """G8R vérifie les sorties exactes après une panne au début, au milieu ou à la fin."""
+    text = "Nolan VARELBRICK"
+    api = outage_api(monkeypatch, text)
+    successful_alerts = [[[1, 4]]] * failure_index
+    checks = Mock(side_effect=[*successful_alerts, OSError(text)])
+    monkeypatch.setattr(gate8_measure, "final_alerts", checks)
+    payload = gate8_measure.stage_outputs([text] * 4, "fake", 0.3, "en", api)
+    expected = {
+        "detections": [[0, len(text), "PERSON", 0.9, "pattern"]],
+        "occurrences": [[0, len("[PERSONNE_1]"), len(text)]],
+        "alerts": None,
+    }
+    assert payload["documents"] == [expected] * 4
+    assert api.detect.call_count == 4
+    assert checks.call_count == failure_index + 1
+    assert payload["metadata"]["resources"]["main_detection_calls"] == 4
+    assert payload["metadata"]["final_check"] == {
+        "available": False,
+        "error_type": "OSError",
+    }
+    assert text not in json.dumps(payload)
+
+
+@pytest.mark.parametrize("stage", gate8_measure.STAGES)
+def test_recheck_failure_contract_at_every_stage(
+    stage: str, monkeypatch: pytest.MonkeyPatch, no_network: None
+) -> None:
+    """Chaque stade fatal renvoie le code 3 et deux seuls champs sans message sensible."""
+    text = "Nolan VARELBRICK"
+    api = outage_api(monkeypatch, text)
+    monkeypatch.setattr(gate8_measure.pilot, "load_api", Mock(return_value=api))
+    monkeypatch.setattr(gate8_measure, "final_alerts", Mock(return_value=[]))
+    failed = Mock(side_effect=ValueError(text))
+    if stage == "load":
+        monkeypatch.setattr(gate8_measure.pilot, "load_api", failed)
+    elif stage == "detection":
+        api.detect = failed
+    elif stage == "pseudonymization":
+        api.pseudonymize = failed
+    else:
+        monkeypatch.setattr(gate8_measure.pilot, "measured_metadata", failed)
+    payload, code = gate8_measure.answer_request(
+        {"texts": [text], "preset": "fake", "threshold": 0.3, "language": "fr"}
+    )
+    assert code == 3
+    assert payload == {"failure": {"stage": stage, "error_type": "ValueError"}}
+    assert text not in json.dumps(payload)
+
+
+def test_recheck_final_outage_is_a_successful_worker_response(
+    monkeypatch: pytest.MonkeyPatch, no_network: None
+) -> None:
+    """Une panne finale seule garde un worker réussi et un contrôle indisponible explicite."""
+    text = "Nolan VARELBRICK"
+    api = outage_api(monkeypatch, text)
+    monkeypatch.setattr(gate8_measure.pilot, "load_api", Mock(return_value=api))
+    monkeypatch.setattr(gate8_measure, "final_alerts", Mock(side_effect=ValueError(text)))
+    payload, code = gate8_measure.answer_request(
+        {"texts": [text] * 2, "preset": "fake", "threshold": 0.3, "language": "fr"}
+    )
+    assert code == 0
+    assert "failure" not in payload
+    assert len(payload["documents"]) == 2
+    assert all(row["alerts"] is None for row in payload["documents"])
+    assert payload["metadata"]["final_check"]["available"] is False
+    assert text not in json.dumps(payload)
