@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 22:12 | S71 | Rapport de méthode et architecture | Claude Code, Opus 5.5
+- Fait : fusion lane-b en avance rapide sans conflit (85fe724). docs/METHOD_REPORT.md, anglais, douze sections, environ 2 935 mots (3 174 jetons séparés par blancs) ; docs/ARCHITECTURE.md, anglais, environ 1 650 mots (1 835), trajet d'une phrase fictive, Mermaid, frontières, table séparée, familles de modules, états périmés, erreurs, modifications après gel et glossaire de 22 termes. Chaque tableau cite sa source (G8R2, D-G8-1, D-G7-1, results/summary.md, D-AF-A4-4) ; chiffres G8R2 vérifiés dans results/gate8-resume/report.md.
+- Preuve : G8R2 sur 930c414 seul résultat courant ; gain de couverture non significatif (IC apparié touchant zéro), réduction de fuite dont l'IC exclut zéro ; G8 test/C3 historiques sur e3d13bd ; Standard EN avec réserves fortes, Enhanced EN non recommandé ; aucune mesure exécutée.
+- Tests : garde FIX3R, 1783 passed en 209,53 s puis 203,30 s (second passage journalisé hors dépôt pour lire le compteur), zéro ouverture réservée refusée ; Ruff check et format conformes ; check_style 0 erreur, 15 avertissements connus ; git diff --check conforme. Avertissement torch.jit connu. Contrôle ponctuel hors dépôt : mots, sections, liens locaux tous présents (seul docs/RESEARCH.md, cité comme absent, n'existe pas).
+- Décisions : aucune.
+- Risques : docs/RESEARCH.md absent, donc CNB, statut des lignes directrices CEPD, CJUE, concurrents et chiffres de marché omis ; la page Method de l'application cite encore un guide CNB de mars 2026 sans source dans le dépôt (hors périmètre S71). Liens EUR-Lex et Légifrance non consultés, pas une vérification juridique. Vidéo IA confiée à un camarade, non produite ; crédits à ajouter après réception.
+- Suite : S72 sur lane-b. README annonce encore METHOD_REPORT et ARCHITECTURE « added before submission » : lien à poser par une session autorisant README. Aucun push ni tag.
+
 ### 2026-10-28 23:59 | PLAN71 | Prompts immédiats et vidéo IA externalisée | Codex, GPT-6
 - Fait : prompts S71/S72 autonomes et identiques aux fiches du masterplan, lançables dans cet ordre sans attendre la vidéo ; sources G8R2/R8, réserves EN, licences attestées et journaux non reconstruits comme verbatim.
 - Vidéo : tâches S61/S6A/H6/G6 retirées du plan actif, plan dédié docs/video/MASTER_PLAN.md avec étapes, prompts, chaîne freemium sourcée et remise au camarade ; S61 adaptée, 620 mots, sept blocs, 41 plans et cible 4:45. Voix synthétique, reconstitution annoncée et réponse illustrative ; capture réelle pilotée par IA en alternative identifiée.
