@@ -12,6 +12,7 @@ from dataclasses import replace
 
 from huisclos.config import DetectionConfig
 from huisclos.detection.exclusions import is_legal_reference
+from huisclos.detection.person_heuristics import build_person_recognizers
 from huisclos.models import Detection, EntityType, Source
 from huisclos.text_utils import (
     CIVILITIES,
@@ -42,12 +43,6 @@ _LEGAL_FORM = re.compile(rf"(?<!\w)(?:{_LEGAL_ALTERNATION})(?!\w)")
 _LEGAL_AFTER = re.compile(rf"[^\S\n]+(?:{_LEGAL_ALTERNATION})(?!\w)")
 # Un signe de ponctuation forme un mot à lui seul : "Durand," donne "Durand" puis ",".
 _TOKEN = re.compile(r"[^\s.,;:()\[\]{}\"\u00ab\u00bb!?]+|\S")
-_NAME_WORD = r"[A-ZÀ-ÖØ-Þ][^\W\d_]*(?:[-'\u2019][^\W\d_]+)*"
-# Le nom est lu sans être consommé, pour que "Voir M. Jean DURAND" trouve encore "M.".
-_CIVILITY_NAME = re.compile(
-    rf"(?<!\w)(?P<civility>[^\W\d_]+)\.?[^\S\n]+"
-    rf"(?=(?P<name>{_NAME_WORD}(?:[^\S\n]+{_NAME_WORD}){{0,2}}))"
-)
 _LIAISON_GAP = re.compile(r"[^\S\n]+(?:de|des|du|la|le|les|et|&)[^\S\n]+|[^\S\n]+d'")
 _STOP_CHARACTERS = frozenset('.,;:()[]{}"\u00ab\u00bb!?')
 _NAME_TYPES = frozenset({EntityType.PERSON, EntityType.ORGANIZATION, EntityType.LOCATION})
@@ -164,41 +159,43 @@ def _absorb(
 
 
 def merge_civility_names(text: str, detections: list[Detection]) -> list[Detection]:
-    """Une civilité suivie de Prénom NOM donne un seul span PERSON.
+    """R?pare les fragments de noms reconnus par une civilit? ou leur casse.
 
-    Le span PERSON remplace les fragments de personne ou de société contenus dans la
-    civilité et le nom ("M. Jean" PERSON et "DURAND" ORGANIZATION). La civilité reste
-    hors du span (D-09). Un nom suivi d'une forme juridique reste une société.
+    Les m?mes heuristiques bornent la d?tection et la r?paration, particules et
+    initiales comprises. Les identifiants, adresses, ajouts manuels et soci?t?s
+    portant une forme juridique emp?chent toute absorption.
     """
-    for match in _CIVILITY_NAME.finditer(text):
-        if fold(match.group("civility")) not in CIVILITIES:
+    candidates = [
+        (start, end, recognizer.score)
+        for recognizer in build_person_recognizers()
+        for start, end in recognizer._spans(text)
+    ]
+    for start, end, score in sorted(set(candidates), key=lambda item: (item[0], -item[1])):
+        if _LEGAL_AFTER.match(text, end) or any(w in LEGAL_FORMS for w in text[start:end].split()):
             continue
-        start, end = match.span("name")
-        if any(word in LEGAL_FORMS for word in match.group("name").split()):
-            continue
-        if _LEGAL_AFTER.match(text, end):
-            continue
-        parts = _overlapping(detections, match.start(), end)
+        prefix_start = max(0, start - 20)
+        prefix = text[prefix_start:start]
+        civility = re.search(r"(?<!\w)([^\W\d_]+)\.?[^\S\n]+$", prefix)
+        label_start = start
+        if civility and fold(civility[1]) in CIVILITIES:
+            label_start = prefix_start + civility.start()
+        parts = _overlapping(detections, label_start, end)
         if not parts or any(
             p.source == Source.MANUAL
             or p.entity_type not in {EntityType.PERSON, EntityType.ORGANIZATION}
-            or p.start < match.start()
+            or p.start < label_start
             or end < p.end
             for p in parts
         ):
             continue
-        if len(parts) == 1 and parts[0].entity_type == EntityType.PERSON:
-            continue
-        name_start = max(start, min(p.start for p in parts))
-        name_end = max(p.end for p in parts)
         best = max(parts, key=lambda d: d.score)
         person = _span(
             text,
             best,
-            name_start,
-            name_end,
+            start,
+            end,
             entity_type=EntityType.PERSON,
-            score=max(best.score, CIVILITY_NAME_SCORE),
+            score=max(best.score, score),
         )
         detections = [d for d in detections if d not in parts] + [person]
     return detections

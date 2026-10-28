@@ -112,3 +112,23 @@ def test_court_with_an_unhyphenated_compound_place_is_fully_excluded(prefix: str
     reference = f"Tribunal judiciaire de {prefix} Denis"
     text = reference + ", Paul Martin comparaît."
     assert load_exclusions().spans(text) == [(0, len(reference))]
+
+
+@pytest.mark.parametrize("label", ["Courriel", "Objet", "Réf.", "Tél.", "Pièce jointe"])
+@pytest.mark.parametrize("prefix", ["", "Une phrase.\n  ", "Texte ; ", "Une phrase. "])
+def test_field_labels_are_excluded_without_their_values(label: str, prefix: str) -> None:
+    """Un libellé de champ ne masque pas la personne ou la société qui suit."""
+    text = prefix + label + " : Aveline RONCIVAL"
+    spans = load_exclusions().spans(text)
+    assert any(start <= len(prefix) and len(prefix + label) <= end for start, end in spans)
+    value = make(text, "Aveline RONCIVAL", EntityType.PERSON)
+    assert not is_excluded(value, spans)
+    assert not any(start < value.end and value.start < end for start, end in spans)
+
+
+def test_a_named_speaker_and_a_company_are_not_field_labels() -> None:
+    """La ponctuation seule ne suffit pas à exclure un nom dans un dialogue ou une société."""
+    text = "Aveline : je confirme.\nImprimerie Courriel Bleu SAS : disponible."
+    spans = load_exclusions().spans(text)
+    assert not is_excluded(make(text, "Aveline", EntityType.PERSON), spans)
+    assert not is_excluded(make(text, "Courriel", EntityType.ORGANIZATION), spans)

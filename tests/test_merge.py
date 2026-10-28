@@ -56,6 +56,16 @@ def test_rule1_keeps_civility_inside_organization() -> None:
     assert texts(merge(text, raw, CONFIG)) == [("Maître Conseil SAS", EntityType.ORGANIZATION)]
 
 
+def test_exclusions_also_apply_to_fragments_left_by_a_structured_value() -> None:
+    """Le retrait d'une coordonnée ne doit pas laisser un libellé classé comme nom."""
+    text = "Courriel testeur@example.org"
+    raw = [
+        det(text, text, EntityType.PERSON),
+        det(text, "testeur@example.org", EntityType.EMAIL, 0.95, Source.PATTERN),
+    ]
+    assert texts(merge(text, raw, CONFIG, [(0, 8)])) == [("testeur@example.org", EntityType.EMAIL)]
+
+
 # Règle 2 : types activés.
 
 
@@ -173,13 +183,13 @@ def test_rule5_partial_overlap_resolved_by_priority() -> None:
         ("Paul Martin", EntityType.PERSON),
         ("14 rue des Lilas 75011 Paris", EntityType.ADDRESS),
     ]
-    # Le type prime sur le score : une personne à 0,70 l'emporte sur un CUSTOM à 0,95.
+    # Un identifiant explicitement libellé prime sur une interprétation comme nom.
     names = "Paul Martin Durand"
     raw = [det(names, "Paul Martin", EntityType.PERSON, 0.70, Source.HEURISTIC)]
     raw.append(det(names, "Martin Durand", EntityType.CUSTOM, 0.95, Source.PATTERN))
     assert texts(merge(names, raw, CONFIG)) == [
-        ("Paul Martin", EntityType.PERSON),
-        ("Durand", EntityType.CUSTOM),
+        ("Paul", EntityType.PERSON),
+        ("Martin Durand", EntityType.CUSTOM),
     ]
 
 

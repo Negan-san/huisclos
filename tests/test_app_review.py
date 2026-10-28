@@ -19,7 +19,6 @@ from huisclos.pseudonymize.grouping import group_mentions
 ROOT = Path(__file__).resolve().parent.parent
 APP_PATH = str(ROOT / "streamlit_app.py")
 TIMEOUT = 120
-COURRIEL = (290, 298)
 
 
 @pytest.fixture(autouse=True)
@@ -55,6 +54,19 @@ def table_rows(app: AppTest) -> list[dict[str, object]]:
         if "Mask" in table.column_names:
             return table.to_pylist()
     return []
+
+
+def review_target(app: AppTest) -> str:
+    """Renvoie la coordonn?e t?l?phonique ? utiliser pour les actions de revue."""
+    return next(row["Text"] for row in table_rows(app) if row["Type"] == "Phone")
+
+
+def target_span(app: AppTest) -> tuple[int, int]:
+    """Retrouve la position du t?l?phone dans les d?tections originales."""
+    detection = next(
+        d for d in app.session_state["detections"] if d.entity_type == EntityType.PHONE
+    )
+    return detection.start, detection.end
 
 
 def type_counts(app: AppTest) -> dict[str, tuple[int, int]]:
@@ -138,16 +150,16 @@ def test_review_screen_shows_counts_table_and_highlighted_text() -> None:
     assert ">CASE</span>" in document
     legend = next(block for block in page if "hc-legend" in block)
     assert "hc-hl-IBAN" in legend
-    assert "hc-hl-CUSTOM" not in legend
+    assert "hc-hl-CUSTOM" in legend
     assert "hc-hl-LOCATION" not in legend
 
 
 def test_unchecking_a_group_removes_it_from_the_pseudonymization() -> None:
     app = review_app()
-    app = edit_row(app, "Courriel", Mask=False)
-    assert app.session_state["group_decisions"][COURRIEL].masked is False
+    app = edit_row(app, review_target(app), Mask=False)
+    assert app.session_state["group_decisions"][target_span(app)].masked is False
     assert metrics(app)["Rejected occurrences"] == "1"
-    assert type_counts(app)["Organization"] == (1, 1)
+    assert type_counts(app)["Phone"] == (0, 1)
     assert [row["Mask"] for row in table_rows(app)].count(False) == 1
     assert any(">REJECTED</span>" in block for block in html_blocks(app))
     result = pseudonymize(app)
@@ -169,27 +181,27 @@ def test_unchecking_a_group_rejects_every_occurrence_of_it() -> None:
 
 def test_checking_the_box_again_masks_the_group_again() -> None:
     app = review_app()
-    app = edit_row(app, "Courriel", Mask=False)
-    app = edit_row(app, "Courriel", Mask=True)
+    app = edit_row(app, review_target(app), Mask=False)
+    app = edit_row(app, review_target(app), Mask=True)
     assert metrics(app)["Rejected occurrences"] == "0"
-    assert "Courriel" not in pseudonymize(app).text
+    assert review_target(app) not in pseudonymize(app).text
 
 
 def test_changing_a_type_changes_the_token() -> None:
     app = review_app()
-    app = edit_row(app, "Courriel", Type="Custom")
-    assert app.session_state["group_decisions"][COURRIEL].entity_type is EntityType.CUSTOM
-    assert [row["Type"] for row in table_rows(app)].count("Custom") == 1
+    app = edit_row(app, review_target(app), Type="Custom")
+    assert app.session_state["group_decisions"][target_span(app)].entity_type is EntityType.CUSTOM
+    assert [row["Type"] for row in table_rows(app)].count("Custom") == 2
     result = pseudonymize(app)
     assert "[AUTRE_1]" in result.text
     assert "[SOCIETE_B]" not in result.text
-    assert "Courriel" not in result.text
+    assert app.session_state["source_text"][slice(*target_span(app))] not in result.text
 
 
 def test_token_style_of_the_sidebar_is_used() -> None:
     app = review_app()
     app.sidebar.radio(key="token_style").set_value("en").run()
-    app = edit_row(app, "Courriel", Type="Custom")
+    app = edit_row(app, review_target(app), Type="Custom")
     result = pseudonymize(app)
     assert "[OTHER_1]" in result.text
     assert "[PERSON_1]" in result.text
@@ -256,10 +268,11 @@ def test_manual_add_skips_what_a_masked_value_already_covers() -> None:
 
 def test_manual_add_replaces_a_rejected_detection() -> None:
     app = review_app()
-    app = edit_row(app, "Courriel", Mask=False)
-    app = add_value(app, "courriel")
-    assert COURRIEL not in app.session_state["group_decisions"]
-    assert [d.text for d in app.session_state["manual_entities"]] == ["Courriel"]
+    app = edit_row(app, review_target(app), Mask=False)
+    value = review_target(app)
+    app = add_value(app, value)
+    assert target_span(app) not in app.session_state["group_decisions"]
+    assert [d.text for d in app.session_state["manual_entities"]] == [value]
     assert metrics(app)["Rejected occurrences"] == "0"
     assert "[AUTRE_1]" in pseudonymize(app).text
 
@@ -299,7 +312,7 @@ def test_back_to_import_keeps_the_review_available() -> None:
 
 def test_decisions_survive_reruns_and_a_new_document_clears_them() -> None:
     app = review_app()
-    app = edit_row(app, "Courriel", Mask=False)
+    app = edit_row(app, review_target(app), Mask=False)
     app = add_value(app, "client")
     saved = dict(app.session_state["group_decisions"])
     app.run()
@@ -326,7 +339,7 @@ def test_a_new_decision_discards_the_previous_pseudonymization() -> None:
     app.session_state["step"] = "review"
     app.run()
     assert app.session_state["pseudo_result"] is not None
-    app = edit_row(app, "Courriel", Mask=False)
+    app = edit_row(app, review_target(app), Mask=False)
     assert app.session_state["pseudo_result"] is None
     assert app.session_state["restore_result"] is None
 
@@ -335,7 +348,7 @@ def test_nothing_masked_is_announced() -> None:
     app = review_app()
     assert not [w for w in app.warning if "No value is masked" in w.value]
     app.session_state[f"{TABLE_KEY_PREFIX}0"] = {
-        "edited_rows": {i: {"Mask": False} for i in range(14)},
+        "edited_rows": {i: {"Mask": False} for i in range(len(table_rows(app)))},
         "added_rows": [],
         "deleted_rows": [],
     }

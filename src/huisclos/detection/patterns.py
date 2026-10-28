@@ -13,6 +13,9 @@ from datetime import date
 from presidio_analyzer import EntityRecognizer, RecognizerResult
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
+from huisclos.detection.address_patterns import EXPRESSION as ADDRESS_EXPRESSION
+from huisclos.detection.address_patterns import POSTAL_CITY as _POSTAL_CITY
+from huisclos.detection.case_patterns import procedure_candidates
 from huisclos.detection.checksums import (
     digits_only,
     iban_is_valid,
@@ -27,24 +30,8 @@ _SPACE = r"[ \u00a0\u202f]"
 # Chaque remplacement garde un caractère : les positions restent celles du texte original.
 _NONBREAKING_SPACES = str.maketrans("\u00a0\u202f", "  ")
 _SEPARATOR = r"[ .\u00a0\u202f]?"
-_WORD = r"[^\W\d_]{1,40}(?:['\u2019-][^\W\d_]{1,40}){0,4}"
-_CAPITAL_WORD = r"(?!CEDEX\b)[A-ZÀ-ÖØ-Þ][^\W\d_]{0,39}(?:['\u2019-][^\W\d_]{1,40}){0,4}"
-_CITY = (
-    rf"{_CAPITAL_WORD}(?:[ ]{{1,3}}(?:{_CAPITAL_WORD}|sur|sous|en|les|le|la|de|du|aux)){{0,7}}"
-    r"(?:[ ]{1,3}CEDEX(?:[ ]{1,3}[0-9]{1,2})?)?"
-)
-_POSTAL_CITY = rf"[0-9]{{5}}[ \u00a0\u202f]{{1,3}}{_CITY}"
 # Score d'un numéro au bon format mais à clé fausse, près de son libellé (D-07).
 INVALID_KEY_SCORE = 0.40
-_STREET_TYPE = (
-    r"(?:rue|avenue|av\.|boulevard|bd\.?|place|allée|allee|chemin|impasse|quai|cours|"
-    r"route|square|villa|passage|voie|sentier|cité|cite|résidence|residence|lieu-dit|"
-    r"hameau|faubourg|esplanade|promenade)"
-)
-_STREET = (
-    rf"[0-9]{{1,5}}[ ]{{0,3}}(?:(?:bis|ter|quater)[ ]{{1,3}})?"
-    rf"{_STREET_TYPE}[ ]{{1,3}}{_WORD}(?:[ ]{{1,3}}{_WORD}){{0,5}}"
-)
 
 
 def _fold(value: str) -> str:
@@ -91,7 +78,7 @@ class _LocalRecognizer(EntityRecognizer):
         results = []
         for start, end in self._candidates(text):
             # La fenêtre porte sur le texte original pour rester exactement à 40 caractères.
-            context = _fold(text[max(0, start - 40) : start])
+            context = _fold(text[max(0, start - 40) : start].translate(_NONBREAKING_SPACES))
             has_context = re.search(self.context_expression, context) is not None
             score, source = self._evaluate(
                 text[start:end].translate(_NONBREAKING_SPACES), has_context
@@ -225,7 +212,8 @@ class EmailRecognizer(_LocalRecognizer):
     default_score = 0.95
     expression = (
         r"(?<![\w.!#$%&'*+/=?^`{|}~@-])[A-Z0-9!#$%&'*+/=?^`{|}~-]{1,64}"
-        r"(?:\.[A-Z0-9!#$%&'*+/=?^`{|}~-]{1,64}){0,10}@"
+        r"(?:\.[A-Z0-9!#$%&'*+/=?^`{|}~-]{1,64}){0,10}"
+        r"(?:@|[ \t]{0,3}\[at\][ \t]{0,3})"
         r"(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.){1,10}[A-Z]{2,63}"
         r"(?![\w@-])"
     )
@@ -238,6 +226,7 @@ class PhoneFrRecognizer(_LocalRecognizer):
     expression = (
         r"(?<![\w+])(?:0|(?:\+33|0033)[ .\u00a0\u202f-]?(?:\(0\)[ .\u00a0\u202f-]?)?)"
         r"[1-9](?:[ .\u00a0\u202f-]?[0-9]{2}){4}(?!\w)"
+        r"(?:[ \t]{1,3}(?:poste|ext(?:ension)?\.?)[ \t]{0,3}:?[ \t]{0,3}[0-9]{1,6}(?!\w))?"
     )
     context_expression = r"\b(?:tel|telephone|portable|mobile|fixe)\b"
 
@@ -255,7 +244,8 @@ class BirthDateRecognizer(_LocalRecognizer):
         r"(?:1er|[0-9]{1,2})[ ]{1,3}(?:janvier|février|fevrier|mars|avril|mai|juin|"
         r"juillet|août|aout|septembre|octobre|novembre|décembre|decembre)[ ]{1,3}[0-9]{4})(?!\w)"
     )
-    context_expression = r"\b(?:ne(?:e|\(e\))?|naissance)(?!\w)"
+    # Un lieu peut séparer le contexte de la date. Une première date en arrête la portée.
+    context_expression = r"\b(?:ne(?:e|\(e\))?|naissance)(?!\w)(?![\s\S]*[0-9])"
 
     def _evaluate(self, value: str, has_context: bool) -> tuple[float, Source]:
         """Vérifie la date value et renvoie 0,90 seulement avec un contexte de naissance."""
@@ -279,21 +269,23 @@ class CaseNumberRecognizer(_LocalRecognizer):
     entity_type = EntityType.CASE_NUMBER
     expression = (
         r"(?:\bR\.?[ ]?G\.?(?:[ ]{0,3}n[°o])?|\bn[°o][ ]{0,3}R\.?[ ]?G\.?|"
-        r"(?P<portalis>\bPortalis))[ ]{0,3}:?[ ]{0,3}(?P<value>(?(portalis)"
+        r"(?P<portalis>\bPortalis))(?:[ ]{0,3}n[°o])?[ ]{0,3}:?[ ]{0,3}"
+        r"(?P<value>(?(portalis)"
         r"[A-Z0-9]{1,12}(?:-[A-Z0-9]{1,12}){3}(?![\w-])|"
         r"(?:F[ ]{0,3})?(?:[0-9]{4}|[0-9]{2})/[0-9]{5}(?!\w)))"
     )
+
+    def _candidates(self, text: str) -> Iterator[tuple[int, int]]:
+        """Complète RG et Portalis par les numéros de parquet et de pourvoi libellés."""
+        yield from super()._candidates(text)
+        yield from procedure_candidates(text.translate(_NONBREAKING_SPACES))
 
 
 class AddressRecognizer(_LocalRecognizer):
     """Repère une voie, une adresse complète ou un couple code postal et ville."""
 
     entity_type = EntityType.ADDRESS
-    # Les quantificateurs sont bornés ; une ville commence par une majuscule.
-    expression = (
-        rf"(?<!\w)(?:(?i:{_STREET})(?:[ ,\t\r\n]{{1,6}}{_POSTAL_CITY})?|"
-        rf"{_POSTAL_CITY})(?!\w)"
-    )
+    expression = ADDRESS_EXPRESSION
     regex_flags = 0
 
     def _evaluate(self, value: str, has_context: bool) -> tuple[float, Source]:
@@ -304,7 +296,9 @@ class AddressRecognizer(_LocalRecognizer):
 
 
 def build_pattern_recognizers() -> list[EntityRecognizer]:
-    """Renvoie les neuf reconnaisseurs français dans un ordre stable entre les appels."""
+    """Renvoie les reconnaisseurs français dans un ordre stable entre les appels."""
+    from huisclos.detection.labeled_identifiers import LabeledIdentifierRecognizer
+
     return [
         NirRecognizer(),
         SirenRecognizer(),
@@ -315,4 +309,5 @@ def build_pattern_recognizers() -> list[EntityRecognizer]:
         BirthDateRecognizer(),
         CaseNumberRecognizer(),
         AddressRecognizer(),
+        LabeledIdentifierRecognizer(),
     ]

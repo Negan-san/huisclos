@@ -110,7 +110,9 @@ def test_sample_complete_flow_without_network_or_disk_writes(
         if "Mask"
         in (table := pa.ipc.open_stream(element.proto.arrow_data.data).read_all()).column_names
     )
-    rejected = next(i for i, row in enumerate(rows) if row["Text"] == "Courriel")
+    assert not any(row["Text"] == "Courriel" for row in rows)
+    assert any(row["Type"] == "Custom" for row in rows)
+    rejected = next(i for i, row in enumerate(rows) if row["Type"] == "Phone")
     # AppTest ne propose pas l'édition des cellules ; l'état reproduit le message du navigateur.
     app.session_state[f"{TABLE_KEY_PREFIX}0"] = {
         "edited_rows": {rejected: {"Mask": False}},
