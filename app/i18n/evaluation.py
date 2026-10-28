@@ -17,6 +17,48 @@ EN: dict[str, str] = {
     ),
     "evaluation.loading": "Loading precomputed evaluation results...",
     "evaluation.split": "Evaluation split",
+    "evaluation.challenge_note": (
+        "The challenge split was written blind after the detection rules were frozen. "
+        "It uses the threshold selected on dev, without tuning on challenge."
+    ),
+    "evaluation.intervals": "95% bootstrap intervals",
+    "evaluation.intervals_note": (
+        "Documents were resampled with replacement 2,000 times (fixed seed 45). "
+        "The bounds are the 2.5th and 97.5th percentiles of recomputed partial micro ratios, "
+        "at a fixed threshold. Undefined ratios are zero. With one document, intervals "
+        "collapse. These intervals do not account for corpus bias or threshold selection."
+    ),
+    "evaluation.intervals_alt": (
+        "Each labelled row shows the saved 95% interval as a horizontal line and the point "
+        "estimate as a dot. The table provides both bounds and the estimate in text."
+    ),
+    "evaluation.label": "Configuration / metric",
+    "evaluation.estimate": "Point estimate",
+    "evaluation.lower": "Lower bound (2.5%)",
+    "evaluation.upper": "Upper bound (97.5%)",
+    "evaluation.comparison": "Before/after comparison",
+    "evaluation.comparison_note": (
+        "Delta = current minus reference; ratios are shown as percentages and their deltas "
+        "in percentage points. Exposed entities are counts. Missing intervals or "
+        "configurations are marked explicitly. Marginal intervals do not establish "
+        "statistical significance for the delta."
+    ),
+    "evaluation.comparison_source": (
+        "{side}: commit {commit}, threshold {threshold}, documents {documents}."
+    ),
+    "evaluation.reference": "Reference",
+    "evaluation.current": "Current",
+    "evaluation.reference_interval": "Reference 95% interval",
+    "evaluation.current_interval": "Current 95% interval",
+    "evaluation.delta": "Delta (pp / count)",
+    "evaluation.comparison_threshold_different": "The selected thresholds differ between reports.",
+    "evaluation.comparison_threshold_missing": "A selected threshold is not recorded.",
+    "evaluation.comparison_corpus_sha256_different": (
+        "The corpus fingerprints differ. These figures do not compare the same document set."
+    ),
+    "evaluation.comparison_corpus_sha256_missing": (
+        "A corpus fingerprint is missing. The document sets cannot be checked for equality."
+    ),
     "evaluation.lead": (
         "On {split}, hybrid achieves {recall} recall and a {leak_rate} leak rate at the "
         "selected threshold of {threshold} (partial matching, micro averages)."
@@ -25,7 +67,7 @@ EN: dict[str, str] = {
     "evaluation.table": "Configuration comparison",
     "evaluation.matching": (
         "Partial matching, micro averages. Leak rate is the share of reference characters left"
-        " uncovered; exposed entities have at least one uncovered character. A partial match "
+        " uncovered; exposed entities have no covered character. A partial match "
         "can still expose an entity."
     ),
     "evaluation.config": "Configuration",
@@ -95,6 +137,51 @@ FR: dict[str, str] = {
     ),
     "evaluation.loading": "Chargement des résultats d'évaluation précalculés...",
     "evaluation.split": "Jeu d'évaluation",
+    "evaluation.challenge_note": (
+        "Le jeu challenge a été rédigé à l'aveugle après le gel des règles de détection. "
+        "Il utilise le seuil choisi sur dev, sans ajustement sur challenge."
+    ),
+    "evaluation.intervals": "Intervalles bootstrap à 95 %",
+    "evaluation.intervals_note": (
+        "Les documents ont été rééchantillonnés avec remise 2 000 fois (graine fixe 45). "
+        "Les bornes sont les percentiles 2,5 et 97,5 des ratios micro partiels recalculés, "
+        "au seuil fixé. Les ratios indéfinis valent zéro. Avec un document, les intervalles "
+        "se réduisent à un point. Ils ne prennent pas en compte le biais du corpus "
+        "ni le choix du seuil."
+    ),
+    "evaluation.intervals_alt": (
+        "Chaque ligne libellée montre l'intervalle à 95 % enregistré par un trait horizontal "
+        "et la valeur ponctuelle par un point. Le tableau écrit les deux bornes et la valeur."
+    ),
+    "evaluation.label": "Configuration / mesure",
+    "evaluation.estimate": "Valeur ponctuelle",
+    "evaluation.lower": "Borne basse (2,5 %)",
+    "evaluation.upper": "Borne haute (97,5 %)",
+    "evaluation.comparison": "Comparaison avant/après",
+    "evaluation.comparison_note": (
+        "Écart = actuel moins référence ; les ratios sont en pourcentages et leurs écarts "
+        "en points de pourcentage. Les entités exposées sont des comptes. Les intervalles "
+        "et configurations absents sont signalés. Les intervalles marginaux ne démontrent "
+        "pas la significativité statistique de l'écart."
+    ),
+    "evaluation.comparison_source": (
+        "{side} : commit {commit}, seuil {threshold}, documents {documents}."
+    ),
+    "evaluation.reference": "Référence",
+    "evaluation.current": "Actuel",
+    "evaluation.reference_interval": "Intervalle référence à 95 %",
+    "evaluation.current_interval": "Intervalle actuel à 95 %",
+    "evaluation.delta": "Écart (points / compte)",
+    "evaluation.comparison_threshold_different": "Les seuils retenus diffèrent entre les rapports.",
+    "evaluation.comparison_threshold_missing": "Un seuil retenu n'est pas enregistré.",
+    "evaluation.comparison_corpus_sha256_different": (
+        "Les empreintes du corpus diffèrent. Ces chiffres ne comparent pas "
+        "le même jeu de documents."
+    ),
+    "evaluation.comparison_corpus_sha256_missing": (
+        "Une empreinte du corpus manque. L'identité des jeux de documents "
+        "ne peut pas être vérifiée."
+    ),
     "evaluation.lead": (
         "Sur {split}, hybrid atteint un rappel de {recall} et un taux de fuite de {leak_rate} "
         "au seuil retenu de {threshold} (appariement partiel, moyennes micro)."
@@ -103,8 +190,8 @@ FR: dict[str, str] = {
     "evaluation.table": "Comparaison des configurations",
     "evaluation.matching": (
         "Appariement partiel, moyennes micro. Le taux de fuite est la part des caractères de "
-        "référence non couverts ; une entité exposée comporte au moins un caractère non "
-        "couvert. Un appariement partiel peut encore exposer une entité."
+        "référence non couverts ; une entité exposée n'a aucun caractère couvert. "
+        "Un appariement partiel peut encore exposer une entité."
     ),
     "evaluation.config": "Configuration",
     "evaluation.precision": "Précision",

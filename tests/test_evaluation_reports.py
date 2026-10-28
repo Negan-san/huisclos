@@ -121,6 +121,9 @@ def test_test_run_keeps_dev_results_and_uses_saved_threshold(
     }
     assert saved["metadata"]["document_counts"] == {"dev": 2, "test": 1}
     assert saved["selected_threshold"] == dev["selected_threshold"]
+    assert [row for row in saved["bootstrap_intervals"] if row["split"] == "dev"] == dev[
+        "bootstrap_intervals"
+    ]
     assert not (out / "errors_test.csv").exists()
 
 
@@ -166,3 +169,59 @@ def test_repeated_test_does_not_duplicate_and_new_dev_drops_stale_test(
         assert report["metadata"]["document_counts"] == {"dev": 2}
     assert {row["split"] for row in csv_rows(out / "metrics_by_type.csv")} == {"dev"}
     assert "| test |" not in (out / "summary.md").read_text(encoding="utf-8")
+
+
+def test_challenge_preserves_intervals_and_reports_blind_split(
+    synthetic_runs: tuple[Path, Path, list[tuple[str, float]]],
+) -> None:
+    """Challenge fictif conserve les comptes et intervalles antérieurs sans relire leurs corpus."""
+    corpus, out, calls = synthetic_runs
+    write_split(corpus, "challenge", ("Ivo answers.", "Lia signs."))
+    dev = run.run_evaluation("dev", CONFIGS, out, corpus)
+    before = run.run_evaluation("test", CONFIGS, out, corpus)
+    (corpus / "dev.jsonl").unlink()
+    (corpus / "test.jsonl").unlink()
+    calls.clear()
+    after = run.run_evaluation("challenge", ["hybrid"], out, corpus)
+    assert len(calls) == 2
+    assert all(text.startswith(("Ivo", "Lia")) and threshold == 0.3 for text, threshold in calls)
+    assert [row for row in after["bootstrap_intervals"] if row["split"] != "challenge"] == before[
+        "bootstrap_intervals"
+    ]
+    assert after["dev_error_categories"] == dev["dev_error_categories"]
+    assert after["bootstrap_method"] == {
+        "method": "document percentile bootstrap",
+        "draws": 2000,
+        "seed": 45,
+        "confidence_level": 0.95,
+        "percentile_interpolation": "linear (n - 1) * p",
+        "mode": "partial",
+        "type": "micro",
+    }
+    summary = (out / "summary.md").read_text(encoding="utf-8")
+    assert "## 95% bootstrap intervals" in summary
+    assert summary.index("## 95% bootstrap intervals") > summary.index("| challenge | hybrid |")
+    assert "Challenge was written blind" in summary
+    assert "| boundary | 2 |" in summary
+    assert not (out / "errors_challenge.csv").exists()
+    repeated = run.run_evaluation("challenge", ["hybrid"], out, corpus)
+    assert repeated["bootstrap_intervals"] == after["bootstrap_intervals"]
+
+
+def test_common_challenge_loader_validates_fictional_documents(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Le chargeur commun reconnaît challenge et refuse les mêmes spans incohérents."""
+    from huisclos.evaluation import corpus
+
+    write_split(tmp_path, "challenge", ("Ivo writes.",))
+    monkeypatch.setattr(corpus, "CORPUS_DIR", tmp_path)
+    documents = corpus.load_split("challenge")
+    assert documents[0].split == "challenge"
+    assert documents == run.load_challenge_corpus(tmp_path / "challenge.jsonl")
+    record = json.loads((tmp_path / "challenge.jsonl").read_text(encoding="utf-8"))
+    record["entities"][0]["end"] = 100
+    (tmp_path / "challenge.jsonl").write_text(json.dumps(record), encoding="utf-8")
+    with pytest.raises(ValueError):
+        corpus.load_split("challenge")

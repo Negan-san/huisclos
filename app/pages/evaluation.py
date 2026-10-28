@@ -15,6 +15,7 @@ import pandas as pd
 import streamlit as st
 
 from app.i18n import t
+from huisclos.evaluation.intervals import INTERVAL_METRICS
 
 RESULTS_DIR = Path(__file__).resolve().parents[2] / "results"
 # Palette des graphiques : le bleu marine de la charte, puis des teintes de la palette
@@ -210,12 +211,128 @@ def render_key_figures(hybrid: pd.Series, threshold: float) -> None:
         column.metric(t(f"evaluation.{name}"), value, icon=icon, border=True)
 
 
+def interval_chart(data: pd.DataFrame) -> alt.LayerChart:
+    """Trace les bornes enregistrées et les valeurs ponctuelles, avec des libellés écrits."""
+    base = alt.Chart(data).encode(
+        y=alt.Y("label:N", title=None, sort=None),
+        tooltip=[
+            alt.Tooltip("label:N", title=t("evaluation.label")),
+            *[
+                alt.Tooltip(f"{key}:Q", title=t(f"evaluation.{key}"), format=".2%")
+                for key in ("estimate", "lower", "upper")
+            ],
+        ],
+    )
+    limits = base.mark_rule(color=CHART_COLORS[0], strokeWidth=2).encode(
+        x=alt.X(
+            "lower:Q",
+            title=t("evaluation.score"),
+            scale=alt.Scale(domain=[0, 1]),
+            axis=alt.Axis(format="%"),
+        ),
+        x2="upper:Q",
+    )
+    points = base.mark_point(color=CHART_COLORS[0], filled=True, size=60).encode(x="estimate:Q")
+    return _styled(alt.layer(limits, points).properties(height=alt.Step(24)))
+
+
+def render_intervals(
+    results: dict[str, Any], chosen: pd.DataFrame, split: str, threshold: float
+) -> None:
+    """Affiche les intervalles disponibles en tableau et en barres, sans calcul sur le corpus."""
+    records = []
+    for row in results.get("bootstrap_intervals", []):
+        if row["mode"] != "partial" or row["type"] != "micro":
+            continue
+        estimates = chosen[chosen["config"] == row["config"]]
+        if row["split"] != split or row["threshold"] != threshold or estimates.empty:
+            continue
+        for name in INTERVAL_METRICS:
+            records.append(
+                {
+                    "label": f"{row['config']} / {t(f'evaluation.{name}')}",
+                    "estimate": estimates.iloc[0][name],
+                    **row[name],
+                }
+            )
+    if not records:
+        return
+    with st.container(key="hc-card-eval-intervals"):
+        st.subheader(t("evaluation.intervals"), anchor=False)
+        st.caption(t("evaluation.intervals_note"))
+        data = pd.DataFrame(records)
+        table = data.copy()
+        for key in ("estimate", "lower", "upper"):
+            table[key] = table[key].map(lambda value: f"{value:.2%}")
+        st.dataframe(
+            table.rename(columns={key: t(f"evaluation.{key}") for key in table.columns}),
+            hide_index=True,
+            width="stretch",
+        )
+        st.altair_chart(
+            interval_chart(data), width="stretch", theme=None, alt=t("evaluation.intervals_alt")
+        )
+
+
+def render_comparison(split: str) -> None:
+    """Affiche le tableau avant/après du split si le script de comparaison l'a enregistré."""
+    path = RESULTS_DIR / f"{split}_comparison.json"
+    if not path.is_file():
+        return
+    comparison = json.loads(path.read_text(encoding="utf-8"))
+    if comparison["split"] != split:
+        raise ValueError("Split incohérent dans la comparaison.")
+    with st.container(key="hc-card-eval-comparison"):
+        st.subheader(t("evaluation.comparison"), anchor=False)
+        st.caption(t("evaluation.comparison_note"))
+        for side, source in comparison["sources"].items():
+            st.caption(
+                t(
+                    "evaluation.comparison_source",
+                    side=t(f"evaluation.{side}"),
+                    commit=source["git_commit"],
+                    threshold=source["threshold"],
+                    documents=source["documents"],
+                )
+            )
+        for warning in comparison["warnings"]:
+            st.info(t(f"evaluation.comparison_{warning}"))
+        table = pd.DataFrame(comparison["rows"])
+        for key in ("reference_interval", "current_interval"):
+            table[key] = table[key].map(
+                lambda value: (
+                    t("evaluation.not_recorded")
+                    if value is None
+                    else f"[{value['lower']:.2%}, {value['upper']:.2%}]"
+                )
+            )
+        for key in ("reference", "current", "delta"):
+            table[key] = table.apply(
+                lambda row, column=key: comparison_value(row[column], row["metric"], column), axis=1
+            )
+        table["metric"] = table["metric"].map(lambda name: t(f"evaluation.{name}"))
+        st.dataframe(
+            table.rename(columns={key: t(f"evaluation.{key}") for key in table.columns}),
+            hide_index=True,
+            width="stretch",
+        )
+
+
+def comparison_value(value: float | None, metric: str, column: str) -> str:
+    """Formate un compte ou un ratio, avec un signe pour les écarts et une absence explicite."""
+    if pd.isna(value):
+        return t("evaluation.not_recorded")
+    if metric == "exposed_entities":
+        return f"{value:+.0f}" if column == "delta" else f"{value:.0f}"
+    return f"{value * 100:+.2f}" if column == "delta" else f"{value:.2%}"
+
+
 def render_results(results: dict[str, Any], sweep: pd.DataFrame, threshold: float) -> None:
     """Affiche les mesures partielles du split choisi et le balayage dev enregistré."""
     rows = pd.DataFrame(results["metrics_by_type"])
     rows = rows[(rows["mode"] == "partial") & (rows["threshold"] == threshold)]
     micro = rows[rows["type"] == "micro"]
-    splits = [split for split in ("dev", "test") if split in micro["split"].values]
+    splits = [split for split in ("dev", "test", "challenge") if split in micro["split"].values]
     if not splits:
         raise ValueError("Aucun split disponible au seuil retenu.")
     split = st.selectbox(t("evaluation.split"), splits, key="evaluation_split", width=240)
@@ -231,6 +348,8 @@ def render_results(results: dict[str, Any], sweep: pd.DataFrame, threshold: floa
         )
     )
     render_key_figures(hybrid, threshold)
+    if split == "challenge":
+        st.info(t("evaluation.challenge_note"))
     with st.container(key="hc-card-eval-table"):
         st.subheader(t("evaluation.table"), anchor=False)
         st.caption(t("evaluation.matching"))
@@ -239,6 +358,8 @@ def render_results(results: dict[str, Any], sweep: pd.DataFrame, threshold: floa
             table[name] = table[name].map(lambda value: f"{value:.2%}")
         table = table.rename(columns={name: t(f"evaluation.{name}") for name in table.columns})
         st.dataframe(table, hide_index=True, width="stretch")
+    render_intervals(results, chosen, split, threshold)
+    render_comparison(split)
     types = rows[(rows["split"] == split) & ~rows["type"].isin(["micro", "macro"])]
     with st.container(key="hc-card-eval-recall"):
         st.subheader(t("evaluation.recall_chart"), anchor=False)
