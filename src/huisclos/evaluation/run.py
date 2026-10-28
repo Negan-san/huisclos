@@ -1,7 +1,8 @@
 """Compare les configurations sur les corpus fictifs sans modifier la détection.
 
 Entrées : split demandé, configurations et dossier de sortie ; seuil choisi sur dev.
-Sorties : tableaux déterministes, rapport anglais et erreurs réservées à dev.
+Sorties : tableaux déterministes, rapport anglais et erreurs réservées à dev ; pour le pilote
+de robustesse, la garde des corpus réservés et la lecture du plan figé.
 Place dans le pipeline : orchestration locale de detect, du corpus et des métriques.
 """
 
@@ -40,6 +41,13 @@ ERROR_COLUMNS = (
     "nature",
     "category",
 )
+# Garde du pilote de robustesse (B1) : corpus réservés aux gates, plan figé avant la mesure.
+RESERVED_FILE_NAMES = frozenset({"test.jsonl", "challenge.jsonl"})
+RESERVED_DIRECTORY = "blind_post_g7"
+RESERVED_SPLITS = frozenset({"test", "challenge"})
+PLAN_KEYS = frozenset({"document_language", "profiles", "comparisons"})
+PROFILE_KEYS = frozenset({"preset", "threshold", "checkout", "python"})
+DOCUMENT_LANGUAGES = ("fr", "en")
 
 
 def choose_threshold(sweep: Sequence[dict[str, Any]]) -> float:
@@ -104,6 +112,94 @@ def available_configs(requested: Sequence[str]) -> tuple[list[str], list[str]]:
         names.remove("hybrid_camembert")
         notes.append("hybrid_camembert omitted: local recognizer or transformers is unavailable.")
     return names, notes
+
+
+def reserved_reason(path: Path, root: Path = ROOT) -> str | None:
+    """Dit pourquoi path désigne un corpus réservé, après résolution complète du chemin.
+
+    Le chemin est résolu (lien, "..", chemin relatif, casse) ; sont réservés les fichiers
+    test.jsonl et challenge.jsonl, tout chemin qui traverse blind_post_g7 et tout fichier
+    identique sur le disque aux vrais corpus test et challenge de root. Rien n'est lu.
+    """
+    resolved = path.resolve()
+    parts = [part.casefold() for part in resolved.parts]
+    if any(RESERVED_DIRECTORY in part for part in parts):
+        return RESERVED_DIRECTORY
+    if parts and parts[-1] in RESERVED_FILE_NAMES:
+        return parts[-1]
+    for name in sorted(RESERVED_FILE_NAMES):
+        reserved = root / "corpus" / name
+        if resolved.is_file() and reserved.is_file() and os.path.samefile(resolved, reserved):
+            return name
+    return None
+
+
+def check_profile(name: str, profile: Any) -> None:
+    """Refuse un profil sans préréglage ni seuil explicite, ou dont un chemin manque."""
+    if not isinstance(profile, dict) or not (
+        {"preset", "threshold"} <= profile.keys() <= PROFILE_KEYS
+    ):
+        raise ValueError(f"Profile {name} needs preset and threshold; checkout, python optional.")
+    threshold = profile["threshold"]
+    if isinstance(threshold, bool) or not isinstance(threshold, int | float):
+        raise ValueError(f"Profile {name} needs a numeric threshold.")
+    if not 0 <= threshold <= 1:
+        raise ValueError(f"Profile {name} needs a threshold between 0 and 1.")
+    if "checkout" in profile and not (Path(profile["checkout"]) / "src" / "huisclos").is_dir():
+        raise ValueError(f"Profile {name}: the checkout has no src/huisclos folder.")
+    if "python" in profile and not Path(profile["python"]).is_file():
+        raise ValueError(f"Profile {name}: the Python interpreter does not exist.")
+
+
+def load_plan(path: Path) -> dict[str, Any]:
+    """Lit le plan figé ; refuse clé inconnue, langue absente, seuil hors [0, 1], paire invalide.
+
+    Exemple : {"document_language": "fr", "profiles": {"standard": {"preset": "hybrid",
+    "threshold": 0.3}}, "comparisons": []}. comparisons liste des paires [candidat, référence].
+    """
+    try:
+        plan = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise ValueError(f"Unreadable plan ({type(error).__name__}).") from error
+    if not isinstance(plan, dict) or not {"document_language", "profiles"} <= plan.keys():
+        raise ValueError("The plan needs document_language and profiles.")
+    if not plan.keys() <= PLAN_KEYS:
+        raise ValueError("Unknown plan key: only comparisons is optional.")
+    if plan["document_language"] not in DOCUMENT_LANGUAGES:
+        raise ValueError("document_language must be fr or en, independently of the interface.")
+    profiles = plan["profiles"]
+    if not isinstance(profiles, dict) or not profiles:
+        raise ValueError("profiles must be a non-empty object.")
+    for name, profile in profiles.items():
+        check_profile(name, profile)
+    comparisons = plan.setdefault("comparisons", [])
+    if not isinstance(comparisons, list):
+        raise ValueError("comparisons must be a list of [candidate, reference] pairs.")
+    for pair in comparisons:
+        if not (isinstance(pair, list) and len(pair) == 2 and pair[0] != pair[1]):
+            raise ValueError("Each comparison must be [candidate, reference], two profiles.")
+        if not set(pair) <= profiles.keys():
+            raise ValueError("Each comparison must name planned profiles.")
+    return plan
+
+
+def load_unreserved(path: Path, mode: str) -> list[CorpusDocument]:
+    """Charge un corpus d'un seul split ; en mode dev, refuse tout corpus ou split réservé.
+
+    La garde des chemins passe avant toute lecture ; le split des documents est contrôlé
+    ensuite, pour refuser une copie renommée d'un corpus réservé.
+    """
+    if mode == "dev" and (reason := reserved_reason(path)):
+        raise ValueError(f"Reserved corpus refused in dev mode ({reason}); gates only.")
+    if not path.is_file():
+        raise ValueError("The corpus file does not exist.")
+    documents = load_corpus(path)
+    splits = {document.split for document in documents}
+    if len(splits) != 1:
+        raise ValueError("The corpus must hold documents of one single split.")
+    if mode == "dev" and splits & RESERVED_SPLITS:
+        raise ValueError("Reserved split refused in dev mode; gates only.")
+    return documents
 
 
 def run_evaluation(

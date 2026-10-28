@@ -13,7 +13,7 @@ from typing import Any
 
 import pytest
 
-from huisclos.evaluation import run
+from huisclos.evaluation import reports, run
 from huisclos.models import Detection, EntityType, Source
 
 pytestmark = pytest.mark.usefixtures("no_network")
@@ -225,3 +225,27 @@ def test_common_challenge_loader_validates_fictional_documents(
     (tmp_path / "challenge.jsonl").write_text(json.dumps(record), encoding="utf-8")
     with pytest.raises(ValueError):
         corpus.load_split("challenge")
+
+
+def test_report_helpers_keep_metadata_and_format_robustness_cells(tmp_path: Path) -> None:
+    """Empreinte et commit extraits de metadata ; cellules n/a, yes/no et intervalles lisibles."""
+    path = tmp_path / "dev.jsonl"
+    path.write_bytes(b"{}\n")
+    assert reports.file_sha256(path) == hashlib.sha256(b"{}\n").hexdigest()
+    commit = reports.git_commit()
+    assert commit is None or len(commit) == 40
+    assert reports.metadata([path], ["hybrid"], 0.3)["git_commit"] == commit
+    assert [reports.cell_text(value) for value in (None, True, 0.25, 3, "x")] == [
+        "n/a",
+        "yes",
+        "0.2500",
+        "3",
+        "x",
+    ]
+    assert reports.bounds_text({"lower": None, "upper": None}) == "n/a"
+    assert reports.bounds_text({"lower": 0.1, "upper": 0.25}) == "[0.1000, 0.2500]"
+    assert reports.markdown_table(("A", "B"), [(None, 1.0)]) == [
+        "| A | B |",
+        "| --- | --- |",
+        "| n/a | 1.0000 |",
+    ]

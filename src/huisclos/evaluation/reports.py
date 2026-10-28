@@ -1,8 +1,9 @@
 """Écrit les rapports agrégés de l'évaluation locale.
 
 Entrées : lignes de métriques, intervalles et métadonnées sans texte sensible.
-Sorties : fichiers JSON, CSV et synthèse Markdown en anglais.
-Place dans le pipeline : export après calcul des mesures par evaluation.run.
+Sorties : fichiers JSON, CSV et synthèses Markdown en anglais, dont celle du rapport de
+robustesse (couverture complète, alertes, différences appariées).
+Place dans le pipeline : export après calcul des mesures par evaluation.run ou par le pilote.
 """
 
 import csv
@@ -48,23 +49,31 @@ def package_version(name: str) -> str | None:
         return None
 
 
-def metadata(paths: Sequence[Path], names: Sequence[str], threshold: float) -> dict[str, Any]:
-    """Décrit versions, fichiers effectivement évalués, réglages, commit et date UTC."""
+def git_commit(root: Path = ROOT) -> str | None:
+    """Renvoie le commit courant du dépôt root, ou None si git est indisponible."""
     try:
-        commit = subprocess.run(
+        return subprocess.run(
             ["git", "rev-parse", "HEAD"],
-            cwd=ROOT,
+            cwd=root,
             capture_output=True,
             text=True,
             encoding="utf-8",
             check=True,
         ).stdout.strip()
     except (OSError, subprocess.CalledProcessError):
-        commit = None
-    fingerprints = {}
-    for path in paths:
-        with path.open("rb") as stream:
-            fingerprints[path.name] = hashlib.file_digest(stream, "sha256").hexdigest()
+        return None
+
+
+def file_sha256(path: Path) -> str:
+    """Renvoie l'empreinte SHA-256 du fichier, lu en binaire sans rien afficher."""
+    with path.open("rb") as stream:
+        return hashlib.file_digest(stream, "sha256").hexdigest()
+
+
+def metadata(paths: Sequence[Path], names: Sequence[str], threshold: float) -> dict[str, Any]:
+    """Décrit versions, fichiers effectivement évalués, réglages, commit et date UTC."""
+    commit = git_commit()
+    fingerprints = {path.name: file_sha256(path) for path in paths}
     configs = {}
     for name in names:
         values = asdict(replace(PRESETS[name], threshold=threshold))
@@ -164,3 +173,187 @@ def write_summary(
         lines.extend(f"| {category} | {count} |" for category, count in error_counts.items())
     lines.extend(["", *notes, ""])
     path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def cell_text(value: Any) -> str:
+    """Écrit un ratio sur quatre décimales, un booléen en yes/no, None en n/a, le reste tel quel."""
+    if value is None:
+        return "n/a"
+    if isinstance(value, bool):
+        return "yes" if value else "no"
+    if isinstance(value, float):
+        return f"{value:.4f}"
+    return str(value)
+
+
+def bounds_text(interval: dict[str, Any]) -> str:
+    """Écrit un intervalle [bas, haut] sur quatre décimales, ou n/a sans tirage défini."""
+    if interval.get("lower") is None:
+        return "n/a"
+    return f"[{interval['lower']:.4f}, {interval['upper']:.4f}]"
+
+
+def markdown_table(header: Sequence[str], rows: Iterable[Sequence[Any]]) -> list[str]:
+    """Construit un tableau Markdown ; chaque cellule passe par cell_text."""
+    lines = ["| " + " | ".join(header) + " |", "|" + " --- |" * len(header)]
+    lines.extend("| " + " | ".join(cell_text(cell) for cell in row) + " |" for row in rows)
+    return lines
+
+
+ROBUSTNESS_COVERAGE = {
+    "Entities": "reference_entities",
+    "Fully covered": "entities_fully_covered",
+    "Partially exposed": "entities_partially_exposed",
+    "Fully exposed": "entities_fully_exposed",
+    "Any exposure": "entities_with_any_exposure",
+    "Full coverage rate": "full_coverage_rate",
+    "Leaked characters": "leaked_characters",
+    "Leaked character rate": "leaked_character_rate",
+    "Documents with exposure": "documents_with_any_exposure",
+    "Non-sensitive masked": "non_sensitive_characters_masked",
+    "Over-masking rate": "non_sensitive_masked_rate",
+}
+ROBUSTNESS_ALERTS = {
+    "Alerts": "alerts",
+    "Documents with alerts": "documents_with_alerts",
+    "On visible references": "alerts_on_visible_references",
+    "Elsewhere": "alerts_elsewhere",
+    "Exposed entities": "exposed_entities",
+    "Exposed entities alerted": "exposed_entities_alerted",
+}
+ROBUSTNESS_CRITERION = {
+    "Lower leakage": "lower_leakage",
+    "Higher full coverage": "higher_full_coverage",
+    "Precision within 2 points": "precision_within_margin",
+    "Over-masking within 1 point": "over_masking_within_margin",
+    "Recommended": "met",
+}
+
+
+def _robustness_tables(report: dict[str, Any]) -> list[str]:
+    """Construit les tableaux de couverture, d'alertes, d'intervalles et de comparaisons."""
+    lines = []
+    for scope, title in (
+        ("evaluated", "Full coverage, eleven evaluated types"),
+        ("custom_location", "CUSTOM and LOCATION, separate scope"),
+    ):
+        rows = [row for row in report["coverage"] if row["scope"] == scope]
+        lines.extend(["", f"## {title}", ""])
+        lines.extend(
+            markdown_table(
+                ("Profile", "Stage", *ROBUSTNESS_COVERAGE),
+                (
+                    (
+                        row["config"],
+                        row["stage"],
+                        *(row[key] for key in ROBUSTNESS_COVERAGE.values()),
+                    )
+                    for row in rows
+                ),
+            )
+        )
+    lines.extend(["", "## Coverage 95% bootstrap intervals", ""])
+    lines.extend(
+        markdown_table(
+            ("Profile", "Stage", "Metric", "Interval", "Undefined draws"),
+            (
+                (
+                    row["config"],
+                    row["stage"],
+                    row["metric"],
+                    bounds_text(row),
+                    row["undefined_draws"],
+                )
+                for row in report["coverage_intervals"]
+            ),
+        )
+    )
+    lines.extend(["", "## Final check alerts (alerts mask nothing)", ""])
+    lines.extend(
+        markdown_table(
+            ("Profile", "Check threshold", *ROBUSTNESS_ALERTS),
+            (
+                (
+                    row["config"],
+                    row["check_threshold"],
+                    *(row.get(key, "unavailable") for key in ROBUSTNESS_ALERTS.values()),
+                )
+                for row in report["final_check"]
+            ),
+        )
+    )
+    lines.extend(["", "## Paired differences (candidate minus reference, same draws)", ""])
+    paired = report["paired_differences"]
+    lines.extend(
+        markdown_table(
+            ("Candidate", "Reference", "Stage", "Metric", "Estimate", "95% interval")
+            + ("Undefined draws", "Excludes zero"),
+            (
+                (row["candidate"], row["reference"], row["stage"], row["metric"], row["estimate"])
+                + (bounds_text(row), row["undefined_draws"], row["excludes_zero"])
+                for row in paired
+            ),
+        )
+        if paired
+        else ["No paired comparison was planned: marginal intervals support no significance claim."]
+    )
+    lines.extend(["", "## Engineering criterion (not a legal threshold)", ""])
+    lines.extend(
+        markdown_table(
+            ("Candidate", "Reference", *ROBUSTNESS_CRITERION),
+            (
+                (
+                    row["candidate"],
+                    row["reference"],
+                    *(row.get(key) for key in ROBUSTNESS_CRITERION.values()),
+                )
+                for row in report["engineering_criteria"]
+            ),
+        )
+        if report["engineering_criteria"]
+        else ["No comparison was planned."]
+    )
+    return lines
+
+
+def robustness_summary(report: dict[str, Any]) -> list[str]:
+    """Renvoie la synthèse anglaise du rapport de robustesse, sans contenu de document."""
+    meta = report["metadata"]
+    intervals = {row["config"]: row for row in report["bootstrap_intervals"]}
+    micro = [
+        row
+        for row in report["metrics_by_type"]
+        if row["mode"] == "partial" and row["type"] == "micro"
+    ]
+    lines = [
+        "# Robustness report",
+        "",
+        f"Dataset {meta['dataset_id']}: split {meta['split']}, {meta['document_count']} documents, "
+        f"document language {meta['document_language']}, mode {meta['mode']}.",
+        f"Measurement code commit: {meta['git_commit']}. Plan SHA-256: {meta['plan_sha256']}.",
+        f"Corpus SHA-256: {meta['corpus_sha256']}.",
+        "",
+        *report["notes"],
+        "",
+        "## Historical metrics (detection stage, partial matching, micro)",
+        "",
+        *markdown_table(
+            ("Profile", "Threshold", "Precision", "Recall", "F2", "Leak rate", "Exposed entities")
+            + ("Precision 95%", "Recall 95%", "Leak rate 95%"),
+            (
+                (row["config"], f"{row['threshold']:.2f}")
+                + tuple(
+                    row[key]
+                    for key in ("precision", "recall", "f2", "leak_rate", "exposed_entities")
+                )
+                + tuple(
+                    bounds_text(intervals[row["config"]][key])
+                    for key in ("precision", "recall", "leak_rate")
+                )
+                for row in micro
+            ),
+        ),
+        *_robustness_tables(report),
+        "",
+    ]
+    return lines
