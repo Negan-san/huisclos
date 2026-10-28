@@ -1,0 +1,403 @@
+{
+  "dataset_id": "post_g7_blind_v1",
+  "split": "challenge",
+  "a4_freeze_commit": "dc5b04146c9217bdd09da5064091e0cf638f5b37",
+  "authored_on": "2026-10-28",
+  "author": "Codex, fresh C3 session, single model-family author",
+  "method": "Fictional authoring after freeze; editorial second pass; no detector or measurement",
+  "conventions": {
+    "version": "post_g7_fr_en_1.0",
+    "path": "README.md",
+    "sha256": "4d944f5eb3b93e618c22925bb7c2790df84a85e1e206c80453e1d0763a115095"
+  },
+  "reserved_for": [
+    "C3 authoring",
+    "explicitly authorised gate scripts"
+  ],
+  "limitations": [
+    "Single author and model-family style dependence",
+    "No statistical independence claim",
+    "Editorial completeness is not proven",
+    "Synthetic keys may coincide with assigned numbers",
+    "No isolated LOCATION or foreign national identifier coverage"
+  ],
+  "languages": {
+    "fr": {
+      "language": "fr",
+      "path": "fr/challenge.jsonl",
+      "sha256": "df179266f4866128c5b4aaa770559d4ebedfd06c5a0cf47a9f6490ab51d89d6f",
+      "document_count": 8,
+      "entity_count": 112,
+      "character_count": 22640,
+      "word_count": 3392,
+      "genre_counts": {
+        "consultation": 2,
+        "correspondence": 2,
+        "instrument_draft": 2,
+        "summary": 2
+      },
+      "entity_counts": {
+        "ADDRESS": 13,
+        "BIRTH_DATE": 2,
+        "CASE_NUMBER": 8,
+        "CUSTOM": 7,
+        "EMAIL": 15,
+        "IBAN": 4,
+        "NIR": 1,
+        "ORGANIZATION": 10,
+        "PERSON": 32,
+        "PHONE": 10,
+        "SIREN": 5,
+        "SIRET": 5
+      },
+      "documents": [
+        {
+          "id": "aud_fr_01",
+          "genre": "consultation",
+          "source": "fr/source/aud_fr_01.md",
+          "sha256": "fb286775b6e58b5279f1c56a86ddb0e102ab037b5fa6674799e301dbd73be750",
+          "words": 290,
+          "characters": 1921,
+          "entities": 12,
+          "entity_counts": {
+            "ADDRESS": 2,
+            "BIRTH_DATE": 1,
+            "CASE_NUMBER": 1,
+            "CUSTOM": 1,
+            "EMAIL": 2,
+            "ORGANIZATION": 1,
+            "PERSON": 3,
+            "PHONE": 1
+          }
+        },
+        {
+          "id": "aud_fr_02",
+          "genre": "correspondence",
+          "source": "fr/source/aud_fr_02.md",
+          "sha256": "d34c400b47f5dd1876f7db049e4927088cba170f289e7b14486d1992459d435d",
+          "words": 288,
+          "characters": 1900,
+          "entities": 11,
+          "entity_counts": {
+            "ADDRESS": 1,
+            "CASE_NUMBER": 1,
+            "EMAIL": 1,
+            "IBAN": 1,
+            "ORGANIZATION": 1,
+            "PERSON": 3,
+            "PHONE": 1,
+            "SIREN": 1,
+            "SIRET": 1
+          }
+        },
+        {
+          "id": "aud_fr_03",
+          "genre": "instrument_draft",
+          "source": "fr/source/aud_fr_03.md",
+          "sha256": "4bd01bd8679d76aa9b45612ff48f97e12835d59977d9dc726ee48a842ea3ec83",
+          "words": 281,
+          "characters": 1874,
+          "entities": 12,
+          "entity_counts": {
+            "ADDRESS": 2,
+            "BIRTH_DATE": 1,
+            "CASE_NUMBER": 1,
+            "CUSTOM": 1,
+            "EMAIL": 2,
+            "ORGANIZATION": 1,
+            "PERSON": 3,
+            "PHONE": 1
+          }
+        },
+        {
+          "id": "aud_fr_04",
+          "genre": "summary",
+          "source": "fr/source/aud_fr_04.md",
+          "sha256": "02e40f7d152bcae07b31154918052b115ab84dfb799cca4fec35c7eb86fef389",
+          "words": 270,
+          "characters": 1759,
+          "entities": 12,
+          "entity_counts": {
+            "ADDRESS": 1,
+            "CASE_NUMBER": 1,
+            "CUSTOM": 1,
+            "EMAIL": 2,
+            "NIR": 1,
+            "ORGANIZATION": 1,
+            "PERSON": 4,
+            "PHONE": 1
+          }
+        },
+        {
+          "id": "aud_fr_05",
+          "genre": "correspondence",
+          "source": "fr/source/aud_fr_05.md",
+          "sha256": "4599d8c6d1751a0c94b45662c5a305274d88a679e7c98cc2e4cde70646bf8bd4",
+          "words": 284,
+          "characters": 1791,
+          "entities": 11,
+          "entity_counts": {
+            "ADDRESS": 1,
+            "CASE_NUMBER": 1,
+            "CUSTOM": 1,
+            "EMAIL": 2,
+            "ORGANIZATION": 1,
+            "PERSON": 4,
+            "PHONE": 1
+          }
+        },
+        {
+          "id": "aud_fr_06",
+          "genre": "summary",
+          "source": "fr/source/aud_fr_06.md",
+          "sha256": "dd1f27e628f56b973ac75e5fe5d24e4126a0414eaaec0db82639589f08f8b71e",
+          "words": 284,
+          "characters": 1861,
+          "entities": 14,
+          "entity_counts": {
+            "ADDRESS": 1,
+            "CASE_NUMBER": 1,
+            "CUSTOM": 1,
+            "EMAIL": 2,
+            "IBAN": 1,
+            "ORGANIZATION": 1,
+            "PERSON": 4,
+            "PHONE": 1,
+            "SIREN": 1,
+            "SIRET": 1
+          }
+        },
+        {
+          "id": "aud_fr_07",
+          "genre": "consultation",
+          "source": "fr/source/aud_fr_07.md",
+          "sha256": "912fc531f65f61a3063458c0de61516468e37ac881ae1be6da215ef92540868e",
+          "words": 849,
+          "characters": 5651,
+          "entities": 19,
+          "entity_counts": {
+            "ADDRESS": 3,
+            "CASE_NUMBER": 1,
+            "CUSTOM": 1,
+            "EMAIL": 2,
+            "IBAN": 1,
+            "ORGANIZATION": 2,
+            "PERSON": 5,
+            "PHONE": 2,
+            "SIREN": 1,
+            "SIRET": 1
+          }
+        },
+        {
+          "id": "aud_fr_08",
+          "genre": "instrument_draft",
+          "source": "fr/source/aud_fr_08.md",
+          "sha256": "5a19d17a292ce516d3518ace0a14f3389c29964f51ba06673130cac0a97149cc",
+          "words": 846,
+          "characters": 5883,
+          "entities": 21,
+          "entity_counts": {
+            "ADDRESS": 2,
+            "CASE_NUMBER": 1,
+            "CUSTOM": 1,
+            "EMAIL": 2,
+            "IBAN": 1,
+            "ORGANIZATION": 2,
+            "PERSON": 6,
+            "PHONE": 2,
+            "SIREN": 2,
+            "SIRET": 2
+          }
+        }
+      ]
+    },
+    "en": {
+      "language": "en",
+      "path": "en/challenge.jsonl",
+      "sha256": "e3fd4886a2499563f6710cf1cfe57a3f27b3302be1e576e06ac67a4ddede5aea",
+      "document_count": 8,
+      "entity_count": 108,
+      "character_count": 23252,
+      "word_count": 3500,
+      "genre_counts": {
+        "consultation": 2,
+        "correspondence": 2,
+        "instrument_draft": 2,
+        "summary": 2
+      },
+      "entity_counts": {
+        "ADDRESS": 13,
+        "BIRTH_DATE": 3,
+        "CASE_NUMBER": 8,
+        "CUSTOM": 8,
+        "EMAIL": 16,
+        "IBAN": 2,
+        "NIR": 1,
+        "ORGANIZATION": 12,
+        "PERSON": 31,
+        "PHONE": 10,
+        "SIREN": 2,
+        "SIRET": 2
+      },
+      "documents": [
+        {
+          "id": "aud_en_01",
+          "genre": "consultation",
+          "source": "en/source/aud_en_01.md",
+          "sha256": "b06a1cb1139af4678f3e8f1f42fb6beb4aab22b2284f3d2d1eaf63e5dfd0bc2e",
+          "words": 285,
+          "characters": 1837,
+          "entities": 11,
+          "entity_counts": {
+            "ADDRESS": 1,
+            "BIRTH_DATE": 1,
+            "CASE_NUMBER": 1,
+            "CUSTOM": 1,
+            "EMAIL": 2,
+            "ORGANIZATION": 1,
+            "PERSON": 3,
+            "PHONE": 1
+          }
+        },
+        {
+          "id": "aud_en_02",
+          "genre": "correspondence",
+          "source": "en/source/aud_en_02.md",
+          "sha256": "06f8133e45906e0f59ddaec07c852095216499a844bd75a782c5f97e6069222f",
+          "words": 275,
+          "characters": 1826,
+          "entities": 14,
+          "entity_counts": {
+            "ADDRESS": 1,
+            "CASE_NUMBER": 1,
+            "CUSTOM": 1,
+            "EMAIL": 2,
+            "IBAN": 1,
+            "ORGANIZATION": 2,
+            "PERSON": 3,
+            "PHONE": 1,
+            "SIREN": 1,
+            "SIRET": 1
+          }
+        },
+        {
+          "id": "aud_en_03",
+          "genre": "instrument_draft",
+          "source": "en/source/aud_en_03.md",
+          "sha256": "e952b844a78e869ceffc894143ccd6ce3c4b463df5f5f7affc2119bd044da66f",
+          "words": 298,
+          "characters": 1969,
+          "entities": 12,
+          "entity_counts": {
+            "ADDRESS": 2,
+            "BIRTH_DATE": 1,
+            "CASE_NUMBER": 1,
+            "CUSTOM": 1,
+            "EMAIL": 2,
+            "ORGANIZATION": 1,
+            "PERSON": 3,
+            "PHONE": 1
+          }
+        },
+        {
+          "id": "aud_en_04",
+          "genre": "summary",
+          "source": "en/source/aud_en_04.md",
+          "sha256": "50390c7ef3dc0c57fc390b7b7e462204975d2eb2538059e8d8687e5758461a6d",
+          "words": 284,
+          "characters": 1938,
+          "entities": 11,
+          "entity_counts": {
+            "ADDRESS": 1,
+            "CASE_NUMBER": 1,
+            "CUSTOM": 1,
+            "EMAIL": 2,
+            "NIR": 1,
+            "ORGANIZATION": 1,
+            "PERSON": 3,
+            "PHONE": 1
+          }
+        },
+        {
+          "id": "aud_en_05",
+          "genre": "correspondence",
+          "source": "en/source/aud_en_05.md",
+          "sha256": "b108431c7c7c7f82e7bf4c6e0f7fa6451b065ec8f23dd431bff5f9fc52d0291e",
+          "words": 273,
+          "characters": 1757,
+          "entities": 11,
+          "entity_counts": {
+            "ADDRESS": 1,
+            "CASE_NUMBER": 1,
+            "CUSTOM": 1,
+            "EMAIL": 2,
+            "ORGANIZATION": 1,
+            "PERSON": 4,
+            "PHONE": 1
+          }
+        },
+        {
+          "id": "aud_en_06",
+          "genre": "summary",
+          "source": "en/source/aud_en_06.md",
+          "sha256": "5f65c7122c0911c13d668cb2d1d65d0ccb4bb7ec72f54795a67fc3942e5f287a",
+          "words": 290,
+          "characters": 1909,
+          "entities": 12,
+          "entity_counts": {
+            "ADDRESS": 1,
+            "BIRTH_DATE": 1,
+            "CASE_NUMBER": 1,
+            "CUSTOM": 1,
+            "EMAIL": 2,
+            "ORGANIZATION": 2,
+            "PERSON": 3,
+            "PHONE": 1
+          }
+        },
+        {
+          "id": "aud_en_07",
+          "genre": "consultation",
+          "source": "en/source/aud_en_07.md",
+          "sha256": "6d1060bbea50be8b663ea557cbbf3ade3f5dd6530cb9f9199b758a54941cc16d",
+          "words": 875,
+          "characters": 5847,
+          "entities": 20,
+          "entity_counts": {
+            "ADDRESS": 3,
+            "CASE_NUMBER": 1,
+            "CUSTOM": 1,
+            "EMAIL": 2,
+            "IBAN": 1,
+            "ORGANIZATION": 2,
+            "PERSON": 6,
+            "PHONE": 2,
+            "SIREN": 1,
+            "SIRET": 1
+          }
+        },
+        {
+          "id": "aud_en_08",
+          "genre": "instrument_draft",
+          "source": "en/source/aud_en_08.md",
+          "sha256": "c508365d2309b9d0d12e81d627fccadddc0f2b5d562cf1b5bcfa795613cef754",
+          "words": 920,
+          "characters": 6169,
+          "entities": 17,
+          "entity_counts": {
+            "ADDRESS": 3,
+            "CASE_NUMBER": 1,
+            "CUSTOM": 1,
+            "EMAIL": 2,
+            "ORGANIZATION": 2,
+            "PERSON": 6,
+            "PHONE": 2
+          }
+        }
+      ]
+    }
+  },
+  "document_count": 16,
+  "entity_count": 220,
+  "character_count": 45892
+}

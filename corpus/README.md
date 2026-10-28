@@ -60,6 +60,17 @@ UK NIN or foreign social-security type has been introduced. The manifest lists
 formats actually annotated, without asserting detector coverage. All details
 are invented; checksum validity does not establish assignment in real life.
 
+## Reserved post-G7 bilingual set
+
+`corpus/blind_post_g7/` is reserved in full for authoring session C3 after the
+A4 freeze, then for explicitly authorised gate scripts. Coding agents must not
+open its sources or generated challenge files, inspect errors or tune rules
+against it. Its sixteen fictional FR/EN matters have frozen conventions and
+separate language hashes in its own manifest. Only
+`scripts/build_blind_post_g7.py` constructs it; older builders must never scan
+these nested sources or replace an older split with this material. Authoring
+provenance is recorded in `docs/prompts/corpus_post_g7_blind.md`.
+
 ## Source format
 
 Store one UTF-8 document in `corpus/source/<id>.md`:
