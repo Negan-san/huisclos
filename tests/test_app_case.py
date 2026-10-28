@@ -217,3 +217,23 @@ def test_final_check_and_case_block_are_translated_in_french() -> None:
     assert "Contrôle final" in messages(app.main.subheader)
     assert app.button(key="check_mask_0").label == "Masquer partout"
     assert any("Identifiants possibles restés en clair : 1" in w for w in messages(app.warning))
+
+
+def test_check_policy_is_visible_and_never_masks_by_itself() -> None:
+    app = start()
+    app.button(key="load_sample").click().run()
+    app.button(key="detect").click().run()
+    app = pseudonymize_app(app)
+    text = app.session_state["pseudo_result"].text
+    captions = " ".join(messages(app.caption))
+    assert "Types checked: those selected in the sidebar. Exclusion list: applied." in captions
+    assert "No residual identifier found." in messages(app.success)
+    # Sans la liste d'exclusions, des libellés deviennent de fausses alertes, rien de plus.
+    app.checkbox(key="check_policy_no_exclusions").check().run()
+    assert not app.exception
+    assert any("Possible identifiers left in clear: 3" in w for w in messages(app.warning))
+    assert "Exclusion list: ignored." in " ".join(messages(app.caption))
+    assert app.session_state["pseudo_result"].text == text
+    assert app.session_state["manual_entities"] == []
+    app.checkbox(key="check_policy_no_exclusions").uncheck().run()
+    assert "No residual identifier found." in messages(app.success)

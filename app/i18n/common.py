@@ -42,6 +42,30 @@ EN: dict[str, str] = {
     "entity.CUSTOM": "Custom",
     "sidebar.settings": "Settings",
     "sidebar.help": "Changes apply to the next detection.",
+    "sidebar.group.document": "Document",
+    "sidebar.document_language": "Document language",
+    "sidebar.document_language.fr": "French",
+    "sidebar.document_language.en": "English",
+    "sidebar.document_language.help": (
+        "Language of the text you analyse. It selects the rules and the local language model. "
+        "It does not follow the interface language or the token style."
+    ),
+    "sidebar.profile": "Detection profile",
+    "sidebar.profile.standard": "Standard",
+    "sidebar.profile.enhanced": "Enhanced local detection",
+    "sidebar.profile.help": (
+        "Standard: rules, spaCy and propagation. Enhanced adds the local CamemBERT model, for "
+        "French documents only: slower, loaded on first use, local installation only."
+    ),
+    "sidebar.profile.notice.public_demo": (
+        "Enhanced detection is not available on the public demo. Standard is used."
+    ),
+    "sidebar.profile.notice.language": (
+        "Enhanced detection supports French documents only for now. Standard is used."
+    ),
+    "sidebar.profile.notice.unknown": "Unknown detection profile. Standard is used.",
+    "sidebar.profile.demo": "Enhanced detection is offered in a local installation only.",
+    "sidebar.profile.french_only": "Enhanced detection covers French documents only for now.",
     "sidebar.group.detection": "Detection",
     "sidebar.group.tokens": "Tokens",
     "sidebar.group.interface": "Interface",
@@ -105,6 +129,35 @@ FR: dict[str, str] = {
     "entity.CUSTOM": "Autre",
     "sidebar.settings": "Réglages",
     "sidebar.help": "Les changements s'appliquent à la prochaine détection.",
+    "sidebar.group.document": "Document",
+    "sidebar.document_language": "Langue du document",
+    "sidebar.document_language.fr": "Français",
+    "sidebar.document_language.en": "Anglais",
+    "sidebar.document_language.help": (
+        "Langue du texte analysé. Elle choisit les règles et le modèle de langue local. Elle "
+        "ne suit ni la langue de l'interface ni le style des jetons."
+    ),
+    "sidebar.profile": "Profil de détection",
+    "sidebar.profile.standard": "Standard",
+    "sidebar.profile.enhanced": "Détection locale renforcée",
+    "sidebar.profile.help": (
+        "Standard : règles, spaCy et propagation. Le profil renforcé ajoute le modèle local "
+        "CamemBERT, pour les documents français seulement : plus lent, chargé au premier usage, "
+        "installation locale seulement."
+    ),
+    "sidebar.profile.notice.public_demo": (
+        "La détection renforcée n'est pas disponible sur la démonstration publique. Le profil "
+        "Standard est utilisé."
+    ),
+    "sidebar.profile.notice.language": (
+        "La détection renforcée ne prend en charge que les documents français pour le moment. "
+        "Le profil Standard est utilisé."
+    ),
+    "sidebar.profile.notice.unknown": "Profil de détection inconnu. Standard est utilisé.",
+    "sidebar.profile.demo": "La détection renforcée n'est proposée qu'en installation locale.",
+    "sidebar.profile.french_only": (
+        "La détection renforcée ne couvre que les documents français pour le moment."
+    ),
     "sidebar.group.detection": "Détection",
     "sidebar.group.tokens": "Jetons",
     "sidebar.group.interface": "Interface",

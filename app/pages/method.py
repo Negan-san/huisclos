@@ -23,6 +23,7 @@ FLOW = ("document", "read", "detect", "review", "pseudonymize", "llm", "restore"
 HOW_KEYS = tuple(f"method.how.{number}" for number in range(1, 7))
 HYBRID_KEYS = ("method.hybrid.rules", "method.hybrid.ner", "method.hybrid.propagation")
 LEGAL_KEYS = ("method.legal.secrecy", "method.legal.gdpr", "method.legal.cnb")
+LANGUAGE_KEYS = tuple(f"method.languages.{item}" for item in ("supported", "profiles", "limits"))
 LIMIT_KEYS = (
     "method.limits.context",
     "method.limits.errors",
@@ -82,7 +83,8 @@ def render() -> None:
     """Affiche la page Method & limits : sections en encadrés, deux par ligne sur grand écran.
 
     Le texte courant garde une largeur de lecture limitée ; l'ordre des sections est celui
-    de la lecture : schéma, méthode, humain, types, cadre juridique, limites.
+    de la lecture : schéma, méthode, langues des documents, humain, types, cadre juridique,
+    limites.
     """
     st.header(t("method.title"), anchor=False)
     with st.container(key="hc-reading"):
@@ -95,6 +97,7 @@ def render() -> None:
         _render_section("method.how.title", HOW_KEYS, "hc-card-how")
     with hybrid:
         _render_section("method.hybrid.title", HYBRID_KEYS, "hc-card-hybrid")
+    _render_section("method.languages.title", LANGUAGE_KEYS, "hc-card-languages")
     _render_human_and_types()
     legal, limits = st.columns(2, gap="medium")
     with legal:

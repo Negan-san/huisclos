@@ -1,6 +1,6 @@
-"""Envoi facultatif du texte pseudonymisé au service de chat Mistral.
+"""Envoi facultatif du message pseudonymisé et contrôlé au service de chat Mistral.
 
-Entrées : texte déjà relu, consigne, clé API, modèle et délai maximal.
+Entrées : message déjà composé et contrôlé, clé API, modèle et délai maximal.
 Sortie : réponse textuelle ou erreur explicite, sans journaliser les contenus.
 Place dans le pipeline : après la revue humaine, avant la restauration locale.
 """
@@ -30,19 +30,18 @@ class MistralError(ValueError):
         super().__init__(ERROR_MESSAGES[code])
 
 
-def send_pseudonymized(
-    text: str, instruction: str, api_key: str, model: str, timeout: float = 30
-) -> str:
-    """Envoie le texte suivi de la consigne et renvoie la réponse du modèle.
+def send_outbound(content: str, api_key: str, model: str, timeout: float = 30) -> str:
+    """Envoie exactement content, le message contrôlé, et renvoie la réponse du modèle.
 
-    L'appelant fournit uniquement le texte pseudonymisé validé, jamais la table.
+    content est la chaîne composée une seule fois et vérifiée (texte pseudonymisé,
+    séparateur, consigne) : rien n'y est ajouté ici, jamais la table de correspondance.
     Les erreurs ne reprennent ni le corps HTTP, ni les exceptions du transport.
     """
     try:
         response = requests.post(
             CHAT_URL,
             headers={"Authorization": f"Bearer {api_key}"},
-            json={"model": model, "messages": [{"role": "user", "content": text + instruction}]},
+            json={"model": model, "messages": [{"role": "user", "content": content}]},
             timeout=timeout,
             # Une redirection ne doit pas transmettre le texte à une autre destination.
             allow_redirects=False,

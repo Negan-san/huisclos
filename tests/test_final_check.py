@@ -76,12 +76,13 @@ def test_planted_surname_is_reported_from_the_table() -> None:
     assert result.text[found[0].start : found[0].end] == "vernolac"
 
 
-def test_rejected_value_does_not_raise_an_alert() -> None:
+def test_rejected_mention_does_not_raise_an_alert_but_its_value_elsewhere_does() -> None:
     result = planted()
-    assert final_check(result, rejected_values=["Vernolac"]) == []
     start = TEXT.index("vernolac")
     assert final_check(result, rejected_spans=[(start, start + 8)]) == []
-    assert final_check(result, rejected_values=["Pierre"]) != []
+    # Un rejet porte sur une position : la même écriture ailleurs reste signalée (D-AF-A3-4).
+    elsewhere = TEXT.index("rupture")
+    assert final_check(result, rejected_spans=[(elsewhere, elsewhere + 7)]) != []
 
 
 def test_masking_the_reported_value_clears_the_check() -> None:

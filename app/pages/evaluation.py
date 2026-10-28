@@ -385,6 +385,7 @@ def render() -> None:
     if not (RESULTS_DIR / "results.json").is_file():
         st.info(t("evaluation.empty"))
         return
+    st.info(t("evaluation.languages"), icon=":material/translate:")
     try:
         with st.spinner(t("evaluation.loading")):
             results, sweep, threshold = load_results()

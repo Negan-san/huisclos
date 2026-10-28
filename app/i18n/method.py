@@ -117,6 +117,23 @@ EN: dict[str, str] = {
         " text passes through the machine of the host. To process real client files, install "
         "HuisClos on your computer (see the user guide)."
     ),
+    "method.languages.title": "Document languages",
+    "method.languages.supported": (
+        "**French and English documents.** You choose the language of the document in the "
+        "sidebar. It selects the rules and the local language model (spaCy French or English). "
+        "It is separate from the interface language and from the token style; a language is "
+        "not a country or a court system."
+    ),
+    "method.languages.profiles": (
+        "**Profiles.** Standard uses rules, spaCy and propagation in both languages. Enhanced "
+        "local detection adds the CamemBERT model, for French documents only and only in a "
+        "local installation; the model is never downloaded by the application."
+    ),
+    "method.languages.limits": (
+        "**Limits.** The published measures cover French documents only. English support uses "
+        "a small spaCy model and has no published measure yet; read every English result "
+        "with extra care."
+    ),
     "method.disclaimer": "Decision-support tool, not legal advice.",
 }
 
@@ -238,6 +255,24 @@ FR: dict[str, str] = {
         "fictives. Sur un serveur hébergé, le texte passe par la machine de l'hébergeur. Pour "
         "traiter de vrais dossiers clients, installez HuisClos sur votre ordinateur (voir le "
         "guide utilisateur)."
+    ),
+    "method.languages.title": "Langues des documents",
+    "method.languages.supported": (
+        "**Documents français et anglais.** Vous choisissez la langue du document dans la "
+        "barre latérale. Elle choisit les règles et le modèle de langue local (spaCy français "
+        "ou anglais). Elle est distincte de la langue de l'interface et du style des jetons ; "
+        "une langue n'est ni un pays ni un système judiciaire."
+    ),
+    "method.languages.profiles": (
+        "**Profils.** Standard utilise les règles, spaCy et la propagation dans les deux "
+        "langues. La détection locale renforcée ajoute le modèle CamemBERT, pour les documents "
+        "français seulement et en installation locale seulement ; l'application ne télécharge "
+        "jamais le modèle."
+    ),
+    "method.languages.limits": (
+        "**Limites.** Les mesures publiées ne portent que sur des documents français. Le "
+        "support de l'anglais repose sur un petit modèle spaCy et n'a encore aucune mesure "
+        "publiée : relisez chaque résultat anglais avec une attention particulière."
     ),
     "method.disclaimer": "Outil d'aide à la décision, sans valeur de conseil juridique.",
 }

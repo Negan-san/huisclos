@@ -14,6 +14,19 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 14:45 | AF-A3 | Profil local et contrôle du contenu envoyé | Claude Code, Opus 5.5
+- Fait : fusion du SHA B2 validé edae7b9, fragment docs/parallel/B2.md centralisé. Profils Standard/Enhanced et langue du document dans la barre latérale (config.profile_config, refus visibles, démonstration publique protégée), vérification hors ligne du snapshot CamemBERT et identité des modèles (detection/pipeline.py). Empreintes communes et résultats périmés (app/fingerprints.py). Message composé une seule fois et contrôlé par segment (pseudonymize/outbound_check.py), contexte d'origine projeté, rejets positionnels seulement (final_check), statuts, décisions explicites, autorisation vérifiée au clic, exports conditionnés, send_outbound. Method et Evaluation : langues prises en charge et limites. docs/LOCAL_MODELS.md complété.
+- Tests : nouveaux test_outbound_check (16) et test_detection_profiles (23) ; test_mistral_client réécrit sur le vrai parcours (transport simulé), test_app_restore, test_app_case, test_final_check, test_app_smoke adaptés. pytest sous baseline_python : 1603 passed ; Ruff check et format : OK ; check_style : 0 erreur ; diff --check : OK.
+- Décisions : D-AF-A3-1 à D-AF-A3-6 ; D-AF-B2-1 à D-AF-B2-3 intégrées.
+- Risques : la consigne et le texte d'origine ajoutent deux détections au contrôle (plus lent avec Enhanced) ; une décision explicite tombe dès qu'un masquage change le texte ; filtre de Review non testable en français par AppTest ; anglais toujours sans mesure publiée.
+- Prochaine session : selon post_g7.py finish A3.
+
+### 2026-10-28 13:30 | AF-B2 | Qualité d'import et dev anglais | piste B (outil non indiqué dans le fragment)
+- Fait (fragment docs/parallel/B2.md, centralisé par AF-A3) : contrôle PDF page par page (pages vides ou courtes, état inconnu, pas d'OCR), DOCX dans l'ordre XML avec en-têtes, pieds, cellules imbriquées et inventaire des structures non couvertes (io/read_quality.py, io/readers.py) ; avertissements EN/FR à l'Import. Dev anglais séparé corpus/english_dev (8 documents, 138 occurrences) et scripts/build_english_dev.py.
+- Tests : test_import_quality, test_app_import_quality, test_io adaptés ; pytest 1392 passed ; Ruff check et format : OK ; check_style : 0 erreur ; diff --check : OK.
+- Décisions : D-AF-B2-1 à D-AF-B2-3.
+- Risques : aucune preuve de complétude d'un PDF ou d'un DOCX même sans alerte ; dev anglais d'un seul auteur, réservé au réglage.
+
 ### 2026-10-28 14:05 | AF-A2 | Moteur français/anglais, bornes et variantes | Claude Code, Opus 5.5
 - Fait : fusion du SHA B1 validé e786ddf, fragment docs/parallel/B1.md centralisé. Fixtures annotées avant les règles (tests/fixtures/post_g7/, trois FR, deux EN). `document_language` fr/en (detection/languages.py), moteurs, registres et caches par langue, en_core_web_sm sans téléchargement, règles anglaises (detection/english_patterns.py, exclusions_en.txt). Assembleur borné d'adresses (detection/address_bounds.py), portée de naissance et libellés de procédure, vue d'analyse projetable (detection/analysis_view.py), alias explicites et noms de fichiers (detection/aliases.py, propagation, grouping).
 - Tests : nouveaux test_address_bounds, test_analysis_view, test_aliases, test_metamorphic_detection, test_english_detection, test_document_language ; test_patterns et test_robustness_runner adaptés au nouveau contrat. pytest sous baseline_python : 1495 passed ; Ruff check et format : OK ; check_style : 0 erreur, 11 avertissements de longueur sous 400 lignes ; diff --check : OK.

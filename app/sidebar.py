@@ -1,4 +1,4 @@
-"""Barre latérale : réglages de la détection, style des jetons, langue et remise à zéro.
+"""Barre latérale : document, détection, style des jetons, langue et remise à zéro.
 
 Entrées : st.session_state, initialisé par app.state.init_state().
 Sorties : render_sidebar() affiche les réglages ; build_config() en tire la DetectionConfig
@@ -14,9 +14,12 @@ import streamlit as st
 from app.i18n import t
 from app.state import (
     KEY_CONFIRM_RESET,
+    KEY_DOCUMENT_LANGUAGE,
     KEY_ENABLED_TYPES,
     KEY_LANGUAGE,
     KEY_LANGUAGE_NOTICE,
+    KEY_PROFILE,
+    KEY_PROFILE_NOTICE,
     KEY_THRESHOLD,
     KEY_TOKEN_STYLE,
     THRESHOLD_MAX,
@@ -24,8 +27,15 @@ from app.state import (
     THRESHOLD_STEP,
     reset_state,
 )
-from app.ui_common import entity_label
-from huisclos.config import PRESETS, DetectionConfig
+from app.ui_common import entity_label, is_public_demo
+from huisclos.config import (
+    PROFILE_STANDARD,
+    PROFILES,
+    DetectionConfig,
+    profile_config,
+    profile_unavailable,
+)
+from huisclos.detection.languages import DOCUMENT_LANGUAGES
 from huisclos.models import EntityType
 
 # L'anglais reste le choix initial ; les deux dictionnaires sont complets.
@@ -34,17 +44,58 @@ AVAILABLE_LANGUAGES = LANGUAGES
 TOKEN_STYLES = ("fr", "en")
 
 
+def document_language() -> str:
+    """Langue du document choisie dans la barre latérale (fr par défaut), jamais celle de l'UI."""
+    language = st.session_state.get(KEY_DOCUMENT_LANGUAGE, DOCUMENT_LANGUAGES[0])
+    return language if language in DOCUMENT_LANGUAGES else DOCUMENT_LANGUAGES[0]
+
+
+def selected_profile() -> str:
+    """Profil réellement utilisé : celui choisi s'il est disponible ici, sinon Standard.
+
+    Une valeur de session ancienne ne peut pas imposer le modèle lourd sur la démonstration
+    publique ni pour un document anglais ; la barre latérale l'affiche (_check_profile).
+    """
+    profile = st.session_state.get(KEY_PROFILE, PROFILE_STANDARD)
+    if profile_unavailable(profile, document_language(), is_public_demo()) is None:
+        return profile
+    return PROFILE_STANDARD
+
+
 def build_config() -> DetectionConfig:
     """Construit la configuration de détection choisie dans la barre latérale.
 
-    Le point de départ est le préréglage "hybrid", celui de l'interface ; seuls les types
-    activés et le seuil changent.
+    Le point de départ est le profil (Standard = "hybrid", Enhanced = "hybrid_camembert")
+    dans la langue du document ; les types activés et le seuil viennent des réglages.
     """
     return replace(
-        PRESETS["hybrid"],
+        profile_config(selected_profile(), document_language(), is_public_demo()),
         enabled_types=frozenset(st.session_state[KEY_ENABLED_TYPES]),
         threshold=round(float(st.session_state[KEY_THRESHOLD]), 2),
     )
+
+
+def available_profiles() -> tuple[str, ...]:
+    """Profils proposés pour la langue du document, hors modèle lourd en démonstration."""
+    return tuple(
+        profile
+        for profile in PROFILES
+        if profile_unavailable(profile, document_language(), is_public_demo()) is None
+    )
+
+
+def _check_profile() -> None:
+    """Ramène à Standard un profil indisponible ici, et garde la raison pour l'afficher."""
+    profile = st.session_state.get(KEY_PROFILE, PROFILE_STANDARD)
+    reason = profile_unavailable(profile, document_language(), is_public_demo())
+    if reason is not None:
+        st.session_state[KEY_PROFILE] = PROFILE_STANDARD
+        st.session_state[KEY_PROFILE_NOTICE] = reason
+
+
+def _clear_profile_notice() -> None:
+    """Rappel du choix de profil : un choix explicite remplace l'avis précédent."""
+    st.session_state[KEY_PROFILE_NOTICE] = None
 
 
 def _keep_available_language() -> None:
@@ -57,6 +108,8 @@ def _keep_available_language() -> None:
     """
     st.session_state[KEY_ENABLED_TYPES] = list(st.session_state[KEY_ENABLED_TYPES])
     st.session_state[KEY_TOKEN_STYLE] = st.session_state[KEY_TOKEN_STYLE]
+    st.session_state[KEY_DOCUMENT_LANGUAGE] = document_language()
+    st.session_state[KEY_PROFILE] = st.session_state[KEY_PROFILE]
     if st.session_state[KEY_LANGUAGE] not in AVAILABLE_LANGUAGES:
         st.session_state[KEY_LANGUAGE] = AVAILABLE_LANGUAGES[0]
         st.session_state[KEY_LANGUAGE_NOTICE] = True
@@ -92,6 +145,41 @@ def _render_reset() -> None:
 def _group(title_key: str) -> None:
     """Affiche le surtitre d'un groupe de réglages, en petites capitales."""
     st.html(f'<p class="hc-overline">{html.escape(t(title_key))}</p>')
+
+
+def _render_document_settings() -> None:
+    """Groupe Document : langue du document et profil de détection, distincts de l'interface.
+
+    Le profil Enhanced n'est proposé que là où il fonctionne : document français, installation
+    locale. Il se charge au premier usage, jamais à l'ouverture de la page.
+    """
+    _check_profile()
+    language_labels = {code: t(f"sidebar.document_language.{code}") for code in DOCUMENT_LANGUAGES}
+    profile_labels = {profile: t(f"sidebar.profile.{profile}") for profile in PROFILES}
+    _group("sidebar.group.document")
+    st.radio(
+        t("sidebar.document_language"),
+        options=DOCUMENT_LANGUAGES,
+        format_func=language_labels.__getitem__,
+        help=t("sidebar.document_language.help"),
+        key=KEY_DOCUMENT_LANGUAGE,
+        on_change=_check_profile,
+    )
+    st.radio(
+        t("sidebar.profile"),
+        options=available_profiles(),
+        format_func=profile_labels.__getitem__,
+        help=t("sidebar.profile.help"),
+        key=KEY_PROFILE,
+        on_change=_clear_profile_notice,
+    )
+    reason = st.session_state.get(KEY_PROFILE_NOTICE)
+    if reason is not None:
+        st.warning(t(f"sidebar.profile.notice.{reason}"))
+    elif is_public_demo():
+        st.caption(t("sidebar.profile.demo"))
+    elif document_language() != "fr":
+        st.caption(t("sidebar.profile.french_only"))
 
 
 def _render_detection_settings() -> None:
@@ -146,6 +234,7 @@ def render_sidebar() -> None:
     with st.sidebar:
         st.subheader(t("sidebar.settings"))
         st.caption(t("sidebar.help"))
+        _render_document_settings()
         _render_detection_settings()
         _render_display_settings()
         st.divider()

@@ -9,14 +9,17 @@ scripts et l'évaluation ; la revue humaine part de son résultat.
 """
 
 import importlib
+import importlib.metadata
+import importlib.util
 from collections.abc import Sequence
 from dataclasses import replace
 from functools import lru_cache
+from pathlib import Path
 
 from presidio_analyzer import AnalyzerEngine, EntityRecognizer, RecognizerRegistry, RecognizerResult
 from presidio_analyzer.nlp_engine import NlpEngine
 
-from huisclos.config import PRESETS, DetectionConfig
+from huisclos.config import CAMEMBERT_REPO, CAMEMBERT_REVISION, PRESETS, DetectionConfig
 from huisclos.detection.analysis_view import LEGACY, AnalysisView, build_view
 from huisclos.detection.exclusions import load_exclusions_for
 from huisclos.detection.merge import merge, trim
@@ -41,20 +44,91 @@ def get_nlp_engine(model_name: str, language: str = LANGUAGE) -> NlpEngine:
     return build_nlp_engine(model_name, language)
 
 
+# Fichiers indispensables du snapshot CamemBERT validé ; sans le vocabulaire, le modèle
+# tournerait sur un texte illisible (D-AF-A1-3).
+CAMEMBERT_FILES = ("config.json", "sentencepiece.bpe.model", "model.safetensors")
+MODEL_ERRORS: dict[str, str] = {
+    "dependency": "L'option CamemBERT n'est pas installée (requirements-transformers.txt, D-06).",
+    "missing": "La révision validée de CamemBERT manque du cache local ; aucun téléchargement.",
+    "revision": "Le cache local de CamemBERT désigne une autre révision que celle validée en A1.",
+    "public_demo": "Le profil renforcé est interdit sur la démonstration publique (D-14).",
+}
+
+
+class ModelUnavailableError(RuntimeError):
+    """Modèle local absent, incomplet, d'une autre révision ou interdit ici.
+
+    code ("dependency", "missing", "revision" ou "public_demo") permet à l'interface
+    d'afficher un message traduit ; aucun repli vers un autre profil n'est fait.
+    """
+
+    def __init__(self, code: str) -> None:
+        """Conserve le code et un message lisible."""
+        self.code = code
+        super().__init__(MODEL_ERRORS[code])
+
+
+def check_camembert_snapshot() -> str:
+    """Vérifie, sans réseau ni chargement, que le cache local porte la révision validée.
+
+    Valeur retournée : le dossier local du snapshot. Lève ModelUnavailableError si
+    Transformers manque, si un fichier indispensable manque ou si le cache résout une
+    autre révision que CAMEMBERT_REVISION, celle que charge ensuite camembert.load_pipeline.
+    """
+    if importlib.util.find_spec("transformers") is None:
+        raise ModelUnavailableError("dependency")
+    try:
+        from huggingface_hub import try_to_load_from_cache
+    except ImportError:
+        raise ModelUnavailableError("dependency") from None
+    found = [
+        try_to_load_from_cache(CAMEMBERT_REPO, name, revision=CAMEMBERT_REVISION)
+        for name in CAMEMBERT_FILES
+    ]
+    if not all(isinstance(path, str) for path in found):
+        raise ModelUnavailableError("missing")
+    if try_to_load_from_cache(CAMEMBERT_REPO, CAMEMBERT_FILES[0]) != found[0]:
+        raise ModelUnavailableError("revision")
+    return str(Path(found[0]).parent)
+
+
+def _package_version(name: str) -> str:
+    """Version installée d'un paquet, ou "absent" ; ne charge pas le modèle."""
+    try:
+        return importlib.metadata.version(name)
+    except importlib.metadata.PackageNotFoundError:
+        return "absent"
+
+
+def model_identity(config: DetectionConfig) -> str:
+    """Identité des modèles qu'utilise config, pour les empreintes de l'interface.
+
+    Paramètre : config, la configuration de détection.
+    Valeur retournée : la langue du document, le modèle spaCy et sa version installée, puis,
+    pour le profil renforcé, le dépôt et la révision figée de CamemBERT. Rien n'est chargé.
+    Exemple : "fr;spacy=fr_core_news_md==3.8.0".
+    """
+    parts = [config.document_language]
+    parts.append(f"spacy={config.spacy_model}=={_package_version(config.spacy_model)}")
+    if config.use_camembert:
+        parts.append(f"camembert={CAMEMBERT_REPO}@{CAMEMBERT_REVISION}")
+    return ";".join(parts)
+
+
 def _camembert_recognizers(language: str) -> list[EntityRecognizer]:
     """Charge les reconnaisseurs CamemBERT, ou explique pourquoi c'est impossible.
 
     CamemBERT est un modèle français : il n'est pas proposé pour un document anglais, dont
-    la couverture ne peut pas reposer sur lui (D-AF-A2-1).
+    la couverture ne peut pas reposer sur lui (D-AF-A2-1). Le snapshot local est vérifié
+    avant tout chargement.
     """
     if language != "fr":
         raise ValueError("CamemBERT est un modèle français : il ne s'applique pas à ce document.")
+    check_camembert_snapshot()
     try:
         module = importlib.import_module(CAMEMBERT_MODULE)
-    except ImportError as error:
-        raise RuntimeError(
-            "L'option CamemBERT n'est pas installée (requirements-transformers.txt, D-06)."
-        ) from error
+    except ImportError:
+        raise ModelUnavailableError("dependency") from None
     return list(module.build_camembert_recognizers())
 
 

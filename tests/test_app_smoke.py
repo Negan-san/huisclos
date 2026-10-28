@@ -125,6 +125,7 @@ def test_method_page_content() -> None:
         "Pipeline",
         "How it works",
         "Why hybrid AI",
+        "Document languages",
         "Human in the loop",
         "What HuisClos looks for",
         "Legal framework",

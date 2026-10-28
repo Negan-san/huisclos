@@ -1,8 +1,9 @@
 """Tests de l'écran Restore avec AppTest : texte à envoyer, restauration, exports, remise à zéro.
 
 Le cas d'exemple est pseudonymisé une seule fois pour tout le module ; chaque test ouvre
-ensuite l'écran Restore sur ce résultat, sans refaire la détection. Un seul test déroule le
-parcours complet Import, Review, Restore par l'interface.
+ensuite l'écran Restore sur ce résultat, sans refaire la détection : ce résultat imposé est
+périmé pour le contrôle (D-AF-A3-2). Les tests du message prêt à envoyer déroulent le parcours
+complet Import, Review, Restore par l'interface.
 """
 
 import re
@@ -15,8 +16,10 @@ from streamlit.testing.v1 import AppTest
 
 from app import i18n
 from app.steps import restore_step
+from app.steps.restore_check import CheckOutcome
 from app.ui_common import entity_label
 from huisclos.models import EntityType, PseudonymizationResult
+from huisclos.pseudonymize.outbound_check import SEPARATOR, CheckStatus, compose
 
 ROOT = Path(__file__).resolve().parent.parent
 APP_PATH = str(ROOT / "streamlit_app.py")
@@ -26,8 +29,8 @@ SENSITIVE_WARNING = (
     "Never send it to an AI tool."
 )
 DOWNLOAD_LABELS = [
-    "Pseudonymized text (.txt)",
-    "Pseudonymized text (.docx)",
+    "Checked message (.txt)",
+    "Checked message (.docx)",
     "Restored text (.txt)",
     "Restored text (.docx)",
     "Mapping table (.mapping.json)",
@@ -89,6 +92,15 @@ def shown_blocks(app: AppTest) -> list[str]:
     return [block.value for block in app.code]
 
 
+def answer_warnings(app: AppTest) -> list[str]:
+    """Alertes de la restauration, sans celles du contrôle d'un résultat imposé (périmé)."""
+    return [
+        message.value
+        for message in app.warning
+        if not message.value.startswith(("The text, the document", "Not ready to send"))
+    ]
+
+
 def restored_text(app: AppTest) -> str | None:
     """Renvoie le texte restauré affiché, ou None tant que rien n'est restauré."""
     blocks = [element for element in app.main if type(element).__name__ in {"Markdown", "Code"}]
@@ -139,16 +151,22 @@ def test_pseudonymized_text_shown_contains_no_detected_value(
     sample: tuple[str, PseudonymizationResult],
 ) -> None:
     _, result = sample
-    app = restore_app(result)
+    app = journey()
     shown = shown_blocks(app)[0]
-    assert shown == result.text.strip()
+    instruction = app.session_state["outbound_instruction"]
+    assert shown == (result.text + SEPARATOR + instruction).strip()
     originals = {occurrence.original for occurrence in result.mapping.occurrences}
     assert originals
     assert [value for value in originals if value in shown] == []
     assert "[PERSONNE_1]" in shown
-    assert "What leaves your computer: only the text above. The mapping table stays here." in [
-        message.value for message in app.info
-    ]
+    leaves = (
+        "What leaves your computer: only the checked message above. The mapping table stays here."
+    )
+    assert leaves in [message.value for message in app.info]
+    # Un résultat imposé sans détection n'est pas présenté comme prêt : aucun bloc à copier.
+    stale = restore_app(result)
+    assert all(result.text.strip() not in block for block in shown_blocks(stale))
+    assert any(message.value.startswith("Not ready to send") for message in stale.warning)
 
 
 def test_token_counts_by_type_match_the_mapping(
@@ -171,15 +189,17 @@ def test_recommended_instructions_are_offered_in_french_and_english(
     sample: tuple[str, PseudonymizationResult],
 ) -> None:
     _, result = sample
-    shown = shown_blocks(restore_app(result))
-    assert (
-        "Conserve exactement chaque jeton entre crochets, par exemple [PERSONNE_1], sans le "
-        "modifier ni le traduire, et n'en invente aucun."
-    ) in shown
-    assert (
-        "Keep every bracketed token exactly as written, for example [PERSON_1]; do not "
-        "change, translate or invent tokens."
-    ) in shown
+    app = journey()
+    # Le cas d'exemple est un document français : la consigne proposée est en français.
+    assert app.text_area(key="outbound_instruction_widget").value == (
+        "Conserve exactement chaque jeton entre crochets, sans le modifier ni le traduire, et "
+        "n'en invente aucun."
+    )
+    english = i18n.EN["restore.send.instruction.en"]
+    assert english.startswith("Keep every bracketed token exactly as written")
+    # Sans jeton d'exemple, la consigne ne déclenche aucune alerte de jeton inconnu.
+    assert "[" not in english and "[" not in app.session_state["outbound_instruction"]
+    assert "No residual identifier found." in [message.value for message in app.success]
 
 
 def test_pasting_the_pseudonymized_text_restores_the_original_exactly(
@@ -188,7 +208,7 @@ def test_pasting_the_pseudonymized_text_restores_the_original_exactly(
     source, result = sample
     app = restore_answer(restore_app(result), result.text)
     assert restored_text(app) == source.strip()
-    assert [message.value for message in app.warning] == []
+    assert answer_warnings(app) == []
     assert any("Exact mode" in caption.value for caption in app.caption)
 
 
@@ -240,7 +260,7 @@ def test_restoring_an_empty_answer_asks_to_paste_one(
     app = restore_app(result)
     app.button(key="restore_run").click().run()
     assert not app.exception
-    assert [message.value for message in app.warning] == ["Paste the answer of the AI tool first."]
+    assert answer_warnings(app) == ["Paste the answer of the AI tool first."]
     assert restored_text(app) is None
 
 
@@ -259,11 +279,14 @@ def test_five_download_buttons_and_the_warning_comes_before_the_mapping(
     sample: tuple[str, PseudonymizationResult],
 ) -> None:
     _, result = sample
-    app = restore_app(result)
+    stale = restore_app(result)
+    assert download_buttons(stale)["Checked message (.txt)"] is True
+    assert download_buttons(stale)["Checked message (.docx)"] is True
+    app = journey()
     assert list(download_buttons(app)) == DOWNLOAD_LABELS
     assert download_buttons(app) == {
-        "Pseudonymized text (.txt)": False,
-        "Pseudonymized text (.docx)": False,
+        "Checked message (.txt)": False,
+        "Checked message (.docx)": False,
         "Restored text (.txt)": True,
         "Restored text (.docx)": True,
         "Mapping table (.mapping.json)": False,
@@ -382,7 +405,8 @@ def test_start_a_new_document_clears_the_session_after_confirmation(
 
 def test_the_mistral_slot_shows_nothing(sample: tuple[str, PseudonymizationResult]) -> None:
     _, result = sample
-    assert restore_step.render_mistral_slot(result.text) is None
+    outcome = CheckOutcome(compose(result.text, ""), CheckStatus.CLEAR, (), None, "x", "")
+    assert restore_step.render_mistral_slot(outcome) is None
     app = restore_app(result)
     texts = [str(getattr(element, "value", "")) for element in app.main]
     assert not any("Mistral" in text for text in texts)

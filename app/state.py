@@ -8,7 +8,7 @@ d'autre qu'à travers cet état.
 
 import streamlit as st
 
-from huisclos.config import default_threshold
+from huisclos.config import PROFILE_STANDARD, default_threshold
 from huisclos.models import DEFAULT_ENABLED_TYPES, EntityType
 
 STEP_IMPORT = "import"
@@ -31,6 +31,24 @@ KEY_UPLOADED_TABLE = "restore_uploaded_table"
 KEY_TABLE_ERROR = "restore_table_error"
 KEY_LANGUAGE = "language"
 KEY_TOKEN_STYLE = "token_style"
+# Langue du document et profil de détection (D-AF-A3-1) : indépendants de la langue de
+# l'interface et du style des jetons ; aucun changement silencieux de l'un par l'autre.
+KEY_DOCUMENT_LANGUAGE = "document_language"
+KEY_PROFILE = "detection_profile"
+KEY_PROFILE_NOTICE = "detection_profile_notice"
+# Base de la pseudonymisation : (empreinte de détection, empreinte des décisions) au moment
+# du clic sur Pseudonymize ; Restore la compare à l'état courant (D-AF-A3-2).
+KEY_PSEUDO_BASIS = "pseudo_basis"
+# Contrôle du contenu sortant (D-AF-A3-3 et 4) : consigne libre, résultats par segment,
+# mentions examinées, politique visible du contrôle et autorisation d'envoi.
+KEY_INSTRUCTION = "outbound_instruction"
+KEY_CHECK_DOCUMENT = "outbound_check_document"
+KEY_CHECK_INSTRUCTION = "outbound_check_instruction"
+KEY_CHECK_ACKS = "outbound_check_acks"
+KEY_CHECK_NOTICE = "final_check_notice"
+KEY_CHECK_ALL_TYPES = "outbound_check_all_types"
+KEY_CHECK_NO_EXCLUSIONS = "outbound_check_no_exclusions"
+KEY_SEND_AUTH = "outbound_send_authorization"
 # Table de dossier chargée à l'étape Import (D-S24-2) : sensible, gardée en mémoire seulement.
 KEY_CASE_TABLE = "case_table"
 KEY_CASE_NAME = "case_table_name"
@@ -82,6 +100,18 @@ def _defaults() -> dict[str, object]:
         KEY_CASE_NONCE: 0,
         KEY_LANGUAGE: "en",
         KEY_TOKEN_STYLE: "fr",
+        KEY_DOCUMENT_LANGUAGE: "fr",
+        KEY_PROFILE: PROFILE_STANDARD,
+        KEY_PROFILE_NOTICE: None,
+        KEY_PSEUDO_BASIS: None,
+        KEY_INSTRUCTION: None,
+        KEY_CHECK_DOCUMENT: None,
+        KEY_CHECK_INSTRUCTION: None,
+        KEY_CHECK_ACKS: None,
+        KEY_CHECK_NOTICE: None,
+        KEY_CHECK_ALL_TYPES: False,
+        KEY_CHECK_NO_EXCLUSIONS: False,
+        KEY_SEND_AUTH: None,
         KEY_ENABLED_TYPES: ordered_types,
         KEY_THRESHOLD: initial_threshold(),
         KEY_READ_ERROR: None,
@@ -112,15 +142,33 @@ def reset_state() -> None:
     st.session_state[KEY_UPLOAD_NONCE] = nonce
 
 
+def clear_check() -> None:
+    """Retire le contrôle du contenu sortant, les mentions examinées et l'autorisation d'envoi.
+
+    La consigne saisie et la politique du contrôle restent : ce sont des choix de
+    l'utilisateur, revérifiés au prochain contrôle.
+    """
+    st.session_state[KEY_CHECK_DOCUMENT] = None
+    st.session_state[KEY_CHECK_INSTRUCTION] = None
+    st.session_state[KEY_CHECK_ACKS] = None
+    st.session_state[KEY_CHECK_NOTICE] = None
+    st.session_state[KEY_SEND_AUTH] = None
+
+
 def clear_results() -> None:
-    """Efface tout ce qui dépend des détections : décisions, ajouts, texte et restauration."""
+    """Efface ce qui dépend des détections : décisions, ajouts, texte, contrôle, restauration.
+
+    La table de dossier n'est pas touchée : seul son bouton de retrait ou Reset l'oublie.
+    """
     st.session_state[KEY_GROUP_DECISIONS] = {}
     st.session_state[KEY_MANUAL_ENTITIES] = []
     st.session_state[KEY_PSEUDO_RESULT] = None
+    st.session_state[KEY_PSEUDO_BASIS] = None
     st.session_state[KEY_LLM_RESPONSE] = ""
     st.session_state[KEY_RESTORE_RESULT] = None
     st.session_state[KEY_UPLOADED_TABLE] = None
     st.session_state[KEY_TABLE_ERROR] = None
+    clear_check()
 
 
 def go_to(step: str) -> None:

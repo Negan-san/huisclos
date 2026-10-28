@@ -1,8 +1,9 @@
 # Local models and study environments
 
 This page records the local models and Python environments prepared in session A1 (28 October
-2026) for the bilingual work after gate G7. Nothing here is used by the application yet: the
-deployed configuration and `requirements*.txt` are unchanged. Model files and environments live
+2026) for the bilingual work after gate G7. Since session A3, the application uses only the
+existing CamemBERT model, through the Enhanced profile described below; the other models are not
+used by the application. The deployed configuration and `requirements*.txt` are unchanged. Model files and environments live
 outside the repository, in `pilotage/post_g7_assets/` next to the project folder, and are never
 committed.
 
@@ -92,3 +93,30 @@ PYTHONUTF8=1 "<candidate_python>" <B3 experiment script>
 
 Model folders are under `post_g7_assets/models/<name>`. A model missing from the manifest or
 marked `unavailable` must be reported as such, never replaced by a download at run time.
+
+## Use in the application (session A3)
+
+The sidebar offers two detection profiles, independent of the interface language and of the token
+style:
+
+| Profile | Document languages | Sources | Where |
+| --- | --- | --- | --- |
+| Standard | French, English | rules, spaCy (`fr_core_news_md` or `en_core_web_sm`), propagation | everywhere |
+| Enhanced local detection | French only | Standard plus CamemBERT | local installation only |
+
+Enhanced loads CamemBERT on the first detection that asks for it, behind a progress indicator,
+and keeps only the engine in the process cache, never a text or a mapping table. Before any
+loading, `detection.pipeline.check_camembert_snapshot` checks the local Hugging Face cache
+without network access: `config.json`, `sentencepiece.bpe.model` and `model.safetensors` must
+exist for revision `ef35fe7767c1dad71f5c853838cdd80d0b3441ed` (the A1 revision, declared in
+`huisclos.config.CAMEMBERT_REVISION`), and the `main` reference of the cache must point to that
+same revision. A missing package, a missing file or another revision stops the detection with a
+clear message; nothing is downloaded and the application never switches to another profile on its
+own. With `HUISCLOS_PUBLIC_DEMO=true`, Enhanced is refused even if an older session value asks
+for it.
+
+The identity of the models (document language, spaCy model and installed version, CamemBERT
+repository and revision) is part of the detection fingerprint: changing the profile, the document
+language or the installed model makes the earlier review and final check stale. The English
+profile has no CamemBERT equivalent until session A4 integrates a multilingual model; the French
+CamemBERT is never used for an English document.

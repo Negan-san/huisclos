@@ -3,8 +3,9 @@
 Entrées : pseudo_result dans l'état de session, la réponse du LLM collée par l'utilisateur et,
 facultativement, une table de correspondance JSON téléversée.
 Sorties : restore_result dans l'état, le texte restauré affiché et les cinq téléchargements
-(texte pseudonymisé et texte restauré en .txt et .docx, table en .json, fusionnée avec la
-table de dossier éventuelle).
+(message contrôlé et texte restauré en .txt et .docx, table en .json, fusionnée avec la
+table de dossier éventuelle). Le message envoyé ou copié est composé une seule fois, puis
+contrôlé (restore_check).
 Place dans le pipeline : troisième et dernière étape ; appelle pseudonymize.reidentify.restore.
 """
 
@@ -15,10 +16,13 @@ import streamlit as st
 
 from app.components.highlight import render_restored
 from app.i18n import t
+from app.sidebar import document_language
 from app.state import (
+    KEY_INSTRUCTION,
     KEY_LLM_RESPONSE,
     KEY_PSEUDO_RESULT,
     KEY_RESTORE_RESULT,
+    KEY_SEND_AUTH,
     KEY_TABLE_ERROR,
     KEY_UPLOAD_NONCE,
     KEY_UPLOADED_TABLE,
@@ -27,7 +31,7 @@ from app.state import (
     go_to,
     reset_state,
 )
-from app.steps.restore_check import render_final_check
+from app.steps.restore_check import CheckOutcome, evaluate_outbound, render_final_check
 from app.steps.restore_exports import render_downloads
 from app.steps.restore_mistral import KEY_ANSWER_WIDGET, render_mistral_slot
 from app.ui_common import entity_label, literal_markdown
@@ -39,6 +43,9 @@ from huisclos.pseudonymize.reidentify import RestoreResult, restore
 # Clés propres à cette étape ; reset_state() les efface avec le reste de la session.
 KEY_RESTORE_SIGNATURE = "restore_signature"
 KEY_CONFIRM_NEW = "restore_confirm_new"
+# Zone de la consigne : son état est recopié dans KEY_INSTRUCTION, que Streamlit garde même
+# quand la page affiche une autre étape.
+KEY_INSTRUCTION_WIDGET = "outbound_instruction_widget"
 
 # Au-delà, le texte s'affiche dans un cadre à hauteur fixe qui défile. Le texte à envoyer
 # défile plus tôt, pour que les deux colonnes de l'étape restent de hauteur comparable.
@@ -89,22 +96,55 @@ def _token_rows(result: PseudonymizationResult) -> list[dict[str, object]]:
     return rows
 
 
-def _render_send(result: PseudonymizationResult) -> None:
-    """Carte 1 : texte pseudonymisé à copier, consignes à coller avec lui, jetons par type."""
+def _keep_instruction() -> None:
+    """Rappel de la zone de consigne : garde la consigne ; l'autorisation d'envoi tombe."""
+    st.session_state[KEY_INSTRUCTION] = st.session_state[KEY_INSTRUCTION_WIDGET]
+    st.session_state[KEY_SEND_AUTH] = None
+
+
+def _render_instruction() -> None:
+    """Zone de la consigne libre, contrôlée avec le texte et envoyée juste après lui."""
+    st.session_state.setdefault(KEY_INSTRUCTION_WIDGET, st.session_state[KEY_INSTRUCTION])
+    st.text_area(
+        t("restore.send.instruction.label"),
+        key=KEY_INSTRUCTION_WIDGET,
+        height=110,
+        help=t("restore.send.instruction.help"),
+        on_change=_keep_instruction,
+    )
+
+
+def _render_message(outcome: CheckOutcome) -> None:
+    """Le message exact : à copier s'il est prêt, sinon un aperçu sans bouton de copie."""
+    content = outcome.message.content
+    if outcome.ready:
+        _show_text(content, SEND_TEXT_CHARS, SEND_TEXT_HEIGHT)
+        st.caption(t("restore.send.copy"))
+        st.caption(t("restore.send.copy.scope"))
+        return
+    if outcome.stale is not None:
+        reason = "stale"
+    elif outcome.status.value in ("alerts", "unavailable"):
+        reason = outcome.status.value
+    else:
+        reason = "not_run"
+    st.warning(t(f"restore.send.not_ready.{reason}"), icon=":material/block:")
+    height = "content" if len(content) <= SEND_TEXT_CHARS else SEND_TEXT_HEIGHT
+    with st.container(height=height, border=True, key="hc-send-preview"):
+        st.text(content)
+
+
+def _render_send(result: PseudonymizationResult, outcome: CheckOutcome) -> None:
+    """Carte 1 : consigne, message exact contrôlé, ce qui quitte le poste, jetons par type."""
     with st.container(key="hc-card-send"):
         st.subheader(t("restore.send.heading"), anchor=False)
         st.markdown(t("restore.send.intro"))
         if result.warnings:
             st.warning(t("restore.send.literal_tokens"))
-        _show_text(result.text, SEND_TEXT_CHARS, SEND_TEXT_HEIGHT)
-        st.caption(t("restore.send.copy"))
+        _render_instruction()
+        _render_message(outcome)
         st.info(t("restore.send.leaves"), icon=":material/lock:")
         st.caption(t("restore.send.check"))
-        st.markdown(f"**{t('restore.send.instruction.heading')}**")
-        st.caption(t("restore.send.instruction.help"))
-        for language in ("fr", "en"):
-            st.caption(t(f"restore.send.instruction.{language}.label"))
-            st.code(t(f"restore.send.instruction.{language}"), language=None, wrap_lines=True)
         rows = _token_rows(result)
         with st.expander(t("restore.send.counts.heading"), icon=":material/token:"):
             st.dataframe(rows, hide_index=True, width="stretch")
@@ -316,17 +356,22 @@ def render() -> None:
         st.button(t("restore.back"), key="restore_back", on_click=go_to, args=(STEP_IMPORT,))
         table, restored = _render_answer_card(None)
     else:
+        if st.session_state.get(KEY_INSTRUCTION) is None:
+            # Consigne recommandée dans la langue du document, modifiable avant le contrôle.
+            st.session_state[KEY_INSTRUCTION] = t(f"restore.send.instruction.{document_language()}")
+        outcome = evaluate_outbound(result)
         send, answer = st.columns(2, gap="medium")
         with send:
             # Le contrôle final précède le texte : une alerte se traite avant de copier.
-            render_final_check(result)
-            _render_send(result)
+            render_final_check(outcome)
+            _render_send(result, outcome)
         with answer:
             table, restored = _render_answer_card(result)
     if restored is not None and table is not None:
         _show_restored(restored, table)
     if result is not None:
         used = table.mapping if table is not None else result.mapping
-        render_downloads(result, restored.text if restored is not None else None, used)
-        render_mistral_slot(result.text)
+        restored_text = restored.text if restored is not None else None
+        render_downloads(result, restored_text, used, outcome)
+        render_mistral_slot(outcome)
     _render_new_document(result is not None)

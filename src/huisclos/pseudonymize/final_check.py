@@ -1,7 +1,7 @@
 """Contrôle final du texte pseudonymisé, juste avant son envoi au LLM.
 
 Entrées : le résultat de la pseudonymisation, une fonction de détection réglée sous le seuil
-courant, et les valeurs que l'humain a rejetées à l'étape Review.
+courant, et les positions des mentions que l'humain a rejetées à l'étape Review.
 Sorties : les restes, des Detection placées dans le texte pseudonymisé ; une liste vide
 dit seulement qu'aucun identifiant résiduel n'a été trouvé, jamais que le texte est anonyme.
 Place dans le pipeline : après pseudonymize.tokens, avant l'envoi (principe 3, D-S24-3).
@@ -14,7 +14,8 @@ from huisclos.detection.exclusions import load_exclusions
 from huisclos.detection.propagation import organization_variants, person_variants
 from huisclos.models import Detection, EntityType, PseudonymizationResult, Source
 from huisclos.pseudonymize.case_memory import KNOWN_SCORE, entry_forms, find_value
-from huisclos.text_utils import fold, letter_count
+from huisclos.pseudonymize.mapping import Mapping
+from huisclos.text_utils import letter_count
 
 Span = tuple[int, int]
 
@@ -88,10 +89,20 @@ def table_residuals(result: PseudonymizationResult, neutral: str) -> list[Detect
     Paramètres : result, la pseudonymisation ; neutral, son texte aux jetons neutralisés.
     La recherche tolère la casse, les accents et les blancs, en mots entiers.
     """
+    return mapping_residuals(result.mapping, neutral, result.text)
+
+
+def mapping_residuals(mapping: Mapping, neutral: str, text: str) -> list[Detection]:
+    """Écritures d'une table, ou leurs parties sensibles, trouvées dans un texte neutralisé.
+
+    Paramètres : mapping, la table ; neutral, le texte dont les jetons connus sont des
+    blancs ; text, le même texte avant neutralisation, de même longueur, d'où vient le
+    texte de chaque Detection. Sert au texte pseudonymisé comme à la consigne libre.
+    """
     found = []
-    for entry in result.mapping.entities:
+    for entry in mapping.entities:
         parts: set[str] = set()
-        for form in entry_forms(entry, result.mapping):
+        for form in entry_forms(entry, mapping):
             parts |= significant_parts(entry.entity_type, form)
         for part in parts:
             for start, end in find_value(neutral, part):
@@ -102,13 +113,13 @@ def table_residuals(result: PseudonymizationResult, neutral: str) -> list[Detect
                         entry.entity_type,
                         KNOWN_SCORE,
                         Source.CASE_TABLE,
-                        result.text[start:end],
+                        text[start:end],
                     )
                 )
     return found
 
 
-def _outside_tokens(detection: Detection, tokens: Sequence[Span], text: str) -> list[Detection]:
+def outside_tokens(detection: Detection, tokens: Sequence[Span], text: str) -> list[Detection]:
     """Parties d'un reste hors des jetons, sans blancs aux bords ni partie vide.
 
     Un reste qui enjambe un jeton ("Pierre [PERSONNE_1] VERNOLAC") devient deux restes,
@@ -141,7 +152,39 @@ def source_span(result: PseudonymizationResult, start: int, end: int) -> Span:
     return start + shift, end + shift
 
 
-def _without_overlaps(found: Sequence[Detection]) -> list[Detection]:
+def occurrence_spans(result: PseudonymizationResult) -> list[tuple[Span, Span]]:
+    """Couples (passage du texte d'origine, jeton du texte pseudonymisé) de chaque remplacement.
+
+    La position d'origine se déduit sans recherche : hors jetons, le texte est recopié tel
+    quel, donc chaque jeton décale la suite de l'écart entre sa longueur et celle du texte
+    qu'il remplace.
+    """
+    pairs, shift = [], 0
+    for occurrence in sorted(result.occurrences, key=lambda o: o.start):
+        start = occurrence.start + shift
+        pairs.append(
+            ((start, start + len(occurrence.original)), (occurrence.start, occurrence.end))
+        )
+        shift += len(occurrence.original) - (occurrence.end - occurrence.start)
+    return pairs
+
+
+def output_span(result: PseudonymizationResult, start: int, end: int) -> Span:
+    """Position dans le texte pseudonymisé d'un passage du texte d'origine laissé en clair.
+
+    Inverse de source_span. Lève ValueError si le passage touche un texte remplacé : il
+    n'a alors pas de place exacte dans le texte pseudonymisé.
+    """
+    shift = 0
+    for (source_start, source_end), (token_start, token_end) in occurrence_spans(result):
+        if source_start < end and start < source_end:
+            raise ValueError("le passage touche un texte remplacé par un jeton")
+        if source_end <= start:
+            shift += (source_end - source_start) - (token_end - token_start)
+    return start - shift, end - shift
+
+
+def without_overlaps(found: Sequence[Detection]) -> list[Detection]:
     """Garde les restes les plus longs, puis ceux de la table, sans chevauchement."""
     kept: list[Detection] = []
     for detection in sorted(found, key=lambda d: (-d.length, -d.score, d.start)):
@@ -153,15 +196,15 @@ def _without_overlaps(found: Sequence[Detection]) -> list[Detection]:
 def final_check(
     result: PseudonymizationResult,
     detect_text: Callable[[str], Sequence[Detection]] | None = None,
-    rejected_values: Sequence[str] = (),
     rejected_spans: Sequence[Span] = (),
 ) -> list[Detection]:
     """Cherche les identifiants restés en clair dans le texte à envoyer.
 
     Paramètres : result, la pseudonymisation ; detect_text, une détection réglée sous le
     seuil courant (check_threshold), appliquée au texte aux jetons neutralisés, ou None ;
-    rejected_values et rejected_spans, les écritures et positions (texte d'origine) que
-    l'humain a rejetées en revue : elles ne déclenchent aucune alerte.
+    rejected_spans, les positions (texte d'origine) des mentions que l'humain a rejetées
+    en revue : seules ces mentions ne déclenchent aucune alerte. Un rejet ne vaut pas pour
+    la même écriture ailleurs, où le contexte peut identifier quelqu'un (D-AF-A3-4).
     Valeur retournée : les restes, placés dans result.text, triés et sans chevauchement.
     Exemple : un "Vernolac" oublié après "Pierre VERNOLAC" masqué est signalé.
     """
@@ -170,18 +213,16 @@ def final_check(
     if detect_text is not None:
         found.extend(detect_text(neutral))
     tokens = token_spans(result)
-    pieces = [piece for d in found for piece in _outside_tokens(d, tokens, result.text)]
-    folded_rejected = {fold(value) for value in rejected_values}
+    pieces = [piece for d in found for piece in outside_tokens(d, tokens, result.text)]
     kept = [
         piece
         for piece in pieces
-        if fold(piece.text) not in folded_rejected
-        and not _inside(source_span(result, piece.start, piece.end), rejected_spans)
+        if not inside(source_span(result, piece.start, piece.end), rejected_spans)
     ]
-    return _without_overlaps(kept)
+    return without_overlaps(kept)
 
 
-def _inside(span: Span, spans: Sequence[Span]) -> bool:
+def inside(span: Span, spans: Sequence[Span]) -> bool:
     """Dit si span est compris dans l'un des passages de spans."""
     return any(start <= span[0] and span[1] <= end for start, end in spans)
 

@@ -7,6 +7,12 @@ Place dans le pipeline : présentation de l'évaluation, sans calcul de détecti
 
 EN: dict[str, str] = {
     "evaluation.title": "Evaluation",
+    "evaluation.languages": (
+        "All measures on this page are historical measures on French documents (gate G7 and "
+        "earlier). English documents have no measure yet: future English measures will be "
+        "published separately, never averaged with the French ones. The interface language "
+        "does not change any measure."
+    ),
     "evaluation.empty": (
         "No evaluation results are available. Add the precomputed evaluation files to the "
         "results folder to display this page."
@@ -127,6 +133,12 @@ EN: dict[str, str] = {
 
 FR: dict[str, str] = {
     "evaluation.title": "Évaluation",
+    "evaluation.languages": (
+        "Toutes les mesures de cette page sont des mesures historiques sur des documents "
+        "français (gate G7 et avant). Les documents anglais n'ont encore aucune mesure : les "
+        "futures mesures anglaises seront publiées à part, jamais moyennées avec les "
+        "françaises. La langue de l'interface ne change aucune mesure."
+    ),
     "evaluation.empty": (
         "Aucun résultat d'évaluation disponible. Ajoutez les fichiers de résultats précalculés"
         " au dossier results pour afficher cette page."

@@ -1,8 +1,9 @@
-"""Téléchargements de l'étape Restore : textes en .txt et .docx, table de correspondance.
+"""Téléchargements de l'étape Restore : message contrôlé, réponse restaurée, table locale.
 
-Entrées : le résultat de la pseudonymisation, le texte restauré éventuel et la table utilisée.
+Entrées : le contrôle du contenu sortant, le texte restauré éventuel et la table utilisée.
 Sorties : les cinq boutons de téléchargement, regroupés dans une carte, et l'avertissement
-qui précède la table.
+qui précède la table. Le message n'est téléchargeable comme prêt pour un LLM que si le
+contrôle l'autorise (D-AF-A3-5) ; la table et la réponse restaurée restent locales.
 Place dans le pipeline : fin du parcours ; rien n'est écrit sur le disque par l'application,
 c'est le navigateur qui enregistre le fichier choisi.
 """
@@ -10,6 +11,7 @@ c'est le navigateur qui enregistre le fichier choisi.
 import streamlit as st
 
 from app.i18n import t
+from app.steps.restore_check import CheckOutcome
 from huisclos.io.writers import to_docx_bytes, to_txt_bytes
 from huisclos.models import PseudonymizationResult
 from huisclos.pseudonymize.mapping import Mapping
@@ -28,7 +30,7 @@ def stem(mapping: Mapping) -> str:
 
 
 def _text_downloads(kind: str, text: str, name: str, disabled: bool) -> None:
-    """Crée les boutons .txt et .docx d'un texte ; kind vaut "pseudonymized" ou "restored".
+    """Crée les boutons .txt et .docx d'un texte ; kind vaut "message" ou "restored".
 
     Les boutons ne relancent pas la page. Le .docx est fabriqué au clic, pas à l'affichage.
     """
@@ -51,19 +53,26 @@ def _text_downloads(kind: str, text: str, name: str, disabled: bool) -> None:
 
 
 def render_downloads(
-    result: PseudonymizationResult, restored_text: str | None, used: Mapping
+    result: PseudonymizationResult,
+    restored_text: str | None,
+    used: Mapping,
+    outcome: CheckOutcome,
 ) -> None:
-    """Carte des téléchargements : textes, puis la table précédée de son avertissement.
+    """Carte des téléchargements : message contrôlé, réponse restaurée, puis la table.
 
     Paramètres : result, la pseudonymisation du document ; restored_text, le texte restauré
-    à jour ou None ; used, la table qui a servi à restaurer (son empreinte nomme le fichier).
+    à jour ou None ; used, la table qui a servi à restaurer (son empreinte nomme le fichier) ;
+    outcome, le contrôle du message, dont le contenu exact est le seul téléchargé pour un LLM.
     """
     with st.container(key="hc-card-downloads"):
         st.subheader(t("restore.download.heading"), anchor=False)
         pseudonymized, restored, table = st.columns(3, gap="medium")
         with pseudonymized:
-            st.markdown(f"**{t('restore.download.group.pseudonymized')}**")
-            _text_downloads("pseudonymized", result.text, stem(result.mapping), False)
+            st.markdown(f"**{t('restore.download.group.message')}**")
+            content = outcome.message.content
+            _text_downloads("message", content, stem(result.mapping), not outcome.ready)
+            if not outcome.ready:
+                st.caption(t("restore.download.message_wait"))
         with restored:
             # Un titre distinct de "Restored text", qui annonce le résultat restauré plus haut.
             st.markdown(f"**{t('restore.download.group.restored')}**")

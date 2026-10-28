@@ -15,15 +15,15 @@ EN: dict[str, str] = {
     "restore.back_review": "Back to Review",
     "restore.send.heading": "Send to your AI tool",
     "restore.send.intro": (
-        "Copy this text into the AI tool of your choice. Names and identifiers are replaced by"
-        " tokens such as `[PERSONNE_1]`."
+        "The message below is what you copy or send: the pseudonymized text, a separator line "
+        "and your instruction. Names and identifiers are replaced by tokens."
     ),
     "restore.send.literal_tokens": (
         "The input text already contains token-like strings. Check the restored text: they may"
         " be confused with the tokens created by HuisClos."
     ),
     "restore.send.leaves": (
-        "What leaves your computer: only the text above. The mapping table stays here."
+        "What leaves your computer: only the checked message above. The mapping table stays here."
     ),
     "restore.send.check": (
         "Read the text once more before sending it. A value that was not masked leaves your "
@@ -33,19 +33,16 @@ EN: dict[str, str] = {
     "restore.send.counts.type": "Type",
     "restore.send.counts.tokens": "Tokens",
     "restore.send.counts.occurrences": "Occurrences",
-    "restore.send.instruction.heading": "Recommended instruction",
     "restore.send.instruction.help": (
-        "Paste one of these lines with the text, so that the AI tool keeps the tokens unchanged."
+        "You may refer to tokens of this text, written exactly. A token that is not in the "
+        "mapping table is reported. Use fictitious data only."
     ),
-    "restore.send.instruction.fr.label": "In French",
     "restore.send.instruction.fr": (
-        "Conserve exactement chaque jeton entre crochets, par exemple [PERSONNE_1], sans le "
-        "modifier ni le traduire, et n'en invente aucun."
+        "Conserve exactement chaque jeton entre crochets, sans le modifier ni le traduire, et "
+        "n'en invente aucun."
     ),
-    "restore.send.instruction.en.label": "In English",
     "restore.send.instruction.en": (
-        "Keep every bracketed token exactly as written, for example [PERSON_1]; do not change,"
-        " translate or invent tokens."
+        "Keep every bracketed token exactly as written; do not change, translate or invent tokens."
     ),
     "restore.answer.heading": "Restore the AI answer",
     "restore.answer.label": "Answer from the AI tool",
@@ -60,8 +57,7 @@ EN: dict[str, str] = {
         " them. Read them before using the answer."
     ),
     "restore.hover": "{kind}, real value from the mapping table",
-    "restore.send.copy": "Use the copy button at the top right of the text.",
-    "restore.download.group.pseudonymized": "Pseudonymized text",
+    "restore.send.copy": "Use the copy button at the top right of the message.",
     "restore.download.group.restored": "Restored answer",
     "restore.download.mapping.heading": "Mapping table",
     "restore.mode.exact": (
@@ -105,8 +101,6 @@ EN: dict[str, str] = {
         ".mapping.json file exactly as HuisClos saved it."
     ),
     "restore.download.heading": "Download",
-    "restore.download.pseudonymized_txt": "Pseudonymized text (.txt)",
-    "restore.download.pseudonymized_docx": "Pseudonymized text (.docx)",
     "restore.download.restored_txt": "Restored text (.txt)",
     "restore.download.restored_docx": "Restored text (.docx)",
     "restore.download.restored_wait": "Restore an answer first to download the restored text.",
@@ -115,7 +109,6 @@ EN: dict[str, str] = {
         "Sensitive file: it links tokens to real identities. Keep it on this computer. Never "
         "send it to an AI tool."
     ),
-    "restore.docx.title.pseudonymized": "Pseudonymized text",
     "restore.docx.title.restored": "Restored text",
     "restore.new.button": "Start a new document",
     "restore.new.note": (
@@ -129,6 +122,27 @@ EN: dict[str, str] = {
     ),
     "restore.new.yes": "Yes, start a new document",
     "restore.new.cancel": "Cancel",
+    "restore.send.instruction.label": "Your instruction (sent after the text, checked with it)",
+    "restore.send.copy.scope": (
+        "This is exactly the content checked above. HuisClos cannot check a copy that you "
+        "change outside the application."
+    ),
+    "restore.send.not_ready.alerts": (
+        "Not ready to send: alerts of the final check are not resolved. Copy and download are "
+        "disabled."
+    ),
+    "restore.send.not_ready.unavailable": (
+        "Not ready to send: the final check could not run. Copy and download are disabled."
+    ),
+    "restore.send.not_ready.stale": (
+        "Not ready to send: this text no longer matches the current settings or decisions."
+    ),
+    "restore.send.not_ready.not_run": "Not ready to send: the final check has not run yet.",
+    "restore.download.group.message": "Checked message",
+    "restore.download.message_txt": "Checked message (.txt)",
+    "restore.download.message_docx": "Checked message (.docx)",
+    "restore.download.message_wait": "Available once the final check allows it.",
+    "restore.docx.title.message": "Message for the AI tool",
 }
 
 FR: dict[str, str] = {
@@ -141,15 +155,16 @@ FR: dict[str, str] = {
     "restore.back_review": "Retour à Vérifier",
     "restore.send.heading": "Envoyer à votre outil d'IA",
     "restore.send.intro": (
-        "Copiez ce texte dans l'outil d'IA de votre choix. Les noms et identifiants sont "
-        "remplacés par des jetons comme `[PERSONNE_1]`."
+        "Le message ci-dessous est ce que vous copiez ou envoyez : le texte pseudonymisé, une "
+        "ligne de séparation et votre consigne. Les noms et identifiants sont remplacés par "
+        "des jetons."
     ),
     "restore.send.literal_tokens": (
         "Le texte d'origine contient déjà des chaînes ressemblant à des jetons. Vérifiez le "
         "texte restauré : elles peuvent être confondues avec les jetons créés par HuisClos."
     ),
     "restore.send.leaves": (
-        "Ce qui quitte votre ordinateur : uniquement le texte ci-dessus. La table de "
+        "Ce qui quitte votre ordinateur : uniquement le message contrôlé ci-dessus. La table de "
         "correspondance reste ici."
     ),
     "restore.send.check": (
@@ -160,19 +175,16 @@ FR: dict[str, str] = {
     "restore.send.counts.type": "Type",
     "restore.send.counts.tokens": "Jetons",
     "restore.send.counts.occurrences": "Occurrences",
-    "restore.send.instruction.heading": "Consigne recommandée",
     "restore.send.instruction.help": (
-        "Collez une de ces consignes avec le texte pour que l'outil d'IA conserve les jetons."
+        "Vous pouvez citer les jetons de ce texte, écrits exactement. Un jeton absent de la "
+        "table de correspondance est signalé. Utilisez uniquement des données fictives."
     ),
-    "restore.send.instruction.fr.label": "En français",
     "restore.send.instruction.fr": (
-        "Conserve exactement chaque jeton entre crochets, par exemple [PERSONNE_1], sans le "
-        "modifier ni le traduire, et n'en invente aucun."
+        "Conserve exactement chaque jeton entre crochets, sans le modifier ni le traduire, et "
+        "n'en invente aucun."
     ),
-    "restore.send.instruction.en.label": "En anglais",
     "restore.send.instruction.en": (
-        "Keep every bracketed token exactly as written, for example [PERSON_1]; do not change,"
-        " translate or invent tokens."
+        "Keep every bracketed token exactly as written; do not change, translate or invent tokens."
     ),
     "restore.answer.heading": "Restaurer la réponse de l'IA",
     "restore.answer.label": "Réponse de l'outil d'IA",
@@ -187,8 +199,7 @@ FR: dict[str, str] = {
         " à côté. Relisez-les avant d'utiliser la réponse."
     ),
     "restore.hover": "{kind}, vraie valeur de la table de correspondance",
-    "restore.send.copy": "Utilisez le bouton de copie en haut à droite du texte.",
-    "restore.download.group.pseudonymized": "Texte pseudonymisé",
+    "restore.send.copy": "Utilisez le bouton de copie en haut à droite du message.",
     "restore.download.group.restored": "Réponse restaurée",
     "restore.download.mapping.heading": "Table de correspondance",
     "restore.mode.exact": (
@@ -233,8 +244,6 @@ FR: dict[str, str] = {
         " le fichier .mapping.json tel que HuisClos l'a enregistré."
     ),
     "restore.download.heading": "Télécharger",
-    "restore.download.pseudonymized_txt": "Texte pseudonymisé (.txt)",
-    "restore.download.pseudonymized_docx": "Texte pseudonymisé (.docx)",
     "restore.download.restored_txt": "Texte restauré (.txt)",
     "restore.download.restored_docx": "Texte restauré (.docx)",
     "restore.download.restored_wait": (
@@ -245,7 +254,6 @@ FR: dict[str, str] = {
         "Fichier sensible : il relie les jetons aux identités réelles. Conservez-le sur cet "
         "ordinateur. Ne l'envoyez jamais à un outil d'IA."
     ),
-    "restore.docx.title.pseudonymized": "Texte pseudonymisé",
     "restore.docx.title.restored": "Texte restauré",
     "restore.new.button": "Commencer un nouveau document",
     "restore.new.note": (
@@ -259,4 +267,26 @@ FR: dict[str, str] = {
     ),
     "restore.new.yes": "Oui, commencer un nouveau document",
     "restore.new.cancel": "Annuler",
+    "restore.send.instruction.label": "Votre consigne (envoyée après le texte, contrôlée avec lui)",
+    "restore.send.copy.scope": (
+        "C'est exactement le contenu contrôlé ci-dessus. HuisClos ne peut pas contrôler une "
+        "copie que vous modifiez hors de l'application."
+    ),
+    "restore.send.not_ready.alerts": (
+        "Pas prêt à l'envoi : des alertes du contrôle final ne sont pas traitées. La copie et "
+        "le téléchargement sont désactivés."
+    ),
+    "restore.send.not_ready.unavailable": (
+        "Pas prêt à l'envoi : le contrôle final n'a pas pu être fait. La copie et le "
+        "téléchargement sont désactivés."
+    ),
+    "restore.send.not_ready.stale": (
+        "Pas prêt à l'envoi : ce texte ne correspond plus aux réglages ou aux décisions actuels."
+    ),
+    "restore.send.not_ready.not_run": "Pas prêt à l'envoi : le contrôle final n'a pas eu lieu.",
+    "restore.download.group.message": "Message contrôlé",
+    "restore.download.message_txt": "Message contrôlé (.txt)",
+    "restore.download.message_docx": "Message contrôlé (.docx)",
+    "restore.download.message_wait": "Disponible dès que le contrôle final le permet.",
+    "restore.docx.title.message": "Message pour l'outil d'IA",
 }

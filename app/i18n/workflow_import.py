@@ -100,9 +100,33 @@ EN: dict[str, str] = {
     "import.error.pdf_invalid": "This PDF cannot be read. Export it again from its source.",
     "import.error.sample_missing": "The sample case file is missing from this installation.",
     "import.error.engine": (
-        "The detection engine could not start. Check that the French language model is "
-        "installed (see the user guide)."
+        "The detection engine could not start. Check that the language model of the document "
+        "language is installed (see the user guide)."
     ),
+    "import.error.model.dependency": (
+        "Enhanced detection needs the optional local packages (requirements-transformers.txt). "
+        "Nothing was downloaded. Choose Standard or install the option."
+    ),
+    "import.error.model.missing": (
+        "The validated CamemBERT model is not in the local cache. Nothing was downloaded. "
+        "Choose Standard or install the model as described in docs/LOCAL_MODELS.md."
+    ),
+    "import.error.model.revision": (
+        "The local CamemBERT model is not the validated revision. Nothing was downloaded. "
+        "Choose Standard or restore the validated revision."
+    ),
+    "import.error.model.public_demo": (
+        "Enhanced detection is not available on the public demo. Choose Standard."
+    ),
+    "import.stale": (
+        "The text, the document language, the detection profile, the types, the threshold or "
+        "the case table changed since the last detection. Run the detection again: your "
+        "earlier review and final check no longer apply."
+    ),
+    "import.sample.language": (
+        "The sample case is a French document: the document language is now French."
+    ),
+    "import.detects.profile": "Document language: {language}. Detection profile: {profile}.",
     "import.warning.encoding_cp1252": (
         "This file is not in UTF-8. It was read as Windows-1252, so check the accented letters."
     ),
@@ -253,9 +277,36 @@ FR: dict[str, str] = {
     "import.error.pdf_invalid": "Ce PDF est illisible. Exportez-le à nouveau depuis sa source.",
     "import.error.sample_missing": "Le fichier du cas d'exemple manque dans cette installation.",
     "import.error.engine": (
-        "Le moteur de détection n'a pas pu démarrer. Vérifiez que le modèle de langue "
-        "française est installé (voir le guide utilisateur)."
+        "Le moteur de détection n'a pas pu démarrer. Vérifiez que le modèle de la langue du "
+        "document est installé (voir le guide utilisateur)."
     ),
+    "import.error.model.dependency": (
+        "La détection renforcée exige les paquets locaux facultatifs "
+        "(requirements-transformers.txt). Rien n'a été téléchargé. Choisissez Standard ou "
+        "installez l'option."
+    ),
+    "import.error.model.missing": (
+        "Le modèle CamemBERT validé manque dans le cache local. Rien n'a été téléchargé. "
+        "Choisissez Standard ou installez le modèle comme l'indique docs/LOCAL_MODELS.md."
+    ),
+    "import.error.model.revision": (
+        "Le modèle CamemBERT local n'est pas la révision validée. Rien n'a été téléchargé. "
+        "Choisissez Standard ou rétablissez la révision validée."
+    ),
+    "import.error.model.public_demo": (
+        "La détection renforcée n'est pas disponible sur la démonstration publique. "
+        "Choisissez Standard."
+    ),
+    "import.stale": (
+        "Le texte, la langue du document, le profil, les types, le seuil ou la table de "
+        "dossier ont changé depuis la dernière détection. Relancez la détection : la revue et "
+        "le contrôle final précédents ne valent plus."
+    ),
+    "import.sample.language": (
+        "Le cas d'exemple est un document français : la langue du document est maintenant le "
+        "français."
+    ),
+    "import.detects.profile": "Langue du document : {language}. Profil de détection : {profile}.",
     "import.warning.encoding_cp1252": (
         "Ce fichier n'est pas en UTF-8. Il a été lu en Windows-1252 ; vérifiez les lettres "
         "accentuées."

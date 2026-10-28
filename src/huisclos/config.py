@@ -87,3 +87,54 @@ PRESETS: dict[str, DetectionConfig] = {
     "hybrid": _HYBRID,
     "hybrid_camembert": replace(_HYBRID, use_camembert=True),
 }
+
+# Profils de l'interface (D-AF-A3-1) : Standard reprend hybrid, Enhanced y ajoute le
+# CamemBERT local, pour les seuls documents français tant que A4 n'a rien intégré d'autre.
+PROFILE_STANDARD = "standard"
+PROFILE_ENHANCED = "enhanced"
+PROFILES = (PROFILE_STANDARD, PROFILE_ENHANCED)
+PROFILE_LANGUAGES: dict[str, tuple[str, ...]] = {
+    PROFILE_STANDARD: ("fr", "en"),
+    PROFILE_ENHANCED: ("fr",),
+}
+
+# Modèle CamemBERT validé en A1 (docs/LOCAL_MODELS.md) : dépôt et révision figée. Le cache
+# local doit résoudre cette révision ; une autre révision est refusée, jamais téléchargée.
+CAMEMBERT_REPO = "Jean-Baptiste/camembert-ner"
+CAMEMBERT_REVISION = "ef35fe7767c1dad71f5c853838cdd80d0b3441ed"
+
+
+def profile_unavailable(profile: str, document_language: str, public_demo: bool) -> str | None:
+    """Dit pourquoi un profil ne peut pas servir, ou renvoie None s'il le peut.
+
+    Paramètres : profile, standard ou enhanced ; document_language, fr ou en ; public_demo,
+    vrai sur la démonstration publique, où le modèle lourd est interdit (D-14).
+    Valeur retournée : "unknown", "public_demo", "language" ou None.
+    Exemple : profile_unavailable("enhanced", "en", False) == "language".
+    """
+    if profile not in PROFILES:
+        return "unknown"
+    if profile == PROFILE_ENHANCED and public_demo:
+        return "public_demo"
+    if check_language(document_language) not in PROFILE_LANGUAGES[profile]:
+        return "language"
+    return None
+
+
+def profile_config(
+    profile: str, document_language: str, public_demo: bool = False
+) -> DetectionConfig:
+    """Construit la configuration d'un profil pour une langue de document.
+
+    Paramètres : profile, standard ou enhanced ; document_language, fr ou en ; public_demo,
+    vrai sur la démonstration publique.
+    Valeur retournée : hybrid dans la langue du document, avec CamemBERT pour Enhanced. Lève
+    ValueError si le profil n'est pas disponible : aucun repli silencieux vers un autre profil.
+    """
+    reason = profile_unavailable(profile, document_language, public_demo)
+    if reason is not None:
+        raise ValueError(f"profil {profile!r} indisponible pour {document_language} : {reason}")
+    # Le modèle spaCy par défaut suit la langue du document (D-AF-A2-1).
+    return replace(
+        _HYBRID, use_camembert=profile == PROFILE_ENHANCED, document_language=document_language
+    )

@@ -11,11 +11,13 @@ from dataclasses import dataclass, replace
 
 import streamlit as st
 
+from app.fingerprints import pseudonymization_basis
 from app.state import (
     KEY_CASE_TABLE,
     KEY_DETECTIONS,
     KEY_GROUP_DECISIONS,
     KEY_MANUAL_ENTITIES,
+    KEY_PSEUDO_BASIS,
     KEY_SOURCE_TEXT,
     KEY_TOKEN_STYLE,
 )
@@ -106,10 +108,14 @@ def pseudonymize_session() -> PseudonymizationResult:
     """Pseudonymise les mentions masquées du texte de la session.
 
     Le style de jetons de la barre latérale s'applique, sauf si une table de dossier est
-    chargée : ses jetons et son style sont repris (D-S24-2).
+    chargée : ses jetons et son style sont repris (D-S24-2). La base du résultat (empreintes
+    de la détection et des décisions) est gardée : Restore refuse un contrôle ou un envoi
+    vérifié si l'une d'elles a changé depuis (D-AF-A3-2).
     Valeur retournée : le résultat. Lève ValueError si les détections sont incohérentes.
     """
     style = TokenStyle(language=st.session_state[KEY_TOKEN_STYLE])
     masked = [d for d in current_detections() if is_masked(d)]
     known = st.session_state.get(KEY_CASE_TABLE)
-    return pseudonymize(st.session_state[KEY_SOURCE_TEXT], masked, style, known=known)
+    result = pseudonymize(st.session_state[KEY_SOURCE_TEXT], masked, style, known=known)
+    st.session_state[KEY_PSEUDO_BASIS] = pseudonymization_basis()
+    return result

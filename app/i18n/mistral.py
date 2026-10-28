@@ -11,10 +11,16 @@ EN: dict[str, str] = {
         "On Mistral's free Experiment plan, requests may be used to train Mistral's models. "
         "Use fictitious data only."
     ),
-    "mistral.instruction": (
-        "Your instruction (sent after the pseudonymized text; use fictitious data only)"
+    "mistral.content": (
+        "Sends exactly the checked message shown above: the pseudonymized text, the separator "
+        "line and your instruction. Never the mapping table."
     ),
-    "mistral.confirm": "I confirm that only the pseudonymized text above will be sent",
+    "mistral.not_ready": "Sending is possible once the final check allows it.",
+    "mistral.refused": (
+        "Nothing was sent: confirm the exact message first. If the message or its settings "
+        "changed since your confirmation, check it and confirm again."
+    ),
+    "mistral.confirm": "I confirm sending exactly the checked message above",
     "mistral.send": "Send to Mistral",
     "mistral.spinner": "Waiting for Mistral's answer...",
     "mistral.error.unauthorized": "Mistral refused the API key (401). Check the configured key.",
@@ -32,10 +38,16 @@ FR: dict[str, str] = {
         "Avec l'offre gratuite Experiment de Mistral, les requêtes peuvent servir à entraîner "
         "ses modèles. Utilisez uniquement des données fictives."
     ),
-    "mistral.instruction": (
-        "Votre consigne (envoyée après le texte pseudonymisé ; données fictives uniquement)"
+    "mistral.content": (
+        "Envoie exactement le message contrôlé affiché plus haut : le texte pseudonymisé, la "
+        "ligne de séparation et votre consigne. Jamais la table de correspondance."
     ),
-    "mistral.confirm": "Je confirme que seul le texte pseudonymisé ci-dessus sera envoyé",
+    "mistral.not_ready": "L'envoi devient possible dès que le contrôle final le permet.",
+    "mistral.refused": (
+        "Rien n'a été envoyé : confirmez d'abord le message exact. Si le message ou ses "
+        "réglages ont changé depuis votre confirmation, vérifiez-le et confirmez à nouveau."
+    ),
+    "mistral.confirm": "Je confirme l'envoi exact du message contrôlé ci-dessus",
     "mistral.send": "Envoyer à Mistral",
     "mistral.spinner": "En attente de la réponse de Mistral...",
     "mistral.error.unauthorized": "Mistral a refusé la clé API (401). Vérifiez la clé configurée.",
