@@ -14,6 +14,13 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 21:50 | FIX5 | Logo, en-tête d'accueil et levée de deux réserves de R8 | Claude Code, Opus 5.5
+- Fait : logo app/assets/logo.svg (porte fermée et trou de serrure, couleurs de la charte), icône d'onglet, st.logo et en-tête ; en-tête d'accueil (logo, nom, accroche, description EN/FR) à l'étape Import de la première page, en-tête compact ailleurs. Page Evaluation : phrase "pending G8" remplacée. Contrôle de la consigne : verbe de consigne seul en tête de phrase vu comme un nom par un modèle écarté ("Summarise") ; CHECK_VERSION outbound-2. Feuille de style sans lignes vides pour rester sous 400 lignes. Guide utilisateur complété.
+- Tests : nouveaux tests du filtre (cas pièges : règle, table, hors tête de phrase, nom plus long, détection anglaise réelle) et de l'en-tête (logo local, accueil puis en-tête compact). Suite complète sous garde FIX3R, Ruff check/format, style et diff conformes. Rendu vérifié en local par capture Edge headless (bureau et 390 px), serveur arrêté.
+- Décisions : D-FIX5-1.
+- Reste et risques : liste de verbes fermée (un verbe absent garde la fausse alerte, tranchée par l'humain) ; limite D-FIX3-2 inchangée ; commit non publié, main et gate-8 sur 7e0b899.
+- Suite : S61, script et storyboard ; publication de FIX5 seulement par une recette autorisée.
+
 ### 2026-10-28 21:30 | R8 | Recette et publication du périmètre validé après G8R2 | Claude Code, Opus 5.5
 - Fait : HEAD initial 930c414 propre, commit G8R2 a838b05 fusionné en avance rapide, HEAD égal. README et USER_GUIDE alignés sur D-G8R2-1 : collision texte/nom de fichier corrigée, FIX4 recontrôlé et FIX3R-01 clos, reprise unique du challenge, quatre critères FR remplis, G8 test/C3 historiques, réserves EN explicites, limite D-FIX3-2. Recette AppTest results/recette8/test_recette.py : quatre documents fictifs nouveaux, Standard FR/EN et Enhanced FR/EN locaux, langue UI distincte, revue, ajout manuel, consigne plantée puis corrigée, révocations, envoi simulé, restauration exacte, jeton inconnu, second document et jeton stable.
 - Tests : 1749 passed sous garde FIX3R, zéro ouverture réservée refusée ; recette 7 passed ; Ruff check/format, style (0 erreur, 15 avertissements connus) et diff conformes. Journaux et rapport dans results/recette8/.

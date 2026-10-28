@@ -6,6 +6,7 @@ dictionnaire ENTITY_STYLES (couleur et libellé de chaque type d'entité).
 Place dans le pipeline : couche d'affichage partagée par les trois étapes.
 """
 
+import base64
 import html
 import os
 import re
@@ -20,6 +21,7 @@ from app.state import STEPS, is_step_available
 from huisclos.models import EntityType
 
 STYLE_PATH = Path(__file__).resolve().parent / "assets" / "style.css"
+LOGO_PATH = Path(__file__).resolve().parent / "assets" / "logo.svg"
 DEMO_VARIABLE = "HUISCLOS_PUBLIC_DEMO"
 
 
@@ -113,23 +115,21 @@ def is_public_demo() -> bool:
     return str(value).strip().lower() == "true"
 
 
-def render_header() -> None:
-    """Affiche le bandeau de démo éventuel puis l'en-tête de marque compact.
+def render_header(hero: bool = False) -> None:
+    """Affiche le bandeau de démo éventuel puis l'en-tête de marque.
 
-    À gauche, le nom et l'accroche ; à droite, la pastille "Local processing" (icône de
-    cadenas) et la mention juridique. La pastille rappelle la garantie principale de l'outil
-    sur chaque page.
+    À gauche, le logo, le nom et l'accroche ; à droite, la pastille "Local processing" (icône
+    de cadenas) et la mention juridique. La pastille rappelle la garantie principale de l'outil
+    sur chaque page. Avec hero, l'en-tête d'accueil agrandit le logo et ajoute la description
+    de l'outil ; streamlit_app.py le demande seulement à l'étape Import de la première page.
     """
     demo = is_public_demo()
     if demo:
         st.warning(t("demo.banner"), icon=":material/science:")
     with st.container(key="hc-header", horizontal=True, vertical_alignment="center"):
-        # Un seul bloc HTML pour le nom et l'accroche : deux composants empilés dans une
-        # rangée se chevauchent, car Streamlit réserve à un titre moins que sa hauteur.
-        st.html(
-            f'<div class="hc-brand"><h1 class="hc-wordmark">{html.escape(t("app.title"))}</h1>'
-            f'<p class="hc-tagline">{html.escape(t("app.tagline"))}</p></div>'
-        )
+        # Un seul bloc HTML pour le logo, le nom et l'accroche : deux composants empilés dans
+        # une rangée se chevauchent, car Streamlit réserve à un titre moins que sa hauteur.
+        st.html(_brand_html(hero))
         with st.container(key="hc-trust", width="content", horizontal_alignment="right"):
             # Sur la démonstration publique, le texte est traité sur un serveur distant :
             # la pastille ne doit pas promettre un traitement local.
@@ -138,6 +138,25 @@ def render_header() -> None:
             else:
                 st.badge(t("app.local_badge"), icon=":material/lock:", color="primary")
             st.caption(t("app.legal_note"))
+
+
+def _brand_html(hero: bool) -> str:
+    """Bloc de marque : logo décoratif (le nom est écrit à côté), nom, accroche et description.
+
+    Le logo vient de app/assets/logo.svg, intégré en image data: : st.html retire le SVG
+    écrit en ligne, et aucune ressource externe n'est chargée.
+    """
+    description = (
+        f'<p class="hc-description">{html.escape(t("app.description"))}</p>' if hero else ""
+    )
+    logo = base64.b64encode(LOGO_PATH.read_bytes()).decode("ascii")
+    brand = (
+        f'<div class="hc-brand"><img class="hc-logo" src="data:image/svg+xml;base64,{logo}" '
+        f'alt="">'
+        f'<div class="hc-brand-text"><h1 class="hc-wordmark">{html.escape(t("app.title"))}</h1>'
+        f'<p class="hc-tagline">{html.escape(t("app.tagline"))}</p>{description}</div></div>'
+    )
+    return f'<div class="hc-hero">{brand}</div>' if hero else brand
 
 
 def render_steps(current: str) -> None:

@@ -126,3 +126,39 @@ def test_rendered_pages_contain_no_external_resource() -> None:
     assert any('class="hc-stepper"' in block for block in seen)
     offences = [block[:80] for block in seen if EXTERNAL.search(block)]
     assert offences == []
+
+
+def brand_block(app: AppTest) -> str:
+    """Renvoie le bloc HTML de marque (logo, nom, accroche) de la page affichée."""
+    return next(b.value for b in app.get("html") if 'class="hc-brand"' in b.value)
+
+
+def test_logo_is_local_and_uses_the_palette() -> None:
+    logo = (ROOT / "app" / "assets" / "logo.svg").read_text(encoding="utf-8")
+    assert logo.startswith("<svg ")
+    # L'espace de noms SVG est un identifiant exigé dans une image, pas une ressource chargée.
+    assert not EXTERNAL.search(logo.replace('xmlns="http://www.w3.org/2000/svg"', ""))
+    assert "<script" not in logo.lower()
+    assert {f"#{value}".upper() for value in re.findall(r'fill="#(\w{6})"', logo)} <= {
+        TOKENS["primary"].upper(),
+        TOKENS["accent"].upper(),
+        "#FFFFFF",
+    }
+
+
+def test_first_page_shows_logo_name_and_description_then_a_compact_header() -> None:
+    app = AppTest.from_file(APP_PATH, default_timeout=120).run()
+    assert not app.exception
+    hero = brand_block(app)
+    assert hero.startswith('<div class="hc-hero">')
+    assert '<img class="hc-logo" src="data:image/svg+xml;base64,' in hero
+    assert 'alt="">' in hero
+    assert '<h1 class="hc-wordmark">HuisClos</h1>' in hero
+    assert i18n.t("app.description") in hero
+    app.button(key="load_sample").click().run()
+    app.button(key="detect").click().run()
+    review = brand_block(app)
+    assert "hc-hero" not in review and "hc-description" not in review
+    assert '<img class="hc-logo"' in review
+    app.switch_page("app/pages/method.py").run()
+    assert "hc-description" not in brand_block(app)

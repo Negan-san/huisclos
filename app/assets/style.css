@@ -106,6 +106,41 @@ textarea:focus-visible,
     line-height: 1.25;
     letter-spacing: -0.01em;
 }
+/* Logo : carré bleu marine, porte fermée et trou de serrure (app/assets/logo.svg). Il est
+   décoratif à côté du nom écrit ; l'en-tête d'accueil l'agrandit et ajoute la description. */
+.hc-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--hc-space-3);
+}
+.hc-logo {
+    display: block;
+    flex: none;
+    width: 36px;
+    height: 36px;
+}
+.hc-hero .hc-brand {
+    align-items: flex-start;
+    gap: var(--hc-space-4);
+}
+.hc-hero .hc-logo {
+    width: 64px;
+    height: 64px;
+}
+.st-key-hc-header .hc-hero h1.hc-wordmark {
+    font-size: 1.75rem;
+}
+.hc-hero .hc-tagline {
+    color: var(--hc-ink);
+    font-size: var(--hc-text-base);
+}
+.hc-description {
+    max-width: 68ch;
+    margin: var(--hc-space-2) 0 0;
+    color: var(--hc-muted);
+    font-size: var(--hc-text-sm);
+    line-height: 1.5;
+}
 .hc-tagline {
     margin: var(--hc-space-1) 0 0;
     color: var(--hc-muted);
@@ -115,17 +150,14 @@ textarea:focus-visible,
 .st-key-hc-trust [data-testid="stMarkdownContainer"] p {
     margin: 0;
 }
-
 .st-key-hc-trust {
     align-items: flex-end;
 }
-
 .st-key-hc-trust [data-testid="stCaptionContainer"] p {
     color: var(--hc-muted);
     font-size: var(--hc-text-xs);
     text-align: right;
 }
-
 /* Titres de section : surtitre en petites capitales pour les groupes de réglages. */
 .hc-overline {
     margin: var(--hc-space-4) 0 var(--hc-space-1);
@@ -135,18 +167,15 @@ textarea:focus-visible,
     letter-spacing: 0.06em;
     text-transform: uppercase;
 }
-
 /* Barre latérale : fond blanc, pastilles de types adoucies. */
 [data-testid="stMultiSelectTagsContainer"] [data-tag] {
     background-color: var(--hc-primary-soft) !important;
     color: var(--hc-primary) !important;
 }
-
 [data-testid="stMultiSelectTagsContainer"] [data-tag] span,
 [data-testid="stMultiSelectTagsContainer"] [data-tag] button {
     color: var(--hc-primary) !important;
 }
-
 /* Indicateur d'étapes horizontal : pastille numérotée, nom, état écrit. La couleur n'est
    jamais seule : chaque étape dit en toutes lettres si elle est faite, courante ou
    verrouillée, et pourquoi. */
@@ -162,7 +191,6 @@ textarea:focus-visible,
     border-radius: var(--hc-radius-lg);
     box-shadow: var(--hc-shadow-sm);
 }
-
 .hc-step {
     display: flex;
     flex: 1 1 0;
@@ -172,11 +200,9 @@ textarea:focus-visible,
     margin: 0;
     padding: 0;
 }
-
 .hc-step:last-child {
     flex: 0 1 auto;
 }
-
 /* Trait de liaison entre deux étapes, à la hauteur du centre des pastilles. */
 .hc-step:not(:last-child)::after {
     content: "";
@@ -186,11 +212,9 @@ textarea:focus-visible,
     margin-top: 16px;
     background: var(--hc-border);
 }
-
 .hc-step-done:not(:last-child)::after {
     background: var(--hc-primary);
 }
-
 .hc-step-dot {
     display: inline-flex;
     flex: 0 0 auto;
@@ -207,24 +231,20 @@ textarea:focus-visible,
     font-weight: 700;
     box-sizing: border-box;
 }
-
 .hc-step-current .hc-step-dot {
     border-color: var(--hc-primary);
     background: var(--hc-primary);
     color: var(--hc-card);
     box-shadow: 0 0 0 4px var(--hc-primary-soft);
 }
-
 .hc-step-available .hc-step-dot {
     border-color: var(--hc-primary);
     color: var(--hc-primary);
 }
-
 .hc-step-done .hc-step-dot {
     border-color: var(--hc-primary);
     background: var(--hc-primary-soft);
 }
-
 /* Coche dessinée en CSS : aucune police d'icônes ni caractère spécial. */
 .hc-step-done .hc-step-dot::after {
     content: "";
@@ -234,45 +254,37 @@ textarea:focus-visible,
     border-width: 0 2px 2px 0;
     transform: translateY(-2px) rotate(45deg);
 }
-
 .hc-step-locked .hc-step-dot {
     border-style: dashed;
     background: var(--hc-surface);
 }
-
 .hc-step-text {
     display: flex;
     flex-direction: column;
     min-width: 0;
     max-width: 240px;
 }
-
 .hc-step-name {
     color: var(--hc-ink);
     font-weight: 600;
     line-height: 32px;
 }
-
 .hc-step-current .hc-step-name {
     color: var(--hc-primary);
     font-weight: 700;
 }
-
 .hc-step-locked .hc-step-name {
     color: var(--hc-muted);
 }
-
 .hc-step-note {
     color: var(--hc-muted);
     font-size: var(--hc-text-xs);
     line-height: 1.4;
 }
-
 .hc-step-current .hc-step-note {
     color: var(--hc-primary);
     font-weight: 600;
 }
-
 /* Cartes : fond blanc, bordure fine, ombre légère. Toute clé qui commence par hc-card
    reçoit ce style. */
 [class*="st-key-hc-card"] {
@@ -282,13 +294,11 @@ textarea:focus-visible,
     border-radius: var(--hc-radius-lg);
     box-shadow: var(--hc-shadow-sm);
 }
-
 /* Titres de carte : plus petits que les titres de page, sans marge haute. */
 [class*="st-key-hc-card"] h3 {
     padding-top: 0;
     font-size: var(--hc-text-lg);
 }
-
 /* Texte surligné présenté comme une page de document : marges, interligne confortable. */
 .st-key-hc-document,
 .st-key-hc-document-restored {
@@ -297,42 +307,35 @@ textarea:focus-visible,
     border: 1px solid var(--hc-border);
     border-radius: var(--hc-radius);
 }
-
 /* Largeur de lecture limitée pour le texte courant de la page Method & limits. */
 .st-key-hc-reading {
     max-width: 72ch;
 }
-
 /* Indicateurs chiffrés en cartes, de même hauteur sur une rangée même quand un libellé
    traduit passe sur deux lignes. */
 .st-key-hc-metrics [data-testid="stHorizontalBlock"] {
     align-items: stretch;
 }
-
 .st-key-hc-metrics [data-testid="stColumn"] [data-testid="stVerticalBlock"],
 .st-key-hc-metrics [data-testid="stColumn"] [data-testid="stElementContainer"],
 .st-key-hc-metrics [data-testid="stMetric"] {
     height: 100%;
 }
-
 [data-testid="stMetric"] {
     background: var(--hc-card);
     border-color: var(--hc-border);
     box-shadow: var(--hc-shadow-sm);
 }
-
 [data-testid="stMetricLabel"] p {
     color: var(--hc-muted);
     font-size: var(--hc-text-sm);
     font-weight: 600;
     white-space: normal;
 }
-
 [data-testid="stMetricValue"] {
     color: var(--hc-ink);
     font-weight: 700;
 }
-
 /* Pastille de type d'entité : fond doux, pastille de la couleur franche, libellé écrit. */
 .hc-badge {
     display: inline-flex;
@@ -346,48 +349,43 @@ textarea:focus-visible,
     font-size: var(--hc-text-sm);
     line-height: 1.75;
 }
-
 .hc-swatch {
     display: inline-block;
     width: 8px;
     height: 8px;
     border-radius: var(--hc-radius-pill);
 }
-
 .hc-legend {
     margin: var(--hc-space-2) 0 var(--hc-space-4);
 }
-
 /* Écran étroit : les étapes s'empilent et l'en-tête passe sur deux lignes. */
 @media (max-width: 640px) {
+    .hc-hero .hc-logo {
+        width: 48px;
+        height: 48px;
+    }
     [data-testid="stHtml"] ol.hc-stepper {
         flex-direction: column;
         gap: var(--hc-space-3);
         padding: var(--hc-space-4);
     }
-
     .hc-step:not(:last-child)::after {
         display: none;
     }
-
     .hc-step-text {
         max-width: none;
     }
-
     /* Deux cartes d'indicateurs par ligne plutôt qu'une longue colonne. */
     .st-key-hc-metrics [data-testid="stHorizontalBlock"] {
         flex-flow: row wrap;
     }
-
     .st-key-hc-metrics [data-testid="stColumn"] {
         flex: 1 1 calc(50% - 16px) !important;
         min-width: calc(50% - 16px) !important;
     }
-
     [class*="st-key-hc-card"] {
         padding: var(--hc-space-4);
     }
-
     .st-key-hc-document,
     .st-key-hc-document-restored {
         padding: var(--hc-space-4);

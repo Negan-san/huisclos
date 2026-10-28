@@ -10,9 +10,10 @@ EN: dict[str, str] = {
     "evaluation.languages": (
         "All measures on this page are historical measures on French documents (gate "
         "G7 and earlier). Post-G7 dev comparisons, including English, are archived "
-        "separately and described in docs/LOCAL_MODELS.md; bilingual blind validation "
-        "is pending G8. Languages are never averaged together. The interface language "
-        "does not change any measure."
+        "separately and described in docs/LOCAL_MODELS.md. The historical G8 blind results "
+        "(code e3d13bd) and the single G8R2 resume of the French challenge are reported in "
+        "the README; English remains experimental. Languages are never averaged together. "
+        "The interface language does not change any measure."
     ),
     "evaluation.empty": (
         "No evaluation results are available. Add the precomputed evaluation files to the "
@@ -138,8 +139,9 @@ FR: dict[str, str] = {
         "Toutes les mesures de cette page sont des mesures historiques sur des "
         "documents fran\u00e7ais (gate G7 et avant). Les comparaisons dev apr\u00e8s G7, dont "
         "l'anglais, sont archiv\u00e9es s\u00e9par\u00e9ment et d\u00e9crites dans "
-        "docs/LOCAL_MODELS.md ; "
-        "la validation bilingue aveugle attend G8. Les langues ne sont jamais "
+        "docs/LOCAL_MODELS.md. Les r\u00e9sultats aveugles historiques de G8 (code "
+        "e3d13bd) et la reprise unique du challenge fran\u00e7ais G8R2 figurent dans le "
+        "README ; l'anglais reste exp\u00e9rimental. Les langues ne sont jamais "
         "moyenn\u00e9es ensemble. La langue de l'interface ne change aucune mesure."
     ),
     "evaluation.empty": (

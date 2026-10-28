@@ -25,6 +25,7 @@ from huisclos.pseudonymize.outbound_check import (
     document_alerts,
     instruction_alerts,
     known_token_spans,
+    leading_verb,
     may_send,
     send_fingerprint,
     token_like_spans,
@@ -96,6 +97,75 @@ def test_value_of_the_table_in_the_instruction_is_reported() -> None:
     message = compose(result.text, "Que pense Vernolac de la lettre ?")
     alerts = instruction_alerts(message, result, None)
     assert [(a.text, a.origin) for a in alerts] == [("Vernolac", "table")]
+
+
+def model_words(pattern: str):
+    """Fausse détection de modèle : chaque mot qui correspond au motif devient une personne."""
+
+    def run(text: str) -> list[Detection]:
+        return [
+            Detection(m.start(), m.end(), P, 0.85, Source.NER_SPACY, m.group())
+            for m in re.finditer(pattern, text)
+        ]
+
+    return run
+
+
+@pytest.mark.parametrize(
+    "instruction",
+    [
+        "Summarise this fictitious file in three points.",
+        "Read the letter. Draft a reply.",
+        "Tasks:\n- Translate the claim",
+        "Résume ce dossier.",
+    ],
+)
+def test_leading_instruction_verb_seen_as_a_name_is_not_reported(instruction: str) -> None:
+    result = result_of()
+    message = compose(result.text, instruction)
+    verbs = r"\b(?:Summarise|Draft|Translate|Résume)\b"
+    assert instruction_alerts(message, result, model_words(verbs)) == []
+
+
+@pytest.mark.parametrize(
+    ("instruction", "detect_text", "expected"),
+    [
+        # Une règle n'est jamais écartée, même sur un verbe de consigne.
+        ("Summarise the file.", words(r"Summarise"), ["Summarise"]),
+        # Hors tête de phrase, le mot reste signalé.
+        ("Please ask Draft about it.", model_words(r"Draft"), ["Draft"]),
+        # Un nom plus long que le verbe seul reste signalé.
+        ("Review Halverstoke now.", model_words(r"Review Halverstoke"), ["Review Halverstoke"]),
+        # Un mot hors de la liste reste signalé, même en tête de phrase.
+        ("Halverstoke wrote.", model_words(r"Halverstoke"), ["Halverstoke"]),
+    ],
+)
+def test_other_detections_stay_reported(instruction: str, detect_text, expected) -> None:
+    result = result_of()
+    message = compose(result.text, instruction)
+    assert [a.text for a in instruction_alerts(message, result, detect_text)] == expected
+
+
+def test_table_value_that_looks_like_a_verb_stays_reported() -> None:
+    text = "M. Draft écrit."
+    result = result_of(text, "Draft")
+    message = compose(result.text, "Draft a reply.")
+    assert [a.origin for a in instruction_alerts(message, result, model_words(r"Draft"))] == [
+        "table"
+    ]
+    detection = Detection(0, 5, P, 0.85, Source.NER_SPACY, "Draft")
+    assert leading_verb("Draft a reply.", detection)
+    assert not leading_verb("Draft a reply.", replace(detection, source=Source.PATTERN))
+
+
+def test_real_english_check_no_longer_reports_summarise() -> None:
+    english = replace(LOWERED, document_language="en")
+    result = result_of()
+    message = compose(result.text, "Summarise this fictitious file in three points.")
+    assert instruction_alerts(message, result, lambda text: detect(text, english)) == []
+    planted = compose(result.text, "Summarise the file of Dorian Halverstoke.")
+    alerts = instruction_alerts(planted, result, lambda text: detect(text, english))
+    assert [a.text for a in alerts] == ["Dorian Halverstoke"]
 
 
 def test_known_token_reused_in_the_instruction_raises_no_alert() -> None:

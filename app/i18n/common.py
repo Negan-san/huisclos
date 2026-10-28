@@ -9,6 +9,12 @@ EN: dict[str, str] = {
     "app.title": "HuisClos",
     "app.tagline": "Use generative AI on client files without breaching professional secrecy.",
     "app.legal_note": "Pseudonymization is not anonymization (GDPR art. 4(5), recital 26).",
+    "app.description": (
+        "HuisClos finds names, companies, addresses and identifiers in a French or English "
+        "legal document and replaces them with tokens before you send the text to a language "
+        "model. You review every detection. The correspondence table is never sent to the "
+        "model; it puts the real values back into the answer."
+    ),
     "app.local_badge": "Local processing",
     "app.demo_badge": "Public demo",
     "demo.banner": (
@@ -116,6 +122,13 @@ FR: dict[str, str] = {
     ),
     "app.legal_note": (
         "La pseudonymisation n'est pas une anonymisation (RGPD art. 4(5), considérant 26)."
+    ),
+    "app.description": (
+        "HuisClos repère les noms, sociétés, adresses et identifiants d'un "
+        "document juridique français ou anglais et les remplace par des jetons avant "
+        "l'envoi du texte à un modèle de langage. Vous validez chaque "
+        "détection. La table de correspondance n'est jamais envoyée au "
+        "modèle ; elle rétablit les vraies valeurs dans la réponse."
     ),
     "app.local_badge": "Traitement local",
     "app.demo_badge": "Démonstration publique",

@@ -17,17 +17,20 @@ for path in (ROOT, ROOT / "src"):
 
 from app.i18n import t  # noqa: E402  (le chemin d'import doit être complété avant)
 from app.sidebar import render_sidebar  # noqa: E402
-from app.state import init_state  # noqa: E402
-from app.ui_common import inject_style, render_header  # noqa: E402
+from app.state import KEY_STEP, STEP_IMPORT, init_state  # noqa: E402
+from app.ui_common import LOGO_PATH, inject_style, render_header  # noqa: E402
 
 
 def main() -> None:
     """Prépare la page puis exécute la page choisie dans la navigation.
 
     La navigation est placée en haut de page : la barre latérale ne garde que les réglages.
-    Sur un écran étroit, Streamlit replie lui-même ces liens dans un menu.
+    Sur un écran étroit, Streamlit replie lui-même ces liens dans un menu. Le logo local sert
+    d'icône d'onglet et s'affiche dans la barre de navigation ; l'en-tête d'accueil, avec la
+    description de l'outil, n'apparaît qu'à l'étape Import de la première page.
     """
-    st.set_page_config(page_title=t("app.title"), page_icon=":material/lock:", layout="wide")
+    st.set_page_config(page_title=t("app.title"), page_icon=str(LOGO_PATH), layout="wide")
+    st.logo(str(LOGO_PATH), size="medium")
     inject_style()
     init_state()
     pages = [
@@ -51,7 +54,7 @@ def main() -> None:
         ),
     ]
     navigation = st.navigation(pages, position="top")
-    render_header()
+    render_header(hero=navigation.url_path == "" and st.session_state[KEY_STEP] == STEP_IMPORT)
     render_sidebar()
     navigation.run()
 

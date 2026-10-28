@@ -29,11 +29,25 @@ DetectText = Callable[[str], Sequence[Detection]]
 
 # Version du vérificateur, comprise dans les empreintes : un changement de règle périme les
 # contrôles et les autorisations déjà donnés.
-CHECK_VERSION = "outbound-1"
+CHECK_VERSION = "outbound-2"
 # Séparateur explicite entre le texte et la consigne ; il fait partie de la chaîne vérifiée.
 SEPARATOR = "\n\n---\n\n"
 DOCUMENT = "document"
 INSTRUCTION = "instruction"
+# Verbes qui ouvrent souvent une consigne. À l'impératif en tête de phrase, un modèle les lit
+# parfois comme un prénom : spaCy anglais prend "Summarise" pour une personne (recette R8).
+INSTRUCTION_VERBS = frozenset(
+    """
+    summarise summarize draft write rewrite translate explain list review check compare
+    analyse analyze identify extract prepare propose suggest outline answer reply describe
+    correct proofread résume résumez rédige rédigez traduis traduisez explique expliquez
+    liste listez vérifie vérifiez compare comparez analyse analysez identifie identifiez
+    extrais extrayez prépare préparez propose proposez réponds répondez décris décrivez
+    corrige corrigez reformule reformulez relis relisez
+    """.split()
+)
+MODEL_SOURCES = frozenset({Source.NER_SPACY, Source.NER_CAMEMBERT, Source.NER_GLINER})
+_SENTENCE_ENDS = ".!?:;\n-"
 
 _LABEL_SEPARATOR = r"(?:\\?_|[ \u00a0-])"
 _LABELS = "|".join(
@@ -298,11 +312,26 @@ def instruction_alerts(
     ]
     candidates = [(d, "table") for d in mapping_residuals(result.mapping, neutral, text)]
     if detect_text is not None:
-        candidates += [(d, "detection") for d in detect_text(neutral)]
+        candidates += [(d, "detection") for d in detect_text(neutral) if not leading_verb(text, d)]
     covered = sorted([*known, *unknown])
     for detection, origin in candidates:
         found += [(piece, origin) for piece in outside_tokens(detection, covered, text)]
     return _alerts(message, INSTRUCTION, found)
+
+
+def leading_verb(text: str, detection: Detection) -> bool:
+    """Vrai pour un verbe de consigne seul en tête de phrase, lu à tort comme un nom par un modèle.
+
+    Seules les détections d'un modèle sont écartées : une règle, une valeur de la table ou un
+    mot plus long que le seul verbe restent signalés, par priorité au rappel.
+    Exemple : leading_verb("Summarise this file.", <"Summarise", ner_spacy>) est vrai.
+    """
+    if detection.source not in MODEL_SOURCES:
+        return False
+    if text[detection.start : detection.end].lower() not in INSTRUCTION_VERBS:
+        return False
+    before = text[: detection.start].rstrip(" \t\u00a0")
+    return not before or before[-1] in _SENTENCE_ENDS
 
 
 def check_status(alerts: Sequence[Alert], acknowledged: Collection[str]) -> CheckStatus:

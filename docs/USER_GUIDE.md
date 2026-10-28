@@ -239,7 +239,10 @@ a decision.
 
 Under **Check settings**, two options widen the check: **Also check the types turned off in
 the sidebar** (places, for example) and **Ignore the exclusion list during the check**. Both
-find more values and give more false alerts; neither masks anything. The second detection
+find more values and give more false alerts; neither masks anything. In the instruction, a
+common instruction verb alone at the start of a sentence ("Summarise", "Draft", "Résume")
+is not reported when only a language model reads it as a name; a value of the
+correspondence table or a rule match is always reported. The second detection
 uses the same engine as the first one: it is not an independent review, and a lower
 threshold cannot reveal a value that no model proposed. If the check cannot run, nothing is
 presented as checked; use **Run the check again**.
