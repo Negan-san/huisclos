@@ -48,7 +48,15 @@ def build_config() -> DetectionConfig:
 
 
 def _keep_available_language() -> None:
-    """Rappel du choix de langue : revient à l'anglais si la langue choisie n'existe pas."""
+    """Rappel du choix de langue : garde les réglages choisis, revient à l'anglais au besoin.
+
+    Le navigateur désigne les choix d'une liste par leur libellé affiché. Quand la langue
+    change, un libellé traduit ne correspond plus à aucune option et le choix serait perdu :
+    tous les types sauf IBAN, SIREN et SIRET, donc les noms laissés en clair. Réécrire ces
+    valeurs depuis le serveur les renvoie au navigateur avec les nouveaux libellés.
+    """
+    st.session_state[KEY_ENABLED_TYPES] = list(st.session_state[KEY_ENABLED_TYPES])
+    st.session_state[KEY_TOKEN_STYLE] = st.session_state[KEY_TOKEN_STYLE]
     if st.session_state[KEY_LANGUAGE] not in AVAILABLE_LANGUAGES:
         st.session_state[KEY_LANGUAGE] = AVAILABLE_LANGUAGES[0]
         st.session_state[KEY_LANGUAGE_NOTICE] = True

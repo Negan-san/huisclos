@@ -88,9 +88,12 @@ about ten minutes. After that, HuisClos works without internet.
 
 ## 3. The three steps
 
-The left column shows the pages (**Pseudonymize**, **Evaluation**, **Method & limits**) and
-the settings. The **Pseudonymize** page guides you through three steps: **Import**,
-**Review** and **Restore**. A step becomes available once the previous one is done.
+The bar at the top of the page shows the pages (**Pseudonymize**, **Evaluation**,
+**Method & limits**); on a narrow screen, they are in the menu of the left column. The left
+column holds the settings. The **Pseudonymize** page guides you through three steps:
+**Import**, **Review** and **Restore**, shown at the top of the page with their state
+(completed, current step, or the reason why a step is not available yet). A step becomes
+available once the previous one is done.
 
 ### Step 1: Import
 
@@ -109,9 +112,13 @@ scanned documents are refused.
 
 ![Review step: highlighted text](screenshots/02_review_highlight.png)
 
+Cards at the top count the entities, the masked and rejected occurrences, the types found
+and the **Low confidence** occurrences (score below 0.75), which deserve a check first.
+
 The **Highlighted text** shows every detection with a colour and a label such as PERSON,
-COMPANY or ADDRESS. The **Legend** explains the labels. Hover over a highlight to see its
-score and source.
+COMPANY or ADDRESS. The legend above the text explains the colours, and **By type** counts
+the masked and rejected occurrences of each type. Hover over a highlight to see its score
+and source.
 
 ![Review step: entity table](screenshots/03_review_table.png)
 
@@ -146,7 +153,9 @@ first step.
 
 ![Restore step: restored answer](screenshots/05_restore_result.png)
 
-The **Restored text** shows the answer with the real values. Read the messages above it:
+The **Restored text** shows the answer with the real values from the mapping table
+highlighted, each with its type written next to it; the tab **Plain text (copy)** gives the
+same text with a copy button. Read the messages below it:
 
 - **Exact mode** (you pasted the pseudonymized text itself): every value comes back as it was
   written.

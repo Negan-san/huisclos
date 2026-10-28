@@ -315,7 +315,18 @@ textarea:focus-visible,
     max-width: 72ch;
 }
 
-/* Indicateurs chiffrés en cartes. */
+/* Indicateurs chiffrés en cartes, de même hauteur sur une rangée même quand un libellé
+   traduit passe sur deux lignes. */
+.st-key-hc-metrics [data-testid="stHorizontalBlock"] {
+    align-items: stretch;
+}
+
+.st-key-hc-metrics [data-testid="stColumn"] [data-testid="stVerticalBlock"],
+.st-key-hc-metrics [data-testid="stColumn"] [data-testid="stElementContainer"],
+.st-key-hc-metrics [data-testid="stMetric"] {
+    height: 100%;
+}
+
 [data-testid="stMetric"] {
     background: var(--hc-card);
     border-color: var(--hc-border);

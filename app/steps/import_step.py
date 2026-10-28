@@ -13,7 +13,7 @@ from pathlib import Path
 import streamlit as st
 
 from app.engine import prepare_engine
-from app.i18n import t
+from app.i18n import current_language, t
 from app.sidebar import build_config
 from app.state import (
     KEY_DETECTIONS,
@@ -141,7 +141,17 @@ def _render_source_feedback() -> None:
     name = st.session_state[KEY_SOURCE_NAME]
     if name == SAMPLE_PATH.name:
         st.info(t("import.sample.notice"), icon=":material/science:")
-    st.caption(t("import.source.summary", name=literal_markdown(name), count=f"{len(text):,}"))
+    st.caption(t("import.source.summary", name=literal_markdown(name), count=_count(len(text))))
+
+
+def _count(number: int) -> str:
+    """Écrit un nombre avec le séparateur de milliers de la langue : 2,057 ou 2 057.
+
+    En français, la virgule est le séparateur décimal ; les milliers sont séparés par une
+    espace fine insécable.
+    """
+    written = f"{number:,}"
+    return written.replace(",", "\u202f") if current_language() == "fr" else written
 
 
 def _run_detection(config: DetectionConfig) -> None:

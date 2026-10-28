@@ -284,7 +284,7 @@ def render() -> None:
     groups = group_mentions(text, detections)
     st.markdown(t("review.intro"))
     _render_metrics(groups, detections)
-    document, side = st.columns([7, 3], gap="medium")
+    document, side = st.columns([2, 1], gap="medium")
     with document:
         _render_text(text, detections)
     with side:

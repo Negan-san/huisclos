@@ -13,6 +13,7 @@ import pytest
 from streamlit.testing.v1 import AppTest
 
 from app import i18n
+from huisclos.models import EntityType
 
 MODULE_NAMES = [path.stem for path in Path("app/i18n").glob("*.py")]
 
@@ -71,3 +72,22 @@ def test_main_app_in_french() -> None:
     app.selectbox(key="language").select("fr").run()
     assert not app.exception
     assert any(header.value == "Importer un document" for header in app.header)
+
+
+def test_language_switch_resends_the_chosen_settings() -> None:
+    """Le changement de langue renvoie au navigateur les types et le style de jetons choisis.
+
+    Le navigateur désigne un choix par son libellé : sans renvoi (set_value), un libellé
+    traduit ne correspond plus et le navigateur perd les types dont le nom change, donc les
+    noms ne seraient plus détectés.
+    """
+    app = AppTest.from_file(Path("streamlit_app.py").resolve(), default_timeout=15).run()
+    app.sidebar.radio(key="token_style").set_value("en").run()
+    app.sidebar.selectbox(key="language").select("fr").run()
+    assert not app.exception
+    types = app.sidebar.multiselect(key="enabled_types")
+    style = app.sidebar.radio(key="token_style")
+    assert types.proto.set_value
+    assert style.proto.set_value
+    assert len(types.value) == len(EntityType) - 1
+    assert style.value == "en"
