@@ -295,32 +295,115 @@ def test_gate_worker_reuses_one_main_detection_per_document(
     assert text not in json.dumps(payload)
 
 
-@pytest.mark.xfail(
-    strict=True, reason="G8-01 : le harnais perd les prédictions si le contrôle échoue"
-)
-def test_unavailable_final_check_preserves_main_predictions(
-    monkeypatch: pytest.MonkeyPatch, no_network: None
-) -> None:
-    """Une panne finale injectée devrait laisser les métriques principales mesurables.
-
-    Ce défaut de harnais est établi sans corpus ; son lien avec l'échec challenge est inconnu.
-    Le contrôle doit rester indisponible, jamais être présenté comme une absence d'alerte.
-    """
+def outage_api(monkeypatch: pytest.MonkeyPatch, text: str) -> SimpleNamespace:
+    """Prépare un moteur fictif à une détection, avec contrôle final déclaré disponible."""
     from huisclos.detection import pipeline
 
-    text = "Lucien FALVERAC"
     detection = Detection(0, len(text), EntityType.PERSON, 0.9, Source.PATTERN, text)
-    api = SimpleNamespace(
+    monkeypatch.setattr(pipeline, "analyzer_for", Mock())
+    return SimpleNamespace(
         presets={"fake": profile_config("standard", "fr")},
         detect=Mock(return_value=[detection]),
         pseudonymize=pseudonymize,
         final_check=True,
         check_threshold=lambda threshold: 0.1,
     )
-    monkeypatch.setattr(pipeline, "analyzer_for", Mock())
+
+
+def test_unavailable_final_check_preserves_main_predictions(
+    monkeypatch: pytest.MonkeyPatch, no_network: None
+) -> None:
+    """G8-01 : une panne finale injectée laisse les métriques principales mesurables.
+
+    Le contrôle reste indisponible, jamais présenté comme une absence d'alerte ; le message
+    de la panne, qui pourrait citer un document, n'est pas conservé.
+    """
+    text = "Lucien FALVERAC"
+    api = outage_api(monkeypatch, text)
     monkeypatch.setattr(
         gate8_measure, "final_alerts", Mock(side_effect=RuntimeError("Fictive outage"))
     )
     payload = gate8_measure.stage_outputs([text], "fake", 0.3, "fr", api)
     assert payload["documents"][0]["detections"]
     assert payload["documents"][0]["alerts"] is None
+    assert payload["metadata"]["final_check"] == {"available": False, "error_type": "RuntimeError"}
+    assert "Fictive outage" not in json.dumps(payload)
+
+
+def test_late_final_check_outage_makes_the_whole_profile_unavailable(
+    monkeypatch: pytest.MonkeyPatch, no_network: None
+) -> None:
+    """Une panne au deuxième document ne laisse pas d'alertes partielles au rapport.
+
+    Le premier document avait des alertes : les garder ferait croire que le second n'en a
+    aucune. Toutes passent à None, et le rapport reconstruit dit le contrôle indisponible.
+    """
+    from huisclos.evaluation.corpus import CorpusDocument
+    from huisclos.evaluation.coverage_reports import alert_row, profile_run
+
+    text = "Lucien FALVERAC"
+    api = outage_api(monkeypatch, text)
+    checks = Mock(side_effect=[[[0, 3]], OSError("Fictive outage"), [[0, 3]]])
+    monkeypatch.setattr(gate8_measure, "final_alerts", checks)
+    payload = gate8_measure.stage_outputs([text] * 3, "fake", 0.3, "fr", api)
+    assert checks.call_count == 2
+    assert api.detect.call_count == 3
+    assert all(row["detections"] and row["alerts"] is None for row in payload["documents"])
+    assert payload["metadata"]["final_check"]["error_type"] == "OSError"
+    documents = [
+        CorpusDocument(f"fix_{index}", "letter", "dev", "Fictive", text, []) for index in range(3)
+    ]
+    run = profile_run("standard", 0.3, documents, payload)
+    assert len(run.predictions) == 3
+    assert alert_row(documents, run)["available"] is False
+
+
+def test_available_final_check_is_declared(
+    monkeypatch: pytest.MonkeyPatch, no_network: None
+) -> None:
+    """Un contrôle réussi est déclaré disponible, sans classe d'erreur."""
+    text = "Lucien FALVERAC"
+    api = outage_api(monkeypatch, text)
+    monkeypatch.setattr(gate8_measure, "final_alerts", Mock(return_value=[]))
+    payload = gate8_measure.stage_outputs([text], "fake", 0.3, "fr", api)
+    assert payload["documents"][0]["alerts"] == []
+    assert payload["metadata"]["final_check"] == {"available": True, "error_type": None}
+
+
+def test_worker_failure_names_only_stage_and_error_class(
+    monkeypatch: pytest.MonkeyPatch, no_network: None
+) -> None:
+    """Un échec du worker est situé par son stade et sa classe, jamais par son message."""
+    text = "Lucien FALVERAC"
+    api = outage_api(monkeypatch, text)
+    api.detect.side_effect = ValueError(text)
+    monkeypatch.setattr(gate8_measure.pilot, "load_api", lambda: api)
+    request = {"texts": [text], "preset": "fake", "threshold": 0.3, "language": "fr"}
+    payload, code = gate8_measure.answer_request(request)
+    assert code == 3
+    assert payload == {"failure": {"stage": "detection", "error_type": "ValueError"}}
+    monkeypatch.setattr(
+        gate8_measure.subprocess,
+        "run",
+        Mock(return_value=SimpleNamespace(returncode=3, stderr=text, stdout=json.dumps(payload))),
+    )
+    with pytest.raises(RuntimeError, match=r"exit 3 at stage detection \(ValueError\)") as caught:
+        gate8_measure.run_separate({"preset": "fake", "threshold": 0.3}, [text], "fr", "gate")
+    assert text not in str(caught.value)
+
+
+@pytest.mark.parametrize(
+    "stdout",
+    [
+        "",
+        "Lucien FALVERAC",
+        json.dumps({"failure": {"stage": "Lucien FALVERAC", "error_type": "OSError"}}),
+        json.dumps({"failure": {"stage": "detection", "error_type": "Lucien FALVERAC"}}),
+        json.dumps({"failure": {"stage": "detection", "error_type": ["OSError"]}}),
+        json.dumps({"failure": "Lucien FALVERAC"}),
+        json.dumps(["Lucien FALVERAC"]),
+    ],
+)
+def test_forged_failure_detail_is_ignored(stdout: str) -> None:
+    """Une sortie de worker inattendue n'est jamais recopiée dans le message d'échec."""
+    assert gate8_measure.failure_detail(stdout) == ""

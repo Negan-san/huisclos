@@ -9,6 +9,7 @@ Les prédictions restent en mémoire et servent à toutes les métriques.
 import json
 import os
 import platform
+import re
 import socket
 import subprocess
 import sys
@@ -21,6 +22,9 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from scripts import evaluate_robustness as pilot  # noqa: E402
+
+STAGES = ("load", "detection", "pseudonymization", "metadata")
+ERROR_TYPE = re.compile(r"[A-Za-z_][A-Za-z0-9_]{0,63}")
 
 
 def refuse_network(*args: Any, **kwargs: Any) -> None:
@@ -44,16 +48,25 @@ def final_alerts(api: Any, result: Any, text: str, lowered: Any) -> list[list[in
 
 
 def stage_outputs(
-    texts: list[str], preset: str, threshold: float, language: str, api: Any = None
+    texts: list[str],
+    preset: str,
+    threshold: float,
+    language: str,
+    api: Any = None,
+    progress: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     """Détecte une fois par document et réutilise les sorties pour tous les comptes.
 
     Le chargement est séparé de l'inférence principale, des substitutions et du contrôle.
     RSS est échantillonné toutes les vingt millisecondes dans le processus du profil.
-    Aucune valeur ou position n'est écrite sur disque par ce processus.
+    Aucune valeur ou position n'est écrite sur disque par ce processus. Une panne du
+    contrôle final rend ce contrôle indisponible pour tout le profil (alertes None), sans
+    perdre les détections ni les substitutions déjà mesurées. progress reçoit le stade en
+    cours, pour qu'un échec soit situé sans citer le document.
     """
     import psutil
 
+    progress = {} if progress is None else progress
     process, samples, stop = psutil.Process(), [], threading.Event()
 
     def sample() -> None:
@@ -66,6 +79,7 @@ def stage_outputs(
     thread.start()
     started = time.perf_counter()
     try:
+        progress["stage"] = "load"
         api = api or pilot.load_api()
         config, language_field = pilot.configured(api.presets[preset], threshold, language)
         from huisclos.detection import pipeline
@@ -93,15 +107,24 @@ def stage_outputs(
             replace(config, threshold=api.check_threshold(threshold)) if api.final_check else None
         )
         documents, inference, substitution, checking = [], 0.0, 0.0, 0.0
+        check_error: str | None = None
         for text in texts:
+            progress["stage"] = "detection"
             begin = time.perf_counter()
             detected = list(api.detect(text, config))
             inference += time.perf_counter() - begin
+            progress["stage"] = "pseudonymization"
             begin = time.perf_counter()
             result = api.pseudonymize(text, detected)
             substitution += time.perf_counter() - begin
             begin = time.perf_counter()
-            alerts = final_alerts(api, result, text, lowered)
+            alerts = None
+            if check_error is None:
+                try:
+                    alerts = final_alerts(api, result, text, lowered)
+                except Exception as error:
+                    # Seule la classe est gardée : le message pourrait citer le document.
+                    check_error = type(error).__name__
             checking += time.perf_counter() - begin
             documents.append(
                 {
@@ -113,7 +136,17 @@ def stage_outputs(
                     "alerts": alerts,
                 }
             )
+        if check_error is not None:
+            # Le rapport exige un contrôle présent partout ou nulle part : une alerte
+            # partielle ferait croire à une absence d'alerte sur les documents restants.
+            for document in documents:
+                document["alerts"] = None
+        progress["stage"] = "metadata"
         metadata = pilot.measured_metadata(config, language_field, lowered)
+        metadata["final_check"] = {
+            "available": lowered is not None and check_error is None,
+            "error_type": check_error,
+        }
         metadata["versions"].update(
             {
                 name: pilot.package_version(name)
@@ -149,7 +182,48 @@ def stage_outputs(
         thread.join()
 
 
-def worker(checkout: Path) -> None:
+def answer_request(request: dict[str, Any]) -> tuple[dict[str, Any], int]:
+    """Mesure une demande du worker et renvoie la réponse et le code de sortie.
+
+    En cas d'échec, la réponse ne contient que le stade et la classe de l'erreur, code 3 :
+    le message ou la trace pourraient citer un document réservé.
+    """
+    progress: dict[str, str] = {}
+    try:
+        payload = stage_outputs(
+            request["texts"],
+            request["preset"],
+            request["threshold"],
+            request["language"],
+            progress=progress,
+        )
+    except Exception as error:
+        stage = progress.get("stage", "load")
+        return {"failure": {"stage": stage, "error_type": type(error).__name__}}, 3
+    return payload, 0
+
+
+def failure_detail(stdout: str) -> str:
+    """Relit le diagnostic d'un worker en échec et ne garde qu'un stade et une classe connus.
+
+    Toute autre forme est ignorée : la sortie d'un processus en échec n'est jamais recopiée.
+    Exemple : '{"failure": {"stage": "detection", "error_type": "OSError"}}' donne
+    " at stage detection (OSError)".
+    """
+    lines = [line for line in stdout.splitlines() if line.strip()]
+    try:
+        failure = json.loads(lines[-1])["failure"]
+        stage, error_type = failure["stage"], failure["error_type"]
+    except (IndexError, KeyError, TypeError, ValueError):
+        return ""
+    if stage not in STAGES or not isinstance(error_type, str):
+        return ""
+    if not ERROR_TYPE.fullmatch(error_type):
+        return ""
+    return f" at stage {stage} ({error_type})"
+
+
+def worker(checkout: Path) -> int:
     """Charge exclusivement le code du checkout demandé et répond par un tube privé."""
     for owner, name in (
         (socket, "getaddrinfo"),
@@ -166,11 +240,10 @@ def worker(checkout: Path) -> None:
         raise RuntimeError("Wrong source checkout")
     request = json.loads(sys.stdin.read())
     answer, sys.stdout = sys.stdout, sys.stderr
-    payload = stage_outputs(
-        request["texts"], request["preset"], request["threshold"], request["language"]
-    )
+    payload, code = answer_request(request)
     answer.write(json.dumps(payload) + "\n")
     answer.flush()
+    return code
 
 
 def run_separate(
@@ -208,8 +281,9 @@ def run_separate(
         check=False,
     )
     if completed.returncode:
+        detail = failure_detail(completed.stdout or "")
         raise RuntimeError(
-            f"G8 worker failed: exit {completed.returncode}; no reserved output shown"
+            f"G8 worker failed: exit {completed.returncode}{detail}; no reserved output shown"
         )
     return json.loads(completed.stdout.strip().splitlines()[-1])
 
@@ -218,8 +292,7 @@ def main(arguments: list[str] | None = None) -> int:
     """Lance B1 avec le worker corrigé ; les plans et métriques restent inchangés."""
     arguments = sys.argv[1:] if arguments is None else arguments
     if len(arguments) == 2 and arguments[0] == "--worker":
-        worker(Path(arguments[1]))
-        return 0
+        return worker(Path(arguments[1]))
     pilot.run_separate = run_separate
     pilot.stage_outputs = stage_outputs
     return pilot.main(arguments)

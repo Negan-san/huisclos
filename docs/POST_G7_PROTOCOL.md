@@ -237,3 +237,9 @@ de cet échec réservé restent inconnues, sans journal sensible conservé. Aucu
 détection réservée n'est autorisée par ce constat ; un relais explicite devra en fixer
 les limites. [D-G8-1](DECISIONS.md#d-g8-1-gate-bilingue-et-protection-complete) et
 [rapport complet](../results/gate8/report.md) conservent méthodes, intervalles et replis.
+
+Correctif AF-FIX, après G8 et sans nouvelle mesure : une panne du contrôle final garde les
+prédictions principales et rend ce contrôle indisponible pour tout le profil ; un worker en
+échec cite seulement son stade et la classe d'erreur. Critères, seuils, plans et rapports
+G8 restent inchangés ; les chiffres G8 décrivent le code mesuré, pas ce correctif.
+[D-FIX-1](DECISIONS.md#d-fix-1-contrôle-final-indisponible-et-diagnostic-du-worker-g8).

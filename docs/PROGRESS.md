@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 17:59 | AF-FIX | Correction ciblée des points ouverts de G8 | Claude Code, Opus 5.5
+- Fait : start/base FIX acceptés, SHA G8 1ecb063 fusionné en avance rapide sans conflit. G8-01 corrigé dans scripts/gate8_measure.py : une panne du contrôle final garde toutes les détections et substitutions, arrête ce contrôle et le rend indisponible (alertes None) pour tout le profil, car profile_run refuse un contrôle partiel ; métadonnées final_check avec disponibilité et classe d'erreur seulement. Un worker en échec répond par code 3, stade connu et classe d'erreur ; run_separate ne recopie que ces deux valeurs validées.
+- Tests : xfail strict G8-01 retiré, le test passe ; quatre régressions sur valeurs fictives (panne tardive et rapport reconstruit, contrôle disponible, diagnostic du worker, sept sorties falsifiées ignorées). pytest : 1691 passed ; Ruff check et format conformes ; check_style sans erreur (quinze avertissements connus) ; diff --check conforme.
+- Décisions : D-FIX-1.
+- Reste à faire : cause de l'échec challenge G8 toujours inconnue, aucun moyen de la reproduire sans corpus réservé ; le nouveau diagnostic la situera lors de la prochaine mesure autorisée. Les métriques G8 décrivent e3d13bd, pas ce commit.
+- Risques : aucun détecteur, seuil, corpus, rapport ni reçu modifié ; aucune mesure réservée ni ouverture de source réservée. Le message d'une exception du pilote en processus local (mode dev sans checkout) reste inchangé.
+- Suite : finish FIX, puis G8R dans une conversation B neuve selon le pilote ; aucun tag ni push.
+
 ### 2026-10-28 | G8 | Gate bilingue et protection complète, NO-GO | Codex
 - Fait : start/base acceptés, fusion du SHA A5 029caa9 sans perte ; C3 centralisé, gel A4 et empreintes vérifiés, référence G7 autonome et poids préservés. Nouveaux contrôles AppTest croisant les deux langues UI/document, payload exact, révocations, mémoire et traitement hors ligne ; aucun détecteur ni seuil modifié.
 - Mesures uniques : FR neuf Standard 95/105, Enhanced 96/105 couverts, fuite 139/2042 et 130/2042 ; chaque profil gagne une entité et 32 caractères contre sa référence G7. EN 78/100 vers 88/100 et fuite 235/2285 vers 115/2285, mais précision 0,8349 vers 0,7000 : marge de deux points refusée. Quatrième test historique : 93/93 couverts, fuite nulle contre 37/1889 G7 ; ancien challenge lancé une fois, échec sans rapport, aucune relance.
