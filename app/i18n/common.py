@@ -55,8 +55,8 @@ EN: dict[str, str] = {
     "sidebar.profile.enhanced": "Enhanced local detection",
     "sidebar.profile.help": (
         "Standard: rules, spaCy and propagation. Enhanced adds CamemBERT for French "
-        "or GLiNER for English. Local installation only; slower and experimental "
-        "until gate G8."
+        "or GLiNER for English. Local installation only, slower and experimental. "
+        "Standard is the recommended profile; Enhanced English is not recommended."
     ),
     "sidebar.profile.notice.public_demo": (
         "Enhanced detection is not available on the public demo. Standard is used."
@@ -66,7 +66,15 @@ EN: dict[str, str] = {
     ),
     "sidebar.profile.notice.unknown": "Unknown detection profile. Standard is used.",
     "sidebar.profile.demo": "Enhanced detection is offered in a local installation only.",
-    "sidebar.profile.french_only": ("Enhanced detection is experimental until bilingual gate G8."),
+    "sidebar.profile.status.fr": (
+        "Enhanced French detection is experimental: its historical challenge check is still "
+        "open. Review every detection."
+    ),
+    "sidebar.profile.status.en": (
+        "Enhanced English detection is experimental and not recommended. In gate G8 it left "
+        "fewer names visible than Standard but made far more wrong detections, beyond the "
+        "allowed margin. Standard is recommended; review every detection."
+    ),
     "sidebar.group.detection": "Detection",
     "sidebar.group.tokens": "Tokens",
     "sidebar.group.interface": "Interface",
@@ -156,8 +164,9 @@ FR: dict[str, str] = {
     "sidebar.profile.enhanced": "Détection locale renforcée",
     "sidebar.profile.help": (
         "Standard : r\u00e8gles, spaCy et propagation. Le profil renforc\u00e9 ajoute CamemBERT "
-        "en fran\u00e7ais ou GLiNER en anglais. Installation locale seulement ; plus lent "
-        "et exp\u00e9rimental avant G8."
+        "en fran\u00e7ais ou GLiNER en anglais. Installation locale seulement, plus lent "
+        "et exp\u00e9rimental. Standard est le profil recommand\u00e9 ; le profil "
+        "renforc\u00e9 anglais n'est pas recommand\u00e9."
     ),
     "sidebar.profile.notice.public_demo": (
         "La détection renforcée n'est pas disponible sur la démonstration publique. Le profil "
@@ -169,8 +178,15 @@ FR: dict[str, str] = {
     ),
     "sidebar.profile.notice.unknown": "Profil de détection inconnu. Standard est utilisé.",
     "sidebar.profile.demo": "La détection renforcée n'est proposée qu'en installation locale.",
-    "sidebar.profile.french_only": (
-        "La d\u00e9tection renforc\u00e9e reste exp\u00e9rimentale avant la gate bilingue G8."
+    "sidebar.profile.status.fr": (
+        "La d\u00e9tection renforc\u00e9e fran\u00e7aise reste exp\u00e9rimentale : son "
+        "contr\u00f4le challenge historique reste ouvert. Relisez chaque d\u00e9tection."
+    ),
+    "sidebar.profile.status.en": (
+        "La d\u00e9tection renforc\u00e9e anglaise est exp\u00e9rimentale et non "
+        "recommand\u00e9e. En G8, elle laissait moins de noms visibles que Standard mais "
+        "produisait bien plus de d\u00e9tections erron\u00e9es, au-del\u00e0 de la marge "
+        "admise. Standard est recommand\u00e9 ; relisez chaque d\u00e9tection."
     ),
     "sidebar.group.detection": "Détection",
     "sidebar.group.tokens": "Jetons",

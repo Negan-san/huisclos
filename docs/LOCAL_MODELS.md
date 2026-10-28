@@ -3,7 +3,7 @@
 This page records the local models and Python environments prepared in session A1 (28 October
 2026), and the A4 integration after gate G7. Standard supports French and English. Enhanced
 retains CamemBERT for French and adds GLiNER for English, locally and optionally. These post-G7
-profiles remain experimental until bilingual gate G8. Historical A1/A3 records below are preserved;
+profiles remain experimental; after gate G8 and FIX2, English Enhanced is not recommended. Historical A1/A3 records below are preserved;
 the current installation, migration and measurements are in the A4 section. Model files and environments live
 outside the repository, in `pilotage/post_g7_assets/` next to the project folder, and are never
 committed.

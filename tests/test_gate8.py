@@ -381,7 +381,9 @@ def test_worker_failure_names_only_stage_and_error_class(
     request = {"texts": [text], "preset": "fake", "threshold": 0.3, "language": "fr"}
     payload, code = gate8_measure.answer_request(request)
     assert code == 3
-    assert payload == {"failure": {"stage": "detection", "error_type": "ValueError"}}
+    failure = payload["failure"]
+    assert (failure["stage"], failure["error_type"]) == ("detection", "ValueError")
+    assert (failure["path"], failure["function"]) == ("scripts/gate8_measure.py", "stage_outputs")
     monkeypatch.setattr(
         gate8_measure.subprocess,
         "run",
@@ -458,7 +460,10 @@ def test_recheck_failure_contract_at_every_stage(
         {"texts": [text], "preset": "fake", "threshold": 0.3, "language": "fr"}
     )
     assert code == 3
-    assert payload == {"failure": {"stage": stage, "error_type": "ValueError"}}
+    assert set(payload) == {"failure"}
+    assert set(payload["failure"]) == {"stage", "error_type", "path", "function", "line"}
+    assert (payload["failure"]["stage"], payload["failure"]["error_type"]) == (stage, "ValueError")
+    assert payload["failure"]["path"] == "scripts/gate8_measure.py"
     assert text not in json.dumps(payload)
 
 

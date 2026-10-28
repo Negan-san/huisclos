@@ -1,0 +1,79 @@
+diff --git a/src/huisclos/pseudonymize/tokens.py b/src/huisclos/pseudonymize/tokens.py
+index 48df79d..ea94c16 100644
+--- a/src/huisclos/pseudonymize/tokens.py
++++ b/src/huisclos/pseudonymize/tokens.py
+@@ -9,7 +9,7 @@ table reste sur le poste pour pseudonymize.reidentify.
+ 
+ import itertools
+ import re
+-from collections.abc import Callable, Sequence
++from collections.abc import Sequence
+ from dataclasses import replace
+ from functools import cache
+ 
+@@ -125,25 +125,14 @@ def _sorted_detections(text: str, detections: Sequence[Detection]) -> list[Detec
+     return ordered
+ 
+ 
+-def _token_tables(text: str, groups: Sequence[EntityGroup]) -> dict[str, dict[str, str]]:
+-    """Table (type, texte exact de la mention) vers jeton, pour l'opérateur de presidio.
++def _owners(groups: Sequence[EntityGroup]) -> dict[tuple[int, int], EntityGroup]:
++    """Groupe de chaque mention, retrouvé par sa position et non par son texte.
+ 
+-    L'opérateur ne reçoit que le texte de la mention ; la table suffit car deux mentions
+-    de même type et de même texte ont la même clé, donc le même groupe.
++    Deux groupes peuvent partager une écriture : un nom repéré dans un nom de fichier garde
++    son propre groupe (D-AF-A2-7). Une table indexée par le texte ne pourrait alors pas
++    donner deux jetons à la même écriture (FIX2-01).
+     """
+-    tables: dict[str, dict[str, str]] = {}
+-    for group in groups:
+-        table = tables.setdefault(group.entity_type.value, {})
+-        for start, end in group.mention_spans:
+-            mention = text[start:end]
+-            if table.setdefault(mention, group.token) != group.token:
+-                raise RuntimeError(f"mention rattachée à deux groupes : {mention!r}")
+-    return tables
+-
+-
+-def _lookup(table: dict[str, str]) -> Callable[[str], str]:
+-    """Fonction confiée à l'opérateur custom de presidio : texte de la mention vers jeton."""
+-    return table.__getitem__
++    return {span: group for group in groups for span in group.mention_spans}
+ 
+ 
+ @cache
+@@ -161,17 +150,19 @@ def _substitute(
+     produit, mais pas le texte d'origine : les éléments triés sont appariés aux
+     détections triées, puis contrôlés (D-S21-1).
+     """
+-    tables = _token_tables(text, groups)
++    owners = _owners(groups)
+     result = _engine().anonymize(
+         text=text,
+         analyzer_results=[
+-            RecognizerResult(d.entity_type.value, d.start, d.end, d.score) for d in detections
++            RecognizerResult(f"G{owners[d.start, d.end].group_id}", d.start, d.end, d.score)
++            for d in detections
+         ],
++        # Une clé par groupe : chaque mention reçoit le jeton de son propre groupe.
+         operators={
+-            name: OperatorConfig("custom", {"lambda": _lookup(table)})
+-            for name, table in tables.items()
++            f"G{group.group_id}": OperatorConfig("replace", {"new_value": group.token})
++            for group in groups
+         },
+-        # Sans cette option, presidio réunit deux mentions voisines de même type séparées
++        # Sans cette option, presidio réunit deux mentions voisines de même clé séparées
+         # par une espace, ce qui fausserait le nombre d'occurrences.
+         merge_entities_with_spaces=False,
+     )
+@@ -180,7 +171,7 @@ def _substitute(
+         raise RuntimeError("presidio n'a pas remplacé exactement une fois chaque détection")
+     occurrences = []
+     for item, detection in zip(items, detections, strict=True):
+-        expected = tables[detection.entity_type.value][detection.text]
++        expected = owners[detection.start, detection.end].token
+         if item.text != expected or result.text[item.start : item.end] != expected:
+             raise RuntimeError(f"jeton inattendu pour la mention {detection.text!r}")
+         occurrences.append(Occurrence(expected, detection.text, item.start, item.end))

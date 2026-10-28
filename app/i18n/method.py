@@ -128,13 +128,14 @@ EN: dict[str, str] = {
         "**Profiles.** Standard uses rules, spaCy and propagation in both languages. "
         "Enhanced adds CamemBERT for French or GLiNER for English, in a local "
         "installation only. Models are never downloaded by the application. Both "
-        "post-G7 profiles remain experimental until bilingual gate G8."
+        "Enhanced profiles remain experimental; after gate G8, Enhanced English is not "
+        "recommended because its precision loss exceeded the pre-registered margin."
     ),
     "method.languages.limits": (
         "**Limits.** Published evaluation tables remain historical French measures. "
         "English uses a small spaCy model; local dev comparisons are documented in "
-        "LOCAL_MODELS.md and do not validate generalisation. Review every result; "
-        "bilingual blind validation is pending G8."
+        "LOCAL_MODELS.md and do not validate generalisation. Gate G8 measured English "
+        "once on a small fictional blind set, with a NO-GO verdict. Review every result."
     ),
     "method.disclaimer": "Decision-support tool, not legal advice.",
 }
@@ -270,14 +271,16 @@ FR: dict[str, str] = {
         "langues. Le profil renforc\u00e9 ajoute CamemBERT en fran\u00e7ais ou GLiNER en "
         "anglais, en installation locale seulement. Aucun mod\u00e8le n'est "
         "t\u00e9l\u00e9charg\u00e9 par "
-        "l'application. Les profils apr\u00e8s G7 restent exp\u00e9rimentaux avant la gate "
-        "bilingue G8."
+        "l'application. Les deux profils renforc\u00e9s restent exp\u00e9rimentaux ; "
+        "apr\u00e8s G8, le profil renforc\u00e9 anglais n'est pas recommand\u00e9, car sa "
+        "perte de pr\u00e9cision d\u00e9passe la marge pr\u00e9enregistr\u00e9e."
     ),
     "method.languages.limits": (
         "**Limites.** Les tableaux publi\u00e9s restent des mesures fran\u00e7aises "
         "historiques. L'anglais utilise un petit mod\u00e8le spaCy ; les comparaisons dev "
         "locales d\u00e9crites dans LOCAL_MODELS.md ne valident pas la g\u00e9n\u00e9ralisation. "
-        "Relisez chaque r\u00e9sultat ; la validation bilingue aveugle attend G8."
+        "G8 a mesur\u00e9 l'anglais une fois sur un petit lot aveugle fictif, avec un verdict "
+        "NO-GO. Relisez chaque r\u00e9sultat."
     ),
     "method.disclaimer": "Outil d'aide à la décision, sans valeur de conseil juridique.",
 }

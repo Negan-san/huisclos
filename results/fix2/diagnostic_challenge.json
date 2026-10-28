@@ -1,0 +1,36 @@
+{
+  "finished_at_utc": "2026-10-28T17:36:40.336915+00:00",
+  "completed": true,
+  "profiles": {
+    "standard": {
+      "preset": "hybrid",
+      "worker_exit_code": 0,
+      "all_documents_through_pseudonymization": false,
+      "failure_sites": [
+        {
+          "stage": "pseudonymization",
+          "error_type": "RuntimeError",
+          "path": "src/huisclos/pseudonymize/tokens.py",
+          "function": "_token_tables",
+          "line": 140
+        }
+      ],
+      "report_construction": "not_reached"
+    },
+    "enhanced": {
+      "preset": "hybrid_camembert",
+      "worker_exit_code": 0,
+      "all_documents_through_pseudonymization": false,
+      "failure_sites": [
+        {
+          "stage": "pseudonymization",
+          "error_type": "RuntimeError",
+          "path": "src/huisclos/pseudonymize/tokens.py",
+          "function": "_token_tables",
+          "line": 140
+        }
+      ],
+      "report_construction": "not_reached"
+    }
+  }
+}

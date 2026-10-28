@@ -15,6 +15,7 @@ import subprocess
 import sys
 import threading
 import time
+import traceback
 from dataclasses import replace
 from pathlib import Path
 from typing import Any
@@ -25,6 +26,11 @@ from scripts import evaluate_robustness as pilot  # noqa: E402
 
 STAGES = ("load", "detection", "pseudonymization", "metadata")
 ERROR_TYPE = re.compile(r"[A-Za-z_][A-Za-z0-9_]{0,63}")
+# Lieu d'une erreur : fichier du code mesuré ou du harnais, fonction et ligne (FIX2). Ce sont
+# des identifiants du code, jamais une valeur du document ; le message n'est jamais lu.
+CODE_PATH = re.compile(r"(?:src/huisclos|scripts)/[A-Za-z0-9_/]{1,120}\.py")
+FUNCTION = re.compile(r"<module>|[A-Za-z_][A-Za-z0-9_]{0,63}")
+NO_LOCATION = {"path": None, "function": None, "line": None}
 
 
 def refuse_network(*args: Any, **kwargs: Any) -> None:
@@ -182,11 +188,34 @@ def stage_outputs(
         thread.join()
 
 
+def code_location(error: BaseException) -> dict[str, Any]:
+    """Situe une erreur au dernier cadre du code mesuré (src/huisclos) ou du harnais.
+
+    Seuls le chemin relatif, le nom de la fonction et la ligne sont gardés ; le message et
+    les variables locales ne sont jamais lus. Un cadre de bibliothèque n'est pas cité.
+    Exemple : {"path": "src/huisclos/pseudonymize/tokens.py", "function": "_token_tables",
+    "line": 140}.
+    """
+    for frame in reversed(traceback.extract_tb(error.__traceback__)):
+        posix = Path(frame.filename).as_posix()
+        if "/src/huisclos/" in posix and "site-packages" not in posix:
+            relative = "src/huisclos/" + posix.rsplit("/src/huisclos/", 1)[1]
+        elif Path(frame.filename).resolve().is_relative_to(ROOT / "scripts"):
+            relative = Path(frame.filename).resolve().relative_to(ROOT).as_posix()
+        else:
+            continue
+        if CODE_PATH.fullmatch(relative) and FUNCTION.fullmatch(frame.name):
+            return {"path": relative, "function": frame.name, "line": frame.lineno}
+        return dict(NO_LOCATION)
+    return dict(NO_LOCATION)
+
+
 def answer_request(request: dict[str, Any]) -> tuple[dict[str, Any], int]:
     """Mesure une demande du worker et renvoie la réponse et le code de sortie.
 
-    En cas d'échec, la réponse ne contient que le stade et la classe de l'erreur, code 3 :
-    le message ou la trace pourraient citer un document réservé.
+    En cas d'échec, la réponse ne contient que le stade, la classe de l'erreur et son lieu
+    dans le code (code_location), code 3 : le message ou la trace pourraient citer un
+    document réservé.
     """
     progress: dict[str, str] = {}
     try:
@@ -199,16 +228,18 @@ def answer_request(request: dict[str, Any]) -> tuple[dict[str, Any], int]:
         )
     except Exception as error:
         stage = progress.get("stage", "load")
-        return {"failure": {"stage": stage, "error_type": type(error).__name__}}, 3
+        failure = {"stage": stage, "error_type": type(error).__name__} | code_location(error)
+        return {"failure": failure}, 3
     return payload, 0
 
 
 def failure_detail(stdout: str) -> str:
-    """Relit le diagnostic d'un worker en échec et ne garde qu'un stade et une classe connus.
+    """Relit le diagnostic d'un worker en échec : stade et classe connus, lieu s'il est valide.
 
     Toute autre forme est ignorée : la sortie d'un processus en échec n'est jamais recopiée.
     Exemple : '{"failure": {"stage": "detection", "error_type": "OSError"}}' donne
-    " at stage detection (OSError)".
+    " at stage detection (OSError)" ; avec path, function et line conformes, le lieu suit :
+    " at stage detection (OSError) in src/huisclos/detection/ner.py:analyze:63".
     """
     lines = [line for line in stdout.splitlines() if line.strip()]
     try:
@@ -220,7 +251,17 @@ def failure_detail(stdout: str) -> str:
         return ""
     if not ERROR_TYPE.fullmatch(error_type):
         return ""
-    return f" at stage {stage} ({error_type})"
+    return f" at stage {stage} ({error_type}){location_detail(failure)}"
+
+
+def location_detail(failure: dict[str, Any]) -> str:
+    """Lieu relu d'un échec, seulement si chemin, fonction et ligne sont tous conformes."""
+    path, function, line = (failure.get(key) for key in ("path", "function", "line"))
+    if not (isinstance(path, str) and isinstance(function, str) and type(line) is int):
+        return ""
+    if not (CODE_PATH.fullmatch(path) and FUNCTION.fullmatch(function) and line > 0):
+        return ""
+    return f" in {path}:{function}:{line}"
 
 
 def worker(checkout: Path) -> int:

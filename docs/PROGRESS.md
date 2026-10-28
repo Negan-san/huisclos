@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 18:55 | FIX2 | Investigation ciblée après NO-GO G8R | Claude Code, Opus 5.5
+- Fait : SHA G8R 84bb7f0 fusionné en avance rapide. Cause du challenge établie : sonde de 40 structures fictives puis unique tentative diagnostique enregistrée, même lieu pour les deux profils, tokens.py:_token_tables:140 à la substitution. FIX2-01 : un nom présent dans le texte et dans un nom de fichier réclame deux jetons (D-AF-A2-7 contre la table indexée par texte), FR et EN, sans lien avec G8-01. Harnais : échec du worker situé par fichier, fonction et ligne validés. Enhanced EN : aucune cause générale établie (multi-label et imbrication réfutés sur dev), statut non recommandé visible dans la barre latérale.
+- Tests : pytest 1712 passed, 4 xfailed stricts FIX2-01 ; Ruff check et format OK ; check_style 0 erreur, 15 avertissements connus ; diff --check OK. Premiers essais conservés : deux tests attendaient l'ancien texte « until G8 », six lignes i18n trop longues. Correctif proposé vérifié hors dépôt : 1713 tests puis 94 ciblés.
+- Reste à faire : appliquer results/fix2/proposed_fix2_01.patch (pseudonymize/tokens.py, hors périmètre FIX2), retirer les xfail, traiter le message d'erreur de Review (app/steps) ; puis mesure challenge par une session indépendante autorisée.
+- Décisions : D-FIX2-1, D-FIX2-2, D-FIX2-3.
+- Risques ou blocages : FIX2-01 bloque Pseudonymize pour tout document de cette forme, dans toutes les langues ; l'interface affiche alors une exception locale brute. Aucun corpus, seuil, modèle, rapport G8/G8R ni reçu modifié ; aucune nouvelle validation aveugle.
+- Prochaine session : correction autorisée de FIX2-01, puis recontrôle indépendant en piste B ; aucun tag, push ni R8.
+
 ### 2026-10-28 19:13 | G8R | Recontrôle indépendant des corrections bilingues, NO-GO | Codex
 - Fait : start/base acceptés, FIX 37f98f1 fusionné en avance rapide, arbre initial propre. Nouvelle référence du gel FIX ; diff métier identique au code mesuré G8, choix de réutiliser ses métriques consigné avant exécution. Huit régressions indépendantes : sorties exactes conservées après panne finale précoce/tardive, contrôle indisponible pour tout le profil, quatre stades fatals sans message sensible. G8-01 clos.
 - Tests : 205 ciblés et 1699 complets passent ; AppTest croise les deux langues UI/document, payload exact, révocations, réseau, projection et offsets. Quatre sondes Enhanced hors ligne avec caches vides et auxiliaires manquants passent ; vingt fichiers de modèles, deux freezes et pip check conformes. Ruff check/format, style et diff conformes après correction de quatre lignes du nouveau script de synthèse ; quinze avertissements de longueur connus, torch et cache pytest non inscriptible sans effet sur les tests.

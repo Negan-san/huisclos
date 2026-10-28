@@ -243,3 +243,18 @@ prédictions principales et rend ce contrôle indisponible pour tout le profil ;
 échec cite seulement son stade et la classe d'erreur. Critères, seuils, plans et rapports
 G8 restent inchangés ; les chiffres G8 décrivent le code mesuré, pas ce correctif.
 [D-FIX-1](DECISIONS.md#d-fix-1-contrôle-final-indisponible-et-diagnostic-du-worker-g8).
+
+## 14. Investigation FIX2 du 28 octobre 2026
+
+Le protocole, les seuils et les marges ci-dessus restent figés. FIX2 situe l'échec du
+challenge historique : la substitution s'arrête quand la même écriture, de même type,
+figure dans le texte et dans un nom de fichier (FIX2-01, tokens.py:_token_tables). Ce
+lieu vient d'une unique tentative diagnostique enregistrée avant lancement, qui n'exporte
+que stade, classe, fichier, fonction et ligne ; ce n'est pas une validation aveugle.
+
+Le correctif, dans src/huisclos/pseudonymize/, est hors du périmètre FIX2 : il est proposé
+dans results/fix2/proposed_fix2_01.patch et fixé par quatre tests xfail stricts. Le
+challenge ne doit pas être remesuré avant son application. Le worker G8 cite désormais le
+lieu validé de tout échec, sans message. Enhanced EN reste expérimental et non recommandé ;
+aucun réglage n'a été choisi. [D-FIX2-1](DECISIONS.md#d-fix2-1-cause-de-léchec-challenge--collision-de-jetons-sur-un-nom-de-fichier)
+et [rapport FIX2](../results/fix2/report.md).

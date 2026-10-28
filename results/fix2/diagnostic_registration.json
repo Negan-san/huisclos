@@ -1,0 +1,54 @@
+{
+  "registered_at_utc": "2026-10-28T17:35:20.510657+00:00",
+  "reference_sha": "84bb7f0a5faaaf494a170c385c3c677777a4c41d",
+  "head_at_registration": "84bb7f0a5faaaf494a170c385c3c677777a4c41d",
+  "business_paths_identical_to_reference": [
+    "src",
+    "app",
+    "data",
+    ".streamlit",
+    "streamlit_app.py",
+    "requirements.txt"
+  ],
+  "harness_sha256": {
+    "results/fix2/diagnose_challenge.py": "dbe770eccd0f4b7f742fc64fe44c2815628461cd4d97f03b9c8d611393e94b90",
+    "scripts/gate8_measure.py": "bbbfd93a0d78b51bcb5ac75bb02787375aab63c1231212be6ee846612b771b78",
+    "scripts/evaluate_robustness.py": "8aec0a0965a96f908c79a1fc4adc5d145764d09759ec437cca2bf241fbd29a3c"
+  },
+  "corpus": {
+    "path": "corpus/challenge.jsonl",
+    "sha256": "c47502d65bf05b6f3e0bd7e0bf9ccd9e58b046787fa2252e6a49ece85a03d609"
+  },
+  "plan": {
+    "path": "results/gate8/plan_historical_fr.json",
+    "sha256": "747c37211f92a02d4eef473e1019b894a88c5d83fff163acebe4975501394da2"
+  },
+  "parameters": {
+    "threshold": 0.3,
+    "final_check": 0.1,
+    "environment": {
+      "PYTHONUTF8": "1",
+      "HF_HUB_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1",
+      "OMP_NUM_THREADS": "2",
+      "MKL_NUM_THREADS": "2",
+      "TOKENIZERS_PARALLELISM": "false"
+    }
+  },
+  "attempt": {
+    "historical_challenge_execution_in_project": 3,
+    "predecessors": [
+      "G7 (complete)",
+      "G8 (failed, exit 2)"
+    ],
+    "nature": "diagnostic reuse of a known corpus, not a fresh blind validation",
+    "repeat_forbidden": true
+  },
+  "export_allowed": [
+    "stage",
+    "error_type",
+    "path",
+    "function",
+    "line"
+  ]
+}

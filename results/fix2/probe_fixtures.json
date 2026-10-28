@@ -1,0 +1,562 @@
+[
+  {
+    "profile": "hybrid",
+    "fixture": "base",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "crlf",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "cr_only",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "nbsp",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "narrow_nbsp",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "soft_hyphen_name",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "zero_width_name",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "bom_start",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "nfd",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "combining_start",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "ligature",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "file_name",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "token_like",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "token_adjacent",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "astral",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "tabs_ff",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "line_sep",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "guillemets",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "start_end_entity",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "only_entity",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "no_entity",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "whitespace_only",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "empty",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "long_doc",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "long_word",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "unknown_chars",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "repeated_case",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "dash_variants",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "control_chars",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "apostrophes",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "sigle",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "nickname",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "ambiguous_alias",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "alias_is_person_part",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "alias_is_other_person",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "alias_same_as_origin_case",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "alias_in_file",
+    "stage": "pseudonymization",
+    "error": "RuntimeError",
+    "where": "src/huisclos/pseudonymize/tokens.py:_token_tables:140"
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "nested_alias",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "alias_quotes_ascii",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid",
+    "fixture": "diminutive",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "base",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "crlf",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "cr_only",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "nbsp",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "narrow_nbsp",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "soft_hyphen_name",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "zero_width_name",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "bom_start",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "nfd",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "combining_start",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "ligature",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "file_name",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "token_like",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "token_adjacent",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "astral",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "tabs_ff",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "line_sep",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "guillemets",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "start_end_entity",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "only_entity",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "no_entity",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "whitespace_only",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "empty",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "long_doc",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "long_word",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "unknown_chars",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "repeated_case",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "dash_variants",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "control_chars",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "apostrophes",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "sigle",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "nickname",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "ambiguous_alias",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "alias_is_person_part",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "alias_is_other_person",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "alias_same_as_origin_case",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "alias_in_file",
+    "stage": "pseudonymization",
+    "error": "RuntimeError",
+    "where": "src/huisclos/pseudonymize/tokens.py:_token_tables:140"
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "nested_alias",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "alias_quotes_ascii",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  },
+  {
+    "profile": "hybrid_camembert",
+    "fixture": "diminutive",
+    "stage": "done",
+    "error": "",
+    "where": ""
+  }
+]

@@ -250,7 +250,7 @@ def test_enhanced_profile_remains_selected_for_an_english_document() -> None:
     app.radio(key="detection_profile").set_value("enhanced").run()
     app.radio(key="document_language").set_value("en").run()
     assert app.session_state["detection_profile"] == "enhanced"
-    assert any("experimental" in item.value for item in app.sidebar.caption)
+    assert any("not recommended" in item.value for item in app.sidebar.warning)
 
 
 def test_missing_enhanced_model_shows_a_clear_error_without_fallback(
@@ -321,7 +321,7 @@ def test_method_and_evaluation_pages_state_the_supported_languages() -> None:
     assert "Document languages" in [item.value for item in app.main.subheader]
     method = " ".join(item.value for item in app.main.markdown)
     assert "French and English documents" in method
-    assert "bilingual blind validation is pending G8" in method
+    assert "Enhanced English is not recommended" in method
     app = app.switch_page("app/pages/evaluation.py").run()
     assert not app.exception
     assert any("historical measures on French documents" in item.value for item in app.info)

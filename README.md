@@ -29,6 +29,9 @@ Gate G8 is **NO-GO for complete bilingual validation**: the historical challenge
 and English Enhanced fails the precision margin fixed before testing. Standard remains the
 default. English detection is experimental and needs careful manual review; English Enhanced
 is not recommended. The local Enhanced option adds CamemBERT for French or GLiNER for English.
+FIX2 located the challenge failure: pseudonymization stops when the same name, of the same
+type, appears both in the text and inside a file name. A correction is proposed in
+[results/fix2/report.md](results/fix2/report.md) and still needs an authorised session.
 The [user guide](docs/USER_GUIDE.md#4-settings-in-the-left-column) describes the covered
 FR/US/UK formats and their limits; a document language is not a nationality or jurisdiction.
 

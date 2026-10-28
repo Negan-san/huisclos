@@ -1,0 +1,67 @@
+E501 Line too long (105 > 100)
+   --> app\i18n\common.py:168:101
+    |
+166 |         "Standard : r\u00e8gles, spaCy et propagation. Le profil renforc\u00e9 ajoute CamemBERT "
+167 |         "en fran\u00e7ais ou GLiNER en anglais. Installation locale seulement, plus lent "
+168 |         "et exp\u00e9rimental. Standard est le profil recommand\u00e9 ; le profil renforc\u00e9 anglais "
+    |                                                                                                     ^^^^^
+169 |         "n'est pas recommand\u00e9."
+170 |     ),
+    |
+
+E501 Line too long (113 > 100)
+   --> app\i18n\common.py:182:101
+    |
+180 |     "sidebar.profile.demo": "La détection renforcée n'est proposée qu'en installation locale.",
+181 |     "sidebar.profile.status.fr": (
+182 |         "La d\u00e9tection renforc\u00e9e fran\u00e7aise reste exp\u00e9rimentale : son contr\u00f4le challenge "
+    |                                                                                                     ^^^^^^^^^^^^^
+183 |         "historique reste ouvert. Relisez chaque d\u00e9tection."
+184 |     ),
+    |
+
+E501 Line too long (112 > 100)
+   --> app\i18n\common.py:186:101
+    |
+184 |     ),
+185 |     "sidebar.profile.status.en": (
+186 |         "La d\u00e9tection renforc\u00e9e anglaise est exp\u00e9rimentale et non recommand\u00e9e. En G8, elle "
+    |                                                                                                     ^^^^^^^^^^^^
+187 |         "laissait moins de noms visibles que Standard mais produisait bien plus de "
+188 |         "d\u00e9tections erron\u00e9es, au-del\u00e0 de la marge admise. Standard est recommand\u00e9 ; relisez "
+    |
+
+E501 Line too long (113 > 100)
+   --> app\i18n\common.py:188:101
+    |
+186 |         "La d\u00e9tection renforc\u00e9e anglaise est exp\u00e9rimentale et non recommand\u00e9e. En G8, elle "
+187 |         "laissait moins de noms visibles que Standard mais produisait bien plus de "
+188 |         "d\u00e9tections erron\u00e9es, au-del\u00e0 de la marge admise. Standard est recommand\u00e9 ; relisez "
+    |                                                                                                     ^^^^^^^^^^^^^
+189 |         "chaque d\u00e9tection."
+190 |     ),
+    |
+
+E501 Line too long (104 > 100)
+   --> app\i18n\method.py:274:101
+    |
+272 |         "anglais, en installation locale seulement. Aucun mod\u00e8le n'est "
+273 |         "t\u00e9l\u00e9charg\u00e9 par "
+274 |         "l'application. Les deux profils renforc\u00e9s restent exp\u00e9rimentaux ; apr\u00e8s G8, le "
+    |                                                                                                     ^^^^
+275 |         "profil renforc\u00e9 anglais n'est pas recommand\u00e9, car sa perte de pr\u00e9cision d\u00e9passe "
+276 |         "la marge pr\u00e9enregistr\u00e9e."
+    |
+
+E501 Line too long (110 > 100)
+   --> app\i18n\method.py:275:101
+    |
+273 |         "t\u00e9l\u00e9charg\u00e9 par "
+274 |         "l'application. Les deux profils renforc\u00e9s restent exp\u00e9rimentaux ; apr\u00e8s G8, le "
+275 |         "profil renforc\u00e9 anglais n'est pas recommand\u00e9, car sa perte de pr\u00e9cision d\u00e9passe "
+    |                                                                                                     ^^^^^^^^^^
+276 |         "la marge pr\u00e9enregistr\u00e9e."
+277 |     ),
+    |
+
+Found 6 errors.

@@ -1,0 +1,42 @@
+{
+  "corpus": "corpus/english_dev/dev.jsonl",
+  "documents": 8,
+  "profiles": {
+    "hybrid": {
+      "tp": 122,
+      "fp": 9,
+      "precision": 0.931298,
+      "counts": {
+        "tp|heuristic": 6,
+        "tp|ner_spacy": 47,
+        "tp|pattern": 58,
+        "fp|wrong_type|ner_spacy|ORGANIZATION": 6,
+        "fp|no_reference|ner_spacy|ORGANIZATION": 2,
+        "tp|propagation": 7,
+        "tp|checksum": 4,
+        "fp|no_reference|ner_spacy|PERSON": 1
+      }
+    },
+    "hybrid_gliner": {
+      "tp": 124,
+      "fp": 9,
+      "precision": 0.932331,
+      "counts": {
+        "tp|ner_gliner": 100,
+        "tp|ner_spacy": 9,
+        "fp|wrong_type|ner_spacy|ORGANIZATION": 6,
+        "fp|no_reference|ner_spacy|ORGANIZATION": 2,
+        "tp|heuristic": 1,
+        "tp|propagation": 7,
+        "tp|checksum": 4,
+        "tp|pattern": 3,
+        "fp|no_reference|ner_spacy|PERSON": 1
+      }
+    }
+  },
+  "gliner_label_shapes_dev": {
+    "gliner_results": 112,
+    "same_span_multi_label": 0,
+    "nested_pairs": 0
+  }
+}

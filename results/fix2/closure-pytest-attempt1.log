@@ -1,0 +1,67 @@
+........................................................................ [  4%]
+........................................................................ [  8%]
+........................................................................ [ 12%]
+........................................................................ [ 16%]
+........................................................................ [ 20%]
+........................................................................ [ 25%]
+........................................................................ [ 29%]
+...............................................F...F.................... [ 33%]
+........................................................................ [ 37%]
+........................................................................ [ 41%]
+........................................................................ [ 46%]
+.....................................xxx.............x.................. [ 50%]
+........................................................................ [ 54%]
+........................................................................ [ 58%]
+........................................................................ [ 62%]
+........................................................................ [ 67%]
+........................................................................ [ 71%]
+........................................................................ [ 75%]
+........................................................................ [ 79%]
+........................................................................ [ 83%]
+........................................................................ [ 88%]
+........................................................................ [ 92%]
+........................................................................ [ 96%]
+............................................................             [100%]
+================================== FAILURES ===================================
+_______ test_enhanced_profile_remains_selected_for_an_english_document ________
+
+    def test_enhanced_profile_remains_selected_for_an_english_document() -> None:
+        app = AppTest.from_file(APP_PATH, default_timeout=TIMEOUT).run()
+        app.radio(key="detection_profile").set_value("enhanced").run()
+        app.radio(key="document_language").set_value("en").run()
+        assert app.session_state["detection_profile"] == "enhanced"
+>       assert any("experimental" in item.value for item in app.sidebar.caption)
+E       assert False
+E        +  where False = any(<generator object test_enhanced_profile_remains_selected_for_an_english_document.<locals>.<genexpr> at 0x0000023A203A60C0>)
+
+tests\test_detection_profiles.py:253: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-10-28 18:55:23.085 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:508 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+_______ test_method_and_evaluation_pages_state_the_supported_languages ________
+
+    def test_method_and_evaluation_pages_state_the_supported_languages() -> None:
+        app = AppTest.from_file(APP_PATH, default_timeout=TIMEOUT).run()
+        app = app.switch_page("app/pages/method.py").run()
+        assert "Document languages" in [item.value for item in app.main.subheader]
+        method = " ".join(item.value for item in app.main.markdown)
+        assert "French and English documents" in method
+>       assert "bilingual blind validation is pending G8" in method
+E       AssertionError: assert 'bilingual blind validation is pending G8' in '<style>/* Charte HuisClos : système de design à jetons (couleurs, espacements multiples de 4 px,\n   rayons, ombres l...through the machine of the host. To process real client files, install HuisClos on your computer (see the user guide).'
+
+tests\test_detection_profiles.py:324: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-10-28 18:55:24.940 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:508 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+============================== warnings summary ===============================
+.venv\Lib\site-packages\torch\jit\_script.py:1491
+  C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_detection_profiles.py::test_enhanced_profile_remains_selected_for_an_english_document
+FAILED tests/test_detection_profiles.py::test_method_and_evaluation_pages_state_the_supported_languages
+2 failed, 1710 passed, 4 xfailed, 1 warning in 137.97s (0:02:17)

@@ -363,7 +363,7 @@ What has been measured, and what has not:
 | G8 new blind French documents | 8 fictitious documents, 105 evaluated entities | Standard covers 95/105 entities, Enhanced 96/105; respectively 139 and 130 characters remain exposed out of 2042. French corrections improve coverage against their corresponding G7 profiles. Paired intervals include zero. |
 | G8 new blind English documents | 8 fictitious documents, 100 evaluated entities | Standard covers 78/100 entities and Enhanced 88/100. Enhanced reduces leaked characters from 235 to 115 out of 2285, but precision drops from 0.8349 to 0.7000, outside the pre-registered two-point margin. Enhanced is not recommended. |
 | G8 historical French test | Fourth project measure, 6 documents | Both profiles cover 93/93 entities, no leaked character in the eleven evaluated types. G7 had 37/1889 leaked characters. CUSTOM remains separate. |
-| G8 historical challenge | One authorised attempt | Failed without a usable report; not repeated. Complete bilingual validation is NO-GO pending correction and an explicitly authorised follow-up. |
+| G8 historical challenge | One authorised attempt | Failed without a usable report; not repeated. FIX2 located the cause: Pseudonymize stops when the same name appears in the text and inside a file name (such as conclusions_NAME.pdf). Nothing is sent in that case. Complete bilingual validation is NO-GO pending the correction and an explicitly authorised follow-up. |
 
 The development sets are small and fictitious. The English rules were developed together
 with a few small example documents, which cannot show how they behave on new ones. Treat

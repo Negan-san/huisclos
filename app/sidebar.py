@@ -179,8 +179,11 @@ def _render_document_settings() -> None:
         st.warning(t(f"sidebar.profile.notice.{reason}"))
     elif is_public_demo():
         st.caption(t("sidebar.profile.demo"))
+    elif selected_profile() == PROFILE_ENHANCED and document_language() == "en":
+        # Statut G8 visible : le profil reste celui choisi, sans bascule silencieuse.
+        st.warning(t("sidebar.profile.status.en"))
     elif selected_profile() == PROFILE_ENHANCED:
-        st.caption(t("sidebar.profile.french_only"))
+        st.caption(t("sidebar.profile.status.fr"))
 
 
 def _render_detection_settings() -> None:

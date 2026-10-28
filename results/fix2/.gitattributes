@@ -1,0 +1,5 @@
+# Les empreintes enregistrées portent sur les octets réels : aucune conversion de fin de ligne.
+diagnose_challenge.py -text
+*.patch -text -whitespace
+*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+*.log -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
