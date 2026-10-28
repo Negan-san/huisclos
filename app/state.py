@@ -1,7 +1,7 @@
 """État de session de l'interface : clés, valeurs initiales, remise à zéro et navigation.
 
 Entrées : st.session_state, que les étapes lisent et écrivent par les constantes KEY_*.
-Sorties : init_state(), reset_state(), go_to(), is_step_available() et clear_results().
+Sorties : init_state(), reset_state(), go_to(), is_step_available() et les fonctions clear_*.
 Place dans le pipeline : relie les étapes Import, Review et Restore, qui n'échangent rien
 d'autre qu'à travers cet état.
 """
@@ -155,13 +155,15 @@ def clear_check() -> None:
     st.session_state[KEY_SEND_AUTH] = None
 
 
-def clear_results() -> None:
-    """Efface ce qui dépend des détections : décisions, ajouts, texte, contrôle, restauration.
+def clear_pseudonymization() -> None:
+    """Efface ce qui dépend de la dernière pseudonymisation, avant une nouvelle tentative.
 
-    La table de dossier n'est pas touchée : seul son bouton de retrait ou Reset l'oublie.
+    Sont retirés : le résultat et sa base, la réponse collée, la restauration, la table
+    importée à Restore, puis le contrôle sortant et l'autorisation d'envoi (clear_check).
+    Une tentative en échec ne laisse ainsi aucun ancien résultat utilisable (D-FIX4-1).
+    Restent : le texte, les détections, les décisions de revue, les ajouts manuels, la table
+    de dossier, la configuration, la consigne et la politique du contrôle.
     """
-    st.session_state[KEY_GROUP_DECISIONS] = {}
-    st.session_state[KEY_MANUAL_ENTITIES] = []
     st.session_state[KEY_PSEUDO_RESULT] = None
     st.session_state[KEY_PSEUDO_BASIS] = None
     st.session_state[KEY_LLM_RESPONSE] = ""
@@ -169,6 +171,16 @@ def clear_results() -> None:
     st.session_state[KEY_UPLOADED_TABLE] = None
     st.session_state[KEY_TABLE_ERROR] = None
     clear_check()
+
+
+def clear_results() -> None:
+    """Efface ce qui dépend des détections : décisions, ajouts, texte, contrôle, restauration.
+
+    La table de dossier n'est pas touchée : seul son bouton de retrait ou Reset l'oublie.
+    """
+    st.session_state[KEY_GROUP_DECISIONS] = {}
+    st.session_state[KEY_MANUAL_ENTITIES] = []
+    clear_pseudonymization()
 
 
 def go_to(step: str) -> None:

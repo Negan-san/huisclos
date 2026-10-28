@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 20:40 | FIX4 | Invalidation des résultats avant une nouvelle pseudonymisation | Claude Code, Opus 5.5
+- Fait : lane-b (FIX3R 4b8a686) fusionné en avance rapide. app/state.py : clear_pseudonymization() vide résultat, base, réponse, restauration, table importée à Restore, puis clear_check() ; clear_results() le réutilise. review_step._pseudonymize l'appelle avant toute tentative ; sur succès, seul le nouveau résultat est enregistré. tests/test_fix4.py : dix AppTest FR et EN, RuntimeError et ValueError, premier échec, parcours réel Restore puis Review puis échec, nouvel essai réussi.
+- Tests : pytest 1730 passed, aucun xfail, sous garde results/fix3-recheck/guarded_pytest.py (roundtrip limité à dev, zéro ouverture refusée). Six des dix tests FIX4 échouent sur l'application de 4b8a686. Ruff check et format OK ; check_style 0 erreur, 15 avertissements connus ; diff --check OK. Sorties dans results/fix4/.
+- Reste à faire : recontrôle indépendant FIX4 en piste B avant toute autorisation de mesure challenge.
+- Décisions : D-FIX4-1.
+- Risques ou blocages : une nouvelle pseudonymisation réussie efface aussi la réponse collée et l'autorisation précédente, voulu. La zone de réponse de Restore repose sur l'oubli des composants par Streamlit, vérifié par test. Aucun src/, détection, seuil, modèle, corpus, paquet, tag, push ni R8.
+- Prochaine session : FIX4R en piste B sur le SHA de FIX4 ; NO-GO global maintenu jusque-là.
+
 ### 2026-10-28 19:50 | FIX3R | Recontrôle indépendant de FIX3, NO-GO | Codex
 - Fait : arbre initial propre, fusion dev en avance rapide vers bbfc6c1. Neuf fichiers exacts ; blob tokens.py égal au patch FIX2 plus la seule ligne de docstring. Six régressions rouges avec tokens.py de ae5dfe9, vertes avec FIX3 ; worktree externe sans corpus supprimé. Vingt cas Standard FR/EN requis passent, six témoins inclus ; invariants Presidio, mémoire contrôlée et worker G8 fictif conformes. Preuves dans results/fix3-recheck/report.md.
 - Tests : 1720 passed, aucun xfail, sous garde de lecture ; seule la fixture roundtrip est limitée à dev pour respecter l'interdit sur test. Ruff check/format OK ; check_style 0 erreur, 15 avertissements connus ; diff --check OK. Premier garde trop large : huit sources dev refusées, journal conservé. Sondes supplémentaires : masquage FR supplémentaire dans un nom de fichier numérique, sans fuite ni correction de détection.

@@ -1,0 +1,15 @@
+___ test_failed_retry_after_restore_drops_previous_result[fr-RuntimeError] ____
+    def test_failed_retry_after_restore_drops_previous_result(
+____ test_failed_retry_after_restore_drops_previous_result[fr-ValueError] _____
+    def test_failed_retry_after_restore_drops_previous_result(
+___ test_failed_retry_after_restore_drops_previous_result[en-RuntimeError] ____
+    def test_failed_retry_after_restore_drops_previous_result(
+____ test_failed_retry_after_restore_drops_previous_result[en-ValueError] _____
+    def test_failed_retry_after_restore_drops_previous_result(
+FAILED tests/test_fix4.py::test_failed_retry_after_restore_drops_previous_result[fr-RuntimeError]
+FAILED tests/test_fix4.py::test_failed_retry_after_restore_drops_previous_result[fr-ValueError]
+FAILED tests/test_fix4.py::test_failed_retry_after_restore_drops_previous_result[en-RuntimeError]
+FAILED tests/test_fix4.py::test_failed_retry_after_restore_drops_previous_result[en-ValueError]
+FAILED tests/test_fix4.py::test_successful_retry_renews_result_and_check[fr]
+FAILED tests/test_fix4.py::test_successful_retry_renews_result_and_check[en]
+6 failed, 4 passed, 1 warning in 21.22s

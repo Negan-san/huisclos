@@ -29,10 +29,9 @@ from app.state import (
     KEY_RESTORE_RESULT,
     KEY_SIGNATURE,
     KEY_SOURCE_TEXT,
-    KEY_TABLE_ERROR,
-    KEY_UPLOADED_TABLE,
     STEP_IMPORT,
     STEP_RESTORE,
+    clear_pseudonymization,
     go_to,
 )
 from app.steps.review_decisions import (
@@ -230,7 +229,12 @@ def _render_manual() -> None:
 
 
 def _pseudonymize() -> None:
-    """Pseudonymise les mentions masquées, garde le résultat et passe à l'étape Restore."""
+    """Pseudonymise les mentions masquées, garde le résultat et passe à l'étape Restore.
+
+    Tout ce qui dépend de la tentative précédente est effacé avant de commencer : après un
+    échec, aucun ancien résultat, contrôle ou autorisation d'envoi ne reste (D-FIX4-1).
+    """
+    clear_pseudonymization()
     try:
         with st.spinner(t("review.pseudonymize.spinner")):
             result = pseudonymize_session()
@@ -242,10 +246,7 @@ def _pseudonymize() -> None:
         st.error(t("review.error.substitution"))
         return
     st.session_state[KEY_PSEUDO_RESULT] = result
-    st.session_state[KEY_RESTORE_RESULT] = None
     go_to(STEP_RESTORE)
-    st.session_state[KEY_UPLOADED_TABLE] = None
-    st.session_state[KEY_TABLE_ERROR] = None
     st.rerun()
 
 
