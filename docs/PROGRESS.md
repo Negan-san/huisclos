@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 23:20 | S72 | Crédits et journal des prompts | Codex, modèle exact non exposé
+- Fait : veille locale jusqu'au commit S71 fa518d2, piste A propre et contrôles verts attestés ; fusion dev en avance rapide. CREDITS.md en anglais : 22 dépendances directes, versions installées, licences et sources locales, verrou de 109 paquets distingué, modèles et données externes, corpus CC BY 4.0 attesté par corpus/README.md.
+- Provenance : PROMPTS.md conserve les occurrences et relances historiques, ajoute H0 et S72, rattache chaque entrée du journal à une référence versionnée ou à une reconstruction signalée ; S61 réalisée conservée, fiche révisée distincte de l'original indisponible. Modèles inconnus non déduits du plan.
+- Tests : garde FIX3R, 1783 passed en 228,26 s, zéro ouverture réservée refusée ; avertissements torch et cache pytest connus. Ruff check/format conformes ; style 0 erreur, 15 avertissements préexistants ; diff conforme. Audit hors dépôt : 88 occurrences couvertes une fois, 87 lignes historiques conservées, 22 dépendances créditées, 109 versions installées conformes et 106 liens locaux valides ; preuves dans %TEMP%/huisclos-s72/.
+- Décisions : aucune ; compilation documentaire des preuves existantes, D-PLAN71-1 respectée.
+- Reste et risques : RESEARCH.md absent ; carte CamemBERT locale absente, version exacte de licence tokenizers et licences de plusieurs données d'entraînement non vérifiées localement. Vidéo et voix synthétique confiées au camarade, production non attestée ; annexe de crédits et prompts réels attendue avec la vidéo.
+- Périmètre et suite : trois documents seulement ; aucune lecture ou empreinte de corpus réservé, aucun réseau, poids chargé pour le relevé, paquet, pilote, mesure, push ou tag. Audit final documentaire puis réception de la vidéo dans une session distincte.
+
 ### 2026-10-28 22:12 | S71 | Rapport de méthode et architecture | Claude Code, Opus 5.5
 - Fait : fusion lane-b en avance rapide sans conflit (85fe724). docs/METHOD_REPORT.md, anglais, douze sections, environ 2 935 mots (3 174 jetons séparés par blancs) ; docs/ARCHITECTURE.md, anglais, environ 1 650 mots (1 835), trajet d'une phrase fictive, Mermaid, frontières, table séparée, familles de modules, états périmés, erreurs, modifications après gel et glossaire de 22 termes. Chaque tableau cite sa source (G8R2, D-G8-1, D-G7-1, results/summary.md, D-AF-A4-4) ; chiffres G8R2 vérifiés dans results/gate8-resume/report.md.
 - Preuve : G8R2 sur 930c414 seul résultat courant ; gain de couverture non significatif (IC apparié touchant zéro), réduction de fuite dont l'IC exclut zéro ; G8 test/C3 historiques sur e3d13bd ; Standard EN avec réserves fortes, Enhanced EN non recommandé ; aucune mesure exécutée.
