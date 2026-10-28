@@ -59,12 +59,12 @@ def table_rows(app: AppTest) -> list[dict[str, object]]:
 
 
 def review_target(app: AppTest) -> str:
-    """Renvoie la coordonn?e t?l?phonique ? utiliser pour les actions de revue."""
+    """Renvoie le numéro de téléphone à utiliser pour les actions de revue."""
     return next(row["Text"] for row in table_rows(app) if row["Type"] == "Phone")
 
 
 def target_span(app: AppTest) -> tuple[int, int]:
-    """Retrouve la position du t?l?phone dans les d?tections originales."""
+    """Retrouve la position du téléphone dans les détections d'origine."""
     detection = next(
         d for d in app.session_state["detections"] if d.entity_type == EntityType.PHONE
     )
@@ -130,7 +130,7 @@ def test_review_screen_shows_counts_table_and_highlighted_text() -> None:
         "Entities": "14",
         "Masked occurrences": "18",
         "Rejected occurrences": "0",
-        "Types": "11",
+        "Types": "12",
         "Low confidence": "2",
     }
     rows = table_rows(app)
@@ -189,7 +189,9 @@ def test_indicator_cards_follow_the_decisions() -> None:
     assert metrics(app)["Masked occurrences"] == "15"
     assert metrics(app)["Rejected occurrences"] == "3"
     assert metrics(app)["Entities"] == "14"
-    app = add_value(app, "4471-B")
+    # La référence de commande est laissée en clair par la détection : l'ajouter à la main
+    # crée une entité de plus, sans nouveau type puisque CUSTOM figure déjà ("4471-B").
+    app = add_value(app, "442007036")
     assert metrics(app)["Entities"] == "15"
     assert metrics(app)["Types"] == "12"
     assert metrics(app)["Low confidence"] == "2"

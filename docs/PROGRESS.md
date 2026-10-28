@@ -14,6 +14,13 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 08:15 | F1 | Correctifs de tests après la fusion de S14 et S36 | Claude Code, Opus 5.5
+- Cause : la fusion 859a36f réunit des tests écrits de chaque côté sans se voir. S14 importait find_occurrences depuis review_step, que S36 avait déplacé dans review_decisions (échec dès la collecte). Deux tests de cartes de S36 (test_app_review.py) supposaient la détection d'avant S14 : depuis S14, "Courriel" n'est plus une société et "4471-B" est détecté comme CUSTOM, donc 14 entités mais 12 types au lieu de 11, et l'ajout manuel de "4471-B" ne crée plus d'entité.
+- Fait : import corrigé dans test_app_flow.py ; nombre de types attendu passé à 12 ; ajout manuel du second test fait sur la référence de commande "442007036", laissée en clair par la détection, ce qui garde l'intention du test (une entité de plus, pas de nouveau type). Trois docstrings aux accents remplacés par "?" (venues de S14) réécrites. Aucun fichier de app/ ni de src/ modifié.
+- Tests : pytest 1123 passed ; ruff check et format : OK ; check_style : 0 erreur, 5 avertissements de longueur connus.
+- Décisions : aucune. Risques : le déroulé R3 des captures (rejet de "Courriel", ajout de "4471-B") ne correspond plus à la détection de S14 ; à revoir avant de régénérer les captures.
+- Suite : C2 (split challenge), reprise par l'humain.
+
 ### 2026-10-28 01:49 | S36 | Recette R5, puis refonte visuelle de l'interface | Claude Code, Opus 5.5
 - Fait : étape 0, lane-b déjà fusionnée, 865 passed. Phase 0 sans objet : tag gate-5 déjà posé par R5. Refonte en quatre commits : système de design à jetons et thème aligné, en-tête compact (mot-symbole, pastille "Local processing", mention RGPD), navigation en haut avec icônes Material, barre latérale groupée, stepper horizontal (fait, courant, accessible, verrouillé avec raison, aria-current) ; Import en deux colonnes avec st.status ; Review en cartes (cinq indicateurs, page de document, décompte par type, tableau à barre de confiance, ajout manuel sur une ligne, barre d'actions) ; Restore en deux colonnes, valeurs restaurées surlignées avec leur type, téléchargements groupés ; Evaluation avec chiffres clés et graphiques à la charte ; Method en encadrés. Libellés des boutons inchangés.
 - Découpage : review_step.py 393 vers 295 lignes (review_decisions.py, components/entity_table.py, components/review_summary.py) ; restore_exports.py et restore_mistral.py ; components/stepper.py.

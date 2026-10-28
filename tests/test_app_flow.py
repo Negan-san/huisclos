@@ -19,7 +19,8 @@ import pytest
 from streamlit.testing.v1 import AppTest
 
 from app.i18n import t
-from app.steps.review_step import KEY_TABLE_VERSION, TABLE_KEY_PREFIX, find_occurrences
+from app.steps.review_decisions import find_occurrences
+from app.steps.review_step import KEY_TABLE_VERSION, TABLE_KEY_PREFIX
 from huisclos.models import EntityType, Source
 
 APP_PATH = Path(__file__).resolve().parents[1] / "streamlit_app.py"
