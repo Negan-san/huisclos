@@ -1,6 +1,6 @@
 # HuisClos : master plan
 
-Export Markdown du document « HuisClos : master plan » (claude.ai), cinq onglets mis bout à bout : Plan, Fiches 0-2, Fiches 3-5, Fiches 6-7, Annexes. Le document en ligne fait foi en cas d'écart.
+Export Markdown du document « HuisClos : master plan » (claude.ai), cinq onglets mis bout à bout : Plan, Fiches 0-2, Fiches 3-5, Fiches 6-7, Annexes. Le parcours post-G7 ci-dessous est la révision active du 28 octobre 2026 ; les calendriers et fiches antérieurs sont archivés. AGENTS.md et les demandes explicites de session priment.
 
 
 
@@ -12,15 +12,15 @@ Export Markdown du document « HuisClos : master plan » (claude.ai), cinq ongle
 
 ## 1. Synthèse
 
-HuisClos peut être déposé le jeudi 29 octobre avant 21h59 : 28 sessions d'agents (dont 7 gates) sur deux pistes parallèles, gel des fonctionnalités le mercredi 28 à 23h59, vidéo finale le jeudi 29 à 16h00.
+Le plan initial est complété après G7 par un parcours bilingue français/anglais sur deux pistes. Les lots A1 à R8 ci-dessous s'ajoutent aux travaux déjà réalisés ; l'anglais documentaire est une exigence de livraison. Gel des fonctionnalités le mercredi 28 à 23h59, vidéo finale le jeudi 29 à 16h00, dépôt visé avant 21h59.
 
-1. Produit : application Streamlit qui détecte localement les données identifiantes d'un dossier juridique français, les fait valider par l'utilisateur, les remplace par des jetons stables, puis restaure les vraies valeurs dans la réponse du LLM.
+1. Produit : application Streamlit qui détecte localement les données identifiantes d'un dossier juridique en français ou en anglais (exigence post-G7), les fait valider par l'utilisateur, les remplace par des jetons stables, puis restaure les vraies valeurs dans la réponse du LLM.
 2. Détection hybride : motifs avec clés de contrôle (NIR, SIREN, SIRET, IBAN), heuristiques de personnes, NER spaCy via Presidio, propagation des occurrences, liste d'exclusions.
 3. Preuve de qualité : précision, rappel, F1 et F2 par type, taux de fuite, comparaison motifs / NER / hybride, jeu de test réservé que les agents ne lisent jamais.
 4. Traitement local démontré par un test qui bloque tout accès réseau pendant le pipeline complet.
 5. Organisation : Graciano seul pilote Claude Code (piste A : Sonnet par défaut, Opus pour S13, S21, S22) et Codex (piste B : motifs, entrées-sorties, évaluation, toutes les gates).
 6. Le quota Claude est la contrainte principale : chaque session Claude a une alternative Codex, et le corpus, la recherche et les brouillons passent par ChatGPT.
-7. Coupes appliquées dès le plan : GLiNER et Faker. Coupes conditionnelles, dans l'ordre : option vidéo S6A (Remotion, avatar), Mistral, CamemBERT, export .docx, bascule FR/EN, entrée PDF.
+7. Révision post-G7 : Faker reste hors périmètre ; GLiNER et Anonym-IA V2 deviennent des candidats évalués, seuls ou combinés. Le support des documents FR/EN est obligatoire. S6A/avatar est coupée pour préserver la validation ; un renfort ou une migration sans gain démontré est abandonné sans retirer le socle bilingue.
 8. Livrables : dépôt GitHub public, application en ligne (démo fictive), vidéo de 4 min 45, README, guide utilisateur, rapport de méthode, CREDITS.md, PROMPTS.md.
 9. Les fiches de session, avec leurs prompts prêts à copier, sont dans les onglets suivants ; les fichiers de démarrage du dépôt sont dans l'onglet Annexes.
 
@@ -383,64 +383,39 @@ Les deux dossiers partagent l'environnement virtuel de `huisclos` : dans `huiscl
 
 ## 7. Calendrier heure par heure
 
-Révisé le 28 octobre à 00:30 : le mercredi suit le calendrier de l'onglet Approfondissement (fiches S36, S14, C2, S45, S24, G7, S53). Le développement tient en deux demi-journées et une journée, jusqu'au gel du mercredi 23h59 ; le jeudi est réservé à la vidéo, à la documentation et au dépôt. Trois dépendances commandent tout le reste : corpus construit mardi à 23h30, captures d'écran mercredi à 16h00, cas de démo répété mercredi à 21h45.
+Révision active du 28 octobre après G7. Les étapes antérieures sont conservées dans PROGRESS et les fiches historiques ; le tableau suivant remplace leurs créneaux futurs.
 
-### Mardi 27 octobre
+Heures de Paris, départ cible le mercredi 28 octobre 2026 à 11:30. Les créneaux sont des estimations : avancer si les prérequis sont terminés, décaler si nécessaire sans sauter les contrôles. Jamais deux agents dans le même dossier. Si R7 tourne encore, la terminer avant A1 ; ne pas la relancer uniquement pour ce nouveau parcours.
 
-| Heure | Piste A, Claude Code | Piste B, Codex | Humain |
-| --- | --- | --- | --- |
-| 14:00-14:40 |  |  | H0 : dépôt GitHub, clone, Python 3.12, venv, fichiers de démarrage, worktree |
-| 14:40-15:40 | S01 Socle (Sonnet) |  | H1 : corpus, lot 1 (doc\_01 à doc\_06) dans ChatGPT |
-| 15:40-16:10 |  | G0 (contrôle) | Recette G0 avec installation à neuf ; tag `gate-0` |
-| 16:10-17:10 | S12 NER, heuristiques, exclusions (Sonnet) | S11 Motifs et clés de contrôle | H1 : relecture du lot 1, lot 2 (doc\_07 à doc\_12) |
-| 17:10-17:25 |  |  | Fusion de `lane-b` dans `dev`, tests |
-| 17:25-19:00 | S13 Fusion et pipeline (Opus) | S41 Corpus, format et constructeur (jusqu'à 18:25) | H1 : lot 3 (doc\_13 à doc\_18) et cas de démo |
-| 19:00-19:45 |  |  | Dîner |
-| 19:45-20:30 |  | G1 (contrôle et revue croisée) | Recette G1 à 20:15 ; tag `gate-1` |
-| 20:30-21:15 | Réserve : correction Opus si G1 l'exige |  | Installation de PyTorch CPU pour S44 ; construction du corpus |
-| 21:15-22:15 |  | Réserve | H2 : recherche dans ChatGPT, début de RESEARCH.md |
-| 22:15-23:30 |  |  | H1 : corpus validé et commité ; journal du jour ; H4 |
+| Jour | Heure | Piste A (Claude, huisclos) | Piste B (Codex, huisclos-b) | Mode |
+| --- | --- | --- | --- | --- |
+| Mer. 28/10 | 11:30-13:00 | A1 : fusion sans perte, fenêtres, socle EN et environnements modèles (Opus High) | B1 : couverture complète, pilote et protocole FR/EN (GPT High) | Parallèle |
+| Mer. 28/10 | 13:00-15:45 | A2 : moteur FR/EN, adresses, bornes, projection et alias certains (Opus High) | B2 : imports fiables et dev anglais fictif (GPT High) | Parallèle ; attendre A1+B1 |
+| Mer. 28/10 | 15:45-17:45 | A3 : choix langue/profil, empreintes, contrôle du document et de la consigne (Opus High) | B3 : benchmark Anonym-IA/GLiNER/combinaisons et audit indépendant (GPT High) | Parallèle ; attendre A2+B2 |
+| Mer. 28/10 | 17:45-19:15 | A4 : corrections, choix du renfort par langue, migration validée et gel logique (Opus High) | Attente ; aucun changement du venv ni benchmark en cours | A seule ; attendre A3+B3 |
+| Mer. 28/10 | 19:15-20:30 | A5 : guide, modèles et captures bilingues, sans logique (Sonnet Medium) | C3 : nouveau corpus aveugle FR/EN, conversation neuve (GPT High) | Parallèle ; attendre A4 |
+| Mer. 28/10 | 20:30-22:00 | Repos et lecture des comptes rendus ; aucune modification | G8 : contrôle indépendant FR/EN et mesures uniques (GPT High) | B seule ; attendre A5+C3 |
+| Mer. 28/10 | 22:00-22:40 | R8 : recette locale, publication seulement après GO (Sonnet Medium) | Repos | A seule ; G8 GO requis |
+| Mer. 28/10 | 22:40-23:25 | S61 : script/storyboard avec résultats FR/EN réellement validés (Sonnet High) | Repos | A seule |
+| Mer. 28/10 | 23:25-23:55 | Réserve ciblée et préparation de la démonstration ; pas de nouveau modèle | Corrections ciblées seulement si demandées ; pas de mesure répétée sans gate tracée | Seul, ou parallèle sur périmètres disjoints |
+| Mer. 28/10 | 23:59 | Gel des fonctionnalités et conservation de la version validée | Aucun développement | Gel impératif |
+| Jeu. 29/10 | 08:00-09:00 | Vous : répétition et narration ; agents au repos | Repos | Humain |
+| Jeu. 29/10 | 09:00-10:30 | S71 : rapport de méthode et architecture, résultats par langue | S72 : crédits, modèles/licences/versions et journal des prompts | Parallèle ; aucune fonctionnalité nouvelle |
+| Jeu. 29/10 | 10:30-14:00 | Corrections documentaires si nécessaires ; vous : tournage/montage | Repos ou vérification documentaire ciblée | Humain ; agents sur demande |
+| Jeu. 29/10 | 14:00-16:00 | Vous : contrôle G6 et export vidéo final | Repos | Humain |
+| Jeu. 29/10 | 17:30-18:30 | Repos | GF : contrôle final du dépôt | B seule |
+| Jeu. 29/10 | 18:30-19:00 | RF : recette finale et release si GF GO | Repos | A seule |
+| Jeu. 29/10 | 19:00-21:00 | Vous : paquet S73 et dépôt | Repos | Humain ; tampon jusqu'à 21:59 |
 
-### Mercredi 28 octobre
+Barrières effectives : A1+B1 -> A2+B2 -> A3+B3 -> A4 -> A5+C3 -> G8 -> R8. Les reçus de commits verts, pas l'heure seule, débloquent la suite. Une piste qui termine en avance attend l'autre. G8 NO-GO propose FIX (Claude), puis G8R (Codex neuf) ; cette correction utilise la réserve et ne repousse pas le gel.
 
-| Heure | Piste A, Claude Code | Piste B, Codex | Humain |
-| --- | --- | --- | --- |
-| 08:00-09:30 | S21 Regroupement et jetons (Opus) | S23 Lecture et export (jusqu'à 09:15) | Comptes rendus ; fusion de `lane-b` à 09:15 |
-| 09:30-10:45 | S22 Réidentification (Opus) | S42 Métriques et comparaison (jusqu'à 11:00) | H2 : tableau concurrentiel |
-| 10:45-12:00 | S31 Charte et squelette (Sonnet) | G2 (11:00-11:45) | Recette G2 à 11:45 ; tag `gate-2` |
-| 12:00-13:30 | S32 Écran de revue (Sonnet) | S43 Onglet Evaluation (jusqu'à 13:00) | Déjeuner 12:30-13:15 |
-| 13:30-14:00 |  | G4 (contrôle de l'évaluation) | Recette G4 : évaluation unique du jeu test ; tag `gate-4` |
-| 14:00-15:15 | S33 Restauration et exports (Sonnet) | S44 option CamemBERT (14:00-15:00) | H2 : fin de RESEARCH.md |
-| 15:15-16:00 |  | G3 (contrôle de l'interface) | Recette G3 dans le navigateur, six captures ; tag `gate-3` |
-| 16:00-17:00 | S51 Déploiement (Sonnet) | S34 option FR et Mistral | Compte Streamlit Community Cloud, déploiement de `main` |
-| 17:00-18:00 | S52 README et guide utilisateur (Sonnet) |  | Installation à neuf sur le Mac |
-| 18:00-18:45 |  | G5 (contrôle de reproductibilité) | Recette G5 ; tag `gate-5` |
-| 18:45-19:30 |  |  | Dîner |
-| 19:30-20:15 | S61 Script et storyboard (Sonnet) |  | Relecture du script à voix haute |
-| 20:15-21:45 | Corrections issues de la répétition | Corrections issues de la répétition | 6.2 : cas de démo, répétition chronométrée, conversation ChatGPT de démo |
-| 21:45-23:30 | Réserve | S6A option : segments Remotion et avatar (22:05-23:20) | Préparation de S6A à 21:45 (Node.js, Remotion, Rhubarb, voix test) ; go / no-go de l'avatar à 23:20 ; journal, H4 |
-| 23:59 | Gel des fonctionnalités : tag `v1.0-freeze` |  | Corrections seulement ensuite |
+Priorité : vrai support FR/EN, fusion sans perte, revue/restauration et contrôle du contenu sortant. Modèles supplémentaires et migration sont des candidats, jamais une obligation de charger tous les outils. À 19:15, arrêter les nouvelles explorations : conserver le meilleur profil déjà testé par langue. Si EN ou une protection obligatoire ne fonctionne pas, signaler le point bloquant ; ne pas annoncer un support fictif. S6A/avatar est coupée de ce calendrier pour préserver validation et vidéo.
 
-### Jeudi 29 octobre
-
-| Heure | Piste A, Claude Code | Piste B, Codex | Humain |
-| --- | --- | --- | --- |
-| 08:00-09:00 |  |  | Dernière répétition ; enregistrement de la narration |
-| 09:00-10:30 | S71 Rapport de méthode et ARCHITECTURE (Sonnet) | S72 Crédits et journal des prompts (jusqu'à 09:45) | Rendu Remotion si S6A (09:00-09:20), puis 6.3 : captures OBS plan par plan |
-| 10:30-14:00 | Corrections de documentation |  | 6.3 : montage Clipchamp, sous-titres, musique (pause 12:30) |
-| 14:00-15:00 |  |  | 6.4 : contrôle qualité et G6 |
-| 15:00-16:00 |  |  | Corrections ; export final 1080p avant 16:00 (T-8 h) |
-| 16:00-17:30 | Corrections de documentation (Sonnet) |  | Relecture du rapport, du README, de CREDITS et PROMPTS |
-| 17:30-18:30 |  | GF (gate finale) | Recette finale ; tag `v1.0` |
-| 18:30-19:15 |  |  | Dîner ; test de téléversement de la vidéo |
-| 19:15-20:30 |  |  | S73 : paquet de dépôt (lien GitHub, archive v1.0, vidéo, guide en PDF) |
-| 20:30-21:00 |  |  | Dépôt sur la plateforme du cours |
-| 21:00-21:59 |  |  | Tampon ; dépôt au plus tard 21:59 (T-2 h) |
-| 22:00-23:59 |  |  | Aucune modification ; seulement un nouveau téléversement en cas d'échec technique |
+Commandes de pilotage : py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" ready ; planning ; card A1 ; card B1. Chaque prompt contient start/finish et recopie les suivants dans le chat. Les anciennes fiches AF1-AF5 séquentielles sont remplacées par ce parcours ; leur essai AF5 correspond maintenant à la préparation A1, au benchmark B3 et à la décision A4.
 
 ## 8. Tableau de bord des sessions
 
-35 lignes : 28 sessions d'agents (dont 7 gates), 6 activités humaines et la gate vidéo ; le responsable est partout Graciano, la colonne « Dépend de » dit quand lancer.
+Tableau historique du plan initial. Les sessions actives après G7 et leurs dépendances sont définies par le calendrier de la section 7 et les fiches post-G7 ; le responsable reste Graciano. S53 est absorbée par A5, le contrôle suivant est G8 et sa recette R8.
 
 | ID | Titre | Agent, modèle | Durée | Dépend de | Onglet |
 | --- | --- | --- | --- | --- | --- |
@@ -1870,7 +1845,9 @@ Révision du 28 octobre à 00:30. Le développement a environ 18 heures d'avance
 
 Sessions de nuit : sans surveillance, découpées en phases committées une à une (AGENTS.md section 7, exception de la règle 5). Avant de dormir : Claude Code en mode auto (aucune demande de permission bloquante), Codex en mode Agent avec accès complet (le prompt interdit le réseau), mise en veille du PC désactivée, VS Code ouvert.
 
-### Calendrier révisé
+### Calendrier archivé de la première révision
+
+Ce tableau est conservé pour l'historique ; ne pas l'utiliser après G7. Le calendrier actif est en section 7.
 
 | Jour | Heure | Piste A (Claude, huisclos) | Piste B (Codex, huisclos-b) | Mode |
 | --- | --- | --- | --- | --- |
@@ -2206,6 +2183,615 @@ f. Termine par un compte rendu de 5 lignes au plus : fait, tests, reste à faire
 
 <!-- Onglet : Fiches 6-7 -->
 
+# Fiches post-G7 : bilingue et protection complète
+
+Révision autorisée par les demandes du 28 octobre : vrai support de documents anglais, réduction des fuites, nouveaux outils locaux et combinaison éventuelle, tâches les plus difficiles confiées à Claude. Ces fiches remplacent AF1-AF5 séquentielles proposées pendant la recherche. Elles ne prétendent pas que la fonctionnalité est déjà implémentée.
+
+## Architecture cible et décisions de livraison
+
+- Standard FR : règles/checksums/heuristiques français et spaCy FR ; Standard EN : règles/contextes anglais et spaCy EN. L'anglais documentaire ne se déduit ni de l'interface ni des jetons. La langue ne détermine pas la juridiction ; les formats réellement couverts seront annoncés et mesurés.
+- Renfort FR : CamemBERT existant comme référence, puis Anonym-IA V2 et/ou GLiNER si leur apport marginal le justifie. Renfort EN : GLiNER multilingue si validé. Anonym-IA est déclaré français ; il ne valide pas l'anglais. Aucun empilement automatique de tous les modèles.
+- Migration candidate : GLiNER0.2.29 demande Transformers>=4.51.3,<5.17.0. Tester une version exacte compatible et ses transitifs, notamment Hub, en isolation. La pile5.21 actuelle reste la référence et le venv partagé reste stable pendant les vagues. A4 seule applique une migration validée ; préserver avant cela un environnement G7 reproductible.
+- Mesurer couverture intégrale, fuite par caractères/type, rappel exact/partiel, surmasquage et coût. Un rappel partiel100% ne signifie pas une protection totale. Résultats et seuils séparés FR/EN ; aucune mesure G7 ne valide EN.
+- Préparer dev EN avant gel ; C3 FR/EN à l'aveugle après A4 ; G8 mesure une seule fois selon le protocole figé et garde G7 intact. La table, les textes et les modèles ne quittent jamais le poste pour l'inférence.
+
+Sources techniques : les [dépendances GLiNER](https://github.com/urchade/GLiNER/blob/v0.2.29/pyproject.toml) justifient l'étude de migration ; les [dépendances Transformers5.16](https://github.com/huggingface/transformers/blob/v5.16.0/setup.py) montrent que Hub doit aussi être résolu. Le [modèle spaCy EN3.8.0](https://github.com/explosion/spacy-models/releases/tag/en_core_web_sm-3.8.0) est un candidat léger compatible avec spaCy3.8 ; les cartes [Anonym-IA](https://huggingface.co/Anonym-IA/V2-camembert-ner-pii-french) et [GLiNER PII](https://huggingface.co/urchade/gliner_multi_pii-v1) décrivent les renforts à tester, sans prouver un gain HuisClos.
+
+## Organisation et pilotage
+
+A possède les modifications difficiles de détection, langue, offsets, parcours, contrôles et intégration. B possède les mesures, lecteurs, dev EN, benchmark et audits indépendants. Les fichiers sont disjoints pendant chaque vague. Exception explicite de coordination : B1/B2/B3/C3 déposent leurs traces dans docs/parallel/<ID>.md ; A ou G8 centralise ensuite PROGRESS/PROMPTS/DECISIONS. Les synchronisations fusionnent les SHA validés des reçus plutôt qu'une branche pouvant déjà avancer sur un autre lot ; conflit = arrêt.
+
+Le programme externe pilotage/post_g7.py ne lance aucun agent et ne modifie pas Git. start réserve une piste, finish vérifie dossier/branche/commit/arbre propre et enregistre un reçu atomique. Les deux fins d'une vague sont requises avant la suivante. Chaque agent recopie ensuite les prompts complets fournis par le pilote dans le chat, avec piste/outils/dossier. A1 et B1 se lancent ensemble. C3 et G8 exigent des conversations neuves.
+
+Commandes : `py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" ready` pour les prompts lançables ; `planning` pour le tableau ; `card A1` ou `card B1` pour une fiche autorisée. suite.py --planning, G7 --go et la fin de R7 redirigent vers ce parcours ; S53 est absorbée par A5. Après R8, reprise de S61 et du calendrier vidéo/dépôt. Aucune publication pendant cette session de planification ; la recette R8 n'autorise tag/push qu'après tous les GO prévus par AGENTS section 12.
+
+Les copies externes de chaque prompt sont identiques aux blocs versionnés ci-dessous. Un reçu conserve l'empreinte du prompt exécuté ; ne pas modifier les consignes après démarrage d'un lot sans signaler ce changement.
+
+## AF-A1. Fusion, fenêtres et préparation des modèles
+
+```text
+[HuisClos] A1 : Fusion, fenêtres et préparation des modèles
+Piste A, Claude Code, Opus 5.5, High.
+Dossier : C:/Users/nasci/Documents/Coding Project/Assignment/huisclos ; branche dev.
+
+Cette session fait partie du nouveau parcours bilingue après G7 ; elle remplace les anciens lots AF1-AF5 séquentiels. Les changements difficiles sont sur A, les mesures et contrôles indépendants sur B. Ne pas lancer deux sessions dans le même dossier. Si une ancienne recette R7 y tourne encore, la terminer d'abord.
+
+Début obligatoire, dans le dossier indiqué :
+1. Lire AGENTS.md. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" start A1.
+2. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" base A1. Cette commande renvoie le SHA validé de l'autre piste. Faire git merge <ce SHA> --no-edit. Dérogation explicite à AGENTS section 12 : ce SHA figé remplace la branche mouvante pour ne pas importer une phase en cours. Sur conflit, arrêter et signaler ; aucune résolution improvisée.
+3. Présenter dix lignes de plan au plus puis implémenter sans attendre de validation. Préserver tout travail local. Les horloges du tableau sont indicatives ; les prérequis du pilote et les contrôles verts décident du lancement.
+
+Objectif : corriger les pertes de couverture de la fusion et les frontières CamemBERT. Ces changements de logique sont confiés à Claude. B1 travaille simultanément sur les métriques ; ne pas modifier ses fichiers.
+
+Lire : AGENTS.md ; trois dernières entrées de PROGRESS ; DECISIONS D-07/09/11, D-S13-1, D-G1fix-1/2, D-S44-1, D-G7-1 ; puis les fichiers du périmètre nécessaires.
+Périmètre modifiable : src/huisclos/detection/merge.py, camembert.py ; nouveaux detection/conflicts.py et windows.py si nécessaires ; tests/test_merge.py, test_camembert.py, nouveaux tests/test_detection_windows.py ; nouveau scripts/prepare_local_models.py ; docs/LOCAL_MODELS.md ; docs/PROGRESS.md, PROMPTS.md, DECISIONS.md.
+Interdits de périmètre : evaluation/, app/, config.py, io/, scripts/evaluate_robustness.py et tests/test_coverage*.py, réservés aux autres lots. Ne pas modifier requirements ni le venv partagé.
+
+1. Écrire d'abord le test qui reproduit la perte de couverture.
+Texte fictif "Paul Martin" ; PERSON [0:11], score 0,85, Source.NER_SPACY ; candidat supplémentaire ORGANIZATION [0:4], score 0,10, Source.NER_CAMEMBERT ; seuil 0,30 et exclusions désactivées. Avec PERSON seul, onze caractères sont couverts ; avec le candidat supplémentaire, le code G7 n'en couvre plus que six. Le conflit rogne PERSON avant que le seuil supprime ORGANIZATION. Tester aussi ADDRESS et les chevauchements partiels/complets.
+
+2. Corriger l'arbitrage.
+Un candidat non admissible ne doit pas retirer la protection d'un candidat admissible. Garder les priorités, les bornes manuelles, les références publiques exclues et les fragments sensibles libres. Ne pas filtrer naïvement avant les agrégations qui calculent le score final (voie + code postal/ville). Ne pas unir toute une chaîne de chevauchements en un span géant. Extraire conflicts.py si nécessaire pour rester sous 400 lignes.
+Tester les ensembles de caractères couverts, l'indépendance à l'ordre d'arrivée, l'absence de chevauchement et Detection.text == texte[start:end]. Couvrir les scores juste sous/au/au-dessus du seuil, les noms autour d'un email/IBAN et les références juridiques proches.
+
+3. Ajouter du recouvrement aux fenêtres CamemBERT.
+Le découpage existe déjà mais ne partage aucun contexte. Lire la signature installée du tokenizer/pipeline. Utiliser des fenêtres recouvrantes bornées (64 tokens comme point de départ à justifier sur dev), avec tokens spéciaux et capacité respectés. Tous les caractères doivent être analysés, avec progression garantie, sans troncature silencieuse ni retokenisation quadratique de tout le suffixe.
+Reprendre les offsets absolus du modèle, jamais text.find. Dédupliquer sans joindre deux identités. Faux tokenizer à faible capacité et faux modèle qui reconnaît un nom uniquement s'il est entièrement dans sa fenêtre : frontière, répétitions, texte sans blancs, Unicode, début/fin, limite et résultats invalides. Une vraie inférence fictive locale seulement si le cache déjà installé le permet.
+
+4. Préparer le socle EN obligatoire et les candidats PII facultatifs pour B3.
+Cet approvisionnement public est explicitement autorisé pour Claude, hors exécution de l'application ; ne transmettre aucun texte à un service. Approvisionnement et étude de compatibilité bornés à vingt minutes hors corrections principales. Les installations publiques sont autorisées uniquement dans un venv expérimental hors dépôt ; aucune modification du venv partagé pendant les travaux parallèles.
+Candidats retenus pour étude : Anonym-IA/V2-camembert-ner-pii-french (FR) et urchade/gliner_multi_pii-v1 (FR/EN). Leurs modèles seuls et leur combinaison seront comparés ; aucun gain n'est présumé. Consulter carte, config et fichiers officiels sur Hugging Face ; Anonym-IA annonce MIT et une architecture standard CamembertForTokenClassification ; GLiNER annonce Apache-2.0. Vérifier modèles, tokenizers/backbones auxiliaires, configurations et formats des poids ; préférer safetensors vérifiés. Le F1 de la carte n'est pas un résultat HuisClos.
+Placer les seuls fichiers nécessaires hors dépôt dans C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7_assets/. Enregistrer manifest.json avec statut available/unavailable, révision immutable, noms/empreintes de fichiers, licence et chemins locaux. Identifier/exporter aussi le snapshot complet du CamemBERT existant depuis son cache. Approvisionner le modèle anglais officiel en_core_web_sm 3.8.0 compatible spaCy 3.8.18 (wheel officielle 3.8.0, licence MIT), sans ajout au venv partagé pendant B1. Ce modèle léger est nécessaire au vrai support anglais, distinct de la langue UI.
+Vérifier le chargement des dossiers locaux dans un processus neuf, caches HF vides, connexions bloquées, local_files_only=True et trust_remote_code=False. Un fichier auxiliaire absent doit faire échouer clairement. Si un candidat PII échoue, le noter unavailable sans bloquer le socle. En revanche, le modèle spaCy EN et un venv complet capable de tester le moteur EN sont obligatoires : leur absence bloque A1 et doit être déclarée, jamais convertie en succès. Le socle de repli peut conserver Transformers 5.21 si la pile candidate GLiNER ne résout pas.
+Créer si possible un venv expérimental complet avec les mêmes dépendances de base, spaCy EN, GLiNER et une version exacte compatible de Transformers 5.16.x. Résoudre aussi huggingface-hub (5.16.0 exige Hub >=1.5,<2 alors que le projet a actuellement Hub 2.x), pas seulement une ligne Transformers. Vérifier les contraintes de la version effectivement choisie, pip check, imports et inférences fictives FR/EN. Un environnement courant sans GLiNER peut servir de repli pour tester le vrai support anglais. Ne pas utiliser --no-deps ni réutiliser un environnement incohérent. Manifeste : interpréteur, versions exactes, modèles, chemins et statuts de chaque option. Préserver aussi AVANT migration un environnement de référence G7 reproductible, aux versions installées actuelles, avec modèle/tokenizer et manifeste complets. Il peut servir de socle EN 5.21 si la seule addition est le modèle EN non utilisé par G7 ; déclarer cette addition. G8 ne doit pas exécuter G7 sous une pile modifiée en l'appelant référence de livraison. B3 utilisera ces interpréteurs hors ligne. Ne brancher aucun nouveau backend à l'application dans A1.
+
+5. Vérifier uniquement dev et nouvelles fixtures ; aucune mesure test/challenge/all. Ne remplacer aucun résultat G7. Mettre à jour les trois journaux centraux et les décisions D-AF-A1-*. Commit final : "AF-A1 : fusion sans perte et fenêtres recouvrantes".
+
+Contrat des environnements pour les deux pistes : préparer obligatoirement baseline_python, un venv socle aux versions G7 actuelles (Transformers5.21 et transitifs exacts), complété seulement du modèle spaCy EN et des dépendances de test déjà prévues. A2/A3 et les contrôles généraux B3 l'utilisent avant A4 ; cela évite des tests de versions incohérents avec les requirements encore inchangés. Préparer séparément candidate_python, facultatif, pour Transformers/Hub/GLiNER compatibles. Les essais B3 changent d'interpréteur explicitement ; aucune migration n'est encore appliquée au projet. Le manifeste fournit ces deux clés et un statut clair. Baseline manquante = A1 bloquée ; candidat manquant = étude PII partielle, sans faux succès GLiNER.
+
+Règles communes de clôture :
+- PYTHONUTF8=1 ; utiliser l'interpréteur du projet par son chemin : .venv/Scripts/python.exe sur A ; ../huisclos/.venv/Scripts/python.exe sur B. Pour A2/A3 et les contrôles généraux B3, utiliser baseline_python du manifeste A1, aux versions actuelles plus spaCy EN, y compris pour la suite complète. Réserver candidate_python aux expériences explicites B3, puis aux contrôles après modification des requirements A4. Pour les autres lots, conserver le PY habituel, puis le PY validé après A4. Ne pas changer le venv partagé pendant les vagues parallèles ; seule A4 peut appliquer une migration validée.
+- Lire les signatures des bibliothèques installées avant utilisation. Tous les nouveaux modules/fonctions annotés et documentés en français ; messages UI anglais/français dans i18n, HTML utilisateur échappé, fichiers métiers sous 400 lignes. Aucune donnée réelle.
+- Tests ciblés puis PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py ; git diff --check. Corriger les écarts de son périmètre. Codex ne télécharge ni n'installe aucun paquet. Aucun test/challenge/all mesuré hors gate expressément autorisée ; corpus réservés jamais ouverts manuellement.
+- Mettre à jour PROGRESS (entrée en tête), PROMPTS (une ligne) et DECISIONS si décision, avec identifiants de cette session. Centraliser les seuls fragments B déjà validés demandés par le lot ; pas de contenu de corpus réservé.
+- Commit de session au préfixe indiqué dans le corps, contrôles verts. Aucun tag/push sauf autorisation conditionnelle de la recette R8. Compte rendu de cinq lignes au plus, hors prompts de relais.
+
+Pilotage, après le compte rendu et le commit : exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" finish A1. Recopier intégralement sa sortie dans le chat, sans résumer ni modifier ; chaque partie de --- PROMPT À COLLER --- à --- FIN --- dans son propre bloc de code. Elle donne le prochain prompt, la piste, le dossier et le mode seul/parallèle. Si le pilote dit ATTENDRE, ne pas anticiper la vague suivante. En cas de blocage réel avant commit : py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" blocked A1 --reason "motif court sans contenu sensible", puis recopier la sortie.
+```
+
+## AF-B1. Couverture complète et protocole bilingue
+
+```text
+[HuisClos] B1 : Couverture complète et protocole bilingue
+Piste B, Codex, GPT 6.1 Sol, High.
+Dossier : C:/Users/nasci/Documents/Coding Project/Assignment/huisclos-b ; branche lane-b.
+
+Cette session fait partie du nouveau parcours bilingue après G7 ; elle remplace les anciens lots AF1-AF5 séquentiels. Les changements difficiles sont sur A, les mesures et contrôles indépendants sur B. Ne pas lancer deux sessions dans le même dossier. Si une ancienne recette R7 y tourne encore, la terminer d'abord.
+
+Début obligatoire, dans le dossier indiqué :
+1. Lire AGENTS.md. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" start B1.
+2. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" base B1. Cette commande renvoie le SHA validé de l'autre piste. Faire git merge <ce SHA> --no-edit. Dérogation explicite à AGENTS section 12 : ce SHA figé remplace la branche mouvante pour ne pas importer une phase en cours. Sur conflit, arrêter et signaler ; aucune résolution improvisée.
+3. Présenter dix lignes de plan au plus puis implémenter sans attendre de validation. Préserver tout travail local. Les horloges du tableau sont indicatives ; les prérequis du pilote et les contrôles verts décident du lancement.
+
+Objectif : ajouter une mesure honnête de protection complète et un pilote reproductible, sans modifier la détection. A1 corrige simultanément la fusion et CamemBERT sur A ; ne pas toucher ses fichiers.
+
+Lire : AGENTS.md ; trois dernières entrées de PROGRESS ; DECISIONS D-12/13, D-S45-1, D-G7-1 et D-G4bisfix-1 ; puis contrats de models.py, evaluation/corpus.py et métriques. Ne pas inspecter les règles pour inventer des exemples qui les favorisent.
+Périmètre modifiable : src/huisclos/evaluation/metrics.py, run.py, reports.py, intervals.py ; nouveaux evaluation/coverage.py et coverage_reports.py ; nouveau scripts/evaluate_robustness.py ; tests/test_metrics.py, test_evaluation_reports.py, test_evaluation_intervals.py ; nouveaux tests/test_coverage.py, test_robustness_runner.py ; docs/POST_G7_PROTOCOL.md et docs/parallel/B1.md.
+Ne modifier ni detection/, ni pseudonymize/, ni app/, ni io/, ni requirements, ni les journaux centraux. Pour ces journaux, appliquer la dérogation de piste B indiquée en fin de prompt.
+
+1. Garder intégralement les métriques historiques.
+Le rappel partiel accepte tout recouvrement positif de même type ; exposed_entities signifie entièrement découverte. Ces définitions et tous les résultats G7 restent inchangés. Ne pas reconstruire d'intervalles historiques depuis des agrégats.
+
+2. Ajouter une fonction pure de couverture.
+Calculer l'union des caractères réellement masqués, indépendamment du type prédit, sans accorder pour autant un vrai positif NER à une mauvaise étiquette. Publier : entities_fully_covered, entities_partially_exposed, entities_fully_exposed, entities_with_any_exposure, full_coverage_rate, leaked_characters, documents_with_any_exposure, non_sensitive_characters_masked et leur ratio.
+Définir les dénominateurs : onze types historiques pour la comparaison ; CUSTOM/LOCATION séparés ; toutes les substitutions effectives peuvent couvrir les caractères d'une référence. Ne changer aucun périmètre selon le profil. Un seul caractère sensible visible suffit à empêcher la couverture intégrale. Une alerte sans masquage ne réduit pas la fuite. Ratio sans dénominateur : not applicable, pas une garantie de zéro fuite.
+Tester des exemples calculables à la main : prénom masqué/nom visible ; ville laissée visible ; couverture entière avec mauvaise étiquette ; deux spans complémentaires ; intersections ; document sans annotation ; tout le texte masqué. Le dernier cas doit montrer le surmasquage.
+
+3. Pilote de robustesse.
+scripts/evaluate_robustness.py exige --corpus, --dataset-id et --out, sans split réservé par défaut. En mode développement, refuser les vrais chemins test/challenge et blind_post_g7, même via un chemin relatif ou résolu. Un mode gate explicite pourra autoriser un corpus réservé sans afficher textes, valeurs, positions ou ids de documents.
+Réutiliser constructeurs et fonctions pures. Configurations/seuils/langue de document explicites et figés ; une détection par document/profil, puis réemploi des prédictions pour scores et intervalles. Inclure commit, corpus SHA-256, configuration entière, modèle/révision, seuils et stade évalué. Les erreurs détaillées sont limitées au dev.
+Séparer détection, pseudonymisation automatique de toutes les propositions et alertes du contrôle final ; aucune simulation d'un humain qui connaît les annotations. Rapport nouveau séparé compatible avec les rapports antérieurs.
+Bootstrap par document, 2 000 tirages, graine 45. Si un intervalle apparié de différence est prévu, utiliser les mêmes tirages et le tester ; sinon aucune conclusion de significativité depuis les seuls intervalles marginaux.
+
+4. Protocole avant validation aveugle.
+Écrire docs/POST_G7_PROTOCOL.md. Comparateurs : actuel Standard contre G7 hybrid ; actuel Enhanced contre G7 hybrid_camembert ; Enhanced contre Standard actuel pour recommander l'option. Le nouveau backend sera comparé au meilleur profil déjà retenu, pas uniquement au plus faible de G7.
+Les réglages viennent de dev et de fixtures nouvelles. Fixer avant mesure réservée les profils, seuils, marges et métriques ; le challenge C2 a servi à choisir une stratégie, il n'est plus une validation fraîche de cette stratégie. Prévoir un nouveau C3 FR/EN après gel. Les résultats, seuils et intervalles sont séparés par langue ; aucun chiffre G7 ne valide EN. Contrat à prévoir avec A2 : DetectionConfig.document_language vaut fr/en, indépendamment de la langue UI et du style de jetons. Si ce champ manque encore avant A2, échouer clairement pour une demande EN au lieu de simuler son support ; les tests du pilote peuvent utiliser un faux moteur bilingue.
+Critère proposé pour recommander un profil : fuite plus faible et couverture complète plus élevée, précision partielle au moins référence moins deux points et surmasquage au plus référence plus un point. Nommer le comparateur à chaque fois ; ces marges sont des critères d'ingénierie, pas des seuils juridiques. Ne pas masquer tout le texte pour obtenir zéro fuite.
+Prévoir mesure dev puis vérification des seuils AVANT toute mesure réservée. Ne pas utiliser --split all si une vérification intermédiaire des seuils est exigée : cette commande enchaîne immédiatement test.
+
+5. Aucune évaluation test/challenge/all ni ouverture de leurs sources. Dev/fixtures seulement ; sorties hors dépôt. Produire docs/parallel/B1.md avec travail, tests, protocole, décisions proposées D-AF-B1-*, limites et handoff A2. Commit : "AF-B1 : couverture complète et protocole de mesure".
+
+Règles communes de clôture :
+- PYTHONUTF8=1 ; utiliser l'interpréteur du projet par son chemin : .venv/Scripts/python.exe sur A ; ../huisclos/.venv/Scripts/python.exe sur B. Pour A2/A3 et les contrôles généraux B3, utiliser baseline_python du manifeste A1, aux versions actuelles plus spaCy EN, y compris pour la suite complète. Réserver candidate_python aux expériences explicites B3, puis aux contrôles après modification des requirements A4. Pour les autres lots, conserver le PY habituel, puis le PY validé après A4. Ne pas changer le venv partagé pendant les vagues parallèles ; seule A4 peut appliquer une migration validée.
+- Lire les signatures des bibliothèques installées avant utilisation. Tous les nouveaux modules/fonctions annotés et documentés en français ; messages UI anglais/français dans i18n, HTML utilisateur échappé, fichiers métiers sous 400 lignes. Aucune donnée réelle.
+- Tests ciblés puis PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py ; git diff --check. Corriger les écarts de son périmètre. Codex ne télécharge ni n'installe aucun paquet. Aucun test/challenge/all mesuré hors gate expressément autorisée ; corpus réservés jamais ouverts manuellement.
+- Dérogation explicite à AGENTS section 7 pour éviter les conflits : écrire docs/parallel/B1.md avec fait/tests/risques/décisions/handoff, sans modifier PROGRESS/PROMPTS/DECISIONS centraux. La prochaine intégration A les y reportera ; G8 centralisera C3. Ne pas écrire dans le fragment de l'autre piste.
+- Commit de session au préfixe indiqué dans le corps, contrôles verts. Aucun tag/push sauf autorisation conditionnelle de la recette R8. Compte rendu de cinq lignes au plus, hors prompts de relais.
+
+Pilotage, après le compte rendu et le commit : exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" finish B1. Recopier intégralement sa sortie dans le chat, sans résumer ni modifier ; chaque partie de --- PROMPT À COLLER --- à --- FIN --- dans son propre bloc de code. Elle donne le prochain prompt, la piste, le dossier et le mode seul/parallèle. Si le pilote dit ATTENDRE, ne pas anticiper la vague suivante. En cas de blocage réel avant commit : py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" blocked B1 --reason "motif court sans contenu sensible", puis recopier la sortie.
+```
+
+## AF-A2. Moteur français/anglais, bornes et variantes
+
+```text
+[HuisClos] A2 : Moteur français/anglais, bornes et variantes
+Piste A, Claude Code, Opus 5.5, High.
+Dossier : C:/Users/nasci/Documents/Coding Project/Assignment/huisclos ; branche dev.
+
+Cette session fait partie du nouveau parcours bilingue après G7 ; elle remplace les anciens lots AF1-AF5 séquentiels. Les changements difficiles sont sur A, les mesures et contrôles indépendants sur B. Ne pas lancer deux sessions dans le même dossier. Si une ancienne recette R7 y tourne encore, la terminer d'abord.
+
+Début obligatoire, dans le dossier indiqué :
+1. Lire AGENTS.md. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" start A2.
+2. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" base A2. Cette commande renvoie le SHA validé de l'autre piste. Faire git merge <ce SHA> --no-edit. Dérogation explicite à AGENTS section 12 : ce SHA figé remplace la branche mouvante pour ne pas importer une phase en cours. Sur conflit, arrêter et signaler ; aucune résolution improvisée.
+3. Présenter dix lignes de plan au plus puis implémenter sans attendre de validation. Préserver tout travail local. Les horloges du tableau sont indicatives ; les prérequis du pilote et les contrôles verts décident du lancement.
+
+Objectif : corriger les bornes et artefacts, ET fournir un vrai moteur de documents français/anglais. Ce lot bilingue, difficile, appartient à Claude. Ne pas confondre langue du document, interface et style des jetons. B2 travaille en parallèle sur les lecteurs, pas sur la détection.
+
+Après synchronisation au SHA de B1, intégrer docs/parallel/B1.md dans PROGRESS/PROMPTS/DECISIONS sans réécrire le fragment. Lire AGENTS, les dernières entrées, D-S14-1 à 8, D-S24-2/3, D-G7-1 et les décisions A1/B1. Périmètre de code : detection/address_patterns.py, patterns.py, case_patterns.py, labeled_identifiers.py, pipeline.py, propagation.py ; text_utils.py ; nouveaux detection/address_bounds.py, analysis_view.py, aliases.py ; grouping.py et case_memory.py seulement pour les variantes certaines. Tests correspondants et nouveaux tests/test_address_bounds.py, test_analysis_view.py, test_aliases.py, test_metamorphic_detection.py ; tests/fixtures/post_g7/. Journaux centraux et POST_G7_PROTOCOL.md. Périmètre supplémentaire autorisé pour EN : config.py ; detection/ner.py, person_heuristics.py, exclusions.py, organization_bounds.py ; nouveaux detection/languages.py et english_patterns.py ; nouvelle data/exclusions_en.txt limitée aux motifs génériques ; tests/test_english_detection.py et test_document_language.py. Aucun io/, app/, evaluation/, corpus/ ou requirements modifié dans A2 ; B2 écrit le dev EN en parallèle. Utiliser le venv expérimental A1 pour les vraies inférences EN ; le venv partagé reste stable jusqu'à A4.
+
+1. Annoter de nouvelles fixtures fictives AVANT modification des règles.
+Diversifier les valeurs et gabarits. Adresses : numéro/bis/ter, voie composée, lieu-dit, résidence/bâtiment/appartement, BP/CS, commune composée, Cedex, casse, ponctuation, coupures de lignes, tableau textuel, deux adresses voisines. Pièges : champ suivant, téléphone/email, phrase voisine, article de loi, procédure prise pour code postal. Naissance : contexte lié mais long, lieu intercalé, puis date d'audience. Procédure : libellé séparé par des blancs/lignes, ponctuation, citation publique et ambiguïté. Aucun nom ni ville tiré d'un corpus réservé.
+
+2. Étendre les adresses autour d'ancrages solides.
+Réutiliser les motifs ; préférer un assembleur borné à une expression toujours plus large. Limiter lignes/tokens/caractères et arrêter au champ suivant, autre adresse, paragraphe séparé ou fin de phrase. Une adresse complète demeure un span jusqu'à la ville et ses compléments postaux. Garder les indices originaux et la restitution exacte. Ne pas transformer une ville seule en adresse ni engloutir une phrase. Rendre explicables les propositions incertaines.
+
+3. Améliorer contexte naissance/procédure si les fixtures le justifient.
+Portée locale bornée en mots/lignes avec arrêts syntaxiques plutôt qu'élargissement arbitraire de fenêtre. Valider les dates et éviter une date d'audience prise pour naissance. Libellés hors spans ; références publiques préservées ; aucun retrait spécifique dans exclusions. Justifier tout changement de score.
+
+4. Vue d'analyse projetable.
+Les lecteurs font déjà NFC et la propagation tolère accents/casse/blancs. Ajouter seulement ce qui manque : soft hyphen, quelques caractères de largeur nulle, ligatures et équivalences typographiques documentées. Ne jamais modifier le texte canonique.
+Toute transformation qui change la longueur exige une table monotone de projection des bornes. La Detection finale doit reprendre text[start:end] dans le texte canonique. Pas de recherche str.find pour retrouver un offset ; pas de remplacement global de O/0 ou l/1 ; pas de raccord de toutes les lignes sans contexte. Garder les candidats de la vue originale et la garantie de couverture A1.
+
+5. Alias explicites seulement.
+Réutiliser propagation et mémoire de dossier. Un sigle défini après une raison sociale ou une mention explicite d'alias peut relier deux formes si la relation est non ambiguë. Une même abréviation compatible avec deux personnes/sociétés ne fusionne pas silencieusement. Aucun dictionnaire inventé de surnoms ni rapprochement flou global.
+Un nom dans un nom de fichier peut être repéré comme mention à protéger ; ce repérage ne prouve pas son identité. Jeton séparé sauf lien explicite déjà validé. Garder portée/contextes et deux entités en cas de doute ; pas de nouvelle interface complexe.
+
+6. Tests métamorphiques déterministes avec pytest et bibliothèque standard : valeurs fictives substituées, casse, apostrophes/tirets, espaces particuliers, Unicode composé/décomposé, U+00AD/U+200B/U+2060, coupures et répétitions, frontières A1. Vérifier couverture, indices, bornes, jetons quand l'identité est certaine et aller-retour exact. Ajouter des cas négatifs de lisibilité ; ne pas imposer une invariance sémantique à une transformation ambiguë.
+
+
+7. Français/anglais comme langues de document explicites.
+- Ajouter document_language=fr/en dans DetectionConfig, défaut fr pour rétrocompatibilité. Paramétrer factories, Presidio registry/analyzer, supported_language, appel analyze, modèles spaCy et contextes/exclusions. Le code fixe aujourd'hui LANGUAGE=fr dans plusieurs modules : changer seulement spacy_model ne suffit pas.
+- FR conserve fr_core_news_md ; EN utilise en_core_web_sm 3.8.0 approvisionné A1. Chargement paresseux et absence claire, jamais spacy.download. Mapping EN PERSON/ORG/GPE/LOC/FAC selon la politique de types ; DATE générique n'est pas BIRTH_DATE et ville seule n'est pas ADDRESS.
+- Règles EN : civilités (Mr/Ms/Mrs/Dr), personnes/particules, formes de sociétés (Ltd/LLP/Inc/LLC et variantes utiles), contexte born/date of birth/DOB, mois anglais, références privées case/file/claim face aux références publiques, contacts et adresses anglophones usuelles. Choisir un périmètre concret : adresses US/UK et françaises dans des documents anglais, téléphones internationaux explicites et formats locaux justifiés par contexte. Une langue ne détermine pas une nationalité ni toutes les juridictions.
+- Pour une adresse EN, span jusqu'au dernier composant postal explicite ; consigner cette extension de D-09 tout en gardant les conventions FR. Dates numériques ambiguës : masquer la graphie sensible sans prétendre choisir une juridiction. Identifiants français restent reconnus dans un document EN.
+- Tester les négatifs courants anglais, dates d'événement, références publiques, mots communs/homonymes, sociétés/personnes, adresses complètes et champs voisins. Config/cache séparés par document_language ; même table de dossier conserve les jetons en passant d'un document FR à EN pour une identité connue.
+- Les modèles Anonym-IA français ne seront pas utilisés comme preuve de couverture EN. A4 choisira le renfort multilingue sur mesures séparées. Ne pas annoncer le support EN validé avant la gate bilingue.
+8. Mesurer avant/après sur dev et nouvelles fixtures seulement, au même seuil/profil avec le pilote B1. Publier fuite par type, couverture complète, rappel exact/partiel et surmasquage. Aucun recul sur les cas acquis ou absorption des champs voisins. Aucune mesure réservée. Commit final : "AF-A2 : bornes complètes et variantes d'extraction" ; décisions D-AF-A2-*.
+
+Règles communes de clôture :
+- PYTHONUTF8=1 ; utiliser l'interpréteur du projet par son chemin : .venv/Scripts/python.exe sur A ; ../huisclos/.venv/Scripts/python.exe sur B. Pour A2/A3 et les contrôles généraux B3, utiliser baseline_python du manifeste A1, aux versions actuelles plus spaCy EN, y compris pour la suite complète. Réserver candidate_python aux expériences explicites B3, puis aux contrôles après modification des requirements A4. Pour les autres lots, conserver le PY habituel, puis le PY validé après A4. Ne pas changer le venv partagé pendant les vagues parallèles ; seule A4 peut appliquer une migration validée.
+- Lire les signatures des bibliothèques installées avant utilisation. Tous les nouveaux modules/fonctions annotés et documentés en français ; messages UI anglais/français dans i18n, HTML utilisateur échappé, fichiers métiers sous 400 lignes. Aucune donnée réelle.
+- Tests ciblés puis PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py ; git diff --check. Corriger les écarts de son périmètre. Codex ne télécharge ni n'installe aucun paquet. Aucun test/challenge/all mesuré hors gate expressément autorisée ; corpus réservés jamais ouverts manuellement.
+- Mettre à jour PROGRESS (entrée en tête), PROMPTS (une ligne) et DECISIONS si décision, avec identifiants de cette session. Centraliser les seuls fragments B déjà validés demandés par le lot ; pas de contenu de corpus réservé.
+- Commit de session au préfixe indiqué dans le corps, contrôles verts. Aucun tag/push sauf autorisation conditionnelle de la recette R8. Compte rendu de cinq lignes au plus, hors prompts de relais.
+
+Pilotage, après le compte rendu et le commit : exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" finish A2. Recopier intégralement sa sortie dans le chat, sans résumer ni modifier ; chaque partie de --- PROMPT À COLLER --- à --- FIN --- dans son propre bloc de code. Elle donne le prochain prompt, la piste, le dossier et le mode seul/parallèle. Si le pilote dit ATTENDRE, ne pas anticiper la vague suivante. En cas de blocage réel avant commit : py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" blocked A2 --reason "motif court sans contenu sensible", puis recopier la sortie.
+```
+
+## AF-B2. Qualité d'import et corpus dev anglais
+
+```text
+[HuisClos] B2 : Qualité d'import et corpus dev anglais
+Piste B, Codex, GPT 6.1 Sol, High.
+Dossier : C:/Users/nasci/Documents/Coding Project/Assignment/huisclos-b ; branche lane-b.
+
+Cette session fait partie du nouveau parcours bilingue après G7 ; elle remplace les anciens lots AF1-AF5 séquentiels. Les changements difficiles sont sur A, les mesures et contrôles indépendants sur B. Ne pas lancer deux sessions dans le même dossier. Si une ancienne recette R7 y tourne encore, la terminer d'abord.
+
+Début obligatoire, dans le dossier indiqué :
+1. Lire AGENTS.md. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" start B2.
+2. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" base B2. Cette commande renvoie le SHA validé de l'autre piste. Faire git merge <ce SHA> --no-edit. Dérogation explicite à AGENTS section 12 : ce SHA figé remplace la branche mouvante pour ne pas importer une phase en cours. Sur conflit, arrêter et signaler ; aucune résolution improvisée.
+3. Présenter dix lignes de plan au plus puis implémenter sans attendre de validation. Préserver tout travail local. Les horloges du tableau sont indicatives ; les prérequis du pilote et les contrôles verts décident du lancement.
+
+Objectif : rendre explicite la complétude de l'import et rédiger un dev anglais fictif, pendant que Claude implémente les détecteurs bilingues sur A2. Ne pas ajouter d'OCR.
+
+Lire AGENTS, dernières entrées, D-15, D-S14-3, D-G7-1 ; io/readers.py et ses tests ; signature installée python-docx/pypdf. Périmètre : io/readers.py ; nouveau io/read_quality.py si utile ; app/steps/import_step.py et app/i18n/workflow_import.py pour les avertissements de lecture uniquement ; tests/test_io.py, nouveaux tests/test_import_quality.py et test_app_import_quality.py ; docs/parallel/B2.md ; nouveaux corpus/english_dev/source/en_dev_01.md à en_dev_08.md, corpus/english_dev/dev.jsonl et manifest.json ; nouveau scripts/build_english_dev.py ; corpus/README.md pour annoncer ce jeu de développement. Aucun detection/, pseudonymize/, evaluation/, config.py, state.py ni journal central modifié.
+
+1. PDF mixtes.
+Le contrôle actuel utilise la moyenne globale des caractères : une page scannée peut passer inaperçue dans un document riche en texte. Contrôler par page et renvoyer un état explicite partiel/inconnu avec numéros de pages, sans contenu sensible dans les erreurs. Une page courte peut être légitime : le seuil ne prouve pas qu'il s'agit d'un scan. Définir un avertissement ou refus cohérent avec l'interface, sans annoncer une extraction intégrale.
+Le texte non extrait n'est pas envoyé en clair puisque la requête contient seulement l'extraction ; distinguer complétude du document et fuite du payload.
+
+2. DOCX.
+Tableaux imbriqués, en-têtes et pieds sont déjà lus. Préserver l'ordre paragraphes/tableaux avec iter_inner_content si l'API installée le permet. Détecter et signaler les structures non prises en charge (notes, commentaires, zones de texte, révisions), sans prétendre toutes les extraire ni lire une pièce jointe externe. Préserver les contrats ReadResult et erreurs par défaut autant que possible.
+
+3. Tests générés en mémoire avec les paquets existants : PDF texte, page image au milieu, page légitimement courte, extraction vide, DOCX paragraphe-tableau-paragraphe, tableau imbriqué, en-têtes et structures non prises en charge. Pas de gros binaire ajouté ni de donnée réelle. Tests AppTest EN/FR pour les nouveaux avertissements et compatibilité des anciennes lectures.
+
+
+4. Dev anglais distinct, créé avant le gel.
+Huit documents fictifs variés, environ250-450mots chacun, quatre genres juridiques/de gestion, annotations de chaque occurrence avec les types existants et spans complets. Inclure personnes, organisations, adresses usuelles US/UK et dossier français rédigé en anglais, emails example.com/org, téléphones, naissance/dossier et références publiques non sensibles. Ne pas supposer que la langue implique un pays. Manifeste language=en, dataset_id=english_dev_v1 et conventions ; split=dev dans le JSONL compatible.
+Ne pas écraser corpus/dev.jsonl français, test/challenge ni leurs sources. Sources dans ce sous-dossier séparé, constructeur pur qui calcule/valide les offsets, aucun NER. A2 écrit ses fixtures indépendamment ; B3 utilisera ce dev après fusion. Ce dev sert au réglage, pas de prétention de validation aveugle. Aucun nouveau type de sécurité sociale étranger inventé : documenter les formats réellement annotés/visés.
+5. Ne pas modifier les exports : ils sont déjà reconstruits depuis le texte. Aucun réseau ou paquet nouveau. Ne pas lire ni mesurer les corpus réservés. Remettre dans docs/parallel/B2.md le contrat exact des nouveaux avertissements, les tests et les limites pour A3. Commit : "AF-B2 : contrôle des imports incomplets".
+
+Règles communes de clôture :
+- PYTHONUTF8=1 ; utiliser l'interpréteur du projet par son chemin : .venv/Scripts/python.exe sur A ; ../huisclos/.venv/Scripts/python.exe sur B. Pour A2/A3 et les contrôles généraux B3, utiliser baseline_python du manifeste A1, aux versions actuelles plus spaCy EN, y compris pour la suite complète. Réserver candidate_python aux expériences explicites B3, puis aux contrôles après modification des requirements A4. Pour les autres lots, conserver le PY habituel, puis le PY validé après A4. Ne pas changer le venv partagé pendant les vagues parallèles ; seule A4 peut appliquer une migration validée.
+- Lire les signatures des bibliothèques installées avant utilisation. Tous les nouveaux modules/fonctions annotés et documentés en français ; messages UI anglais/français dans i18n, HTML utilisateur échappé, fichiers métiers sous 400 lignes. Aucune donnée réelle.
+- Tests ciblés puis PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py ; git diff --check. Corriger les écarts de son périmètre. Codex ne télécharge ni n'installe aucun paquet. Aucun test/challenge/all mesuré hors gate expressément autorisée ; corpus réservés jamais ouverts manuellement.
+- Dérogation explicite à AGENTS section 7 pour éviter les conflits : écrire docs/parallel/B2.md avec fait/tests/risques/décisions/handoff, sans modifier PROGRESS/PROMPTS/DECISIONS centraux. La prochaine intégration A les y reportera ; G8 centralisera C3. Ne pas écrire dans le fragment de l'autre piste.
+- Commit de session au préfixe indiqué dans le corps, contrôles verts. Aucun tag/push sauf autorisation conditionnelle de la recette R8. Compte rendu de cinq lignes au plus, hors prompts de relais.
+
+Pilotage, après le compte rendu et le commit : exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" finish B2. Recopier intégralement sa sortie dans le chat, sans résumer ni modifier ; chaque partie de --- PROMPT À COLLER --- à --- FIN --- dans son propre bloc de code. Elle donne le prochain prompt, la piste, le dossier et le mode seul/parallèle. Si le pilote dit ATTENDRE, ne pas anticiper la vague suivante. En cas de blocage réel avant commit : py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" blocked B2 --reason "motif court sans contenu sensible", puis recopier la sortie.
+```
+
+## AF-A3. Parcours bilingue et contrôle du contenu envoyé
+
+```text
+[HuisClos] A3 : Parcours bilingue et contrôle du contenu envoyé
+Piste A, Claude Code, Opus 5.5, High.
+Dossier : C:/Users/nasci/Documents/Coding Project/Assignment/huisclos ; branche dev.
+
+Cette session fait partie du nouveau parcours bilingue après G7 ; elle remplace les anciens lots AF1-AF5 séquentiels. Les changements difficiles sont sur A, les mesures et contrôles indépendants sur B. Ne pas lancer deux sessions dans le même dossier. Si une ancienne recette R7 y tourne encore, la terminer d'abord.
+
+Début obligatoire, dans le dossier indiqué :
+1. Lire AGENTS.md. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" start A3.
+2. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" base A3. Cette commande renvoie le SHA validé de l'autre piste. Faire git merge <ce SHA> --no-edit. Dérogation explicite à AGENTS section 12 : ce SHA figé remplace la branche mouvante pour ne pas importer une phase en cours. Sur conflit, arrêter et signaler ; aucune résolution improvisée.
+3. Présenter dix lignes de plan au plus puis implémenter sans attendre de validation. Préserver tout travail local. Les horloges du tableau sont indicatives ; les prérequis du pilote et les contrôles verts décident du lancement.
+
+Objectif : profil local renforcé, empreintes cohérentes et contrôle du contenu exact envoyé. C'est le lot de parcours et de confidentialité le plus délicat ; il appartient à Claude. B3 travaille en parallèle sur les mesures expérimentales, sans modifier production ou interface.
+
+Après synchronisation au SHA validé de B2, intégrer docs/parallel/B2.md aux journaux centraux. Lire AGENTS, dernières entrées, D-06/11/14/17, D-S24-1 à 3, D-G7-1, décisions A1/A2/B1/B2 et protocole. Périmètre : config.py, detection/pipeline.py pour le chemin/identité du modèle existant uniquement ; app/sidebar.py, state.py, engine.py, nouveau app/fingerprints.py ; app/pages/method.py, evaluation.py, nouveau evaluation_coverage.py si nécessaire et app/i18n/method.py, evaluation.py pour les explications et langues de mesures uniquement ; steps/import_step.py, review_decisions.py, restore_check.py, restore_mistral.py, restore_exports.py, restore_step.py ; i18n/common.py, mistral.py, workflow_check.py, workflow_import.py, workflow_restore.py ; pseudonymize/final_check.py et nouveau outbound_check.py ; llm/mistral_client.py ; tests correspondants et nouveaux tests/test_outbound_check.py, test_detection_profiles.py. Journaux centraux et docs/LOCAL_MODELS.md. Ne pas modifier evaluation/, io/, scripts de benchmark, requirements ou poids. Intégration du nouveau modèle réservée à A4.
+
+1. Langue du document et profils Standard/Enhanced, indépendants de la langue UI et des jetons. Ajouter un choix explicite French/English, EN/FR UI, utilisant document_language A2 ; le cas de démo reste un document français même dans une UI anglaise. Aucun changement silencieux de langue selon l'interface. Profils Standard et Enhanced local detection, EN/FR.
+Standard conserve hybrid. Enhanced FR utilise le CamemBERT déjà intégré ; avant intégration multilingue A4, ne pas activer le CamemBERT français comme renfort EN ni présenter le futur profil comme disponible. Standard EN doit fonctionner avec le modèle A1 dans son environnement de test. Enhanced FR conserve le CamemBERT, avec motifs, spaCy et propagation. Chargement volontaire et paresseux, spinner et cache du moteur seul. En HUISCLOS_PUBLIC_DEMO, interdire le backend lourd même si une valeur de session ancienne le demande. Modèle absent : erreur claire, aucun téléchargement ni repli silencieux. Utiliser les snapshots validés A1 et leur révision. Aucun texte ou mapping dans un cache global.
+
+2. Empreinte commune et résultats périmés.
+Inclure texte, configuration complète, chemin logique/identité/révision de modèle, table, décisions de revue et version du vérificateur. Le cache d'analyseur a déjà use_camembert ; ne pas le refaire inutilement. Le cache du contrôle final oublie des éléments : le compléter.
+Changer langue du document/profil/types/seuil/table/texte révoque les validations dépendantes et rend les anciens résultats inutilisables pour un envoi présenté comme vérifié. Préserver la source et demander une nouvelle détection/revue, sans accepter automatiquement de nouvelles propositions. Reset/clear_results retirent contrôle final et confirmations ; la table du dossier ne disparaît que selon l'action prévue.
+
+3. Composer une seule fois le contenu sortant.
+Le client envoie actuellement texte + consigne, mais seul le texte est vérifié. Construire la chaîne exacte destinée au message, séparateur explicite compris, puis la contrôler. Le transport doit envoyer exactement cette chaîne, sans concaténation après validation. Jamais table, valeur canonique ou extrait original ajouté à la requête.
+Analyser aussi la consigne libre. Permettre d'éditer celle-ci ou d'y réutiliser un jeton connu ; pas de jeton nouveau sans revue. Neutraliser les occurrences de jetons connus dans la consigne aussi, avec leurs propres positions. Une chaîne ressemblant à un jeton inconnu ne doit pas contourner le contrôle.
+
+4. États et garde côté Python.
+Distinguer non exécuté, en cours, indisponible, alertes non résolues, terminé sans alerte détectée et alertes explicitement examinées. Aucune exception ou absence de moteur ne produit un succès.
+L'autorisation porte sur l'empreinte du contenu et de tous ses paramètres. Toute modification la révoque. Le bouton et le chemin Python d'envoi vérifient cette autorisation au clic ; ne pas compter seulement sur disabled.
+Résoudre une alerte en corrigeant/masquant ou par décision explicite sur la mention et son contexte. Un rejet ordinaire ne devient pas une exception globale par valeur. Une même écriture rejetée à un endroit doit rester détectable dans un contexte identifiant ailleurs. Ne pas créer une dérogation permanente précochée.
+
+5. Compléter le filet existant.
+Conserver recherche dans la table, variantes et Mask everywhere. Si la source est disponible, conserver son contexte pour repérer les bornes incomplètes, soustraire les zones réellement remplacées et projeter les restes dans le texte sortant. Ne pas reconstruire un offset avec find.
+Un second passage du même moteur n'est pas indépendant ; une simple baisse de seuil ne crée pas de candidats absents. La politique des exclusions et types désactivés au contrôle doit être explicite, avec choix visibles et cas de faux positifs testés. Aucun masquage caché.
+Appliquer la validation aux exports/copies présentés comme prêts pour un LLM ; distinguer table locale et réponse restaurée. Ne pas prétendre contrôler une copie manuelle hors application. Garder les trois étapes et le message honnête d'absence de résidu détecté, jamais une preuve d'anonymat.
+
+6. Pages Method/Evaluation : expliquer les langues de documents réellement prises en charge et les limites, distinguer mesures historiques FR de G7 et futures mesures EN. Aucune mesure EN inventée ni confusion avec les traductions de l'interface. Tout changement app nécessaire doit être fait avant gel ; A5 ne pourra modifier que la documentation et les captures.
+
+7. Tests obligatoires, transport simulé uniquement.
+Identifiant fictif seulement dans la consigne ; jeton connu réutilisé sans faux positif ; jeton inconnu/faux jeton ; offsets par segment et dans le contenu complet ; alerte non résolue ; moteur absent ; confirmation périmée après chaque changement ; tentative d'envoi depuis un ancien état ; homonyme rejeté ailleurs ; chaîne envoyée exactement égale à celle validée ; mapping absent du corps HTTP ; réseau jamais appelé si l'autorisation manque ; correction puis envoi simulé ; Reset. AppTest des deux langues UI croisées avec les deux langues de document, mode public et deux documents FR/EN avec jetons stables. Les tests réels EN peuvent utiliser le venv A1 ; pas d'installation dans le venv partagé pendant B3.
+Commit : "AF-A3 : profil local et contrôle du contenu envoyé" ; décisions D-AF-A3-*. Aucune mesure réservée.
+
+Règles communes de clôture :
+- PYTHONUTF8=1 ; utiliser l'interpréteur du projet par son chemin : .venv/Scripts/python.exe sur A ; ../huisclos/.venv/Scripts/python.exe sur B. Pour A2/A3 et les contrôles généraux B3, utiliser baseline_python du manifeste A1, aux versions actuelles plus spaCy EN, y compris pour la suite complète. Réserver candidate_python aux expériences explicites B3, puis aux contrôles après modification des requirements A4. Pour les autres lots, conserver le PY habituel, puis le PY validé après A4. Ne pas changer le venv partagé pendant les vagues parallèles ; seule A4 peut appliquer une migration validée.
+- Lire les signatures des bibliothèques installées avant utilisation. Tous les nouveaux modules/fonctions annotés et documentés en français ; messages UI anglais/français dans i18n, HTML utilisateur échappé, fichiers métiers sous 400 lignes. Aucune donnée réelle.
+- Tests ciblés puis PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py ; git diff --check. Corriger les écarts de son périmètre. Codex ne télécharge ni n'installe aucun paquet. Aucun test/challenge/all mesuré hors gate expressément autorisée ; corpus réservés jamais ouverts manuellement.
+- Mettre à jour PROGRESS (entrée en tête), PROMPTS (une ligne) et DECISIONS si décision, avec identifiants de cette session. Centraliser les seuls fragments B déjà validés demandés par le lot ; pas de contenu de corpus réservé.
+- Commit de session au préfixe indiqué dans le corps, contrôles verts. Aucun tag/push sauf autorisation conditionnelle de la recette R8. Compte rendu de cinq lignes au plus, hors prompts de relais.
+
+Pilotage, après le compte rendu et le commit : exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" finish A3. Recopier intégralement sa sortie dans le chat, sans résumer ni modifier ; chaque partie de --- PROMPT À COLLER --- à --- FIN --- dans son propre bloc de code. Elle donne le prochain prompt, la piste, le dossier et le mode seul/parallèle. Si le pilote dit ATTENDRE, ne pas anticiper la vague suivante. En cas de blocage réel avant commit : py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" blocked A3 --reason "motif court sans contenu sensible", puis recopier la sortie.
+```
+
+## AF-B3. Comparaison Anonym-IA, GLiNER et combinaisons
+
+```text
+[HuisClos] B3 : Comparaison Anonym-IA, GLiNER et combinaisons
+Piste B, Codex, GPT 6.1 Sol, High.
+Dossier : C:/Users/nasci/Documents/Coding Project/Assignment/huisclos-b ; branche lane-b.
+
+Cette session fait partie du nouveau parcours bilingue après G7 ; elle remplace les anciens lots AF1-AF5 séquentiels. Les changements difficiles sont sur A, les mesures et contrôles indépendants sur B. Ne pas lancer deux sessions dans le même dossier. Si une ancienne recette R7 y tourne encore, la terminer d'abord.
+
+Début obligatoire, dans le dossier indiqué :
+1. Lire AGENTS.md. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" start B3.
+2. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" base B3. Cette commande renvoie le SHA validé de l'autre piste. Faire git merge <ce SHA> --no-edit. Dérogation explicite à AGENTS section 12 : ce SHA figé remplace la branche mouvante pour ne pas importer une phase en cours. Sur conflit, arrêter et signaler ; aucune résolution improvisée.
+3. Présenter dix lignes de plan au plus puis implémenter sans attendre de validation. Préserver tout travail local. Les horloges du tableau sont indicatives ; les prérequis du pilote et les contrôles verts décident du lancement.
+
+Objectif : évaluer hors ligne les modèles candidats et leurs combinaisons, puis auditer les invariants A1/A2. A3 modifie en parallèle l'interface et le contrôle d'envoi ; ne toucher aucun de ses fichiers.
+
+Lire AGENTS, protocole B1, décisions A1/A2, manifeste public et manifest.json hors dépôt dans pilotage/post_g7_assets. Périmètre modifiable : nouveaux scripts/benchmark_post_g7_pii.py et audit_post_g7_invariants.py ; nouveaux tests/test_post_g7_invariants.py, test_pii_benchmark.py ; docs/parallel/B3.md. Les rapports vont hors dépôt dans pilotage/post_g7_assets/benchmarks/. Aucun src/, app/, requirements, journaux centraux ou corpus modifié. Aucun accès réseau et aucune installation par Codex.
+
+1. Vérifier les environnements et snapshots préparés par Claude A1.
+CamemBERT existant ; Anonym-IA/V2-camembert-ner-pii-french ; GLiNER PII multilingue si approvisionné. L'utilisateur autorise l'étude d'un changement d'épinglage et de combinaisons. Le choix final appartient à A4, sur les résultats.
+Un environnement expérimental peut avoir un autre Python/Transformers/Hub ; l'utiliser dans des processus séparés selon le manifeste. Ne jamais remplacer les versions du venv partagé. Vérifier liste de versions, chemins locaux, révisions, caches HF vides et sockets bloquées. Les types/poids/labels réellement chargés sont la référence ; une carte marketing ne suffit pas. Signaler tout environnement incomplet et ne pas faire de téléchargement pour le réparer.
+
+2. Préenregistrer une petite matrice avant les premiers résultats.
+Socle fixe pour chaque langue : motifs/contextes de cette langue, checksums applicables, heuristiques et modèle spaCy approprié. Le socle EN ne réemploie pas les règles FR comme preuve de support anglais. Comparer CamemBERT historique ; Anonym-IA seul comme renfort FR uniquement ; GLiNER seul comme renfort si disponible ; Anonym-IA + GLiNER pour FR ; EN Standard (spaCy EN+règles EN) et EN Standard+GLiNER ; ajouter CamemBERT à la meilleure combinaison seulement si un gain marginal plausible reste à tester. Ne pas choisir tous les modèles par défaut.
+Fixer liste courte d'étiquettes et petite grille de seuils par backend, indépendamment de test/challenge. Les scores ne sont pas calibrés entre modèles. Comparer aussi CamemBERT existant sous la pile actuelle et sous la pile candidate pour isoler une régression de migration. Même corpus dev par langue (FR existant ; EN corpus/english_dev/dev.jsonl de B2), mêmes annotations, mêmes limites d'entrée et CPU ; noter les différences d'environnement.
+
+3. Adaptation expérimentale, sans code de production.
+Lire les API installées. Réutiliser fenêtres A1 et assemblage/projection A2. Vérifier start/end et occurrences répétées, jamais text.find. Anonym-IA : prénom/nom comme propositions PERSON ; société vers ORGANIZATION ; DOB vers BIRTH_DATE ; EMAIL/TELEPHONE vers types existants. Les composants d'adresse nécessitent un assemblage justifié ; une ville seule n'est pas une adresse. DATE générique n'est pas une naissance. Garder la politique métier des dossiers et références publiques.
+GLiNER : étiquettes explicites fixées avant mesure, offsets exacts, limite de fenêtre/largeur documentée. L'union peut conserver une proposition utile isolée ; pas de vote majoritaire qui la supprime. Contrôler que la fusion n'enlève aucune couverture admissible.
+Si l'adaptation est seulement un prototype, le dire : A4 doit valider l'intégration réelle avant adoption. Ne pas maquiller des composants isolés en adresse entièrement masquée.
+
+4. Mesures de développement seulement.
+Publier précision/rappel exact et partiel, couverture intégrale, fuite par type, exposition partielle/entière, surmasquage, durée chargement/inférence et pic RSS réellement échantillonné. Processus séparés et mêmes répétitions, pas de promesse dérivée de la taille des poids. Réutiliser les prédictions pour les fonctions pures quand l'API le permet. Enregistrer commit et hashes ; aucune évaluation test/challenge/all ou nouveau lot aveugle.
+Retenir dans la recommandation la meilleure configuration selon le protocole, avec apport marginal de chaque modèle et coût. Une combinaison n'est recommandée que si elle apporte un gain mesuré ; zéro gain est un résultat valide. Le comparateur est le meilleur profil après A1/A2, pas seulement G7 hybrid.
+
+5. Audit indépendant A1/A2 avec fixtures fictives nouvelles.
+Propriétés : couverture après ajout de candidat faible, frontières, Unicode projeté, adresse complète et arrêt avant champ voisin, référence publique, dates distinctes, ambiguïté d'alias et deux personnes différentes. Ne pas déduire une règle d'un résultat réservé. Si défaut de logique : rapport à A4 et test xfail(strict=True) avec motif précis ; ne pas modifier le détecteur ni rendre le test artificiellement vert. Aucun xfail pour éviter une erreur du script de mesure.
+
+6. Handoff B3 : versions compatibles/incompatibles, résultats, classement, coût, limites, defects/tests et proposition d'épinglage exact si un changement est utile. Commit "AF-B3 : comparaison locale des renforts PII". Si aucun candidat ne peut être exécuté, réaliser l'audit indépendant, documenter l'indisponibilité et terminer par finish B3 --skip ; cela ne valide aucun modèle mais autorise A4 à poursuivre avec l'existant.
+
+Règles communes de clôture :
+- PYTHONUTF8=1 ; utiliser l'interpréteur du projet par son chemin : .venv/Scripts/python.exe sur A ; ../huisclos/.venv/Scripts/python.exe sur B. Pour A2/A3 et les contrôles généraux B3, utiliser baseline_python du manifeste A1, aux versions actuelles plus spaCy EN, y compris pour la suite complète. Réserver candidate_python aux expériences explicites B3, puis aux contrôles après modification des requirements A4. Pour les autres lots, conserver le PY habituel, puis le PY validé après A4. Ne pas changer le venv partagé pendant les vagues parallèles ; seule A4 peut appliquer une migration validée.
+- Lire les signatures des bibliothèques installées avant utilisation. Tous les nouveaux modules/fonctions annotés et documentés en français ; messages UI anglais/français dans i18n, HTML utilisateur échappé, fichiers métiers sous 400 lignes. Aucune donnée réelle.
+- Tests ciblés puis PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py ; git diff --check. Corriger les écarts de son périmètre. Codex ne télécharge ni n'installe aucun paquet. Aucun test/challenge/all mesuré hors gate expressément autorisée ; corpus réservés jamais ouverts manuellement.
+- Dérogation explicite à AGENTS section 7 pour éviter les conflits : écrire docs/parallel/B3.md avec fait/tests/risques/décisions/handoff, sans modifier PROGRESS/PROMPTS/DECISIONS centraux. La prochaine intégration A les y reportera ; G8 centralisera C3. Ne pas écrire dans le fragment de l'autre piste.
+- Commit de session au préfixe indiqué dans le corps, contrôles verts. Aucun tag/push sauf autorisation conditionnelle de la recette R8. Compte rendu de cinq lignes au plus, hors prompts de relais.
+
+Pilotage, après le compte rendu et le commit : exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" finish B3 (ou ajouter --skip dans le seul cas d'abandon documenté). Recopier intégralement sa sortie dans le chat, sans résumer ni modifier ; chaque partie de --- PROMPT À COLLER --- à --- FIN --- dans son propre bloc de code. Elle donne le prochain prompt, la piste, le dossier et le mode seul/parallèle. Si le pilote dit ATTENDRE, ne pas anticiper la vague suivante. En cas de blocage réel avant commit : py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" blocked B3 --reason "motif court sans contenu sensible", puis recopier la sortie.
+```
+
+## AF-A4. Intégration, migration validée et gel logique
+
+```text
+[HuisClos] A4 : Intégration, migration validée et gel logique
+Piste A, Claude Code, Opus 5.5, High.
+Dossier : C:/Users/nasci/Documents/Coding Project/Assignment/huisclos ; branche dev.
+
+Cette session fait partie du nouveau parcours bilingue après G7 ; elle remplace les anciens lots AF1-AF5 séquentiels. Les changements difficiles sont sur A, les mesures et contrôles indépendants sur B. Ne pas lancer deux sessions dans le même dossier. Si une ancienne recette R7 y tourne encore, la terminer d'abord.
+
+Début obligatoire, dans le dossier indiqué :
+1. Lire AGENTS.md. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" start A4.
+2. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" base A4. Cette commande renvoie le SHA validé de l'autre piste. Faire git merge <ce SHA> --no-edit. Dérogation explicite à AGENTS section 12 : ce SHA figé remplace la branche mouvante pour ne pas importer une phase en cours. Sur conflit, arrêter et signaler ; aucune résolution improvisée.
+3. Présenter dix lignes de plan au plus puis implémenter sans attendre de validation. Préserver tout travail local. Les horloges du tableau sont indicatives ; les prérequis du pilote et les contrôles verts décident du lancement.
+
+Objectif : intégrer les retours de B3, choisir le meilleur renfort local et geler la logique. Cette étape est séquentielle, après A3 ET B3. Les décisions difficiles d'architecture et de migration sont confiées à Claude. L'utilisateur autorise Anonym-IA V2, l'étude de GLiNER, leurs combinaisons et une révision justifiée de l'épinglage.
+
+Après synchronisation, intégrer docs/parallel/B3.md aux journaux centraux. Lire ses résultats et défauts, le protocole, les API installées et les manifestes. Périmètre : config.py, models.py ; detection/pipeline.py, merge.py, conflicts.py, camembert.py, windows.py, analysis_view.py, address_bounds.py, address_patterns.py, patterns.py, case_patterns.py, labeled_identifiers.py, ner.py, person_heuristics.py, english_patterns.py, languages.py, exclusions.py, organization_bounds.py, aliases.py, propagation.py ; text_utils.py, pseudonymize/grouping.py et case_memory.py ; nouveaux detection/pii_transformer.py, pii_labels.py et gliner.py si retenus ; app/sidebar.py, engine.py, state.py, fingerprints.py, steps/restore_check.py, pages/method.py et evaluation.py, i18n/common.py, method.py, evaluation.py et workflow_check.py pour refléter le renfort effectivement retenu ; tests correspondants et test_post_g7_invariants.py ; scripts/prepare_local_models.py, benchmark_post_g7_pii.py, measure_memory.py ; requirements-transformers.txt, nouveau requirements-enhanced.txt et verrou dédié si nécessaire ; docs/LOCAL_MODELS.md, POST_G7_PROTOCOL.md, CREDITS.md si présent et journaux centraux ; AGENTS.md sections1/3/5/6/11 uniquement pour consigner le support documents FR/EN, les sources, l'installation locale et la réservation du nouveau corpus, sans élargir les droits de publication. requirements.txt est modifiable uniquement pour le modèle spaCy anglais léger nécessaire au support officiel EN, sans y ajouter Torch/Transformers/GLiNER ; garder ces derniers optionnels. Ne pas modifier le reste des dépendances légères, corpus/, data/, ni les métriques pour favoriser un résultat.
+
+1. Corriger les défauts structurels B3 à partir de ses nouvelles fixtures, jamais de valeurs réservées. Vérifier que chaque xfail strict disparaît uniquement après correction démontrée. Un défaut de logique non résolu doit rester déclaré et empêcher le gel de cette fonctionnalité.
+
+2. Choisir le profil renforcé selon les mesures.
+Conserver le socle règles/checksums/spaCy. Vérifier l'apport marginal réel d'Anonym-IA, GLiNER et de leur union sur le code intégré actuel. Ne pas ajouter un troisième modèle qui ne réduit pas la fuite ou dégrade inutilement la lisibilité/coût. Décider séparément FR et EN : Anonym-IA est français, GLiNER est candidat multilingue et le Standard EN spaCy+règles doit fonctionner. Si seul Anonym-IA gagne en FR, le retenir ; si leur union gagne selon le protocole, la retenir ; si aucun ne gagne en FR, garder CamemBERT existant ; si aucun renfort ne gagne en EN, garder Standard EN. Cette décision est déléguée à Claude, aucune nouvelle question de préférence n'est nécessaire.
+Les métriques de B3 sont une aide, pas la preuve d'une intégration pas encore testée. Faire une comparaison dev au seuil figé ou choisi sur dev, archivée hors dépôt, après intégration réelle.
+
+3. Migration de dépendances autorisée si utile.
+GLiNER 0.2.29 déclare Transformers>=4.51.3,<5.17.0, contre 5.21.0 actuel. Une version exacte compatible de la branche 5.16 est une candidate à tester, pas une vérité imposée. Vérifier également huggingface-hub et les transitifs ; ne pas remplacer une seule ligne en laissant un environnement incohérent. La version choisie doit être publiée, résolue, installée et testée, avec pip check et gel exact reproductible.
+Vérifier d'abord que l'environnement de référence G7 A1 et ses snapshots sont réellement autonomes et reproductibles avant toute modification du venv partagé. En cas d'absence, reconstruire et tester cette référence avec réseau public autorisé pendant A4 ou renoncer à la migration du partagé. Commencer les essais dans le venv expérimental hors dépôt A1. Tester les deux CamemBERT, GLiNER, Presidio/spaCy et toute la suite. Préserver l'installation légère. Installer le modèle spaCy EN léger dans le venv partagé seulement à cette phase séquentielle, même si GLiNER est finalement rejeté. Valider FR et EN séparément. Si la migration neuronale est adoptée, conserver un verrou/requirements exact des dépendances neuronales, documentation et repli reproductible ; mettre à jour le venv partagé seulement après la fin de toute activité B3 et après validation en isolation. Aucun --no-deps, contournement de contraintes ou import silencieux d'une autre version. Cette session Claude est autorisée à installer les dépendances publiques nécessaires dans ce cadre, sans envoyer de données utilisateur.
+Si incompatibilité non résolue ou gain absent, ne pas imposer la migration et ne pas laisser de worker/service permanent de contournement. Consigner le choix et réexaminer D-18 sans effacer l'historique.
+
+4. Intégration locale facultative.
+Provenance explicite par backend, offsets validés, union de candidats compatible avec la fusion, types/mapping JSON existants préservés. Assemblage des composants de personne/adresse contrôlé. Cache moteur seul, identité/révision et versions incluses dans les empreintes et rapports. Poids absents : erreur, aucun réseau/fallback. Pas de backend lourd en mode public. Indiquer expérimental tant que G8 n'a pas validé le profil sur le nouveau lot aveugle.
+Tester le paquet local complet avec caches vides, sockets bloquées et un fichier auxiliaire manquant ; API distante interdite à l'exécution. Tester runtime CPU, deux documents à jetons stables et réponse mêlée restaurée.
+
+5. Figer le protocole final AVANT C3.
+Profils réellement retenus, seuils, labels, versions exactes, poids/révisions, manifestes, comparateurs et marges de précision/surmasquage. Rapports dev compatibles pour les mesures historiques ultérieures, sans rechoisir après un résultat aveugle. Les nouvelles mesures réservées seront exclusivement G8.
+Tests complets, documentation des modèles, PROGRESS/PROMPTS/DECISIONS. Commit final "AF-A4 : intégration du renfort local et gel des règles". Le pilote enregistrera son SHA et l'empreinte de la logique ; aucune logique ne changera pendant A5/C3.
+
+Règles communes de clôture :
+- PYTHONUTF8=1 ; utiliser l'interpréteur du projet par son chemin : .venv/Scripts/python.exe sur A ; ../huisclos/.venv/Scripts/python.exe sur B. Pour A2/A3 et les contrôles généraux B3, utiliser baseline_python du manifeste A1, aux versions actuelles plus spaCy EN, y compris pour la suite complète. Réserver candidate_python aux expériences explicites B3, puis aux contrôles après modification des requirements A4. Pour les autres lots, conserver le PY habituel, puis le PY validé après A4. Ne pas changer le venv partagé pendant les vagues parallèles ; seule A4 peut appliquer une migration validée.
+- Lire les signatures des bibliothèques installées avant utilisation. Tous les nouveaux modules/fonctions annotés et documentés en français ; messages UI anglais/français dans i18n, HTML utilisateur échappé, fichiers métiers sous 400 lignes. Aucune donnée réelle.
+- Tests ciblés puis PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py ; git diff --check. Corriger les écarts de son périmètre. Codex ne télécharge ni n'installe aucun paquet. Aucun test/challenge/all mesuré hors gate expressément autorisée ; corpus réservés jamais ouverts manuellement.
+- Mettre à jour PROGRESS (entrée en tête), PROMPTS (une ligne) et DECISIONS si décision, avec identifiants de cette session. Centraliser les seuls fragments B déjà validés demandés par le lot ; pas de contenu de corpus réservé.
+- Commit de session au préfixe indiqué dans le corps, contrôles verts. Aucun tag/push sauf autorisation conditionnelle de la recette R8. Compte rendu de cinq lignes au plus, hors prompts de relais.
+
+Pilotage, après le compte rendu et le commit : exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" finish A4. Recopier intégralement sa sortie dans le chat, sans résumer ni modifier ; chaque partie de --- PROMPT À COLLER --- à --- FIN --- dans son propre bloc de code. Elle donne le prochain prompt, la piste, le dossier et le mode seul/parallèle. Si le pilote dit ATTENDRE, ne pas anticiper la vague suivante. En cas de blocage réel avant commit : py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" blocked A4 --reason "motif court sans contenu sensible", puis recopier la sortie.
+```
+
+## AF-A5. Guide et captures du parcours bilingue
+
+```text
+[HuisClos] A5 : Guide et captures du parcours bilingue
+Piste A, Claude Code, Sonnet 5.5, Medium.
+Dossier : C:/Users/nasci/Documents/Coding Project/Assignment/huisclos ; branche dev.
+
+Cette session fait partie du nouveau parcours bilingue après G7 ; elle remplace les anciens lots AF1-AF5 séquentiels. Les changements difficiles sont sur A, les mesures et contrôles indépendants sur B. Ne pas lancer deux sessions dans le même dossier. Si une ancienne recette R7 y tourne encore, la terminer d'abord.
+
+Début obligatoire, dans le dossier indiqué :
+1. Lire AGENTS.md. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" start A5.
+2. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" base A5. Cette commande renvoie le SHA validé de l'autre piste. Faire git merge <ce SHA> --no-edit. Dérogation explicite à AGENTS section 12 : ce SHA figé remplace la branche mouvante pour ne pas importer une phase en cours. Sur conflit, arrêter et signaler ; aucune résolution improvisée.
+3. Présenter dix lignes de plan au plus puis implémenter sans attendre de validation. Préserver tout travail local. Les horloges du tableau sont indicatives ; les prérequis du pilote et les contrôles verts décident du lancement.
+
+Objectif : documenter et montrer le parcours réellement livré, pendant que C3 rédige le nouveau corpus aveugle sur B. LOGIQUE GELÉE : aucun src/, app/, configuration, requirements, test ou script métier modifié.
+
+Après synchronisation au SHA validé indiqué par le pilote, exécuter sa commande freeze A5. Lire AGENTS, trois dernières entrées, décisions du renfort, LOCAL_MODELS et protocole. Périmètre : README.md ; docs/USER_GUIDE.md, LOCAL_MODELS.md, CREDITS.md si présent ; docs/screenshots/01_import.png à 08_case_memory.png ; journaux centraux. Ne pas ouvrir corpus/blind_post_g7, même si ses fichiers deviennent visibles à la fin de C3 ; aucune mesure réservée.
+
+1. Décrire les profils et le modèle effectivement retenu, versions, installation locale, poids hors dépôt, licence et coût mesuré. Ne pas promettre une précision universelle ; distinguer résultat dev, résultat historique G7 et profil encore expérimental en attente G8. Anciennes mesures inchangées.
+2. Guide en anglais distinguant langue du document, langue UI et style des jetons ; formats d'adresses/contacts FR/US/UK réellement couverts et limites, sans assimiler langue à nationalité. Libellés présents dans i18n : import partiel, choix du profil, nouvelle revue, mémoire de dossier, contrôle du document ET de la consigne, alertes et révocation. Interface française documentée sans inventer de boutons.
+3. Captures reproductibles sur données fictives uniquement. Préférer les outils déjà installés ; Playwright peut être installé dans un venv temporaire hors dépôt par Claude, jamais dans le venv partagé. Serveur Streamlit local, navigateur headless, processus caché sous Windows, arrêt propre. Contrôler visuellement les images. Aucun recours à une ressource externe dans l'application.
+4. Toute incohérence qui exigerait du code est rapportée à G8 ; ne pas casser le gel pour corriger discrètement un libellé. La documentation peut rester honnête sur un comportement actuel.
+5. Vérifier freeze A5 à nouveau ; contrôles complets. Mettre à jour les journaux centraux, commit "AF-A5 : guide et captures du parcours renforcé". Ne pas publier ni changer de tag. La fin de C3 et celle de A5 doivent toutes deux être validées avant G8.
+
+Règles communes de clôture :
+- PYTHONUTF8=1 ; utiliser l'interpréteur du projet par son chemin : .venv/Scripts/python.exe sur A ; ../huisclos/.venv/Scripts/python.exe sur B. Pour A2/A3 et les contrôles généraux B3, utiliser baseline_python du manifeste A1, aux versions actuelles plus spaCy EN, y compris pour la suite complète. Réserver candidate_python aux expériences explicites B3, puis aux contrôles après modification des requirements A4. Pour les autres lots, conserver le PY habituel, puis le PY validé après A4. Ne pas changer le venv partagé pendant les vagues parallèles ; seule A4 peut appliquer une migration validée.
+- Lire les signatures des bibliothèques installées avant utilisation. Tous les nouveaux modules/fonctions annotés et documentés en français ; messages UI anglais/français dans i18n, HTML utilisateur échappé, fichiers métiers sous 400 lignes. Aucune donnée réelle.
+- Tests ciblés puis PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py ; git diff --check. Corriger les écarts de son périmètre. Codex ne télécharge ni n'installe aucun paquet. Aucun test/challenge/all mesuré hors gate expressément autorisée ; corpus réservés jamais ouverts manuellement.
+- Mettre à jour PROGRESS (entrée en tête), PROMPTS (une ligne) et DECISIONS si décision, avec identifiants de cette session. Centraliser les seuls fragments B déjà validés demandés par le lot ; pas de contenu de corpus réservé.
+- Commit de session au préfixe indiqué dans le corps, contrôles verts. Aucun tag/push sauf autorisation conditionnelle de la recette R8. Compte rendu de cinq lignes au plus, hors prompts de relais.
+
+Pilotage, après le compte rendu et le commit : exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" finish A5. Recopier intégralement sa sortie dans le chat, sans résumer ni modifier ; chaque partie de --- PROMPT À COLLER --- à --- FIN --- dans son propre bloc de code. Elle donne le prochain prompt, la piste, le dossier et le mode seul/parallèle. Si le pilote dit ATTENDRE, ne pas anticiper la vague suivante. En cas de blocage réel avant commit : py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" blocked A5 --reason "motif court sans contenu sensible", puis recopier la sortie.
+```
+
+## AF-C3. Corpus aveugle français/anglais
+
+```text
+[HuisClos] C3 : Corpus aveugle français/anglais
+Piste B, Codex, GPT 6.1 Sol, High.
+Dossier : C:/Users/nasci/Documents/Coding Project/Assignment/huisclos-b ; branche lane-b.
+
+Cette session fait partie du nouveau parcours bilingue après G7 ; elle remplace les anciens lots AF1-AF5 séquentiels. Les changements difficiles sont sur A, les mesures et contrôles indépendants sur B. Ne pas lancer deux sessions dans le même dossier. Si une ancienne recette R7 y tourne encore, la terminer d'abord.
+
+Début obligatoire, dans le dossier indiqué :
+1. Lire AGENTS.md. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" start C3.
+2. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" base C3. Cette commande renvoie le SHA validé de l'autre piste. Faire git merge <ce SHA> --no-edit. Dérogation explicite à AGENTS section 12 : ce SHA figé remplace la branche mouvante pour ne pas importer une phase en cours. Sur conflit, arrêter et signaler ; aucune résolution improvisée.
+3. Présenter dix lignes de plan au plus puis implémenter sans attendre de validation. Préserver tout travail local. Les horloges du tableau sont indicatives ; les prérequis du pilote et les contrôles verts décident du lancement.
+
+CONVERSATION NEUVE : exception de lecture précisée ci-dessous. Ne pas lire les autres prompts ou décisions de détection.
+
+Objectif : rédiger un nouveau lot aveugle FR/EN après le gel A4. Auteur seulement ; aucune règle, aucun modèle et aucune mesure de performance. Conversation Codex NEUVE obligatoire. Ne recevoir ni le pack d'analyse, ni les anciens échanges, ni les prompts A/B ; coller uniquement ce prompt.
+
+Exception explicite au protocole de lecture AGENTS pour préserver l'aveugle : lire AGENTS.md en entier et corpus/README.md/conventions seulement. Ne pas lire PROGRESS détaillé, DECISIONS, résultats, prompts A/B, détection, app ou tests. La trace de cette session va dans son fragment séparé.
+Après synchronisation au SHA fourni, exécuter la commande freeze C3 du pilote ; elle doit confirmer la logique inchangée depuis A4. En cas d'échec, arrêter sans créer un corpus prétendument aveugle.
+Périmètre : nouveaux corpus/blind_post_g7/fr/source/aud_fr_01.md à aud_fr_08.md et en/source/aud_en_01.md à aud_en_08.md ; challenge.jsonl dans chacun des deux sous-dossiers ; corpus/blind_post_g7/manifest.json et README.md ; nouveau scripts/build_blind_post_g7.py ; corpus/README.md pour annoncer la réservation ; docs/prompts/corpus_post_g7_blind.md ; docs/parallel/C3.md. Aucun ancien corpus/source ni dev/test/challenge remplacé.
+
+1. Figer conventions FR/EN avant annotation et inscrire leur version dans le manifeste.
+Seize documents indépendants, huit français et huit anglais, quatre genres par langue (consultation, correspondance, acte/projet, récapitulatif) ; six courts 250-450 mots et deux longs 800-1 200 mots par langue. Pas de remplissage. Varier narrations, listes, tableaux textuels et répétitions naturelles.
+Tous les noms, coordonnées et identifiants sont inventés. Emails example.com/org. Pas de données réelles ni de valeurs des anciens corpus. Identités distinctes entre documents pour limiter les dépendances évidentes, sans prétendre prouver l'indépendance statistique.
+
+2. Couvrir naturellement les types sensibles du projet, avec références publiques et dates non sensibles sans annotation. L'anglais est une langue du texte, pas une nationalité : des identifiants français peuvent apparaître dans un dossier rédigé en anglais ; varier aussi formats d'adresses/contacts usuels anglais. Ne pas inventer une nouvelle étiquette pour un numéro non couvert : appliquer les conventions établies et documenter les limites.
+Annoter chaque occurrence, formes abrégées et répétitions sensibles comprises, selon les bornes : titres/libellés dehors, forme juridique accolée dedans, une adresse complète en un span. Pour une adresse anglophone, couvrir jusqu'au dernier composant postal explicite. Aucun chevauchement et tranche exacte.
+Deuxième lecture des omissions/bornes. Aucun retour d'un détecteur, d'un LLM d'annotation ou d'une mesure avant le gel du corpus. Conventions litigieuses dans l'annexe, sans valeurs du lot.
+
+3. Constructeur pur séparé.
+Enlever balisage, calculer indices, valider types/ids/positions et comptes, sans importer de détecteur. Les seuls contrats models.py et evaluation/corpus.py peuvent être lus si nécessaires au schéma. Identifiants fictifs à clés par calcul pur, jamais par base distante.
+Le champ split peut être challenge dans les deux fichiers pour le contrat existant ; manifeste avec dataset_id post_g7_blind_v1, langue et empreinte distincte par fichier. Les anciens builders ne doivent jamais parcourir ces sources ni écraser un ancien split.
+Audits visibles limités aux comptes, aucun texte ou span. Manifeste : commit A4 de gel confirmé, méthode/date/auteur, conventions figées, genres/langues, nombres de documents/entités/caractères et hashes.
+
+4. Réserver tout corpus/blind_post_g7/ aux auteurs C3 et aux scripts des gates. L'implémentateur n'ouvre ensuite plus ce lot. Les dépendances de style d'un auteur unique et d'une même famille de modèle restent des limites honnêtes.
+Valider le constructeur et les contrôles sans détection du lot. Les tests existants peuvent tourner ; ne pas ajouter ce lot à un test qui produirait des métriques. Exécuter freeze C3 à nouveau. Commit "C3 : lot aveugle bilingue après gel". Aucun src/app/test métier modifié, aucune mesure et aucun réseau.
+
+Règles communes de clôture :
+- PYTHONUTF8=1 ; utiliser l'interpréteur du projet par son chemin : .venv/Scripts/python.exe sur A ; ../huisclos/.venv/Scripts/python.exe sur B. Pour A2/A3 et les contrôles généraux B3, utiliser baseline_python du manifeste A1, aux versions actuelles plus spaCy EN, y compris pour la suite complète. Réserver candidate_python aux expériences explicites B3, puis aux contrôles après modification des requirements A4. Pour les autres lots, conserver le PY habituel, puis le PY validé après A4. Ne pas changer le venv partagé pendant les vagues parallèles ; seule A4 peut appliquer une migration validée.
+- Lire les signatures des bibliothèques installées avant utilisation. Tous les nouveaux modules/fonctions annotés et documentés en français ; messages UI anglais/français dans i18n, HTML utilisateur échappé, fichiers métiers sous 400 lignes. Aucune donnée réelle.
+- Tests ciblés puis PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py ; git diff --check. Corriger les écarts de son périmètre. Codex ne télécharge ni n'installe aucun paquet. Aucun test/challenge/all mesuré hors gate expressément autorisée ; corpus réservés jamais ouverts manuellement.
+- Dérogation explicite à AGENTS section 7 pour éviter les conflits : écrire docs/parallel/C3.md avec fait/tests/risques/décisions/handoff, sans modifier PROGRESS/PROMPTS/DECISIONS centraux. La prochaine intégration A les y reportera ; G8 centralisera C3. Ne pas écrire dans le fragment de l'autre piste.
+- Commit de session au préfixe indiqué dans le corps, contrôles verts. Aucun tag/push sauf autorisation conditionnelle de la recette R8. Compte rendu de cinq lignes au plus, hors prompts de relais.
+
+Pilotage, après le compte rendu et le commit : exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" finish C3. Recopier intégralement sa sortie dans le chat, sans résumer ni modifier ; chaque partie de --- PROMPT À COLLER --- à --- FIN --- dans son propre bloc de code. Elle donne le prochain prompt, la piste, le dossier et le mode seul/parallèle. Si le pilote dit ATTENDRE, ne pas anticiper la vague suivante. En cas de blocage réel avant commit : py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" blocked C3 --reason "motif court sans contenu sensible", puis recopier la sortie.
+```
+
+## AF-G8. Gate bilingue et protection complète
+
+```text
+[HuisClos] G8 : Gate bilingue et protection complète
+Piste B, Codex, GPT 6.1 Sol, High.
+Dossier : C:/Users/nasci/Documents/Coding Project/Assignment/huisclos-b ; branche lane-b.
+
+Cette session fait partie du nouveau parcours bilingue après G7 ; elle remplace les anciens lots AF1-AF5 séquentiels. Les changements difficiles sont sur A, les mesures et contrôles indépendants sur B. Ne pas lancer deux sessions dans le même dossier. Si une ancienne recette R7 y tourne encore, la terminer d'abord.
+
+Début obligatoire, dans le dossier indiqué :
+1. Lire AGENTS.md. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" start G8.
+2. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" base G8. Cette commande renvoie le SHA validé de l'autre piste. Faire git merge <ce SHA> --no-edit. Dérogation explicite à AGENTS section 12 : ce SHA figé remplace la branche mouvante pour ne pas importer une phase en cours. Sur conflit, arrêter et signaler ; aucune résolution improvisée.
+3. Présenter dix lignes de plan au plus puis implémenter sans attendre de validation. Préserver tout travail local. Les horloges du tableau sont indicatives ; les prérequis du pilote et les contrôles verts décident du lancement.
+
+Objectif : contrôle indépendant du parcours bilingue et des renforts locaux. Conversation Codex neuve, distincte de l'implémentation et de l'auteur C3. A5 ET C3 doivent être terminés. Ni réglage de détecteur ni nouveau téléchargement dans cette gate.
+
+Après synchronisation, intégrer le fragment C3 aux journaux centraux. Lire AGENTS, PROGRESS depuis G7, décisions AF*, D-G4bisfix-1/D-G7-1, protocole et manifestes. Puis seulement les fichiers nécessaires. Ne pas ouvrir manuellement les textes/annotations test, challenge et blind_post_g7 ou leurs sources ; seuls les scripts les lisent, sorties visibles limitées aux comptes et agrégats.
+Périmètre modifiable : nouveaux tests/test_gate8.py ; docs/PROGRESS.md, PROMPTS.md, DECISIONS.md, README.md, USER_GUIDE.md et POST_G7_PROTOCOL.md ; nouveau results/gate8/. Scripts de mesure/rapport seulement pour corriger un défaut indépendant de la détection. Défauts de logique ouverts avec nouvelles fixtures xfail(strict=True), sans valeur copiée d'un corpus réservé. Trois cycles maximum de corrections simples.
+
+1. Contrôles complets et freeze G8.
+pytest, Ruff check/format, check_style, diff --check. Vérifier fusion sans perte, frontières, projection, adresses, arrêts, alias et absence de masquage global. Aucune donnée réelle/ressource distante. Modèles/documents en mémoire ; mapping absent de la requête et non écrit côté serveur.
+AppTest pour chaque langue d'interface ET chaque langue de document : ce sont deux réglages distincts. FR/EN documents, mode public, modèle absent, changements de profil/langue/table, état périmé, consigne, alertes et envoi simulé. Vérifier que Anonym-IA français n'est pas utilisé seul comme preuve de couverture anglaise.
+Deux documents fictifs par langue, jetons stables, nouveaux rangs libres, réponse mêlée restaurée ; reste planté dans document et dans consigne. La chaîne envoyée est exactement la chaîne validée. Garde Python révoquée par toute modification. Chargement hors ligne dans un processus neuf avec caches vides et fichiers manquants ; pip check et versions réelles si migration.
+
+2. Intégrité avant la première mesure réservée.
+C3 postérieur au gel A4, sans modification de logique. Audit des littéraux nouveaux selon D-G4bisfix-1 : classification figée avant comparaison, comptes seulement. Les identités/littéraux spécifiques réservés ne peuvent inspirer une correction.
+Consigner profils, langue, modèles/poids, versions, seuils figés sur les dev de chaque langue, corpus hashes, dénominateurs et critères. Préparer les rapports dev/threshold compatibles avant TOUT résultat réservé et arrêter en cas d'écart. Aucun nouveau choix de seuil après un chiffre aveugle. Garder G7 intégralement et les deux langues séparées ; une moyenne bilingue ne doit pas cacher une régression anglaise.
+
+3. Mesure principale fraîche : une fois par document/profil/code.
+Référence française : G7 commit 422a2cd, dans un worktree détaché hors dépôt avec l'environnement de référence G7 préservé et ses versions/poids, hybrid et hybrid_camembert au seuil 0,30. Le code de G7 ne fournit pas de véritable profil anglais : publier cette absence ; ne pas le présenter comme référence EN valable.
+Actuel : profils réellement retenus et paramètres figés par langue. Nouveaux lots blind_post_g7/fr/challenge.jsonl et en/challenge.jsonl identiques pour tous les profils comparés dans une langue, sans changer textes/annotations. Comparer Standard et Enhanced actuels en EN ; corrections FR contre leurs références correspondantes G7 ; nouveau backend contre meilleur profil actuel sans celui-ci pour l'apport marginal.
+Harnais/pilote en mode gate, processus séparés. Réutiliser les prédictions pour précision/rappel exact/partiel, F2, fuite, couverture complète, expositions, documents concernés, surmasquage et intervalles. La mesure pure nouvelle peut utiliser les prédictions de référence sans en changer le code ni refaire une détection.
+Bootstrap par document,2 000 tirages/graine 45 ; différences appariées si implémentées et testées, sinon intervalles marginaux sans test de significativité inventé. Coûts chargement/inférence/RSS, machine/versions. Alertes finales mesurées séparément : non masquées, elles restent des fuites. Aucune simulation d'un humain connaissant le gold.
+
+4. Historique réservé français, une seule série autorisée par cette gate.
+Archiver G7 et sorties actuelles dans results/gate8/ sans remplacement. Une mesure --split test au seuil préalablement vérifié, puis une --split challenge, configurations préenregistrées. Pas de --split all qui rechoisirait puis enchaînerait test sans point d'arrêt. Harnais strict aux seuils figés pour les profils que le CLI historique n'exprime pas.
+Consigner le numéro réel suivant de mesure test dans D-G8-1 à côté des précédentes. Aucun export d'erreurs détaillées, id ou contenu réservé. Comparer aux agrégats G7 sans refaire une mesure G7 de ces anciens splits. Nouvelles métriques historiquement inconnues = non disponibles, pas reconstituées.
+
+5. Verdict par langue, correctif et profil.
+Corrections GO seulement si contrôles verts, défaut de fusion corrigé, pas de surajustement établi, vrai parcours FR/EN opérationnel et traitement local démontré. Le support EN ne se résume ni à l'interface ni aux libellés de jetons.
+Recommander un renfort si gain de fuite/couverture et marges préenregistrées de précision/surmasquage respectées pour le comparateur nommé, coût acceptable. Un backend peut être rejeté sans retirer les correctifs utiles. Résultat EN insuffisant ou fonctionnalité non testée = point ouvert, pas support annoncé sans réserve.
+Recul historique ou défaut de payload : point ouvert/test/repli et NO-GO de la fonction concernée. Pas d'essais réservés répétés pour obtenir le résultat voulu. Les corpus fictifs et petits restent une limite ; aucun score ne garantit anonymat ou zéro fuite.
+
+6. D-G8-1 : contrôle/statut/commentaire, méthodes/provenance, tableaux FR/EN avec intervalles, corrections, points ouverts/repli, verdict global et par profil. Rapports complets dans results/gate8/, synthèse en cinq lignes. Commit "G8 : contrôle bilingue et protection complète". Retirer seulement le worktree temporaire identifié et vérifié. Aucun tag/push.
+En fin, appeler le pilote avec finish G8 --go ou --nogo selon le verdict réel ; ne pas marquer GO pour avancer. Il fournit R8 local si GO, une correction Claude si NO-GO.
+
+Règles communes de clôture :
+- PYTHONUTF8=1 ; utiliser l'interpréteur du projet par son chemin : .venv/Scripts/python.exe sur A ; ../huisclos/.venv/Scripts/python.exe sur B. Pour A2/A3 et les contrôles généraux B3, utiliser baseline_python du manifeste A1, aux versions actuelles plus spaCy EN, y compris pour la suite complète. Réserver candidate_python aux expériences explicites B3, puis aux contrôles après modification des requirements A4. Pour les autres lots, conserver le PY habituel, puis le PY validé après A4. Ne pas changer le venv partagé pendant les vagues parallèles ; seule A4 peut appliquer une migration validée.
+- Lire les signatures des bibliothèques installées avant utilisation. Tous les nouveaux modules/fonctions annotés et documentés en français ; messages UI anglais/français dans i18n, HTML utilisateur échappé, fichiers métiers sous 400 lignes. Aucune donnée réelle.
+- Tests ciblés puis PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py ; git diff --check. Corriger les écarts de son périmètre. Codex ne télécharge ni n'installe aucun paquet. Aucun test/challenge/all mesuré hors gate expressément autorisée ; corpus réservés jamais ouverts manuellement.
+- Mettre à jour PROGRESS (entrée en tête), PROMPTS (une ligne) et DECISIONS si décision, avec identifiants de cette session. Centraliser les seuls fragments B déjà validés demandés par le lot ; pas de contenu de corpus réservé.
+- Commit de session au préfixe indiqué dans le corps, contrôles verts. Aucun tag/push sauf autorisation conditionnelle de la recette R8. Compte rendu de cinq lignes au plus, hors prompts de relais.
+
+Pilotage, après le compte rendu et le commit : exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" finish G8 --go si GO, py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" finish G8 --nogo sinon. Recopier intégralement sa sortie dans le chat, sans résumer ni modifier ; chaque partie de --- PROMPT À COLLER --- à --- FIN --- dans son propre bloc de code. Elle donne le prochain prompt, la piste, le dossier et le mode seul/parallèle. Si le pilote dit ATTENDRE, ne pas anticiper la vague suivante. En cas de blocage réel avant commit : py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" blocked G8 --reason "motif court sans contenu sensible", puis recopier la sortie.
+```
+
+## AF-FIX. Correction ciblée après NO-GO G8
+
+```text
+[HuisClos] FIX : Correction ciblée après NO-GO G8
+Piste A, Claude Code, Opus 5.5, High.
+Dossier : C:/Users/nasci/Documents/Coding Project/Assignment/huisclos ; branche dev.
+
+Cette session fait partie du nouveau parcours bilingue après G7 ; elle remplace les anciens lots AF1-AF5 séquentiels. Les changements difficiles sont sur A, les mesures et contrôles indépendants sur B. Ne pas lancer deux sessions dans le même dossier. Si une ancienne recette R7 y tourne encore, la terminer d'abord.
+
+Début obligatoire, dans le dossier indiqué :
+1. Lire AGENTS.md. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" start FIX.
+2. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" base FIX. Cette commande renvoie le SHA validé de l'autre piste. Faire git merge <ce SHA> --no-edit. Dérogation explicite à AGENTS section 12 : ce SHA figé remplace la branche mouvante pour ne pas importer une phase en cours. Sur conflit, arrêter et signaler ; aucune résolution improvisée.
+3. Présenter dix lignes de plan au plus puis implémenter sans attendre de validation. Préserver tout travail local. Les horloges du tableau sont indicatives ; les prérequis du pilote et les contrôles verts décident du lancement.
+
+Objectif : corriger les points ouverts de G8, confiés à Claude. Lire uniquement le rapport et les tests de régression, jamais les textes/annotations réservés. Les exemples des nouveaux tests doivent être fictifs, génériques et ne pas recopier une valeur réservée.
+Périmètre : fichiers de production cités comme défectueux dans D-G8-1 et leurs tests ; journaux centraux ; protocole uniquement pour décrire les changements sans réécrire les critères après résultat. Pas de suppression de données/rapports/mesures antérieurs.
+Présenter les défauts, reproduire avec tests, corriger sans élargissement gratuit. Limiter trois cycles ; un point structurel non résolu reste ouvert avec xfail(strict=True). Ne pas prétendre que les métriques G8 décrivent le nouveau commit corrigé. Aucune nouvelle mesure réservée pendant la correction et aucune ouverture de ses sources.
+Exécuter contrôles complets ; documenter périmètre, régressions, risques. Commit "AF-FIX : corrections des points ouverts de G8". Le pilote propose ensuite G8R dans une conversation B neuve, pas un nouveau balayage de seuil.
+
+Règles communes de clôture :
+- PYTHONUTF8=1 ; utiliser l'interpréteur du projet par son chemin : .venv/Scripts/python.exe sur A ; ../huisclos/.venv/Scripts/python.exe sur B. Pour A2/A3 et les contrôles généraux B3, utiliser baseline_python du manifeste A1, aux versions actuelles plus spaCy EN, y compris pour la suite complète. Réserver candidate_python aux expériences explicites B3, puis aux contrôles après modification des requirements A4. Pour les autres lots, conserver le PY habituel, puis le PY validé après A4. Ne pas changer le venv partagé pendant les vagues parallèles ; seule A4 peut appliquer une migration validée.
+- Lire les signatures des bibliothèques installées avant utilisation. Tous les nouveaux modules/fonctions annotés et documentés en français ; messages UI anglais/français dans i18n, HTML utilisateur échappé, fichiers métiers sous 400 lignes. Aucune donnée réelle.
+- Tests ciblés puis PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py ; git diff --check. Corriger les écarts de son périmètre. Codex ne télécharge ni n'installe aucun paquet. Aucun test/challenge/all mesuré hors gate expressément autorisée ; corpus réservés jamais ouverts manuellement.
+- Mettre à jour PROGRESS (entrée en tête), PROMPTS (une ligne) et DECISIONS si décision, avec identifiants de cette session. Centraliser les seuls fragments B déjà validés demandés par le lot ; pas de contenu de corpus réservé.
+- Commit de session au préfixe indiqué dans le corps, contrôles verts. Aucun tag/push sauf autorisation conditionnelle de la recette R8. Compte rendu de cinq lignes au plus, hors prompts de relais.
+
+Pilotage, après le compte rendu et le commit : exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" finish FIX. Recopier intégralement sa sortie dans le chat, sans résumer ni modifier ; chaque partie de --- PROMPT À COLLER --- à --- FIN --- dans son propre bloc de code. Elle donne le prochain prompt, la piste, le dossier et le mode seul/parallèle. Si le pilote dit ATTENDRE, ne pas anticiper la vague suivante. En cas de blocage réel avant commit : py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" blocked FIX --reason "motif court sans contenu sensible", puis recopier la sortie.
+```
+
+## AF-G8R. Recontrôle indépendant des corrections
+
+```text
+[HuisClos] G8R : Recontrôle indépendant des corrections
+Piste B, Codex, GPT 6.1 Sol, High.
+Dossier : C:/Users/nasci/Documents/Coding Project/Assignment/huisclos-b ; branche lane-b.
+
+Cette session fait partie du nouveau parcours bilingue après G7 ; elle remplace les anciens lots AF1-AF5 séquentiels. Les changements difficiles sont sur A, les mesures et contrôles indépendants sur B. Ne pas lancer deux sessions dans le même dossier. Si une ancienne recette R7 y tourne encore, la terminer d'abord.
+
+Début obligatoire, dans le dossier indiqué :
+1. Lire AGENTS.md. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" start G8R.
+2. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" base G8R. Cette commande renvoie le SHA validé de l'autre piste. Faire git merge <ce SHA> --no-edit. Dérogation explicite à AGENTS section 12 : ce SHA figé remplace la branche mouvante pour ne pas importer une phase en cours. Sur conflit, arrêter et signaler ; aucune résolution improvisée.
+3. Présenter dix lignes de plan au plus puis implémenter sans attendre de validation. Préserver tout travail local. Les horloges du tableau sont indicatives ; les prérequis du pilote et les contrôles verts décident du lancement.
+
+Objectif : recontrôler les corrections FIX dans une conversation indépendante. Lire AGENTS, D-G8-1 et rapport FIX, tests et changements nécessaires ; ne pas ouvrir manuellement un corpus réservé. Conserver tous les rapports G8.
+Périmètre : tests/test_gate8.py, docs/PROGRESS.md, PROMPTS.md, DECISIONS.md, nouveau results/gate8-recheck/ ; corrections simples de mesure seulement. Pas de réglage de détection.
+Vérifier tests de chaque point ouvert, suite complète, AppTest FR/EN, payload exact, réseau bloqué, modèles et offsets. Nouvelle référence du gel = commit FIX ; C3 est désormais un holdout déjà mesuré : ne pas prétendre qu'une nouvelle mesure serait une validation fraîche.
+Si des fichiers de détection/config/modèles ont changé depuis G8, cette session autorise une seule série aux paramètres figés : lots FR/EN C3, puis test/challenge historiques français, sans nouveau choix de seuil, sans détails réservés. Si aucune logique de détection n'a changé, réutiliser les mesures G8 et vérifier seulement les correctifs concernés ; ne pas refaire de détection inutilement. Consigner explicitement le choix avant exécution et le registre des mesures dans D-G8R-1. Une erreur de mesure n'autorise pas à effacer l'essai précédent.
+Verdict honnête par langue/profil ; points non résolus = NO-GO. Pas de boucle automatique de corrections et de mesures après ce recontrôle. Commit "G8R : recontrôle des corrections bilingues" ; finish G8R --go ou --nogo. GO donne la recette locale R8 ; NO-GO arrête le parcours avec les points ouverts.
+
+Règles communes de clôture :
+- PYTHONUTF8=1 ; utiliser l'interpréteur du projet par son chemin : .venv/Scripts/python.exe sur A ; ../huisclos/.venv/Scripts/python.exe sur B. Pour A2/A3 et les contrôles généraux B3, utiliser baseline_python du manifeste A1, aux versions actuelles plus spaCy EN, y compris pour la suite complète. Réserver candidate_python aux expériences explicites B3, puis aux contrôles après modification des requirements A4. Pour les autres lots, conserver le PY habituel, puis le PY validé après A4. Ne pas changer le venv partagé pendant les vagues parallèles ; seule A4 peut appliquer une migration validée.
+- Lire les signatures des bibliothèques installées avant utilisation. Tous les nouveaux modules/fonctions annotés et documentés en français ; messages UI anglais/français dans i18n, HTML utilisateur échappé, fichiers métiers sous 400 lignes. Aucune donnée réelle.
+- Tests ciblés puis PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py ; git diff --check. Corriger les écarts de son périmètre. Codex ne télécharge ni n'installe aucun paquet. Aucun test/challenge/all mesuré hors gate expressément autorisée ; corpus réservés jamais ouverts manuellement.
+- Mettre à jour PROGRESS (entrée en tête), PROMPTS (une ligne) et DECISIONS si décision, avec identifiants de cette session. Centraliser les seuls fragments B déjà validés demandés par le lot ; pas de contenu de corpus réservé.
+- Commit de session au préfixe indiqué dans le corps, contrôles verts. Aucun tag/push sauf autorisation conditionnelle de la recette R8. Compte rendu de cinq lignes au plus, hors prompts de relais.
+
+Pilotage, après le compte rendu et le commit : exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" finish G8R --go si GO, py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" finish G8R --nogo sinon. Recopier intégralement sa sortie dans le chat, sans résumer ni modifier ; chaque partie de --- PROMPT À COLLER --- à --- FIN --- dans son propre bloc de code. Elle donne le prochain prompt, la piste, le dossier et le mode seul/parallèle. Si le pilote dit ATTENDRE, ne pas anticiper la vague suivante. En cas de blocage réel avant commit : py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" blocked G8R --reason "motif court sans contenu sensible", puis recopier la sortie.
+```
+
+## AF-R8. Recette finale et publication conditionnelle
+
+```text
+[HuisClos] R8 : Recette finale et publication conditionnelle
+Piste A, Claude Code, Sonnet 5.5, Medium.
+Dossier : C:/Users/nasci/Documents/Coding Project/Assignment/huisclos ; branche dev.
+
+Cette session fait partie du nouveau parcours bilingue après G7 ; elle remplace les anciens lots AF1-AF5 séquentiels. Les changements difficiles sont sur A, les mesures et contrôles indépendants sur B. Ne pas lancer deux sessions dans le même dossier. Si une ancienne recette R7 y tourne encore, la terminer d'abord.
+
+Début obligatoire, dans le dossier indiqué :
+1. Lire AGENTS.md. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" start R8.
+2. Exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" base R8. Cette commande renvoie le SHA validé de l'autre piste. Faire git merge <ce SHA> --no-edit. Dérogation explicite à AGENTS section 12 : ce SHA figé remplace la branche mouvante pour ne pas importer une phase en cours. Sur conflit, arrêter et signaler ; aucune résolution improvisée.
+3. Présenter dix lignes de plan au plus puis implémenter sans attendre de validation. Préserver tout travail local. Les horloges du tableau sont indicatives ; les prérequis du pilote et les contrôles verts décident du lancement.
+
+Objectif : recette locale FR/EN puis publication conditionnelle après GO G8 ou G8R. C'est une recette R<N> autorisée par AGENTS section 12 ; aucun tag/push si un contrôle échoue.
+Périmètre : docs/PROGRESS.md, PROMPTS.md, DECISIONS.md ; docs/screenshots/ si une capture doit être actualisée ; README.md uniquement si son URL est erronée. Aucun changement de logique, modèle, dépendance ou corpus.
+Après synchronisation du commit validé B, lire verdict et limites. NO-GO ou branche incorrecte : arrêt. Tests complets puis parcours local reproductible avec données fictives FR et EN : langue de document distincte de l'interface ; modèle retenu ; détection/revue ; ajout manuel ; pseudonymisation ; contrôle de la consigne ; alerte plantée corrigée ; envoi simulé ; restauration ; second document de dossier et jetons stables. Échec à toute exception Streamlit.
+Vérifier Evaluation et guide cohérents avec résultats et profils retenus, sans revendiquer la sécurité absolue. Tout outil auxiliaire reste dans un venv temporaire hors dépôt ; serveur/navigateur arrêtés proprement. Une nouvelle erreur de logique est signalée, pas corrigée discrètement après la gate.
+Entrée R8 détaillée et commit "R8 : recette finale du parcours bilingue". Si tous les contrôles et verdicts sont GO, sans quitter dev : git fetch . dev:main (avance rapide seulement), git tag gate-8 main, git push origin main dev --tags. Si gate-8 existe déjà, vérifier son commit : même commit, ne pas le recréer ; commit différent, arrêter et signaler sans modifier de tag.
+Vérifier le redéploiement de la démo publique (HTTP 200 et cas fictifs FR/EN au profil Standard léger), dix minutes maximum, sans activer de poids lourds en ligne. Compléter le compte rendu par un commit documentaire sans nouveau push si nécessaire. Une panne de déploiement est consignée et bloque la validation R8, sans prétendre que la version en ligne a été vérifiée.
+Une fois la recette terminée, le pilote fournit S61 (script/storyboard) et le retour au calendrier vidéo/dépôt. Le gel à 23:59 reste impératif. Aucun nouveau développement après ce gel.
+
+Règles communes de clôture :
+- PYTHONUTF8=1 ; utiliser l'interpréteur du projet par son chemin : .venv/Scripts/python.exe sur A ; ../huisclos/.venv/Scripts/python.exe sur B. Pour A2/A3 et les contrôles généraux B3, utiliser baseline_python du manifeste A1, aux versions actuelles plus spaCy EN, y compris pour la suite complète. Réserver candidate_python aux expériences explicites B3, puis aux contrôles après modification des requirements A4. Pour les autres lots, conserver le PY habituel, puis le PY validé après A4. Ne pas changer le venv partagé pendant les vagues parallèles ; seule A4 peut appliquer une migration validée.
+- Lire les signatures des bibliothèques installées avant utilisation. Tous les nouveaux modules/fonctions annotés et documentés en français ; messages UI anglais/français dans i18n, HTML utilisateur échappé, fichiers métiers sous 400 lignes. Aucune donnée réelle.
+- Tests ciblés puis PY -m pytest -q ; PY -m ruff check . ; PY -m ruff format --check . ; PY scripts/check_style.py ; git diff --check. Corriger les écarts de son périmètre. Codex ne télécharge ni n'installe aucun paquet. Aucun test/challenge/all mesuré hors gate expressément autorisée ; corpus réservés jamais ouverts manuellement.
+- Mettre à jour PROGRESS (entrée en tête), PROMPTS (une ligne) et DECISIONS si décision, avec identifiants de cette session. Centraliser les seuls fragments B déjà validés demandés par le lot ; pas de contenu de corpus réservé.
+- Commit de session au préfixe indiqué dans le corps, contrôles verts. Aucun tag/push sauf autorisation conditionnelle de la recette R8. Compte rendu de cinq lignes au plus, hors prompts de relais.
+
+Pilotage, après le compte rendu et le commit : exécuter py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" finish R8. Recopier intégralement sa sortie dans le chat, sans résumer ni modifier ; chaque partie de --- PROMPT À COLLER --- à --- FIN --- dans son propre bloc de code. Elle donne le prochain prompt, la piste, le dossier et le mode seul/parallèle. Si le pilote dit ATTENDRE, ne pas anticiper la vague suivante. En cas de blocage réel avant commit : py "C:/Users/nasci/Documents/Coding Project/Assignment/pilotage/post_g7.py" blocked R8 --reason "motif court sans contenu sensible", puis recopier la sortie.
+```
+
 # Fiches des phases 6 et 7
 
 Ces fiches couvrent la vidéo (30 points de la grille), la documentation d'appui (20 points) et le dépôt, de mercredi 19:30 à jeudi 21:59. Après le gel du mercredi 23:59, seules les corrections sont permises.
@@ -2236,7 +2822,7 @@ SCRIPT.md
   0:20-0:50 Problem and rules : secret professionnel (loi du 31 décembre 1971, art. 66-5 ; Code pénal, art. 226-13), RGPD, guide du CNB de mars 2026 qui recommande de pseudonymiser avant l'IA générative.
   0:50-1:05 Name and promise : "huis clos", l'audience à portes fermées ; les données du client restent dans la pièce.
   1:05-3:00 Live demo : Load sample case, détection, revue (juridiction laissée en clair d'office, ajout manuel d'un élément non détecté : le matricule, ou l'élément indiqué par le compte rendu de S14), pseudonymisation, contrôle final (Final check), passage dans ChatGPT, retour, restauration, export et avertissement sur la table ; une phrase sur la mémoire de dossier.
-  3:00-3:45 Under the hood : pipeline hybride (clés de contrôle, heuristiques, NER pré-entraînée), jetons cohérents, test sans réseau, résultats repris de results/summary.md, seuil choisi par F2 parce qu'un nom oublié coûte plus qu'un masquage en trop ; jeu challenge écrit à l'aveugle après le gel des règles, avant/après repris de results/challenge_comparison.md.
+  3:00-3:45 Under the hood : pipeline hybride (clés de contrôle, heuristiques, NER pré-entraînée), jetons cohérents, test sans réseau, résultats repris de results/summary.md, seuil choisi par F2 parce qu'un nom oublié coûte plus qu'un masquage en trop ; jeu challenge écrit à l'aveugle après le gel des règles, avant/après historique repris de results/challenge_comparison.md. Après G8, utiliser aussi results/gate8/ et ses verdicts par langue ; distinguer langue UI, document et jetons, montrer brièvement EN et ne présenter que les profils réellement validés.
   3:45-4:20 Value and competition : valeur si l'usage se généralise (chiffres seulement s'ils figurent avec une source dans docs/RESEARCH.md) ; positionnement face à Docuflair, Nymiz, Sentinel et PseudoShield.
   4:20-4:45 Limits and close : réidentification par le contexte, pseudonymisation n'est pas anonymisation, l'humain reste responsable ; liens vers l'appli et le dépôt.
 - Budget : 600 à 680 mots ; pour chaque bloc, nombre de mots et durée calculée à 140 mots par minute ; total en tête du fichier.
@@ -2394,7 +2980,7 @@ METHOD_REPORT.md (2 500 à 3 500 mots, sections numérotées)
 2. Legal and ethical framework : secret professionnel (loi n° 71-1130 du 31 décembre 1971, art. 66-5 ; Code pénal, art. 226-13) ; RGPD (art. 4(5), considérant 26, art. 5(1)(c), art. 32) ; guide du CNB de mars 2026 ; CJEU, 4 September 2025, EDPS v SRB, C-413/23 P (pseudonymised data are not personal data in every case and for every person ; the controller's information duty is assessed at collection, before transfer ; General Court judgment set aside and case referred back) ; EDPB Guidelines 01/2025 on pseudonymisation. Uniquement ce que docs/RESEARCH.md source.
 3. Market and competitors : tableau tiré de docs/RESEARCH.md ; angle de HuisClos (identifiants juridiques français, rappel mesuré et publié, code ouvert, traitement local, revue humaine).
 4. Solution and pipeline : schéma Mermaid, six étapes, choix techniques avec renvoi aux décisions D-xx.
-5. Evaluation : corpus (taille, types, split dev et test, génération puis relecture), appariements exact et partiel, F2, taux de fuite, comparaison des configurations, choix du seuil, résultats dev et test copiés de results/summary.md avec leur date ; toutes les mesures test (G4, G4bis, G7), sans en cacher aucune ; intervalles de confiance (D-S45-1) ; jeu challenge écrit à l'aveugle et comparaison avant/après (results/challenge_comparison.md, D-G7-1).
+5. Evaluation : corpus (taille, types, split dev et test, génération puis relecture), appariements exact et partiel, F2, taux de fuite, comparaison des configurations, choix du seuil, résultats dev et test copiés de results/summary.md avec leur date ; toutes les mesures test (G4, G4bis, G7 et G8/G8R si exécutées), sans en cacher aucune ; résultats FR/EN séparés et limites des nouveaux modèles ; intervalles de confiance (D-S45-1) ; jeu challenge écrit à l'aveugle et comparaison avant/après (results/challenge_comparison.md, D-G7-1).
 6. Course concepts applied : coût asymétrique et seuil, humain dans la boucle, IA hybride, apprentissage par transfert, mesure de la performance ; pour chacun, l'endroit précis de l'appli où il se voit.
 7. Beyond the course : NER par transformeurs (résultat de D-S44-1, ou option non mesurée), regroupement des mentions, réidentification tolérante, comparaison chiffrée de configurations, mémoire de dossier et contrôle final (D-S24-*), intervalles par rééchantillonnage, évaluation à l'aveugle.
 8. Limits and ethics : réidentification par le contexte, erreurs de détection, jetons altérés, démo en ligne et données fictives, biais du corpus, responsabilité humaine, outil d'aide et non conseil juridique.

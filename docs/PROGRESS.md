@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 11:10 | PIL-G7 | Parcours bilingue et pilotage parallèle après G7 | Codex
+- Fait : MASTER_PLAN révisé avec calendrier actif à deux pistes, treize prompts autonomes et barrières de commits ; A reçoit la logique difficile et l'intégration, B les mesures, imports, corpus et contrôle indépendant. Les fiches antérieures restent archivées.
+- Périmètre demandé : documents français et anglais, distincts de la langue UI et du style des jetons ; socles locaux par langue, comparaison Anonym-IA V2/GLiNER/combinaisons, migration neuronale seulement après essai isolé et gain mesuré. Le support EN reste à implémenter, aucun code métier changé.
+- Pilotage hors dépôt : post_g7.py et reçus atomiques par session ; suite.py raccordé, prochain prompt intégral avec piste/dossier ; SHA validés plutôt que branches mouvantes et fragments B séparés pour éviter les conflits des journaux.
+- Tests : pytest 1229 passed (129,87 s) ; pilote 17 tests unittest OK ; Ruff check/format et style OK (cinq avertissements connus), diff --check conforme. Les treize prompts sont identiques entre masterplan et pilotage ; aucune session lancée, mesure réservée relancée ou source réservée ouverte.
+- Décisions : D-PIL-G7-1 ; ancien AF5 réparti entre préparation A1, benchmark B3 et intégration A4 ; dev EN avant gel puis C3 aveugle FR/EN. Modèles et dépendances actuels inchangés pendant cette planification.
+- Reste et suite : lancer A1+B1 en parallèle après la fin de toute ancienne recette R7 ; cibles horaires indicatives, gel 23:59 inchangé. Risque : charge du support EN et des modèles ; abandonner une exploration sans gain, jamais annoncer un support non validé. Aucun tag ni push.
+
 ### 2026-10-28 09:30 | G7 | Contrôle de l'approfondissement et mesures : GO | Codex
 - Fait : fusion de dev en avance rapide vers b86a977, état initial propre ; contrôle indépendant hors ligne de S36, S14, C2, S45 et S24. Audit S14 gelé avant comparaison : 106 littéraux distincts, 75 nouveaux, 19 candidats, zéro correspondance spécifique dans test et challenge ; C2 postérieur à S14 et sans changement de src/ ni tests/.
 - Mesures uniques dans l'ordre : all (dev puis troisième mesure test du projet), challenge actuel, challenge gate-5 hors dépôt au seuil de référence 0,30, puis compare_results.py. Hybrid : dev P 0,9904, R 1, F2 0,9981, fuite 0 ; test P 0,9789, R 1, F2 0,9957, fuite 0,0196 ; challenge avant/après R 0,8316 vers 0,8421, fuite 0,1758 vers 0,1283. Cinq configurations et intervalles complets dans D-G7-1 ; aucun rappel inférieur à gate-5 sur test ou challenge.
