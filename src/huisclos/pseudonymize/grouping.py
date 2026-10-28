@@ -226,6 +226,18 @@ def _initials_match(words: tuple[str, ...], full: tuple[str, ...]) -> bool:
     return True
 
 
+def may_abbreviate(words: tuple[str, ...], full: tuple[str, ...]) -> bool:
+    """Dit si une forme partielle d'un nom (mot seul ou initiales) peut renvoyer à full.
+
+    Paramètres : words et full, des mots repliés (voir person_words).
+    Valeur retournée : vrai pour un mot seul présent dans full, ou pour une forme à
+    initiales compatible. Exemple : may_abbreviate(("dupont",), ("jean", "dupont")) est vrai.
+    """
+    if len(words) == 1:
+        return words[0] in full
+    return _initials_match(words, full)
+
+
 def _surname(bucket: _Bucket) -> str:
     """Nom de famille présumé : le mot écrit en capitales, sinon le dernier mot."""
     for form in bucket.forms:

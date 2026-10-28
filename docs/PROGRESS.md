@@ -14,6 +14,14 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 09:08 | S24 | Mémoire de dossier et contrôle final avant envoi | Claude Code, Opus 5.5
+- Fait : fusion de lane-b déjà à jour, 1151 passed avant travail. Contrôle final : pseudonymize/final_check.py et carte "Final check" en tête de Restore (restes de la table, noms de famille seuls, seconde détection au seuil moins 0,20, valeurs rejetées ignorées, "Mask everywhere"). Mémoire de dossier : pseudonymize/case_memory.py, bloc "Continue a case" à l'Import (app/steps/import_case.py), detect(..., known), pseudonymize(..., known), table fusionnée exportée par Restore. Source.CASE_TABLE ajoutée ; textes EN et FR (app/i18n/workflow_check.py, workflow_import.py, workflow_restore.py).
+- Tests : nouveaux tests/test_case_memory.py, test_final_check.py, test_app_case.py (51 tests). Mis à jour : test_models (nouvelle source), test_app_restore (sous-titre "Final check"), test_app_smoke (signature de detect), test_mistral_client (faux résultat complété, délai AppTest de 120 s car le contrôle final charge le moteur). pytest 1203 passed ; ruff check et format : OK ; check_style : 0 erreur, 5 avertissements de longueur connus.
+- Décisions : D-S24-1 à D-S24-3.
+- Reste à faire : README et guide utilisateur (bloc "Continue a case", carte "Final check") ; captures à régénérer.
+- Risques : valeur connue d'un seul mot cherchée sans tenir compte de la casse (faux positifs rejetables) ; AppTest relit le sélecteur de type de Review hors session, donc en anglais : le parcours français est testé à partir de Restore ; restore_step.py à 332 lignes.
+- Prochaine session : selon pilotage/suite.py.
+
 ### 2026-10-28 08:33 | C2 | Jeu challenge rédigé à l'aveugle (lot 5) | Claude Code, Opus 5.5
 - Fait : première étape 0 arrêtée sur l'ImportError de la fusion 859a36f (S14 x S36), diagnostic remis à l'humain, correction par F1. Reprise : fusion de lane-b (S45, bdc0eb5) sans conflit, 1151 passed. Huit sources chl_01 à chl_08 (split challenge, 275 à 491 mots, 19 à 30 annotations, 203 entités) et docs/prompts/corpus_lot_5.md (conditions, couverture, trois difficultés ajoutées : noms dans les noms de fichiers, diminutifs et surnoms, sigles repris après la raison sociale ; conventions ; aucune valeur des sources). corpus/challenge.jsonl et corpus/stats.md construits ; dev.jsonl et test.jsonl inchangés.
 - Rédaction à l'aveugle : lus seulement AGENTS.md, PROGRESS.md, corpus/README.md, doc_01.md et l'annexe A5 ; ni src/, ni tests/, ni results/, ni doc_07 à doc_26, ni D-S14. Aucun code modifié : le builder acceptait déjà le split challenge, repli inutile.

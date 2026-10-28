@@ -31,6 +31,11 @@ KEY_UPLOADED_TABLE = "restore_uploaded_table"
 KEY_TABLE_ERROR = "restore_table_error"
 KEY_LANGUAGE = "language"
 KEY_TOKEN_STYLE = "token_style"
+# Table de dossier chargée à l'étape Import (D-S24-2) : sensible, gardée en mémoire seulement.
+KEY_CASE_TABLE = "case_table"
+KEY_CASE_NAME = "case_table_name"
+KEY_CASE_ERROR = "case_table_error"
+KEY_CASE_NONCE = "case_table_nonce"
 
 # Clés des réglages de la barre latérale et du retour de lecture.
 KEY_ENABLED_TYPES = "enabled_types"
@@ -71,6 +76,10 @@ def _defaults() -> dict[str, object]:
         KEY_RESTORE_RESULT: None,
         KEY_UPLOADED_TABLE: None,
         KEY_TABLE_ERROR: None,
+        KEY_CASE_TABLE: None,
+        KEY_CASE_NAME: "",
+        KEY_CASE_ERROR: None,
+        KEY_CASE_NONCE: 0,
         KEY_LANGUAGE: "en",
         KEY_TOKEN_STYLE: "fr",
         KEY_ENABLED_TYPES: ordered_types,

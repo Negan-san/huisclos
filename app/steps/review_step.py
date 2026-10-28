@@ -30,7 +30,6 @@ from app.state import (
     KEY_SIGNATURE,
     KEY_SOURCE_TEXT,
     KEY_TABLE_ERROR,
-    KEY_TOKEN_STYLE,
     KEY_UPLOADED_TABLE,
     STEP_IMPORT,
     STEP_RESTORE,
@@ -42,11 +41,11 @@ from app.steps.review_decisions import (
     current_detections,
     decisions,
     is_masked,
+    pseudonymize_session,
 )
 from app.ui_common import entity_label
-from huisclos.models import Detection, EntityGroup, EntityType, TokenStyle
+from huisclos.models import Detection, EntityGroup, EntityType
 from huisclos.pseudonymize.grouping import group_mentions
-from huisclos.pseudonymize.tokens import pseudonymize
 
 # Clés propres à cet écran. Le numéro de version fait partie de la clé du tableau : il
 # change après chaque modification, ce qui donne un tableau neuf (voir _commit_change).
@@ -230,12 +229,11 @@ def _render_manual() -> None:
         _render_notice()
 
 
-def _pseudonymize(text: str, detections: list[Detection]) -> None:
+def _pseudonymize() -> None:
     """Pseudonymise les mentions masquées, garde le résultat et passe à l'étape Restore."""
-    style = TokenStyle(language=st.session_state[KEY_TOKEN_STYLE])
     try:
         with st.spinner(t("review.pseudonymize.spinner")):
-            result = pseudonymize(text, [d for d in detections if is_masked(d)], style)
+            result = pseudonymize_session()
     except ValueError:
         st.error(t("review.error.pseudonymize"))
         return
@@ -247,7 +245,7 @@ def _pseudonymize(text: str, detections: list[Detection]) -> None:
     st.rerun()
 
 
-def _render_actions(text: str, detections: list[Detection]) -> None:
+def _render_actions(detections: list[Detection]) -> None:
     """Barre d'actions : rappel sur la table, retour à Import et bouton Pseudonymize."""
     with st.container(key="hc-card-actions"):
         if not any(is_masked(d) for d in detections):
@@ -269,7 +267,7 @@ def _render_actions(text: str, detections: list[Detection]) -> None:
                 icon_position="right",
             )
     if clicked:
-        _pseudonymize(text, detections)
+        _pseudonymize()
 
 
 def render() -> None:
@@ -292,4 +290,4 @@ def render() -> None:
     if groups:
         _render_table(groups, detections)
     _render_manual()
-    _render_actions(text, detections)
+    _render_actions(detections)

@@ -172,9 +172,9 @@ def test_detection_is_recomputed_only_when_the_input_changes(
     calls: list[int] = []
     real_detect = import_step.detect
 
-    def counting_detect(text: str, config: object) -> list:
+    def counting_detect(text: str, config: object, known: object = ()) -> list:
         calls.append(len(text))
-        return real_detect(text, config)
+        return real_detect(text, config, known)
 
     monkeypatch.setattr(import_step, "detect", counting_detect)
     app = load_sample(start())

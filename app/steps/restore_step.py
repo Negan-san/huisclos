@@ -1,9 +1,10 @@
-"""Étape Restore : texte à envoyer, restauration de la réponse, exports et remise à zéro.
+"""Étape Restore : contrôle final, texte à envoyer, restauration, exports et remise à zéro.
 
 Entrées : pseudo_result dans l'état de session, la réponse du LLM collée par l'utilisateur et,
 facultativement, une table de correspondance JSON téléversée.
 Sorties : restore_result dans l'état, le texte restauré affiché et les cinq téléchargements
-(texte pseudonymisé et texte restauré en .txt et .docx, table en .json).
+(texte pseudonymisé et texte restauré en .txt et .docx, table en .json, fusionnée avec la
+table de dossier éventuelle).
 Place dans le pipeline : troisième et dernière étape ; appelle pseudonymize.reidentify.restore.
 """
 
@@ -26,11 +27,13 @@ from app.state import (
     go_to,
     reset_state,
 )
+from app.steps.restore_check import render_final_check
 from app.steps.restore_exports import render_downloads
 from app.steps.restore_mistral import KEY_ANSWER_WIDGET, render_mistral_slot
 from app.ui_common import entity_label, literal_markdown
 from huisclos.models import EntityType, Occurrence, PseudonymizationResult
-from huisclos.pseudonymize.mapping import Mapping, MappingError, sha256_of
+from huisclos.pseudonymize.case_memory import TableFileError, read_table_file
+from huisclos.pseudonymize.mapping import Mapping, sha256_of
 from huisclos.pseudonymize.reidentify import RestoreResult, restore
 
 # Clés propres à cette étape ; reset_state() les efface avec le reste de la session.
@@ -116,11 +119,9 @@ def _keep_uploaded_table() -> None:
     if uploaded is None:
         return
     try:
-        mapping = Mapping.from_json(uploaded.getvalue().decode("utf-8-sig"))
-    except UnicodeDecodeError:
-        st.session_state[KEY_TABLE_ERROR] = "encoding"
-    except (MappingError, ValueError, RecursionError):
-        st.session_state[KEY_TABLE_ERROR] = "invalid"
+        mapping = read_table_file(uploaded.getvalue())
+    except TableFileError as error:
+        st.session_state[KEY_TABLE_ERROR] = error.code
     else:
         st.session_state[KEY_UPLOADED_TABLE] = ActiveTable(mapping, None, uploaded.name)
 
@@ -317,6 +318,8 @@ def render() -> None:
     else:
         send, answer = st.columns(2, gap="medium")
         with send:
+            # Le contrôle final précède le texte : une alerte se traite avant de copier.
+            render_final_check(result)
             _render_send(result)
         with answer:
             table, restored = _render_answer_card(result)

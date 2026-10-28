@@ -1,7 +1,7 @@
 """Étape Import : texte collé, fichier ou cas d'exemple, puis détection des données sensibles.
 
 Entrées : texte saisi, fichier TXT, DOCX ou PDF, ou data/samples/demo_case_fr.txt ; la
-configuration de détection de la barre latérale.
+configuration de détection de la barre latérale ; la table de dossier facultative.
 Sorties : source_text et detections dans l'état de session, puis passage à l'étape Review.
 Place dans le pipeline : première étape ; appelle io.readers puis detection.pipeline.detect.
 """
@@ -16,6 +16,7 @@ from app.engine import prepare_engine
 from app.i18n import current_language, t
 from app.sidebar import build_config
 from app.state import (
+    KEY_CASE_TABLE,
     KEY_DETECTIONS,
     KEY_PASTE_WIDGET,
     KEY_READ_ERROR,
@@ -28,20 +29,24 @@ from app.state import (
     clear_results,
     go_to,
 )
+from app.steps.import_case import render_case_table
 from app.ui_common import entity_badge_html, is_public_demo, literal_markdown
 from huisclos.config import DetectionConfig
 from huisclos.detection.pipeline import detect
 from huisclos.io.readers import DocumentReadError, read_document, read_pasted_text
 from huisclos.models import EntityType
+from huisclos.pseudonymize.case_memory import find_known
+from huisclos.pseudonymize.mapping import Mapping, sha256_of
 
 SAMPLE_PATH = Path(__file__).resolve().parents[2] / "data" / "samples" / "demo_case_fr.txt"
 UPLOAD_TYPES = ["txt", "docx", "pdf"]
 
 
-def detection_signature(text: str, config: DetectionConfig) -> str:
-    """Renvoie l'empreinte du texte et de la configuration, pour ne recalculer qu'au besoin.
+def detection_signature(text: str, config: DetectionConfig, table: Mapping | None = None) -> str:
+    """Renvoie l'empreinte du texte, de la configuration et de la table de dossier éventuelle.
 
     Les types activés sont triés : l'ordre d'un frozenset ne doit pas changer l'empreinte.
+    Charger, changer ou retirer la table de dossier refait donc la détection.
     """
     parts = []
     for item in fields(config):
@@ -49,7 +54,8 @@ def detection_signature(text: str, config: DetectionConfig) -> str:
         if isinstance(value, frozenset):
             value = sorted(member.value for member in value)
         parts.append((item.name, value))
-    return hashlib.sha256(f"{text}\0{parts!r}".encode()).hexdigest()
+    case = f"\0{sha256_of(table.to_json())}" if table is not None else ""
+    return hashlib.sha256(f"{text}\0{parts!r}{case}".encode()).hexdigest()
 
 
 def _set_source(text: str, name: str, warnings: tuple[str, ...] = ()) -> None:
@@ -165,7 +171,8 @@ def _run_detection(config: DetectionConfig) -> None:
     except DocumentReadError as error:
         st.error(t(f"import.error.{error.code}"))
         return
-    signature = detection_signature(text, config)
+    table = st.session_state[KEY_CASE_TABLE]
+    signature = detection_signature(text, config, table)
     unchanged = (
         signature == st.session_state[KEY_SIGNATURE]
         and st.session_state[KEY_DETECTIONS] is not None
@@ -178,7 +185,10 @@ def _run_detection(config: DetectionConfig) -> None:
                 status.write(t("import.detect.step.engine"))
                 prepare_engine(config)
                 status.write(t("import.detect.step.search"))
-                detections = detect(text, config)
+                known = find_known(text, table) if table is not None else []
+                if table is not None:
+                    status.write(t("import.detect.step.case", count=len(known)))
+                detections = detect(text, config, known=known)
                 status.update(label=t("import.detect.done"), state="complete")
         except RuntimeError:
             st.error(t("import.error.engine"))
@@ -205,6 +215,7 @@ def _render_document_card(config: DetectionConfig) -> None:
             )
         _render_tabs()
         _render_source_feedback()
+        render_case_table()
         if not config.enabled_types:
             st.warning(t("import.detect.no_types"))
         if st.button(

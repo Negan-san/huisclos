@@ -100,6 +100,10 @@ EN: dict[str, str] = {
         "This file is not a valid HuisClos mapping table. Upload the .mapping.json file "
         "exactly as HuisClos saved it."
     ),
+    "restore.table.error.too_large": (
+        "This file is larger than 2 MB, too large for a mapping table. Upload the "
+        ".mapping.json file exactly as HuisClos saved it."
+    ),
     "restore.download.heading": "Download",
     "restore.download.pseudonymized_txt": "Pseudonymized text (.txt)",
     "restore.download.pseudonymized_docx": "Pseudonymized text (.docx)",
@@ -223,6 +227,10 @@ FR: dict[str, str] = {
     "restore.table.error.invalid": (
         "Ce fichier n'est pas une table de correspondance HuisClos valide. Téléversez le "
         "fichier .mapping.json tel que HuisClos l'a enregistré."
+    ),
+    "restore.table.error.too_large": (
+        "Ce fichier dépasse 2 Mo, ce qui est trop pour une table de correspondance. Téléversez"
+        " le fichier .mapping.json tel que HuisClos l'a enregistré."
     ),
     "restore.download.heading": "Télécharger",
     "restore.download.pseudonymized_txt": "Texte pseudonymisé (.txt)",

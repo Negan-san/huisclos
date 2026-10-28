@@ -1,11 +1,13 @@
 """Attribution des jetons et substitution dans le texte.
 
-Entrées : le texte, ses détections validées et la forme des jetons (TokenStyle).
+Entrées : le texte, ses détections validées, la forme des jetons (TokenStyle) et, pour un
+dossier, la table d'un document précédent.
 Sorties : un PseudonymizationResult (texte à jetons, groupes, occurrences, table).
 Place dans le pipeline : après pseudonymize.grouping ; le texte produit part au LLM, la
 table reste sur le poste pour pseudonymize.reidentify.
 """
 
+import itertools
 import re
 from collections.abc import Callable, Sequence
 from dataclasses import replace
@@ -24,6 +26,7 @@ from huisclos.models import (
     PseudonymizationResult,
     TokenStyle,
 )
+from huisclos.pseudonymize.case_memory import match_entry, merge_tables, token_number
 from huisclos.pseudonymize.grouping import group_mentions
 from huisclos.pseudonymize.mapping import Mapping
 
@@ -58,19 +61,56 @@ def make_token(entity_type: EntityType, number: int, style: TokenStyle = DEFAULT
     return f"{style.open_bracket}{label}_{index}{style.close_bracket}"
 
 
-def assign_tokens(groups: Sequence[EntityGroup], style: TokenStyle) -> list[EntityGroup]:
+def assign_tokens(
+    groups: Sequence[EntityGroup], style: TokenStyle, known: Mapping | None = None
+) -> list[EntityGroup]:
     """Donne un jeton à chaque groupe, numéroté par type dans l'ordre de première apparition.
 
-    Paramètres : groups, triés par première apparition ; style, la forme des jetons.
-    Valeur retournée : les mêmes groupes, champ token rempli.
+    Paramètres : groups, triés par première apparition ; style, la forme des jetons ; known,
+    la table d'un document précédent du dossier, facultative.
+    Valeur retournée : les groupes, champ token rempli. Avec known, un groupe qui désigne
+    une entité de la table garde son jeton, un groupe nouveau prend le premier rang libre de
+    son type, et les groupes rattachés à la même entité sont réunis (D-S24-2).
     """
-    counters: dict[EntityType, int] = {}
+    used: dict[EntityType, set[int]] = {}
+    for entry in known.entities if known is not None else ():
+        number = token_number(entry.token, entry.entity_type, style)
+        if number is not None:
+            used.setdefault(entry.entity_type, set()).add(number)
     numbered = []
     for group in sorted(groups, key=lambda g: g.mention_spans[0][0]):
-        counters[group.entity_type] = counters.get(group.entity_type, 0) + 1
-        token = make_token(group.entity_type, counters[group.entity_type], style)
+        entry = match_entry(group, known) if known is not None else None
+        if entry is not None:
+            token = entry.token
+        else:
+            taken = used.setdefault(group.entity_type, set())
+            number = next(n for n in itertools.count(1) if n not in taken)
+            taken.add(number)
+            token = make_token(group.entity_type, number, style)
         numbered.append(replace(group, token=token))
-    return numbered
+    return _merge_same_token(numbered)
+
+
+def _merge_same_token(groups: Sequence[EntityGroup]) -> list[EntityGroup]:
+    """Réunit les groupes qui ont reçu le même jeton : une entité de la table, un jeton.
+
+    Le premier groupe garde sa place et sa forme canonique ; mentions, variantes et
+    ambiguïtés sont mises en commun. Sans table connue, aucun jeton n'est partagé.
+    """
+    merged: dict[str, EntityGroup] = {}
+    for group in groups:
+        first = merged.get(group.token)
+        merged[group.token] = (
+            group
+            if first is None
+            else replace(
+                first,
+                variants=tuple(sorted({*first.variants, *group.variants})),
+                mention_spans=tuple(sorted((*first.mention_spans, *group.mention_spans))),
+                ambiguous_with=tuple(sorted({*first.ambiguous_with, *group.ambiguous_with})),
+            )
+        )
+    return list(merged.values())
 
 
 def _sorted_detections(text: str, detections: Sequence[Detection]) -> list[Detection]:
@@ -173,22 +213,29 @@ def pseudonymize(
     style: TokenStyle = DEFAULT_STYLE,
     *,
     created_at: str | None = None,
+    known: Mapping | None = None,
 ) -> PseudonymizationResult:
     """Remplace chaque détection par le jeton de son groupe.
 
     Paramètres : text, le texte d'origine ; detections, les détections validées, sans
-    chevauchement ; style, la forme des jetons ; created_at, horodatage imposé de la table.
+    chevauchement ; style, la forme des jetons ; created_at, horodatage imposé de la table ;
+    known, la table d'un document précédent du même dossier. Avec known, son style de jetons
+    remplace style, les entités connues gardent leur jeton et la table produite est la
+    table fusionnée du dossier (case_memory.merge_tables).
     Valeur retournée : le résultat ; mêmes entrées et même created_at, même sortie.
     Exemple : pseudonymize("Jean DUPONT et M. Dupont", ...).text vaut
     "[PERSONNE_1] et M. [PERSONNE_1]".
     """
+    if known is not None:
+        style = known.token_style
     ordered = _sorted_detections(text, detections)
-    groups = tuple(assign_tokens(group_mentions(text, ordered), style))
+    groups = tuple(assign_tokens(group_mentions(text, ordered), style, known))
     output, occurrences = _substitute(text, ordered, groups)
+    mapping = Mapping.build(groups, occurrences, output, style, created_at)
     return PseudonymizationResult(
         text=output,
         groups=groups,
         occurrences=occurrences,
-        mapping=Mapping.build(groups, occurrences, output, style, created_at),
+        mapping=merge_tables(known, mapping) if known is not None else mapping,
         warnings=token_like_warnings(text, style),
     )

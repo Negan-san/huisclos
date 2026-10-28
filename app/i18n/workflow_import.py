@@ -49,6 +49,34 @@ EN: dict[str, str] = {
     "import.detect.step.engine": "Preparing the detection engine.",
     "import.detect.step.search": "Looking for names, companies, addresses and identifiers.",
     "import.detect.done": "Detection complete.",
+    "import.detect.step.case": "Known values of the case table found in this text: {count}.",
+    "import.case.heading": "Continue a case (optional)",
+    "import.case.help": (
+        "Upload the .mapping.json file of an earlier document from the same case. Its values "
+        "are searched in this text, even where the detection misses them, and keep their "
+        "tokens; a new entity takes the next free number. The file is read in memory on this "
+        "computer, never saved and never sent."
+    ),
+    "import.case.upload": "Mapping table of an earlier document (.json)",
+    "import.case.loaded": "Case table in use: {name}, {count} known entities.",
+    "import.case.style": (
+        "Tokens follow the style of this table, so that a known entity keeps exactly the same "
+        "token. Download the merged table in the Restore step for the next document."
+    ),
+    "import.case.remove": "Remove the case table",
+    "import.case.kept": "The case table loaded before is still in use.",
+    "import.case.error.too_large": (
+        "This file is larger than 2 MB, too large for a mapping table. Upload the "
+        ".mapping.json file exactly as HuisClos saved it."
+    ),
+    "import.case.error.encoding": (
+        "This file is not readable text. Upload the .mapping.json file exactly as HuisClos "
+        "saved it."
+    ),
+    "import.case.error.invalid": (
+        "This file is not a valid HuisClos mapping table. Upload the .mapping.json file "
+        "exactly as HuisClos saved it."
+    ),
     "import.error.unsupported_type": (
         "This file type is not supported. Use a .txt, .docx or .pdf file."
     ),
@@ -133,6 +161,37 @@ FR: dict[str, str] = {
     "import.detect.step.engine": "Préparation du moteur de détection.",
     "import.detect.step.search": "Recherche des noms, sociétés, adresses et identifiants.",
     "import.detect.done": "Détection terminée.",
+    "import.detect.step.case": (
+        "Valeurs connues de la table de dossier trouvées dans ce texte : {count}."
+    ),
+    "import.case.heading": "Poursuivre un dossier (facultatif)",
+    "import.case.help": (
+        "Téléversez le fichier .mapping.json d'un document précédent du même dossier. Ses "
+        "valeurs sont recherchées dans ce texte, même là où la détection les manque, et gardent"
+        " leur jeton ; une nouvelle entité prend le premier numéro libre. Le fichier est lu en "
+        "mémoire sur cet ordinateur, jamais enregistré ni envoyé."
+    ),
+    "import.case.upload": "Table de correspondance d'un document précédent (.json)",
+    "import.case.loaded": "Table de dossier utilisée : {name}, {count} entités connues.",
+    "import.case.style": (
+        "Les jetons suivent le style de cette table, pour qu'une entité connue garde exactement"
+        " le même jeton. Téléchargez la table fusionnée à l'étape Restaurer pour le document "
+        "suivant."
+    ),
+    "import.case.remove": "Retirer la table de dossier",
+    "import.case.kept": "La table de dossier chargée auparavant reste utilisée.",
+    "import.case.error.too_large": (
+        "Ce fichier dépasse 2 Mo, ce qui est trop pour une table de correspondance. Téléversez"
+        " le fichier .mapping.json tel que HuisClos l'a enregistré."
+    ),
+    "import.case.error.encoding": (
+        "Ce fichier n'est pas un texte lisible. Téléversez le fichier .mapping.json tel que "
+        "HuisClos l'a enregistré."
+    ),
+    "import.case.error.invalid": (
+        "Ce fichier n'est pas une table de correspondance HuisClos valide. Téléversez le "
+        "fichier .mapping.json tel que HuisClos l'a enregistré."
+    ),
     "import.error.unsupported_type": (
         "Ce type de fichier n'est pas pris en charge. Utilisez un fichier .txt, .docx ou .pdf."
     ),

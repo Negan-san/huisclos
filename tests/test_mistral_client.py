@@ -23,6 +23,8 @@ PSEUDONYMIZED = "[PERSONNE_1] écrit à [EMAIL_1].\n"
 INSTRUCTION = "Résume ce texte en conservant les jetons."
 ORIGINAL_VALUES = ("Alice FICTIVEL", "alice@example.com")
 ANSWER = "[PERSONNE_1] demande une réponse."
+# Le contrôle final de Restore (S24) charge le moteur de détection au premier affichage.
+TIMEOUT = 120
 
 # La vraie étape est exercée avec une table fictive contenant les valeurs interdites.
 RESTORE_APP = """
@@ -35,6 +37,7 @@ st.session_state['source_text'] = 'Alice FICTIVEL écrit à alice@example.com.'
 mapping = SimpleNamespace(
     pseudonymized_sha256='1234567890',
     to_json=lambda: '{"original": "Alice FICTIVEL", "email": "alice@example.com"}',
+    entities=(), occurrences=(),
 )
 st.session_state[KEY_PSEUDO_RESULT] = SimpleNamespace(
     text=st.session_state.get('test_pseudonymized', "[PERSONNE_1] écrit à [EMAIL_1].\\n"),
@@ -133,7 +136,7 @@ def test_invalid_json(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_no_key_hides_block(monkeypatch: pytest.MonkeyPatch) -> None:
     """La vraie étape Restore n'affiche aucun composant Mistral sans clé."""
     monkeypatch.delenv("MISTRAL_API_KEY", raising=False)
-    app = AppTest.from_string(RESTORE_APP)
+    app = AppTest.from_string(RESTORE_APP, default_timeout=TIMEOUT)
     app.secrets = {}
     app.run()
     assert not app.exception
@@ -149,7 +152,7 @@ def test_consent_and_answer_in_real_restore(
     monkeypatch.delenv("MISTRAL_API_KEY", raising=False)
     post = Mock(return_value=_success())
     monkeypatch.setattr(requests, "post", post)
-    app = AppTest.from_string(RESTORE_APP)
+    app = AppTest.from_string(RESTORE_APP, default_timeout=TIMEOUT)
     app.secrets = {"MISTRAL_API_KEY": "fake-key"} if key_source == "secrets" else {}
     if key_source == "environment":
         monkeypatch.setenv("MISTRAL_API_KEY", "fake-key")
@@ -191,7 +194,7 @@ def test_ui_errors(monkeypatch: pytest.MonkeyPatch, code: str, status: int | Non
         Mock(return_value=_response({}, status)) if status else Mock(side_effect=requests.Timeout)
     )
     monkeypatch.setattr(requests, "post", post)
-    app = AppTest.from_string(RESTORE_APP)
+    app = AppTest.from_string(RESTORE_APP, default_timeout=TIMEOUT)
     app.secrets = {}
     app.run()
     app.text_area(key="restore_answer").set_value("Réponse déjà collée").run()

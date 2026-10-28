@@ -1,20 +1,27 @@
 """Décisions de l'écran Review : masquer ou non chaque mention, ajouts manuels.
 
 Entrées : detections, manual_entities et group_decisions dans l'état de session.
-Sorties : current_detections() (les détections de travail), is_masked() et add_manual(),
-que l'étape Review appelle pour afficher et modifier les décisions.
+Sorties : current_detections() (les détections de travail), is_masked(), add_manual() et
+pseudonymize_session(), que les étapes Review et Restore appellent.
 Place dans le pipeline : entre la détection et pseudonymize.tokens ; ces règles décident de
 ce qui sera remplacé par un jeton.
 """
 
-import re
 from dataclasses import dataclass, replace
 
 import streamlit as st
 
-from app.state import KEY_DETECTIONS, KEY_GROUP_DECISIONS, KEY_MANUAL_ENTITIES
-from huisclos.models import Detection, EntityType, Source
-from huisclos.text_utils import fold, fold_same_length
+from app.state import (
+    KEY_CASE_TABLE,
+    KEY_DETECTIONS,
+    KEY_GROUP_DECISIONS,
+    KEY_MANUAL_ENTITIES,
+    KEY_SOURCE_TEXT,
+    KEY_TOKEN_STYLE,
+)
+from huisclos.models import Detection, EntityType, PseudonymizationResult, Source, TokenStyle
+from huisclos.pseudonymize.case_memory import find_value
+from huisclos.pseudonymize.tokens import pseudonymize
 
 Span = tuple[int, int]
 
@@ -70,14 +77,7 @@ def find_occurrences(text: str, value: str) -> list[Span]:
     blancs de la valeur correspondent à n'importe quel blanc du texte, retour à la ligne
     compris. Exemple : find_occurrences("Le CLIENT a écrit", "client") donne [(3, 9)].
     """
-    folded = fold(value)
-    if not folded:
-        return []
-    body = r"\s+".join(re.escape(word) for word in folded.split(" "))
-    before = r"(?<!\w)" if re.match(r"\w", folded[0]) else ""
-    after = r"(?!\w)" if re.match(r"\w", folded[-1]) else ""
-    pattern = re.compile(f"{before}{body}{after}")
-    return [match.span() for match in pattern.finditer(fold_same_length(text))]
+    return find_value(text, value)
 
 
 def add_manual(text: str, value: str, entity_type: EntityType) -> tuple[int, int]:
@@ -100,3 +100,16 @@ def add_manual(text: str, value: str, entity_type: EntityType) -> tuple[int, int
     for span in [s for s in decisions() if any(s[0] < a.end and a.start < s[1] for a in added)]:
         del decisions()[span]
     return len(added), len(spans) - len(added)
+
+
+def pseudonymize_session() -> PseudonymizationResult:
+    """Pseudonymise les mentions masquées du texte de la session.
+
+    Le style de jetons de la barre latérale s'applique, sauf si une table de dossier est
+    chargée : ses jetons et son style sont repris (D-S24-2).
+    Valeur retournée : le résultat. Lève ValueError si les détections sont incohérentes.
+    """
+    style = TokenStyle(language=st.session_state[KEY_TOKEN_STYLE])
+    masked = [d for d in current_detections() if is_masked(d)]
+    known = st.session_state.get(KEY_CASE_TABLE)
+    return pseudonymize(st.session_state[KEY_SOURCE_TEXT], masked, style, known=known)

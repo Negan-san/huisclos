@@ -128,6 +128,7 @@ def test_complete_journey_ends_on_the_restore_step() -> None:
     assert not app.exception
     assert '<span class="hc-step-name">Restore</span>' in current_step(app)
     assert [element.value for element in app.main.subheader] == [
+        "Final check",
         "Send to your AI tool",
         "Restore the AI answer",
         "Download",

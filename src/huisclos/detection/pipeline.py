@@ -1,12 +1,15 @@
 """Moteur de détection : assemble les reconnaisseurs, la fusion, les bornes et la propagation.
 
-Entrées : un texte français et une DetectionConfig (config.PRESETS["hybrid"] par défaut).
+Entrées : un texte français, une DetectionConfig (config.PRESETS["hybrid"] par défaut) et,
+pour un dossier, les valeurs connues d'une table précédente.
 Sorties : la liste triée des Detection retenues, sans chevauchement.
 Place dans le pipeline : point d'entrée unique de la détection pour l'interface, les
 scripts et l'évaluation ; la revue humaine part de son résultat.
 """
 
 import importlib
+from collections.abc import Sequence
+from dataclasses import replace
 from functools import lru_cache
 
 from presidio_analyzer import AnalyzerEngine, EntityRecognizer, RecognizerRegistry, RecognizerResult
@@ -113,12 +116,39 @@ def to_detection(text: str, result: RecognizerResult) -> Detection | None:
     )
 
 
-def detect(text: str, config: DetectionConfig | None = None) -> list[Detection]:
+def add_known(
+    text: str, detections: Sequence[Detection], known: Sequence[Detection]
+) -> list[Detection]:
+    """Ajoute aux détections les valeurs connues d'une table de dossier (D-S24-2).
+
+    Paramètres : text, le texte analysé ; detections, les détections du moteur ; known, les
+    valeurs connues retrouvées dans text, sans chevauchement entre elles.
+    Valeur retournée : les détections triées, sans chevauchement. Une valeur connue comprise
+    dans une détection est déjà couverte ; sinon elle remplace les détections qu'elle
+    recouvre et s'étend à leur réunion, pour ne découvrir aucun caractère.
+    """
+    result = list(detections)
+    for value in known:
+        overlapping = [d for d in result if d.start < value.end and value.start < d.end]
+        if any(d.start <= value.start and value.end <= d.end for d in overlapping):
+            continue
+        start = min([value.start, *(d.start for d in overlapping)])
+        end = max([value.end, *(d.end for d in overlapping)])
+        result = [d for d in result if d not in overlapping]
+        result.append(replace(value, start=start, end=end, text=text[start:end]))
+    return sorted(result, key=lambda d: (d.start, d.end))
+
+
+def detect(
+    text: str, config: DetectionConfig | None = None, known: Sequence[Detection] = ()
+) -> list[Detection]:
     """Détecte les données personnelles d'un texte.
 
-    Paramètres : text, le texte brut ; config, la configuration (hybrid par défaut).
+    Paramètres : text, le texte brut ; config, la configuration (hybrid par défaut) ; known,
+    les valeurs d'une table de dossier retrouvées dans text (case_memory.find_known).
     Valeur retournée : les détections triées, sans chevauchement, après fusion, bornes
-    des sociétés et, si elle est activée, propagation.
+    des sociétés, valeurs connues et, si elle est activée, propagation. Les valeurs
+    connues passent avant la propagation : leurs autres formes sont alors retrouvées.
     Exemple : detect("Écrire à jean.martin@example.com") renvoie une détection EMAIL.
     """
     config = config or PRESETS["hybrid"]
@@ -132,6 +162,7 @@ def detect(text: str, config: DetectionConfig | None = None) -> list[Detection]:
     exclusion_spans = load_exclusions().spans(text) if config.use_exclusions else []
     detections = merge(text, raw, config, exclusion_spans)
     detections = adjust_organizations(text, detections, config, exclusion_spans)
+    detections = add_known(text, detections, known)
     if config.use_propagation:
         detections = propagate(text, detections, config, exclusion_spans)
     return detections

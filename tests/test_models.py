@@ -53,6 +53,7 @@ def test_source_values() -> None:
         "ner_camembert",
         "propagation",
         "manual",
+        "case_table",
     ]
 
 
