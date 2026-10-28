@@ -1,0 +1,14 @@
+{
+  "exit_code": 0,
+  "passed": 12,
+  "ui_cases": 8,
+  "worker_cases": 4,
+  "full_collection_passed": 1749,
+  "full_log": "results/gate8-resume/preflight2-pytest.log",
+  "source_sha256": "f30777fd671c83a60df3d2f83cac17f70b9737769eaf9265913d1a0f5aff36be",
+  "reserved_opens_refused": 0,
+  "worker_models_dir_scoped_to_probe": true,
+  "initial_proof": "results/gate8-resume/independent-checks.json",
+  "all_failure_and_recovery_scenarios_passed": true,
+  "all_four_real_workers_passed": true
+}

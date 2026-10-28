@@ -1,0 +1,9 @@
+{
+  "started_at_utc": "2026-10-28T19:40:16.799816+00:00",
+  "attempt_number": 4,
+  "measured_sha": "930c414dd7ae1e7128b292bfa7bac1e45f27b1e9",
+  "registration_sha256": "7c695e2fa1e8104524f9a57f066a77d285331bd7d8a33eb29d9d40d38ae3022a",
+  "plan_sha256": "747c37211f92a02d4eef473e1019b894a88c5d83fff163acebe4975501394da2",
+  "exclusive_creation": true,
+  "repeat_forbidden": true
+}

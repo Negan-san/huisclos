@@ -1,0 +1,19 @@
+{
+  "aggregates_only": true,
+  "audited_json": [
+    "results/gate8-resume/attempt_challenge.json",
+    "results/gate8-resume/challenge/robustness.json",
+    "results/gate8-resume/challenge-provenance.json",
+    "results/gate8-resume/complete_challenge.json",
+    "results/gate8-resume/environment.json",
+    "results/gate8-resume/independent-checks.json",
+    "results/gate8-resume/independent-current.json",
+    "results/gate8-resume/preflight-checks.json",
+    "results/gate8-resume/preflight-environment-incident.json",
+    "results/gate8-resume/preflight2-checks.json",
+    "results/gate8-resume/registration.json",
+    "results/gate8-resume/scope.json",
+    "results/gate8-resume/summary.json"
+  ],
+  "historical_artifacts_unchanged": 210
+}

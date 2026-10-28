@@ -1,0 +1,16 @@
+src/huisclos/detection/merge.py:1:1: avertissement C7 365 lignes, au-delà de 300
+src/huisclos/detection/organization_bounds.py:1:1: avertissement C7 343 lignes, au-delà de 300
+src/huisclos/detection/patterns.py:1:1: avertissement C7 393 lignes, au-delà de 300
+src/huisclos/detection/person_heuristics.py:1:1: avertissement C7 304 lignes, au-delà de 300
+src/huisclos/detection/pipeline.py:1:1: avertissement C7 344 lignes, au-delà de 300
+src/huisclos/detection/propagation.py:1:1: avertissement C7 343 lignes, au-delà de 300
+src/huisclos/evaluation/coverage_reports.py:1:1: avertissement C7 366 lignes, au-delà de 300
+src/huisclos/evaluation/reports.py:1:1: avertissement C7 359 lignes, au-delà de 300
+src/huisclos/evaluation/run.py:1:1: avertissement C7 334 lignes, au-delà de 300
+src/huisclos/pseudonymize/grouping.py:1:1: avertissement C7 400 lignes, au-delà de 300
+src/huisclos/pseudonymize/outbound_check.py:1:1: avertissement C7 335 lignes, au-delà de 300
+app/i18n/workflow_import.py:1:1: avertissement C7 351 lignes, au-delà de 300
+app/pages/evaluation.py:1:1: avertissement C7 398 lignes, au-delà de 300
+app/steps/restore_check.py:1:1: avertissement C7 336 lignes, au-delà de 300
+app/steps/restore_step.py:1:1: avertissement C7 377 lignes, au-delà de 300
+Total : 0 erreur(s), 15 avertissement(s)

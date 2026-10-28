@@ -1,0 +1,9 @@
+{
+  "reason": "initial staged diff rejected trailing spaces in the preserved failed pytest log",
+  "trimmed_line_count": 5,
+  "raw_sha256": "d5fd9e7ecb360188ed300ea8340fd418dd34257d3f67959fc8f50423036fa82a",
+  "normalized_sha256": "fa4198affa89723af3d48ffd7457d3730deb4ffd72dc4a9a4655c99af659e149",
+  "raw_is_test_log_only": true,
+  "reserved_worker_stderr_retained": false,
+  "historical_archives_changed": false
+}

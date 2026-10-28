@@ -1,0 +1,37 @@
+{
+  "command": [
+    "../huisclos/.venv/Scripts/python.exe",
+    "results/fix3-recheck/guarded_pytest.py",
+    "-q",
+    "results/gate8-resume/test_recheck.py",
+    "--tb=short"
+  ],
+  "exit_code": 0,
+  "passed": 12,
+  "warnings": 2,
+  "duration_seconds": 86.86,
+  "reserved_opens_refused": 0,
+  "ui_cases": 8,
+  "worker_cases": 4,
+  "ui_languages": [
+    "fr",
+    "en"
+  ],
+  "document_languages": [
+    "fr",
+    "en"
+  ],
+  "errors": [
+    "RuntimeError",
+    "ValueError"
+  ],
+  "first_failure_and_real_restore_review_retry": true,
+  "failure_followed_by_success_and_exact_restore": true,
+  "worker_profiles": [
+    "fr:hybrid",
+    "fr:hybrid_camembert",
+    "en:hybrid",
+    "en:hybrid_gliner"
+  ],
+  "source_changes_after_run": "formatting only; rerun included in preflight full collection"
+}

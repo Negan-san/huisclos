@@ -1,0 +1,47 @@
+{
+  "ruff-check": {
+    "command": [
+      "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos\\.venv\\Scripts\\python.exe",
+      "-m",
+      "ruff",
+      "check",
+      "."
+    ],
+    "exit_code": 0
+  },
+  "ruff-format": {
+    "command": [
+      "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos\\.venv\\Scripts\\python.exe",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "."
+    ],
+    "exit_code": 0
+  },
+  "style": {
+    "command": [
+      "C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos\\.venv\\Scripts\\python.exe",
+      "scripts/check_style.py"
+    ],
+    "exit_code": 0
+  },
+  "diff": {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0
+  },
+  "staged-diff": {
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "exit_code": 0
+  }
+}

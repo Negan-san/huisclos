@@ -1,0 +1,10 @@
+{
+  "finished_at_utc": "2026-10-28T19:41:35.908821+00:00",
+  "attempt_number": 4,
+  "cli_exit_code": 0,
+  "report_produced": true,
+  "raw_stdout_retained": false,
+  "raw_stderr_retained": false,
+  "diagnostic": null,
+  "repeat_forbidden": true
+}

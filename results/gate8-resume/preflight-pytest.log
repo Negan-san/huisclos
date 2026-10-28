@@ -1,0 +1,105 @@
+FIX3R: full test collection; corpus roundtrip restricted to dev by session policy
+........................................................................ [  4%]
+........................................................................ [  8%]
+........................................................................ [ 12%]
+..........................................................F............. [ 16%]
+........................................................................ [ 20%]
+........................................................................ [ 24%]
+........................................................................ [ 28%]
+.....................................F.................................. [ 32%]
+........................................................................ [ 37%]
+........................................................................ [ 41%]
+........................................................................ [ 45%]
+........................................................................ [ 49%]
+........................................................................ [ 53%]
+........................................................................ [ 57%]
+........................................................................ [ 61%]
+........................................................................ [ 65%]
+........................................................................ [ 69%]
+........................................................................ [ 74%]
+........................................................................ [ 78%]
+........................................................................ [ 82%]
+........................................................................ [ 86%]
+........................................................................ [ 90%]
+........................................................................ [ 94%]
+........................................................................ [ 98%]
+.....................                                                    [100%]FIX3R reserved opens refused: 0
+
+================================== FAILURES ===================================
+_______________________ test_offline_loading_and_cache ________________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000203A0EE1550>
+
+    def test_offline_loading_and_cache(monkeypatch: pytest.MonkeyPatch) -> None:
+        """Force les deux variables hors ligne et les deux chargements depuis le cache seul."""
+        import transformers
+
+        calls = []
+
+        def fake_load(name: str, **kwargs: Any) -> object:
+            """Enregistre les options de chargement et renvoie un objet local fictif complet."""
+            calls.append((name, kwargs))
+            return SimpleNamespace(vocab_size=32005, config=SimpleNamespace(vocab_size=32005))
+
+        def fake_pipeline(task: str, **kwargs: Any) -> FakePipeline:
+            """Contrôle la tâche, l'agrégation et le choix explicite du CPU."""
+            assert task == "token-classification"
+            assert kwargs["aggregation_strategy"] == "simple"
+            assert kwargs["device"] == -1
+            return FakePipeline()
+
+        camembert.load_pipeline.cache_clear()
+        monkeypatch.setenv("HF_HUB_OFFLINE", "0")
+        monkeypatch.setenv("TRANSFORMERS_OFFLINE", "0")
+        monkeypatch.setattr(transformers.AutoTokenizer, "from_pretrained", fake_load)
+        monkeypatch.setattr(transformers.AutoModelForTokenClassification, "from_pretrained", fake_load)
+        monkeypatch.setattr(transformers, "pipeline", fake_pipeline)
+        try:
+            first = camembert.CamembertRecognizer()
+            second = camembert.CamembertRecognizer()
+            assert first.pipeline is second.pipeline
+            assert len(calls) == 2
+>           assert all(name == camembert.MODEL_NAME for name, _ in calls)
+E           assert False
+E            +  where False = all(<generator object test_offline_loading_and_cache.<locals>.<genexpr> at 0x00000203A49AD630>)
+
+tests\test_camembert.py:179: AssertionError
+______________ test_snapshot_check_never_downloads_and_explains _______________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000203A0FFC920>
+no_network = None
+
+    def test_snapshot_check_never_downloads_and_explains(
+        monkeypatch: pytest.MonkeyPatch, no_network: None
+    ) -> None:
+        if importlib.util.find_spec("huggingface_hub") is None:
+            pytest.skip("option locale absente")
+        import huggingface_hub
+
+        monkeypatch.setattr(huggingface_hub, "try_to_load_from_cache", fake_cache(complete_cache()))
+>       assert pipeline.check_camembert_snapshot().endswith(CAMEMBERT_REVISION)
+E       AssertionError: assert False
+E        +  where False = <built-in method endswith of str object at 0x00000203A5406CA0>('ef35fe7767c1dad71f5c853838cdd80d0b3441ed')
+E        +    where <built-in method endswith of str object at 0x00000203A5406CA0> = 'C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\pilotage\\post_g7_assets\\models\\camembert_ner'.endswith
+E        +      where 'C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\pilotage\\post_g7_assets\\models\\camembert_ner' = <function check_camembert_snapshot at 0x000002038630E160>()
+E        +        where <function check_camembert_snapshot at 0x000002038630E160> = pipeline.check_camembert_snapshot
+
+tests\test_detection_profiles.py:137: AssertionError
+============================== warnings summary ===============================
+..\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491
+  C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+..\huisclos\.venv\Lib\site-packages\_pytest\cacheprovider.py:469
+  C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\_pytest\cacheprovider.py:469: PytestCacheWarning: could not create cache path C:\Users\nasci\Documents\Coding Project\Assignment\huisclos-b\.pytest_cache\v\cache\nodeids: [WinError 5] Accès refusé: 'C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b\\.pytest_cache\\v\\cache'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+..\huisclos\.venv\Lib\site-packages\_pytest\cacheprovider.py:423
+  C:\Users\nasci\Documents\Coding Project\Assignment\huisclos\.venv\Lib\site-packages\_pytest\cacheprovider.py:423: PytestCacheWarning: could not create cache path C:\Users\nasci\Documents\Coding Project\Assignment\huisclos-b\.pytest_cache\v\cache\lastfailed: [WinError 5] Accès refusé: 'C:\\Users\\nasci\\Documents\\Coding Project\\Assignment\\huisclos-b\\.pytest_cache\\v\\cache'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_camembert.py::test_offline_loading_and_cache - assert False
+FAILED tests/test_detection_profiles.py::test_snapshot_check_never_downloads_and_explains
+2 failed, 1747 passed, 3 warnings in 263.50s (0:04:23)

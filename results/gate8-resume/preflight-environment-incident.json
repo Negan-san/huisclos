@@ -1,0 +1,21 @@
+{
+  "first_preflight": {
+    "failed": 2,
+    "passed": 1747,
+    "duration_seconds": 263.5,
+    "reserved_opens_refused": 0,
+    "cause": "session runner set HUISCLOS_MODELS_DIR globally; two tests explicitly expect the Hugging Face cache route"
+  },
+  "affected_tests": [
+    "tests/test_camembert.py::test_offline_loading_and_cache",
+    "tests/test_detection_profiles.py::test_snapshot_check_never_downloads_and_explains"
+  ],
+  "scope_fix": "results/gate8-resume only; unset HUISCLOS_MODELS_DIR for pytest, set it locally in the real worker probe",
+  "focused_recheck": {
+    "passed": 2,
+    "duration_seconds": 12.72,
+    "reserved_opens_refused": 0
+  },
+  "application_changed": false,
+  "reserved_attempt_created": false
+}

@@ -258,3 +258,32 @@ challenge ne doit pas être remesuré avant son application. Le worker G8 cite d
 lieu validé de tout échec, sans message. Enhanced EN reste expérimental et non recommandé ;
 aucun réglage n'a été choisi. [D-FIX2-1](DECISIONS.md#d-fix2-1-cause-de-léchec-challenge--collision-de-jetons-sur-un-nom-de-fichier)
 et [rapport FIX2](../results/fix2/report.md).
+
+## 15. Constat final G8R2 du 28 octobre 2026
+
+FIX4 est recontrôlé indépendamment au SHA 930c414 : FIX3R-01 est clos, GO du correctif.
+Le fonctionnement technique Standard/Enhanced FR et EN est confirmé sur fixtures fictives
+hors ligne ; ce contrôle technique ne vaut pas recommandation de tous les profils.
+
+Après les prérequis conformes, G8R2 réalise la seule reprise explicitement autorisée du
+challenge historique : quatrième tentative, diagnostics compris, registre et reçu exclusifs
+avant lancement. Aucun changement du plan historique FR, des modèles, seuils, marges ou
+bootstrap ; une exécution par profil et mêmes prédictions pour toutes les métriques.
+Standard couvre 157/190 entités, avec 325/3600 caractères exposés ; Enhanced 170/190,
+avec 218/3600. Précision partielle 0,803922 vers 0,801802, surmasquage 366 vers 379
+caractères : les quatre critères figés sont remplis. GO du périmètre FR mesuré, Standard
+par défaut et Enhanced comme option locale française. L'IC apparié du gain de couverture
+touche zéro ; celui de réduction de fuite l'exclut. Aucune garantie d'absence de fuite.
+
+G7 reste une comparaison historique descriptive, sans couverture ou IC appariés inventés.
+Les résultats G8 test/C3 sont réutilisés comme résultats historiques sur leur code mesuré,
+sans nouvelle lecture, empreinte, mesure ni validation du code courant sur ces corpus.
+Le challenge déjà connu ne constitue pas un nouveau lot aveugle. Enhanced EN reste
+expérimental et non recommandé : sa perte historique de précision de 0,134862 dépasse
+la marge de 0,02. Standard EN garde ses réserves ; aucune validation bilingue sans réserve.
+
+Les preuves et l'incident du premier précontrôle d'environnement sont conservés dans
+[le rapport G8R2](../results/gate8-resume/report.md), avec le registre, les reçus et les
+journaux. Les archives précédentes restent intactes. Cette autorisation est consommée ;
+aucune nouvelle série, correction ou remesure automatique, aucun R8, tag ou push.
+[D-G8R2-1](DECISIONS.md#d-g8r2-1-clôture-fix3r-01-verdict-fr-et-registre-de-la-reprise-unique).

@@ -1,0 +1,4 @@
+Observed tool result, aggregated transcript:
+FIX3R reserved opens refused: 0
+12 passed, 2 warnings in 86.86s
+Known warnings: torch.jit.script deprecation; pytest cache permission.
