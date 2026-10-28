@@ -22,6 +22,10 @@ def main() -> None:
     parser.add_argument("--split", choices=("dev", "test", "challenge", "all"), default="dev")
     parser.add_argument("--configs", nargs="+", choices=tuple(PRESETS))
     parser.add_argument("--out", type=Path, default=ROOT / "results")
+    parser.epilog = (
+        "Saved reports include 95% document bootstrap intervals (2,000 draws, seed 45). "
+        "Challenge requires the threshold already selected on dev; all means dev then test."
+    )
     arguments = parser.parse_args()
     try:
         report = run_evaluation(arguments.split, arguments.configs, arguments.out)

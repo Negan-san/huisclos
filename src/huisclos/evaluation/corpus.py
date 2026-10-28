@@ -12,7 +12,7 @@ from pathlib import Path
 from huisclos.models import EntityType
 
 CORPUS_TYPES = frozenset(EntityType) - {EntityType.LOCATION}
-SPLITS = frozenset({"dev", "test", "demo"})
+SPLITS = frozenset({"dev", "test", "demo", "challenge"})
 CORPUS_DIR = Path(__file__).resolve().parents[3] / "corpus"
 
 
@@ -75,8 +75,18 @@ class CorpusDocument:
             previous_end = entity.end
 
 
-def load_corpus(path: str | Path) -> list[CorpusDocument]:
-    """Charge path en JSONL ; renvoie les documents ou une erreur fichier:ligne."""
+class ChallengeDocument(CorpusDocument):
+    """Conserve le constructeur réservé utilisé par le builder depuis S14."""
+
+    def __post_init__(self) -> None:
+        """Exige challenge puis applique toutes les validations du document commun."""
+        if self.split != "challenge":
+            raise ValueError("Split challenge attendu.")
+        super().__post_init__()
+
+
+def load_corpus(path: str | Path, *, expected_split: str | None = None) -> list[CorpusDocument]:
+    """Charge path en JSONL ; contrôle le split demandé et renvoie une erreur fichier:ligne."""
     path = Path(path)
     documents: list[CorpusDocument] = []
     identifiers: set[str] = set()
@@ -85,22 +95,33 @@ def load_corpus(path: str | Path) -> list[CorpusDocument]:
             try:
                 record = json.loads(line)
                 entities = [GoldEntity(**entity) for entity in record.pop("entities")]
-                document = CorpusDocument(**record, entities=entities)
+                if expected_split is not None and record["split"] != expected_split:
+                    raise ValueError(f"Split {expected_split} attendu.")
+                constructor = (
+                    ChallengeDocument if record["split"] == "challenge" else CorpusDocument
+                )
+                document = constructor(**record, entities=entities)
                 if document.id in identifiers:
                     raise ValueError("Identifiant de document dupliqué.")
             except (ValueError, TypeError, KeyError, AttributeError) as error:
+                kind = "challenge" if expected_split == "challenge" else "JSONL"
                 raise ValueError(
-                    f"{path}:{line_number}: document JSONL invalide : {error}"
+                    f"{path}:{line_number}: document {kind} invalide : {error}"
                 ) from error
             identifiers.add(document.id)
             documents.append(document)
     return documents
 
 
+def load_challenge_corpus(path: Path) -> list[CorpusDocument]:
+    """Charge uniquement challenge avec les validations communes et les erreurs réservées."""
+    return load_corpus(path, expected_split="challenge")
+
+
 def load_split(name: str) -> list[CorpusDocument]:
-    """Charge le split dev ou test depuis le dossier corpus du dépôt."""
-    if name not in {"dev", "test"}:
-        raise ValueError("Le split chargé doit être dev ou test.")
+    """Charge un split d'évaluation explicitement demandé depuis le dossier corpus."""
+    if name not in {"dev", "test", "challenge"}:
+        raise ValueError("Le split chargé doit être dev ou test, ou le split réservé challenge.")
     documents = load_corpus(CORPUS_DIR / f"{name}.jsonl")
     if any(document.split != name for document in documents):
         raise ValueError(f"{CORPUS_DIR / f'{name}.jsonl'}:1: split incohérent avec le fichier.")

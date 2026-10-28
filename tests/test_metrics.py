@@ -277,6 +277,7 @@ def test_error_export_refuses_test_and_limits_context() -> None:
     errors = run.dev_errors([document], [[prediction(35, 39)]])
     assert [error["nature"] for error in errors] == ["FN", "FP"]
     assert [len(error["text"]) for error in errors] == [5, 4]
+    assert [error["category"] for error in errors] == ["boundary", "boundary"]
     assert all(
         len(error["context_before"]) == len(error["context_after"]) == 30 for error in errors
     )
@@ -339,3 +340,30 @@ def test_all_on_synthetic_documents_freezes_threshold_and_omits_missing_local_mo
     assert "local model unavailable" in report["notes"][0]
     assert (out / "errors_dev.csv").is_file()
     assert not (out / "errors_test.csv").exists()
+
+
+def test_dev_error_categories_follow_unmatched_spans() -> None:
+    """Distingue absence, ajout, bornes et mauvais type sans changer les comptes exacts."""
+    document = CorpusDocument(
+        "errors",
+        "letter",
+        "dev",
+        "Fiction",
+        "x" * 40,
+        [gold(0, 3), gold(5, 10), gold(12, 16), gold(20, 24)],
+    )
+    detected = [
+        prediction(5, 9),
+        prediction(12, 16, "EMAIL"),
+        prediction(20, 24),
+        prediction(30, 32),
+    ]
+    errors = run.dev_errors([document], [detected])
+    assert [(row["nature"], row["category"]) for row in errors] == [
+        ("FN", "missed"),
+        ("FN", "boundary"),
+        ("FN", "type_confusion"),
+        ("FP", "boundary"),
+        ("FP", "type_confusion"),
+        ("FP", "extra"),
+    ]
