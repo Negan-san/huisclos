@@ -10,6 +10,7 @@ import json
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 
+from huisclos.detection.languages import check_language, default_model_for, model_language
 from huisclos.models import DEFAULT_ENABLED_TYPES, EntityType
 
 # Seuil de D-07, en vigueur tant que l'évaluation n'a pas écrit results/threshold.json.
@@ -44,7 +45,8 @@ class DetectionConfig:
 
     Les booléens use_* activent chaque source ou étape ; enabled_types limite les types
     signalés ; threshold écarte les détections de score inférieur ; spacy_model nomme le
-    modèle spaCy installé localement.
+    modèle spaCy installé localement ; document_language (fr ou en) est la langue du
+    document, distincte de celle de l'interface et du style des jetons.
     """
 
     use_patterns: bool = True
@@ -56,11 +58,22 @@ class DetectionConfig:
     enabled_types: frozenset[EntityType] = DEFAULT_ENABLED_TYPES
     threshold: float = field(default_factory=default_threshold)
     spacy_model: str = "fr_core_news_md"
+    document_language: str = "fr"
 
     def __post_init__(self) -> None:
-        """Refuse un seuil hors de l'intervalle [0, 1]."""
+        """Refuse un seuil, une langue ou un modèle incohérents.
+
+        Le modèle par défaut suit la langue : replace(config, document_language="en")
+        charge en_core_web_sm. Un modèle choisi explicitement doit porter le préfixe de la
+        langue du document, car un modèle français lirait mal un document anglais.
+        """
         if not 0.0 <= self.threshold <= 1.0:
             raise ValueError(f"threshold doit être compris entre 0 et 1, reçu {self.threshold}")
+        language = check_language(self.document_language)
+        model = default_model_for(language, self.spacy_model)
+        if model_language(model) != language:
+            raise ValueError(f"le modèle spaCy {model} ne correspond pas à la langue {language}")
+        object.__setattr__(self, "spacy_model", model)
 
 
 _HYBRID = DetectionConfig()

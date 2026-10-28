@@ -14,6 +14,21 @@ Une entrée par session, la plus récente en tête de la section Entrées. Cinq 
 
 ## Entrées
 
+### 2026-10-28 14:05 | AF-A2 | Moteur français/anglais, bornes et variantes | Claude Code, Opus 5.5
+- Fait : fusion du SHA B1 validé e786ddf, fragment docs/parallel/B1.md centralisé. Fixtures annotées avant les règles (tests/fixtures/post_g7/, trois FR, deux EN). `document_language` fr/en (detection/languages.py), moteurs, registres et caches par langue, en_core_web_sm sans téléchargement, règles anglaises (detection/english_patterns.py, exclusions_en.txt). Assembleur borné d'adresses (detection/address_bounds.py), portée de naissance et libellés de procédure, vue d'analyse projetable (detection/analysis_view.py), alias explicites et noms de fichiers (detection/aliases.py, propagation, grouping).
+- Tests : nouveaux test_address_bounds, test_analysis_view, test_aliases, test_metamorphic_detection, test_english_detection, test_document_language ; test_patterns et test_robustness_runner adaptés au nouveau contrat. pytest sous baseline_python : 1495 passed ; Ruff check et format : OK ; check_style : 0 erreur, 11 avertissements de longueur sous 400 lignes ; diff --check : OK.
+- Mesure (pilote B1, dev, seuil 0,30, worktree ccc8b81 hors dépôt) : dev FR identique avant et après ; fixtures FR fuite 234/1128 vers 0, couverture complète 43/56 vers 56/56, surmasquage 94 vers 17 caractères ; fixtures EN après seulement, fuite 17/615, couverture 31/33. Aucun test, challenge ni all mesuré.
+- Décisions : D-AF-A2-1 à D-AF-A2-8 ; D-AF-B1-1 à D-AF-B1-5 intégrées.
+- Risques : fixtures écrites dans la même session que les règles ; anglais limité par en_core_web_sm (signature sans civilité, nom isolé lu comme société) ; double lecture des textes à invisibles plus lente ; app/ toujours en français seulement, support anglais non annoncé avant la gate bilingue.
+- Prochaine session : selon post_g7.py finish A2.
+
+### 2026-10-28 12:41 | AF-B1 | Couverture complète, pilote de robustesse et protocole post-G7 | Claude Code, Opus 5.5
+- Fait (fragment docs/parallel/B1.md, centralisé par AF-A2) : evaluation/coverage.py et coverage_reports.py (couverture complète par stade, alertes, différences appariées, critère d'ingénierie, robustness.json et .md), intervals.py (tirages partagés), reports.py et run.py (garde des corpus réservés, plan figé), scripts/evaluate_robustness.py, docs/POST_G7_PROTOCOL.md.
+- Tests : test_coverage (15 cas), test_robustness_runner (26 cas), intervalles et rapports complétés ; pytest 1274 passed ; Ruff check et format : OK ; check_style : 0 erreur, 8 avertissements ; diff --check : OK.
+- Mesure dev hors dépôt : Standard et Enhanced au seuil 0,30 identiques bit à bit à G7 dev, profil séparé identique. Aucune mesure test, challenge ou all, aucune source réservée ouverte.
+- Décisions : D-AF-B1-1 à D-AF-B1-5.
+- Risques : dev FR saturé, sans pouvoir de départage ; la couverture compte des caractères et ne juge pas la réidentification par le contexte ; dépendance aux signatures detect, pseudonymize et final_check.
+
 ### 2026-10-28 12:05 | AF-A1 | Fusion sans perte, fenêtres recouvrantes et socle des modèles | Claude Code, Opus 5.5
 - Fait : fusion du SHA validé 4fc14cc en avance rapide. Test rouge de la perte G7 (11 puis 6 caractères), puis arbitrage corrigé : candidats admissibles d'abord, jonction de l'adresse prise en compte, boucle de correction bornée ; arbitrage extrait dans detection/conflicts.py. Fenêtres CamemBERT recouvrantes de 64 jetons (detection/windows.py), une seule tokenisation, vue la plus éloignée d'une coupure ; ancien découpage quadratique retiré.
 - Modèles et environnements hors dépôt (post_g7_assets) : baseline_python = G7 exact + en_core_web_sm 3.8.0 ; candidate_python = Transformers 5.16.1, Hub 1.9.2, GLiNER 0.2.29. Anonym-IA V2, GLiNER, mdeberta (configuration et tokenizer) et CamemBERT exporté, empreintes vérifiées ; chargement hors ligne en processus neuf, caches vides, réseau coupé. Constat : un tokenizer CamemBERT sans vocabulaire se chargeait en silence, garde ajoutée. scripts/prepare_local_models.py, docs/LOCAL_MODELS.md.

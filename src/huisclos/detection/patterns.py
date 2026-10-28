@@ -1,21 +1,21 @@
 """Repère les identifiants et coordonnées par motifs locaux et clés de contrôle.
 
-Entrées : texte français et types demandés par Presidio. Sorties : RecognizerResult.
-Les scores suivent D-07 ; les libellés restent hors des spans selon D-09.
+Entrées : texte français ou anglais, langue du document et types demandés par Presidio.
+Sorties : RecognizerResult. Les scores suivent D-07 ; les libellés restent hors des spans
+selon D-09.
 Ce premier étage de détection ne charge aucun modèle et ne fait aucun appel réseau.
 """
 
 import re
 import unicodedata
 from collections.abc import Iterator
-from datetime import date
 
 from presidio_analyzer import EntityRecognizer, RecognizerResult
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
-from huisclos.detection.address_patterns import EXPRESSION as ADDRESS_EXPRESSION
-from huisclos.detection.address_patterns import POSTAL_CITY as _POSTAL_CITY
-from huisclos.detection.case_patterns import procedure_candidates
+from huisclos.detection.address_bounds import SCORES as ADDRESS_SCORES
+from huisclos.detection.address_bounds import address_spans
+from huisclos.detection.case_patterns import LABEL_GAP, procedure_candidates
 from huisclos.detection.checksums import (
     digits_only,
     iban_is_valid,
@@ -25,6 +25,7 @@ from huisclos.detection.checksums import (
     siret_is_valid,
 )
 from huisclos.models import EntityType, Source
+from huisclos.text_utils import full_year, is_calendar_date
 
 _SPACE = r"[ \u00a0\u202f]"
 # Chaque remplacement garde un caractère : les positions restent celles du texte original.
@@ -32,6 +33,12 @@ _NONBREAKING_SPACES = str.maketrans("\u00a0\u202f", "  ")
 _SEPARATOR = r"[ .\u00a0\u202f]?"
 # Score d'un numéro au bon format mais à clé fausse, près de son libellé (D-07).
 INVALID_KEY_SCORE = 0.40
+# Mots de contexte téléphonique, français et anglais, cherchés sans accents ni casse.
+PHONE_CONTEXT = r"\b(?:tel|telephone|portable|mobile|fixe|phone|cell|call|fax)\b"
+# Portée du contexte de naissance (D-AF-A2-3) : mots, caractères et lignes avant la date.
+BIRTH_SCOPE_WORDS = 12
+BIRTH_SCOPE_CHARS = 120
+_SCOPE_TOKEN = re.compile(r"[^\W\d_]+|[0-9]|[.;!?](?=\s|$)|\n")
 
 
 def _fold(value: str) -> str:
@@ -52,10 +59,11 @@ class _LocalRecognizer(EntityRecognizer):
     default_score: float = 0.90
     regex_flags: int = re.IGNORECASE
 
-    def __init__(self) -> None:
-        """Prépare les motifs et déclare le type français pris en charge."""
+    def __init__(self, language: str = "fr") -> None:
+        """Prépare les motifs et déclare le type pris en charge dans la langue du document."""
         self._regex = re.compile(self.expression, self.regex_flags)
-        super().__init__(supported_entities=[self.entity_type.value], supported_language="fr")
+        self.language = language
+        super().__init__(supported_entities=[self.entity_type.value], supported_language=language)
 
     def load(self) -> None:
         """Satisfait le contrat Presidio ; aucun fichier ni modèle n'est nécessaire."""
@@ -107,7 +115,9 @@ class NirRecognizer(_LocalRecognizer):
         rf"(?:[0-9]{{2}}|2[AB]){_SEPARATOR}[0-9]{{3}}{_SEPARATOR}"
         rf"[0-9]{{3}}{_SEPARATOR}[0-9]{{2}}(?!\w)"
     )
-    context_expression = r"\b(?:securite\s+sociale|n[°o]\s*ss|nir|insee|immatriculation)\b"
+    context_expression = (
+        r"\b(?:securite\s+sociale|n[°o]\s*ss|nir|insee|immatriculation|social\s+security)\b"
+    )
 
     def _evaluate(self, value: str, has_context: bool) -> tuple[float, Source]:
         """Renvoie pour value 1 avec clé correcte, 0,40 si plausible, sinon zéro."""
@@ -228,7 +238,7 @@ class PhoneFrRecognizer(_LocalRecognizer):
         r"[1-9](?:[ .\u00a0\u202f-]?[0-9]{2}){4}(?!\w)"
         r"(?:[ \t]{1,3}(?:poste|ext(?:ension)?\.?)[ \t]{0,3}:?[ \t]{0,3}[0-9]{1,6}(?!\w))?"
     )
-    context_expression = r"\b(?:tel|telephone|portable|mobile|fixe)\b"
+    context_expression = PHONE_CONTEXT
 
     def _evaluate(self, value: str, has_context: bool) -> tuple[float, Source]:
         """Renvoie pour value 0,90 avec contexte téléphonique, sinon 0,75."""
@@ -236,43 +246,98 @@ class PhoneFrRecognizer(_LocalRecognizer):
 
 
 class BirthDateRecognizer(_LocalRecognizer):
-    """Repère les dates uniquement après un contexte explicite de naissance."""
+    """Repère les dates uniquement dans la portée d'un contexte explicite de naissance."""
 
     entity_type = EntityType.BIRTH_DATE
+    # Une année sur deux chiffres n'est pas suivie d'un autre groupe : "06.12.34.56" est un
+    # téléphone, pas une date.
     expression = (
-        r"(?<!\w)(?:[0-9]{1,2}(?P<separator>[/\.])[0-9]{1,2}(?P=separator)[0-9]{4}|"
+        r"(?<!\w)(?:[0-9]{1,2}(?P<separator>[/.-])[0-9]{1,2}(?P=separator)"
+        r"(?:[0-9]{4}|[0-9]{2}(?![./-]?[0-9]))|"
         r"(?:1er|[0-9]{1,2})[ ]{1,3}(?:janvier|février|fevrier|mars|avril|mai|juin|"
         r"juillet|août|aout|septembre|octobre|novembre|décembre|decembre)[ ]{1,3}[0-9]{4})(?!\w)"
     )
-    # Un lieu peut séparer le contexte de la date. Une première date en arrête la portée.
-    context_expression = r"\b(?:ne(?:e|\(e\))?|naissance)(?!\w)(?![\s\S]*[0-9])"
+    months = (
+        "janvier fevrier mars avril mai juin juillet aout septembre octobre novembre decembre"
+    ).split()
+    keywords = frozenset({"ne", "nee", "naissance"})
+    # Un événement daté entre le contexte et la date coupe la portée (date d'audience).
+    stops = frozenset(
+        """
+        audience audiences jugement arret ordonnance decision delibere convocation signature
+        signe signee rendu rendue fait faite courrier lettre requete assignation saisine
+        contrat acte reunion entretien licenciement embauche depuis echeance effet livraison
+        facture paiement versement notification envoi reception mariage
+        """.split()
+    )
+
+    def _candidates(self, text: str) -> Iterator[tuple[int, int]]:
+        """Garde les dates de text dont la portée locale contient un mot de naissance."""
+        for start, end in super()._candidates(text):
+            if self.in_scope(text, start):
+                yield start, end
+
+    def window(self, text: str, start: int) -> str:
+        """Texte lu avant la date : BIRTH_SCOPE_CHARS caractères au plus."""
+        return text[max(0, start - BIRTH_SCOPE_CHARS) : start]
+
+    def in_scope(self, text: str, start: int) -> bool:
+        """Dit si un mot de naissance précède la date qui commence à start, dans sa portée.
+
+        La portée remonte au plus BIRTH_SCOPE_WORDS mots et une fin de ligne ; elle s'arrête
+        sur un chiffre (autre date ou numéro), une fin de phrase ou un mot d'événement.
+        Exemple : "née à Valbrune (Nord) le 3 mars 1981" a un contexte ; "après la
+        naissance du litige, l'audience du 3 mai 2026" n'en a pas.
+        """
+        tokens = list(_SCOPE_TOKEN.finditer(self.window(text, start)))
+        words = newlines = 0
+        for index in range(len(tokens) - 1, -1, -1):
+            value = tokens[index].group()
+            if value == "\n":
+                newlines += 1
+                if newlines > 1:
+                    return False
+                continue
+            folded = _fold(value)
+            if value[0].isdigit() or value in ".;!?" or folded in self.stops:
+                return False
+            words += 1
+            if words > BIRTH_SCOPE_WORDS:
+                return False
+            if folded in self.keywords and self._is_birth_word(value, tokens[index + 1 :]):
+                return True
+        return False
+
+    @staticmethod
+    def _is_birth_word(word: str, following: list[re.Match[str]]) -> bool:
+        """Écarte la négation "ne" : seul "né" accentué, ou "ne le", "ne à", est retenu."""
+        if _fold(word) != "ne" or word.lower() != "ne":
+            return True
+        return bool(following) and _fold(following[0].group()) in {"le", "a", "en"}
 
     def _evaluate(self, value: str, has_context: bool) -> tuple[float, Source]:
-        """Vérifie la date value et renvoie 0,90 seulement avec un contexte de naissance."""
-        if not has_context:
-            return 0.0, Source.PATTERN
-        parts = re.split(r"[/\. ]+", _fold(value).replace("1er", "1"))
-        months = (
-            "janvier fevrier mars avril mai juin juillet aout septembre octobre novembre decembre"
-        ).split()
-        try:
-            month = months.index(parts[1]) + 1 if parts[1] in months else int(parts[1])
-            date(int(parts[2]), month, int(parts[0]))
-        except ValueError:
-            return 0.0, Source.PATTERN
-        return 0.90, Source.PATTERN
+        """Vérifie la date value dans le calendrier et renvoie 0,90, sinon zéro."""
+        parts = re.split(r"[/.\- ]+", _fold(value).replace("1er", "1"))
+        if parts[1] in self.months:
+            month = self.months.index(parts[1]) + 1
+        else:
+            month = int(parts[1])
+        valid = is_calendar_date(full_year(parts[2]), month, int(parts[0]))
+        return (0.90 if valid else 0.0), Source.PATTERN
 
 
 class CaseNumberRecognizer(_LocalRecognizer):
     """Repère les numéros RG et Portalis en laissant leur libellé visible."""
 
     entity_type = EntityType.CASE_NUMBER
+    # Le libellé peut être séparé de la valeur par des blancs, un "n°" ou deux lignes au
+    # plus, jamais par un mot (D-AF-A2-3) ; "23 / 00045" et "24-01234" restent des RG.
     expression = (
-        r"(?:\bR\.?[ ]?G\.?(?:[ ]{0,3}n[°o])?|\bn[°o][ ]{0,3}R\.?[ ]?G\.?|"
-        r"(?P<portalis>\bPortalis))(?:[ ]{0,3}n[°o])?[ ]{0,3}:?[ ]{0,3}"
+        r"(?:\bR\.?[ ]?G\.?(?:[ ]{0,3}n[°o]\.?)?|\bn[°o]\.?[ ]{0,3}R\.?[ ]?G\.?|"
+        rf"(?P<portalis>\bPortalis))(?:{LABEL_GAP}n[°o]\.?)?{LABEL_GAP}:?{LABEL_GAP}"
         r"(?P<value>(?(portalis)"
         r"[A-Z0-9]{1,12}(?:-[A-Z0-9]{1,12}){3}(?![\w-])|"
-        r"(?:F[ ]{0,3})?(?:[0-9]{4}|[0-9]{2})/[0-9]{5}(?!\w)))"
+        r"(?:F[ ]{0,3})?(?:[0-9]{4}|[0-9]{2})[ ]{0,2}[/-][ ]{0,2}[0-9]{5}(?!\w)))"
     )
 
     def _candidates(self, text: str) -> Iterator[tuple[int, int]]:
@@ -282,32 +347,47 @@ class CaseNumberRecognizer(_LocalRecognizer):
 
 
 class AddressRecognizer(_LocalRecognizer):
-    """Repère une voie, une adresse complète ou un couple code postal et ville."""
+    """Repère une voie, une adresse complète ou un couple code postal et ville.
+
+    L'assembleur borné de detection.address_bounds remplace une expression unique toujours
+    plus large ; les scores D-07 dépendent de la nature de l'adresse trouvée.
+    """
 
     entity_type = EntityType.ADDRESS
-    expression = ADDRESS_EXPRESSION
-    regex_flags = 0
+    expression = r"(?!)"
 
-    def _evaluate(self, value: str, has_context: bool) -> tuple[float, Source]:
-        """Renvoie pour value 0,70 si complète, 0,55 pour la voie, sinon 0,45."""
-        if re.fullmatch(_POSTAL_CITY, value):
-            return 0.45, Source.PATTERN
-        return (0.70 if re.search(rf"{_POSTAL_CITY}$", value) else 0.55), Source.PATTERN
+    def analyze(
+        self, text: str, entities: list[str], nlp_artifacts: NlpArtifacts | None = None
+    ) -> list[RecognizerResult]:
+        """Renvoie 0,70 pour une adresse complète, 0,55 pour la voie, 0,45 pour la ville."""
+        if self.entity_type.value not in entities:
+            return []
+        spans = address_spans(text.translate(_NONBREAKING_SPACES), self.language)
+        return [
+            self._result(span.start, span.end, ADDRESS_SCORES[span.kind], Source.PATTERN)
+            for span in spans
+        ]
 
 
-def build_pattern_recognizers() -> list[EntityRecognizer]:
-    """Renvoie les reconnaisseurs français dans un ordre stable entre les appels."""
+def build_pattern_recognizers(language: str = "fr") -> list[EntityRecognizer]:
+    """Renvoie les reconnaisseurs de la langue du document dans un ordre stable.
+
+    Les identifiants français (NIR, SIREN, SIRET, IBAN, téléphones, RG) restent reconnus
+    dans un document anglais ; celui-ci reçoit en plus les motifs de english_patterns.
+    """
+    from huisclos.detection.english_patterns import birth_recognizer, language_recognizers
     from huisclos.detection.labeled_identifiers import LabeledIdentifierRecognizer
 
     return [
-        NirRecognizer(),
-        SirenRecognizer(),
-        SiretRecognizer(),
-        IbanRecognizer(),
-        EmailRecognizer(),
-        PhoneFrRecognizer(),
-        BirthDateRecognizer(),
-        CaseNumberRecognizer(),
-        AddressRecognizer(),
-        LabeledIdentifierRecognizer(),
+        NirRecognizer(language),
+        SirenRecognizer(language),
+        SiretRecognizer(language),
+        IbanRecognizer(language),
+        EmailRecognizer(language),
+        PhoneFrRecognizer(language),
+        birth_recognizer(language),
+        CaseNumberRecognizer(language),
+        AddressRecognizer(language),
+        LabeledIdentifierRecognizer(language),
+        *language_recognizers(language),
     ]

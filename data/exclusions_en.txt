@@ -1,0 +1,172 @@
+# Exclusions propres aux documents anglais, lues après data/exclusions_fr.txt.
+#
+# Même format que la liste française : sections entre crochets, une entrée par ligne, casse
+# ignorée pour les entrées simples, "re:" pour une expression régulière, X pour un lieu.
+# Seuls des motifs génériques figurent ici : juridictions, institutions, textes, citations
+# publiées, acronymes et rôles contractuels. Aucun nom de personne ou de société.
+
+[juridictions]
+High Court of Justice
+High Court
+Court of Appeal
+Supreme Court
+Supreme Court of the United States
+Privy Council
+Crown Court at X
+County Court at X
+Magistrates' Court
+Employment Tribunal
+Employment Appeal Tribunal
+First-tier Tribunal
+Upper Tribunal
+Court of Justice of the European Union
+European Court of Human Rights
+General Court
+District Court
+Circuit Court
+Court of Chancery
+Chancery Division
+King's Bench Division
+Queen's Bench Division
+Family Division
+Commercial Court
+Technology and Construction Court
+Court of Session
+Sheriff Court
+
+[institutions]
+Companies House
+HM Revenue and Customs
+HM Courts and Tribunals Service
+Information Commissioner's Office
+Financial Conduct Authority
+Solicitors Regulation Authority
+Law Society
+Bar Council
+Internal Revenue Service
+Securities and Exchange Commission
+Home Office
+European Commission
+European Union
+United Nations
+National Health Service
+Department of X
+Ministry of X
+
+[textes]
+Data Protection Act 2018
+General Data Protection Regulation
+UK GDPR
+Companies Act 2006
+Employment Rights Act 1996
+Equality Act 2010
+Human Rights Act 1998
+Civil Procedure Rules
+re:(?<!\w)(?:Sections?|Articles?|Clauses?|Rules?|Schedule|Paragraph)\s+\d+[A-Za-z]?(?:\(\d+\))*(?:\s+of\s+the\s+[A-Z][\w'-]*(?:\s+[A-Z][\w'-]*){0,6}\s+(?:Act|Regulations?|Rules|Code)(?:\s+\d{4})?)?
+# Citations neutres et références de jurisprudence publiée, jamais des références privées.
+re:\[\d{4}\]\s+(?:UKSC|UKHL|UKPC|EWCA\s+(?:Civ|Crim)|EWHC|UKUT|UKFTT|UKEAT|EWFC|CSOH|CSIH)\s+\d+(?:\s+\([A-Za-z]+\))?
+re:(?<!\w)Case\s+[CT]-\d+/\d{2}(?!\w)
+re:(?<!\w)\d{1,4}\s+U\.S\.\s+\d{1,4}(?!\w)
+
+[acronymes]
+UK
+US
+USA
+EU
+UN
+NHS
+HMRC
+IRS
+SEC
+FCA
+ICO
+GDPR
+DPA
+CEO
+CFO
+COO
+CTO
+HR
+VAT
+DOB
+SSN
+NI
+NINO
+PO
+LLP
+LLC
+LTD
+PLC
+INC
+ID
+CPR
+UKSC
+UKHL
+EWCA
+EWHC
+ECHR
+CJEU
+ECLI
+USD
+GBP
+
+[mots]
+Claimant
+Claimants
+Defendant
+Defendants
+Respondent
+Respondents
+Appellant
+Applicant
+Petitioner
+Plaintiff
+Employer
+Employee
+Counsel
+Court
+Judge
+Party
+Company
+Partnership
+Landlord
+Tenant
+Buyer
+Seller
+Licensor
+Licensee
+Contractor
+Supplier
+Customer
+Agreement
+Schedule
+Exhibit
+Appendix
+Clause
+Section
+Dear
+Sir
+Madam
+Yours
+Regards
+Sincerely
+Partner
+Director
+Solicitor
+Solicitors
+Barrister
+Attorney
+Witness
+Expert
+Notices
+National Insurance
+the
+a
+an
+this
+that
+these
+those
+of
+and
+or

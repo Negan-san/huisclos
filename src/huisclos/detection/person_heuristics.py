@@ -1,19 +1,21 @@
 """Heuristiques de repérage des personnes : civilité + nom, Prénom NOM, NOM Prénom.
 
-Entrées : un texte français et, en option, l'ensemble des acronymes à ne pas prendre pour un nom.
-Sorties : des RecognizerResult PERSON de langue "fr" et de source "heuristic".
+Entrées : un texte français ou anglais, sa langue et, en option, l'ensemble des acronymes à ne
+pas prendre pour un nom.
+Sorties : des RecognizerResult PERSON de la langue du document et de source "heuristic".
 Place dans le pipeline : complète le NER spaCy, qui oublie souvent les noms en majuscules ;
 les scores suivent le barème D-07 (0,80 avec civilité, 0,70 sans).
 """
 
 import re
 from collections.abc import Iterator
+from dataclasses import dataclass
 from typing import Final
 
 from presidio_analyzer import LocalRecognizer, RecognizerResult
 from presidio_analyzer.nlp_engine import NlpArtifacts
 
-from huisclos.detection.exclusions import load_exclusions
+from huisclos.detection.exclusions import load_exclusions_for
 from huisclos.models import Source
 from huisclos.text_utils import CIVILITIES
 
@@ -83,15 +85,65 @@ TITLE_WORDS: Final = frozenset(
 _ARTICLES: Final = frozenset({"le", "la", "les"})
 SURNAME_PARTICLES: Final = frozenset({"de", "du", "des", "le", "la", "les"})
 
+# Documents anglais : civilités anglaises, avec ou sans point, et civilités françaises sans
+# ambiguïté en anglais ("Me" seul y est un pronom).
+_CIVILITY_EN = re.compile(
+    r"(?<![\w.])(?:M\.|MM\.|Mmes?|Mlle|[Mm]onsieur|[Mm]adame|[Mm]aître|Me\."
+    r"|(?:Mr|MR|Mrs|MRS|Ms|MS|Miss|Mx|Dr|DR|Prof|Sir|Dame|Lady|Lord)\.?)[ \u00a0\u202f]+"
+)
+# Mots anglais qui ouvrent une phrase ou une formule de lettre. "May" n'y figure pas : c'est
+# aussi un prénom.
+ENGLISH_STARTERS: Final = frozenset(
+    """
+    the a an this that these those in on at by for from to of with without under over between
+    and or but if as when where which who whom whose dear re our your their his her its my we
+    you they he she it i me us them mr mrs ms miss mx dr prof sir madam section article clause
+    schedule annex exhibit appendix page part chapter court claim case file ref reference date
+    subject total amount tel phone fax email client company limited ltd llp llc inc plc street
+    road avenue lane yours regards kind best sincerely faithfully signed dated attn attention
+    notice notices note monday tuesday wednesday thursday friday saturday sunday january
+    february march april june july august september october november december
+    """.split()
+)
+ENGLISH_TITLES: Final = frozenset(
+    """
+    president judge justice chief registrar master director officer counsel solicitor
+    barrister attorney inspector constable sergeant mayor minister secretary chair chairman
+    chairwoman chairperson partner
+    """.split()
+)
 
-def _is_rejected(lead: str, upper_words: list[str], acronyms: frozenset[str]) -> bool:
+
+@dataclass(frozen=True)
+class PersonRules:
+    """Mots propres à une langue : civilités, débuts de phrase et titres de fonction."""
+
+    civility: re.Pattern[str]
+    starters: frozenset[str]
+    titles: frozenset[str]
+
+
+RULES: Final = {
+    "fr": PersonRules(_CIVILITY, COMMON_STARTERS, TITLE_WORDS),
+    "en": PersonRules(
+        _CIVILITY_EN, COMMON_STARTERS | ENGLISH_STARTERS, TITLE_WORDS | ENGLISH_TITLES
+    ),
+}
+
+
+def _is_rejected(
+    lead: str,
+    upper_words: list[str],
+    acronyms: frozenset[str],
+    starters: frozenset[str] = COMMON_STARTERS,
+) -> bool:
     """Vrai si la candidate n'est pas un nom de personne.
 
-    lead est le premier mot significatif (un mot courant de début de phrase l'écarte) ;
-    upper_words sont les mots en majuscules (un acronyme connu, ou une suite de chiffres
-    romains comme "IV", les écarte).
+    lead est le premier mot significatif (un mot courant de début de phrase, pris dans
+    starters, l'écarte) ; upper_words sont les mots en majuscules (un acronyme connu, ou
+    une suite de chiffres romains comme "IV", les écarte).
     """
-    if lead.lower() in COMMON_STARTERS or lead.lower().rstrip(".") in CIVILITIES:
+    if lead.lower() in starters or lead.lower().rstrip(".") in CIVILITIES:
         return True
     if any(word in acronyms for word in upper_words):
         return True
@@ -114,17 +166,21 @@ def _result(recognizer: LocalRecognizer, start: int, end: int, score: float) -> 
 
 
 class _PersonHeuristic(LocalRecognizer):
-    """Base commune : un reconnaisseur PERSON français dont les spans viennent de _spans."""
+    """Base commune : un reconnaisseur PERSON dont les spans viennent de _spans."""
 
     score: float = NAME_PATTERN_SCORE
 
-    def __init__(self, acronyms: frozenset[str] | None = None) -> None:
+    def __init__(self, acronyms: frozenset[str] | None = None, language: str = LANGUAGE) -> None:
         """Prépare le reconnaisseur.
 
-        Paramètre : acronyms, les acronymes exclus (ceux de data/exclusions_fr.txt par défaut).
+        Paramètres : acronyms, les acronymes exclus (ceux des listes de la langue par
+        défaut) ; language, la langue du document, qui choisit civilités et mots courants.
         """
-        self.acronyms = load_exclusions().acronyms if acronyms is None else acronyms
-        super().__init__(supported_entities=["PERSON"], supported_language=LANGUAGE)
+        self.rules = RULES[language]
+        if acronyms is None:
+            acronyms = load_exclusions_for(language).acronyms
+        self.acronyms = acronyms
+        super().__init__(supported_entities=["PERSON"], supported_language=language)
 
     def load(self) -> None:  # noqa: D102
         pass
@@ -156,7 +212,7 @@ class CivilityPersonRecognizer(_PersonHeuristic):
     MAX_WORDS = 4
 
     def _spans(self, text: str) -> Iterator[tuple[int, int]]:
-        for civility in _CIVILITY.finditer(text):
+        for civility in self.rules.civility.finditer(text):
             start = civility.end()
             first = self._word_at(text, start)
             if first is None:
@@ -185,18 +241,21 @@ class CivilityPersonRecognizer(_PersonHeuristic):
         lowered = word.group().lower()
         if lowered in _ARTICLES:
             return word if self._article_leads_name(text, word.end()) else None
-        if lowered in COMMON_STARTERS or lowered in TITLE_WORDS or word.group() in self.acronyms:
+        if (
+            lowered in self.rules.starters
+            or lowered in self.rules.titles
+            or word.group() in self.acronyms
+        ):
             return None
         return word
 
-    @staticmethod
-    def _article_leads_name(text: str, position: int) -> bool:
+    def _article_leads_name(self, text: str, position: int) -> bool:
         """Vrai si l'article est suivi d'un nom : "Le Gall" oui, "Le Président" non."""
         spaces = _SPACE_RE.match(text, position)
         if spaces is None:
             return False
         following = _NAME_WORD_RE.match(text, spaces.end())
-        return following is not None and following.group().lower() not in TITLE_WORDS
+        return following is not None and following.group().lower() not in self.rules.titles
 
 
 class FirstNameUpperSurnameRecognizer(_PersonHeuristic):
@@ -205,7 +264,9 @@ class FirstNameUpperSurnameRecognizer(_PersonHeuristic):
     def _spans(self, text: str) -> Iterator[tuple[int, int]]:
         for match in _FIRST_UPPER.finditer(text):
             upper_words = match.group("upper").split()
-            if not _is_rejected(match.group("first"), upper_words, self.acronyms):
+            if not _is_rejected(
+                match.group("first"), upper_words, self.acronyms, self.rules.starters
+            ):
                 yield match.start(), match.end()
 
 
@@ -223,19 +284,21 @@ class UpperSurnameFirstNameRecognizer(_PersonHeuristic):
             upper_words = match.group("upper").split()
             # Les particules ("DE LA FONTAINE Jean") ne comptent pas comme premier mot.
             lead = next((w for w in upper_words if w.lower() not in SURNAME_PARTICLES), "")
-            if lead and first.group().lower() not in COMMON_STARTERS:
-                if not _is_rejected(lead, upper_words, self.acronyms):
+            if lead and first.group().lower() not in self.rules.starters:
+                if not _is_rejected(lead, upper_words, self.acronyms, self.rules.starters):
                     yield match.start(), first.end()
 
 
-def build_person_recognizers(acronyms: frozenset[str] | None = None) -> list[LocalRecognizer]:
-    """Renvoie les trois reconnaisseurs de personnes.
+def build_person_recognizers(
+    acronyms: frozenset[str] | None = None, language: str = LANGUAGE
+) -> list[LocalRecognizer]:
+    """Renvoie les trois reconnaisseurs de personnes de la langue du document.
 
-    Paramètre : acronyms, les acronymes à ne pas prendre pour un nom (par défaut, ceux de
-    data/exclusions_fr.txt).
+    Paramètres : acronyms, les acronymes à ne pas prendre pour un nom (par défaut, ceux des
+    listes d'exclusions de la langue) ; language, fr ou en.
     """
     return [
-        CivilityPersonRecognizer(acronyms),
-        FirstNameUpperSurnameRecognizer(acronyms),
-        UpperSurnameFirstNameRecognizer(acronyms),
+        CivilityPersonRecognizer(acronyms, language),
+        FirstNameUpperSurnameRecognizer(acronyms, language),
+        UpperSurnameFirstNameRecognizer(acronyms, language),
     ]

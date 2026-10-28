@@ -11,7 +11,8 @@ import re
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 
-from huisclos.models import Detection, EntityGroup, EntityType
+from huisclos.detection.aliases import filename_spans, find_aliases, in_filename
+from huisclos.models import Detection, EntityGroup, EntityType, Source
 from huisclos.text_utils import CIVILITIES, LEGAL_FORMS, fold
 
 # Mot d'un nom après repliement : lettres, éventuellement reliées par un trait d'union ou
@@ -341,24 +342,59 @@ def _forms_by_type(detections: Sequence[Detection]) -> dict[EntityType, list[_Fo
     return by_type
 
 
+def _bucket_of(buckets: Sequence[_Bucket], entity_type: EntityType, key: str) -> _Bucket | None:
+    """Groupe en construction qui contient la forme (entity_type, key), ou None."""
+    for bucket in buckets:
+        if any(f.entity_type is entity_type and f.key == key for f in bucket.forms):
+            return bucket
+    return None
+
+
+def _link_aliases(text: str, buckets: list[_Bucket], detections: Sequence[Detection]) -> None:
+    """Réunit un alias explicite non ambigu au groupe de son entité d'origine.
+
+    "Brightmoor SAS (ci-après \u00ab BLX \u00bb)" donne le même jeton à "BLX" et à la société. Un
+    alias défini pour deux entités, ou rattaché à un groupe dont le choix était douteux,
+    garde son propre groupe : un jeton de plus vaut mieux qu'une confusion.
+    """
+    for link in find_aliases(text, detections):
+        kind = link.origin.entity_type
+        origin = _bucket_of(buckets, kind, normalized_key(kind, link.origin.text))
+        alias = _bucket_of(buckets, kind, normalized_key(kind, link.alias))
+        if link.ambiguous or origin is None or alias is None or origin is alias:
+            continue
+        if alias.ambiguous_with or any(alias in other.ambiguous_with for other in buckets):
+            continue
+        origin.forms.extend(alias.forms)
+        buckets.remove(alias)
+
+
 def group_mentions(text: str, detections: Sequence[Detection]) -> list[EntityGroup]:
     """Regroupe les détections qui désignent la même entité.
 
     Paramètres : text, le texte d'origine ; detections, les détections validées.
     Valeur retournée : les groupes, numérotés (group_id à partir de 1) et triés par
     première apparition ; le jeton reste vide, pseudonymize.tokens le fixe.
+    Un nom repéré dans un nom de fichier forme son propre groupe : ce repérage ne prouve
+    pas l'identité, sauf valeur déjà validée (ajout manuel ou table du dossier).
     Exemple : "Jean DUPONT" et "M. Dupont" forment un seul groupe de canonical
     "Jean DUPONT".
     """
     for detection in detections:
         if text[detection.start : detection.end] != detection.text:
             raise ValueError(f"détection incohérente avec le texte : {detection!r}")
+    files = filename_spans(text)
+    validated = {Source.MANUAL, Source.CASE_TABLE}
+    in_files = [d for d in detections if in_filename(d, files) and d.source not in validated]
+    regular = [d for d in detections if d not in in_files]
     buckets: list[_Bucket] = []
-    for entity_type, forms in _forms_by_type(detections).items():
+    for entity_type, forms in _forms_by_type(regular).items():
         if entity_type is EntityType.PERSON:
             buckets.extend(_group_persons(forms))
         else:
             buckets.extend(_Bucket([form]) for form in forms)
+    _link_aliases(text, buckets, regular)
+    buckets.extend(_Bucket([form]) for forms in _forms_by_type(in_files).values() for form in forms)
     buckets.sort(key=lambda b: b.first_start)
     group_ids = {id(bucket): index for index, bucket in enumerate(buckets, start=1)}
     return [_to_group(bucket, group_ids) for bucket in buckets]

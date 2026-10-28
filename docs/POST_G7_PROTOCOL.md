@@ -100,6 +100,7 @@ Une égalité de fuite ou de couverture ne suffit pas : sans gain mesuré, l'opt
 - `DetectionConfig.document_language` vaut `fr` ou `en`, défaut `fr`. Il est indépendant de la langue de l'interface et du style des jetons (`TokenStyle.language`).
 - Le pilote fixe ce champ depuis le plan avec `dataclasses.replace`. Tant que le champ n'existe pas, une demande `en` échoue avec un message clair au lieu de simuler un support anglais avec le moteur français ; une demande `fr` est mesurée et marquée `document_language_field: false`.
 - La langue d'un jeu est portée par le plan, pas par les enregistrements JSONL : `load_corpus` refuse aujourd'hui toute clé inconnue.
+- Mise en oeuvre A2 (D-AF-A2-1) : le champ existe ; `replace(config, document_language="en")` charge en_core_web_sm 3.8.0, enregistré par le pilote comme modèle spaCy du profil (`document_language_field: true`). Le code de G7 et celui du départ de A2 refusent toujours l'anglais : aucune référence anglaise antérieure n'existe. CamemBERT est refusé pour un document anglais. Les préréglages gardent leurs noms et leur langue française par défaut.
 
 ## 9. Limites
 
@@ -120,3 +121,20 @@ Mesure B1 du 28 octobre 2026 en mode dev, hors dépôt : `corpus/dev.jsonl`, 20 
 - Métriques et intervalles historiques identiques bit à bit à G7 dev ; profil Standard rejoué en processus séparé identique (différences appariées nulles).
 - Périmètre séparé : 50 annotations CUSTOM, 46 entièrement couvertes, 4 entièrement exposées (48 caractères).
 - Critère Enhanced contre Standard non rempli : aucun gain mesurable sur ce dev déjà saturé. Ce n'est pas une conclusion sur des documents nouveaux.
+
+## 11. Mesure avant/après A2
+
+Mesure AF-A2 du 28 octobre 2026 en mode dev, hors dépôt, baseline_python, seuil 0,30. Référence "avant" : worktree détaché au SHA de départ ccc8b81 (A1 et B1), en processus séparé ; "après" : arbre de travail du commit A2. Les fixtures viennent de tests/fixtures/post_g7/, annotées avant les règles, converties en JSONL par le parseur du corpus.
+
+| Jeu | Profil | Précision partielle | Rappel partiel | Rappel exact | Couverture complète | Fuite | Surmasquage |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| dev FR, 20 documents | Standard avant | 0.9904 | 1.0000 | 311/311 | 311/311 | 0 caractère | 7 caractères |
+| dev FR, 20 documents | Standard après | 0.9904 | 1.0000 | 311/311 | 311/311 | 0 caractère | 7 caractères |
+| fixtures FR, 3 documents | Standard avant | 0.8421 | 0.8571 | 40/56 | 43/56 | 234/1128 | 94 caractères (0.0642) |
+| fixtures FR, 3 documents | Standard après | 0.9825 | 1.0000 | 56/56 | 56/56 | 0/1128 | 17 caractères (0.0116) |
+| fixtures EN, 2 documents | Standard après | 0.9394 | 0.9394 | 30/33 | 31/33 | 17/615 | 5 caractères (0.0049) |
+
+- Enhanced égale Standard sur chaque ligne française, avant comme après ; le dev FR reste saturé (différences appariées nulles).
+- Fuite par type, fixtures FR avant : adresses 149, personnes 37, procédure 30, naissance 18 caractères ; après : zéro pour chaque type.
+- Différences appariées sur les fixtures FR (après moins avant) : couverture complète +0,2321 [0,1111 ; 0,4286], fuite -0,2074 [-0,3529 ; -0,1729], intervalles qui excluent zéro ; précision +0,1404 et rappel +0,1429, intervalles qui touchent zéro. Critère d'ingénierie rempli pour Standard et Enhanced. Trois documents écrits dans la même session que les règles : ce n'est pas une mesure de généralisation.
+- Anglais : aucune référence antérieure. Restent une signature sans civilité manquée par en_core_web_sm (16 caractères), la parenthèse d'un indicatif rognée par la fusion (1 caractère) et une personne lue comme société, masquée. Ces chiffres ne valident pas le support anglais : le dev EN de B2 puis C3 en décideront.

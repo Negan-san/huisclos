@@ -11,6 +11,7 @@ from collections.abc import Sequence
 from dataclasses import replace
 
 from huisclos.config import DetectionConfig
+from huisclos.detection.analysis_view import AnalysisView, build_view
 from huisclos.detection.exclusions import is_legal_reference
 from huisclos.detection.person_heuristics import build_person_recognizers
 from huisclos.models import Detection, EntityType, Source
@@ -31,6 +32,27 @@ GRAMMAR_WORDS = frozenset(
     "a au aux avec ce ces cet cette chez contre dans elle en entre il je leur leurs ma mes "
     "mon nos notre on par pour sa sans selon ses son sous sur vers vos votre vous".split()
 )
+# Documents anglais : liaisons ("Bank of", "Smith and Sons"), libellés de rôle et mots
+# grammaticaux qui ne prolongent jamais un nom de société ("For", "The").
+ENGLISH_LIAISONS = frozenset({"of", "and"})
+ENGLISH_LABEL_WORDS = frozenset(
+    {"company", "employer", "claimant", "defendant", "respondent", "client", "supplier"}
+)
+ENGLISH_GRAMMAR_WORDS = frozenset(
+    "the a an for with by from to at in on as between against versus v vs per via under over "
+    "into upon about after before during dear re or but our your their his her its my we they "
+    "he she it this that these those which who whom whose when where while if all any each "
+    "every such no not only also both either neither nor".split()
+)
+# Mots de liaison, libellés et mots grammaticaux par langue du document.
+WORDS = {
+    "fr": (LIAISONS, LABEL_WORDS, GRAMMAR_WORDS),
+    "en": (
+        LIAISONS | ENGLISH_LIAISONS,
+        LABEL_WORDS | ENGLISH_LABEL_WORDS,
+        GRAMMAR_WORDS | ENGLISH_GRAMMAR_WORDS,
+    ),
+}
 MAX_EXTENSION_WORDS = 6
 # Une forme juridique précédée de mots à majuscule désigne une société (D-S35-2).
 LEGAL_FORM_SCORE = 0.70
@@ -58,20 +80,21 @@ def _line_tokens(text: str, start: int, end: int) -> list[tuple[int, int]]:
     return [m.span() for m in _TOKEN.finditer(text, start, end)]
 
 
-def _token_kind(token: str) -> str:
+def _token_kind(token: str, language: str = "fr") -> str:
     """Classe un mot voisin d'une société : "liaison", "name" ou "stop".
 
     Exemple : _token_kind("des") == "liaison", _token_kind("Atelier") == "name",
     _token_kind("chez") == "stop", _token_kind("SAS") == "stop".
     """
+    liaisons, labels, grammar = WORDS[language]
     if any(char in _STOP_CHARACTERS for char in token) or any(c.isdigit() for c in token):
         return "stop"
     folded = fold(token)
-    if folded in LIAISONS:
+    if folded in liaisons:
         return "liaison"
     if folded in CIVILITIES or token in LEGAL_FORMS:
         return "stop"
-    if folded in LABEL_WORDS or folded in GRAMMAR_WORDS or not is_capitalized_form(token):
+    if folded in labels or folded in grammar or not is_capitalized_form(token):
         return "stop"
     return "name"
 
@@ -82,7 +105,10 @@ def _in_legal_reference(text: str, start: int, end: int, spans: Sequence[tuple[i
 
 
 def _extend(
-    text: str, tokens: list[tuple[int, int]], exclusion_spans: Sequence[tuple[int, int]]
+    text: str,
+    tokens: list[tuple[int, int]],
+    exclusion_spans: Sequence[tuple[int, int]],
+    language: str = "fr",
 ) -> int | None:
     """Compte les mots de tokens (les plus proches de la société d'abord) qui la prolongent.
 
@@ -91,7 +117,7 @@ def _extend(
     """
     last_name: int | None = None
     for index, (start, end) in enumerate(tokens[:MAX_EXTENSION_WORDS]):
-        kind = _token_kind(text[start:end])
+        kind = _token_kind(text[start:end], language)
         if kind == "stop" or _in_legal_reference(text, start, end, exclusion_spans):
             break
         if kind == "name":
@@ -111,7 +137,11 @@ def _line_end(text: str, position: int) -> int:
 
 
 def extended_bounds(
-    text: str, start: int, end: int, exclusion_spans: Sequence[tuple[int, int]] = ()
+    text: str,
+    start: int,
+    end: int,
+    exclusion_spans: Sequence[tuple[int, int]] = (),
+    language: str = "fr",
 ) -> tuple[int, int]:
     """Bornes d'une société étendues aux mots de son nom restés hors du span.
 
@@ -124,12 +154,12 @@ def extended_bounds(
     words = text[start:end].split()
     if words and words[-1] in LEGAL_FORMS:
         before = list(reversed(_line_tokens(text, _line_start(text, start), start)))
-        last = _extend(text, before, exclusion_spans)
+        last = _extend(text, before, exclusion_spans, language)
         if last is not None:
             return before[last][0], end
     if words and words[0] in LEGAL_FORMS:
         after = _line_tokens(text, end, _line_end(text, end))
-        last = _extend(text, after, exclusion_spans)
+        last = _extend(text, after, exclusion_spans, language)
         if last is not None:
             return start, after[last][1]
     return start, end
@@ -158,17 +188,24 @@ def _absorb(
     return [d for d in detections if d is not target and d not in others] + [widened]
 
 
-def merge_civility_names(text: str, detections: list[Detection]) -> list[Detection]:
-    """R?pare les fragments de noms reconnus par une civilit? ou leur casse.
+def merge_civility_names(
+    text: str,
+    detections: list[Detection],
+    language: str = "fr",
+    view: AnalysisView | None = None,
+) -> list[Detection]:
+    """Répare les fragments de noms reconnus par une civilité ou leur casse.
 
-    Les m?mes heuristiques bornent la d?tection et la r?paration, particules et
-    initiales comprises. Les identifiants, adresses, ajouts manuels et soci?t?s
-    portant une forme juridique emp?chent toute absorption.
+    Les mêmes heuristiques, celles de la langue du document, bornent la détection et la
+    réparation, particules et initiales comprises ; elles lisent la vue d'analyse, dont
+    les spans sont reprojetés. Les identifiants, adresses, ajouts manuels et sociétés
+    portant une forme juridique empêchent toute absorption.
     """
+    view = view if view is not None and view.canonical == text else build_view(text)
     candidates = [
-        (start, end, recognizer.score)
-        for recognizer in build_person_recognizers()
-        for start, end in recognizer._spans(text)
+        (*view.project(start, end), recognizer.score)
+        for recognizer in build_person_recognizers(language=language)
+        for start, end in recognizer._spans(view.text)
     ]
     for start, end, score in sorted(set(candidates), key=lambda item: (item[0], -item[1])):
         if _LEGAL_AFTER.match(text, end) or any(w in LEGAL_FORMS for w in text[start:end].split()):
@@ -202,20 +239,26 @@ def merge_civility_names(text: str, detections: list[Detection]) -> list[Detecti
 
 
 def _widen_organizations(
-    text: str, detections: list[Detection], exclusion_spans: Sequence[tuple[int, int]]
+    text: str,
+    detections: list[Detection],
+    exclusion_spans: Sequence[tuple[int, int]],
+    language: str = "fr",
 ) -> list[Detection]:
     """Étend chaque société à son nom complet (extended_bounds), si rien ne s'y oppose."""
     for target in sorted(detections, key=lambda d: d.start):
         if target.entity_type != EntityType.ORGANIZATION or target not in detections:
             continue
-        start, end = extended_bounds(text, target.start, target.end, exclusion_spans)
+        start, end = extended_bounds(text, target.start, target.end, exclusion_spans, language)
         if (start, end) != (target.start, target.end):
             detections = _absorb(text, detections, target, start, end) or detections
     return detections
 
 
 def _anchor_legal_forms(
-    text: str, detections: list[Detection], exclusion_spans: Sequence[tuple[int, int]]
+    text: str,
+    detections: list[Detection],
+    exclusion_spans: Sequence[tuple[int, int]],
+    language: str = "fr",
 ) -> list[Detection]:
     """Crée une société pour chaque forme juridique libre accolée à des mots à majuscule.
 
@@ -233,7 +276,7 @@ def _anchor_legal_forms(
             Source.HEURISTIC,
             match.group(),
         )
-        start, end = extended_bounds(text, seed.start, seed.end, exclusion_spans)
+        start, end = extended_bounds(text, seed.start, seed.end, exclusion_spans, language)
         if (start, end) != match.span():
             detections = _absorb(text, [*detections, seed], seed, start, end) or detections
     return detections
@@ -276,22 +319,25 @@ def adjust_organizations(
     detections: Sequence[Detection],
     config: DetectionConfig,
     exclusion_spans: Sequence[tuple[int, int]] = (),
+    view: AnalysisView | None = None,
 ) -> list[Detection]:
     """Corrige les bornes des sociétés et des personnes précédées d'une civilité.
 
     Paramètres : text, le texte analysé ; detections, la sortie de merge ; config, pour les
-    types activés, le seuil et les sources ; exclusion_spans, les passages exclus.
+    types activés, le seuil, les sources et la langue ; exclusion_spans, les passages
+    exclus ; view, la vue d'analyse de text (construite si elle manque).
     Valeur retournée : les détections triées, sans chevauchement, dont text vaut
     texte[start:end]. Les sociétés créées à partir d'une forme juridique relèvent des
     heuristiques et n'apparaissent que si celles-ci sont activées.
     """
     spans = exclusion_spans if config.use_exclusions else ()
+    language = config.document_language
     result = list(detections)
     if EntityType.PERSON in config.enabled_types:
-        result = merge_civility_names(text, result)
+        result = merge_civility_names(text, result, language, view)
     if EntityType.ORGANIZATION in config.enabled_types:
-        result = _widen_organizations(text, result, spans)
+        result = _widen_organizations(text, result, spans, language)
         if config.use_heuristics and LEGAL_FORM_SCORE >= config.threshold:
-            result = _anchor_legal_forms(text, result, spans)
+            result = _anchor_legal_forms(text, result, spans, language)
         result = fuse_organizations(text, result)
     return sorted(result, key=lambda d: (d.start, d.end))
