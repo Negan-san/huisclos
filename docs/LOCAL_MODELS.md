@@ -10,7 +10,9 @@ committed.
 
 ## Manifest
 
-`post_g7_assets/manifest.json` is the single source for later sessions. It holds:
+`post_g7_assets/manifest.json` records the A1 environments and pinned model files. The A4
+`retained-runtime-final.json` and integration report at the end of this page record the
+retained runtime; the historical A1 files are preserved. The A1 manifest holds:
 
 - `baseline_python` and `candidate_python`: the two interpreters, each with a status
   (`available` or `unavailable`) and a note;
@@ -26,38 +28,53 @@ Regenerate or extend it with `PY scripts/prepare_local_models.py` and one of fou
 snapshot from the local Hugging Face cache), `envs` (record interpreters) and `verify` (load each
 model in a fresh process).
 
-## Environments
+## Historical environments (A1, before A4 migration)
 
 | Key | Purpose | Stack | Status |
 | --- | --- | --- | --- |
 | `baseline_python` | G7 reference; A2, A3 and general B3 checks, full test suite | exact G7 freeze (Transformers 5.21.0, Hub 2.3.0, torch 2.14.1+cpu, spaCy 3.8.18) plus `en_core_web_sm` 3.8.0 | available |
 | `candidate_python` | explicit B3 experiments, then A4 checks if a migration is accepted | baseline with Transformers 5.16.1, Hub 1.9.2, GLiNER 0.2.29; httpx2 and httpcore2 (Hub 2.x only) removed | available |
 
-The baseline differs from the shared venv by one declared addition, `en_core_web_sm` 3.8.0
+At A1, the baseline differed from the shared venv by one declared addition, `en_core_web_sm` 3.8.0
 (official wheel, MIT, SHA-256
 `1932429db727d4bff3deed6b34cfc05df17794f4a52eeb26cf8928f7c1a0fb85`), which G7 never used. Both environments were
-built from lock files with exact pins, without `--no-deps`, and pass `pip check`. The full test
-suite passes under the shared venv and under the baseline (1285 tests). Under the candidate, the
-CamemBERT, window and merge tests pass; torch warns that `torch.jit.script` is deprecated.
+built from lock files with exact pins, without `--no-deps`, and passed `pip check`. At A1 the
+full suite passed under the shared venv and baseline (1285 tests); the candidate passed the
+CamemBERT, window and merge tests. Torch warned that `torch.jit.script` is deprecated.
 
 GLiNER 0.2.29 requires `transformers<5.17`, and Transformers 5.16.x requires
-`huggingface-hub>=1.5,<2`: the candidate therefore pins the latest 1.x Hub. No migration is
-applied to the project; only A4 may change the shared venv.
+`huggingface-hub>=1.5,<2`: the candidate therefore pins Hub 1.9.2. No migration was
+applied to the project at A1; A4 later migrated the shared venv as recorded below.
 
-## Models
+## Model inventory and licences
+
+The table includes study candidates. In the retained application, CamemBERT is the French
+Enhanced backend and GLiNER is the English Enhanced backend; Anonym-IA was not adopted.
+The Standard French model `fr_core_news_md` 3.8.0 is LGPL-LR; the English model below is MIT.
+Licences are recorded from the pinned local model manifest and installed metadata, not from
+the application's own MIT licence. No paid inference service is used for these local models;
+the measured costs below are CPU time and resident memory, not a cloud price estimate.
 
 | Model | Revision | Licence | Weights | Role |
 | --- | --- | --- | --- | --- |
-| Jean-Baptiste/camembert-ner | `ef35fe77` | MIT | safetensors | current French reference (D-06) |
+| Jean-Baptiste/camembert-ner | `ef35fe77` | MIT | safetensors | retained French Enhanced backend (D-06) |
 | Anonym-IA/V2-camembert-ner-pii-french | `b39848cc` | MIT | safetensors | French PII candidate, `CamembertForTokenClassification` |
-| urchade/gliner_multi_pii-v1 | `1fcf13e8` | Apache-2.0 | `pytorch_model.bin` only | French and English PII candidate |
+| urchade/gliner_multi_pii-v1 | `1fcf13e8` | Apache-2.0 | `pytorch_model.bin` only | retained English Enhanced backend; French study candidate rejected |
 | microsoft/mdeberta-v3-base | `a0484667` | MIT | none copied | GLiNER backbone: config and tokenizer only |
 | spaCy `en_core_web_sm` | 3.8.0 | MIT | wheel | English rule and NER base |
 
+Full immutable revisions of retained neural models:
+
+| Repository | Revision |
+| --- | --- |
+| Jean-Baptiste/camembert-ner | `ef35fe7767c1dad71f5c853838cdd80d0b3441ed` |
+| urchade/gliner_multi_pii-v1 | `1fcf13e85f4eef5394e1fcd406cf2ca9ea82351d` |
+| microsoft/mdeberta-v3-base, configuration and tokenizer | `a0484667b22365f84929a935b5e50a51f71f159d` |
+
 GLiNER publishes no safetensors file. Its weights are loaded by GLiNER with
 `torch.load(..., weights_only=True)`, which refuses arbitrary Python objects. The scores on the
-model cards are not HuisClos results; B3 measures each model and useful combinations on the
-project corpus.
+model cards are not HuisClos results; B3 compared candidates and A4 measured the integrated
+profiles on development data only.
 
 Anonym-IA V2 uses its own label set (for example `NOM_PERSONNE`, `PRENOM_PERSONNE`,
 `NOM_SOCIETE`, `NOM_VOIE`, `VILLE`, `NUM_DOSSIER`). On the check sentence it labels first and last
@@ -172,8 +189,10 @@ resolver, install and test logs. The historical A1 manifest, locks and snapshots
 
 ### Local installation
 
-For Standard, install `requirements.txt` (or `requirements-dev.txt` for development). For the
-local heavy option, use the full lock in a separate venv:
+For Standard, install `requirements.txt` (or `requirements-dev.txt` for development) as in
+the [user guide](USER_GUIDE.md). Standard needs neither the model package below nor Torch,
+Transformers or GLiNER. For the local heavy option, use the full lock in a separate venv.
+`PY` below means the explicit path to that environment's Python, not a command to paste as-is:
 
 ```
 PY -m pip install -r requirements-enhanced-lock.txt
@@ -195,6 +214,19 @@ Set `HUISCLOS_MODELS_DIR` to that folder. For the current development machine, i
 The folder must contain `manifest.json` and the model subfolders written by the preparation tool.
 Download requests contain model identifiers only, never a document or a mapping table.
 Anonym-IA is unnecessary for the retained runtime profiles.
+
+For example, after preparing your own package outside the repository, start the optional
+profile from PowerShell with that package path (replace both paths with yours):
+
+```powershell
+$env:PYTHONUTF8 = "1"
+$env:HUISCLOS_MODELS_DIR = "C:/HuisClosModels"
+C:/HuisClosEnhanced/Scripts/python.exe -m streamlit run streamlit_app.py --server.address localhost
+```
+
+The complete lock was validated on Python 3.12.10, Windows CPU. The normal Standard commands
+also cover macOS; the heavy lock has not been validated on macOS. Preparation may use a
+network connection to fetch public packages and model files; application processing does not.
 
 GLiNER checks the two repository identities and immutable revisions, all five required files
 and their pinned SHA-256 before loading. The backbone vocabulary, capacity and span width are
@@ -247,6 +279,12 @@ The short two-document CPU probe, including imports, models and restoration, too
 16 seconds with two torch threads. These measurements are observations, not latency guarantees.
 `PY scripts/measure_memory.py --enhanced --language en` compares the retained local profiles;
 its RSS readings are snapshots, not sampled peaks. B3 contains independent full-lot cost records.
+
+For context only, the historical Standard French S51 probe reached 732.2 MiB RSS including
+Streamlit imports; the earlier S44 sequential comparison recorded 716.6 MiB for Standard and
+1203.9 MiB for French Enhanced, with detection taking 0.135 s and 0.477 s respectively.
+These used the older neural stack and a short demonstration document. They are not new A4
+measurements and cannot be compared directly with the English two-document probe.
 
 Both production backends passed fresh-process tests with empty HF caches, sockets/DNS blocked,
 two stable-token documents, JSON reloading and a mixed restored reply. Removing CamemBERT's
