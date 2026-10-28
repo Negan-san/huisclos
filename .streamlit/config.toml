@@ -7,10 +7,34 @@ maxUploadSize = 5
 [client]
 toolbarMode = "minimal"
 
+# Thème aligné sur les jetons de app/assets/style.css : bleu marine, neutres, un accent
+# (#0E7490) et trois états. Polices du système uniquement, aucune police distante.
 [theme]
 base = "light"
 primaryColor = "#1F3A5F"
-backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F4F5F7"
+backgroundColor = "#F6F7F9"
+secondaryBackgroundColor = "#F1F3F6"
 textColor = "#1B1F24"
-font = "sans serif"
+font = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+headingFontSizes = ["1.75rem", "1.5rem", "1.125rem", "1rem", "0.875rem", "0.75rem"]
+headingFontWeights = [700, 700, 600, 600, 600, 600]
+codeFontSize = "0.875rem"
+codeBackgroundColor = "#F6F7F9"
+baseRadius = "0.5rem"
+buttonRadius = "0.5rem"
+borderColor = "#8A94A3"
+dataframeBorderColor = "#DDE1E6"
+dataframeHeaderBackgroundColor = "#F1F3F6"
+showWidgetBorder = true
+showSidebarBorder = true
+linkColor = "#0E7490"
+redColor = "#9B2C2C"
+orangeColor = "#8C5A00"
+yellowColor = "#8C5A00"
+greenColor = "#2E6B4F"
+blueColor = "#1F3A5F"
+chartCategoricalColors = ["#1F3A5F", "#E69F00", "#56B4E9", "#009E73", "#CC79A7", "#D55E00"]
+
+[theme.sidebar]
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F6F7F9"

@@ -9,6 +9,8 @@ EN: dict[str, str] = {
     "app.title": "HuisClos",
     "app.tagline": "Use generative AI on client files without breaching professional secrecy.",
     "app.legal_note": "Pseudonymization is not anonymization (GDPR art. 4(5), recital 26).",
+    "app.local_badge": "Local processing",
+    "app.demo_badge": "Public demo",
     "demo.banner": (
         "Public demo: use fictitious data only. To process real client files, install HuisClos"
         " on your computer (see the user guide)."
@@ -20,7 +22,9 @@ EN: dict[str, str] = {
     "steps.import": "Import",
     "steps.review": "Review",
     "steps.restore": "Restore",
-    "steps.current": "(current step)",
+    "steps.state.done": "Completed",
+    "steps.state.current": "Current step",
+    "steps.state.available": "Available",
     "steps.locked.review": "Available once sensitive data has been detected.",
     "steps.locked.restore": "Available once the pseudonymized text has been created.",
     "entity.PERSON": "Person",
@@ -37,6 +41,10 @@ EN: dict[str, str] = {
     "entity.LOCATION": "Place",
     "entity.CUSTOM": "Custom",
     "sidebar.settings": "Settings",
+    "sidebar.help": "Changes apply to the next detection.",
+    "sidebar.group.detection": "Detection",
+    "sidebar.group.tokens": "Tokens",
+    "sidebar.group.interface": "Interface",
     "sidebar.types": "Types to detect",
     "sidebar.threshold": "Confidence threshold",
     "sidebar.threshold.help": "Lower threshold = more text masked, fewer misses.",
@@ -63,6 +71,8 @@ FR: dict[str, str] = {
     "app.legal_note": (
         "La pseudonymisation n'est pas une anonymisation (RGPD art. 4(5), considérant 26)."
     ),
+    "app.local_badge": "Traitement local",
+    "app.demo_badge": "Démonstration publique",
     "demo.banner": (
         "Démonstration publique : utilisez uniquement des données fictives. Pour traiter de "
         "vrais dossiers clients, installez HuisClos sur votre ordinateur (voir le guide "
@@ -75,7 +85,9 @@ FR: dict[str, str] = {
     "steps.import": "Importer",
     "steps.review": "Vérifier",
     "steps.restore": "Restaurer",
-    "steps.current": "(étape actuelle)",
+    "steps.state.done": "Terminée",
+    "steps.state.current": "Étape actuelle",
+    "steps.state.available": "Disponible",
     "steps.locked.review": "Disponible après la détection des données sensibles.",
     "steps.locked.restore": "Disponible après la création du texte pseudonymisé.",
     "entity.PERSON": "Personne",
@@ -92,6 +104,10 @@ FR: dict[str, str] = {
     "entity.LOCATION": "Lieu",
     "entity.CUSTOM": "Autre",
     "sidebar.settings": "Réglages",
+    "sidebar.help": "Les changements s'appliquent à la prochaine détection.",
+    "sidebar.group.detection": "Détection",
+    "sidebar.group.tokens": "Jetons",
+    "sidebar.group.interface": "Interface",
     "sidebar.types": "Types à détecter",
     "sidebar.threshold": "Seuil de confiance",
     "sidebar.threshold.help": "Un seuil plus bas masque davantage de texte et réduit les oublis.",

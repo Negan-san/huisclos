@@ -5,6 +5,7 @@ posées dans l'état du composant (edited_rows), comme le navigateur le ferait, 
 est relancée. Les lignes du tableau sont relues dans le message Arrow envoyé au navigateur.
 """
 
+import re
 from pathlib import Path
 
 import pyarrow as pa
@@ -100,6 +101,14 @@ def add_value(app: AppTest, value: str) -> AppTest:
 def html_blocks(app: AppTest) -> list[str]:
     """Rassemble les fragments HTML affichés par la page."""
     return [element.value for element in app.get("html")]
+
+
+def current_step(app: AppTest) -> str:
+    """Renvoie l'unique étape de l'indicateur marquée aria-current="step"."""
+    stepper = next(b.value for b in app.get("html") if 'class="hc-stepper"' in b.value)
+    current = [i for i in re.findall(r"<li .*?</li>", stepper) if 'aria-current="step"' in i]
+    assert len(current) == 1
+    return current[0]
 
 
 def test_review_screen_shows_counts_table_and_highlighted_text() -> None:
@@ -283,7 +292,7 @@ def test_pseudonymize_goes_to_the_restore_step() -> None:
     app = review_app()
     result = pseudonymize(app)
     assert app.session_state["step"] == "restore"
-    assert "3. Restore <span" in app.get("html")[0].value
+    assert '<span class="hc-step-name">Restore</span>' in current_step(app)
     assert "[PERSONNE_1]" in result.text
     assert "Pierre" not in result.text
     assert result.mapping is not None

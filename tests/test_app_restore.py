@@ -5,6 +5,7 @@ ensuite l'écran Restore sur ce résultat, sans refaire la détection. Un seul t
 parcours complet Import, Review, Restore par l'interface.
 """
 
+import re
 from dataclasses import replace
 from pathlib import Path
 
@@ -102,6 +103,14 @@ def download_buttons(app: AppTest) -> dict[str, bool]:
     return {button.label: button.disabled for button in app.get("download_button")}
 
 
+def current_step(app: AppTest) -> str:
+    """Renvoie l'unique étape de l'indicateur marquée aria-current="step"."""
+    stepper = next(b.value for b in app.get("html") if 'class="hc-stepper"' in b.value)
+    current = [i for i in re.findall(r"<li .*?</li>", stepper) if 'aria-current="step"' in i]
+    assert len(current) == 1
+    return current[0]
+
+
 def token_of(result: PseudonymizationResult, kind: EntityType) -> tuple[str, str]:
     """Renvoie le jeton et la forme canonique de la première entité du type donné."""
     entry = next(e for e in result.mapping.entities if e.entity_type is kind)
@@ -117,7 +126,7 @@ def test_complete_journey_ends_on_the_restore_step() -> None:
     app = journey()
     assert app.session_state["step"] == "restore"
     assert not app.exception
-    assert "3. Restore <span" in app.get("html")[0].value
+    assert '<span class="hc-step-name">Restore</span>' in current_step(app)
     assert [element.value for element in app.main.subheader] == [
         "Send to your AI tool",
         "Restore the AI answer",

@@ -70,6 +70,14 @@ def texts(app: AppTest) -> list[str]:
     return [element.value for element in [*elements, *app.warning]]
 
 
+def current_step(app: AppTest) -> str:
+    """Renvoie l'unique étape de l'indicateur marquée aria-current="step"."""
+    stepper = next(b.value for b in app.get("html") if 'class="hc-stepper"' in b.value)
+    current = [i for i in re.findall(r"<li .*?</li>", stepper) if 'aria-current="step"' in i]
+    assert len(current) == 1
+    return current[0]
+
+
 def load_sample(app: AppTest) -> AppTest:
     """Clique sur "Load sample case"."""
     return app.button(key="load_sample").click().run()
@@ -78,14 +86,16 @@ def load_sample(app: AppTest) -> AppTest:
 def test_app_starts_with_header_and_steps() -> None:
     app = start()
     assert not app.exception
-    assert app.title[0].value == "HuisClos"
-    page = texts(app)
-    assert any("Use generative AI on client files" in text for text in page)
-    assert any("Pseudonymization is not anonymization" in text for text in page)
-    steps = app.get("html")[0].value
-    assert "1. Import <span" in steps
-    assert "(current step)" in steps
-    assert 'aria-current="step"' in steps
+    brand = next(b.value for b in app.get("html") if 'class="hc-brand"' in b.value)
+    assert '<h1 class="hc-wordmark">HuisClos</h1>' in brand
+    assert "Use generative AI on client files" in brand
+    assert any("Pseudonymization is not anonymization" in text for text in texts(app))
+    assert any(":material/lock:" in text and "Local processing" in text for text in texts(app))
+    current = current_step(app)
+    assert '<span class="hc-step-name">Import</span>' in current
+    assert t("steps.state.current") in current
+    steps = next(b.value for b in app.get("html") if 'class="hc-stepper"' in b.value)
+    assert 'aria-label="Steps of the workflow"' in steps
     assert "Available once sensitive data has been detected." in steps
     assert "Available once the pseudonymized text has been created." in steps
 
@@ -147,9 +157,12 @@ def test_detect_on_sample_goes_to_review_quickly() -> None:
     assert elapsed < 5
     assert len(app.session_state["detections"]) >= 1
     assert app.session_state["step"] == "review"
-    steps = app.get("html")[0].value
-    assert "2. Review <span" in steps
-    assert "(current step)" in steps
+    current = current_step(app)
+    assert '<span class="hc-step-name">Review</span>' in current
+    assert t("steps.state.current") in current
+    steps = next(b.value for b in app.get("html") if 'class="hc-stepper"' in b.value)
+    done = '<li class="hc-step hc-step-done"><span class="hc-step-dot" aria-hidden="true"></span>'
+    assert done in steps
     assert any("detections are ready" in text for text in texts(app))
 
 
@@ -413,7 +426,7 @@ def test_entity_styles_cover_every_type_with_readable_contrast() -> None:
 def test_palette_and_muted_text_are_readable() -> None:
     assert "--hc-ink: #1B1F24" in STYLE
     assert "--hc-primary: #1F3A5F" in STYLE
-    assert "--hc-surface: #F4F5F7" in STYLE
+    assert "--hc-surface: #F1F3F6" in STYLE
     muted = re.search(r"--hc-muted: (#[0-9A-Fa-f]{6})", STYLE)
     assert muted
     assert contrast(muted.group(1), "#FFFFFF") >= 4.5
@@ -426,7 +439,7 @@ def test_css_has_no_external_resource_gradient_or_off_grid_spacing() -> None:
         assert forbidden not in lowered
     for declaration in re.findall(r"(?:padding|margin|gap)[\w-]*:\s*([^;]+);", STYLE):
         for pixels in re.findall(r"(\d+)px", declaration):
-            assert int(pixels) % 8 == 0, declaration
+            assert int(pixels) % 4 == 0, declaration
 
 
 def test_entity_badge_shows_a_text_label() -> None:

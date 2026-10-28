@@ -6,6 +6,7 @@ que l'étape Import transmet à detect().
 Place dans le pipeline : réglages communs à toutes les pages, lus par l'étape Import.
 """
 
+import html
 from dataclasses import replace
 
 import streamlit as st
@@ -64,9 +65,15 @@ def _cancel_reset() -> None:
 
 
 def _render_reset() -> None:
-    """Affiche le bouton de remise à zéro, puis sa confirmation quand il a été cliqué."""
+    """Affiche la remise à zéro en action secondaire, puis sa confirmation après un clic."""
     if not st.session_state.get(KEY_CONFIRM_RESET):
-        st.button(t("sidebar.reset"), key="reset_session", on_click=_ask_reset)
+        st.button(
+            t("sidebar.reset"),
+            key="reset_session",
+            on_click=_ask_reset,
+            icon=":material/restart_alt:",
+            width="stretch",
+        )
         return
     st.warning(t("sidebar.reset.confirm"))
     yes, cancel = st.columns(2)
@@ -74,44 +81,64 @@ def _render_reset() -> None:
     cancel.button(t("sidebar.reset.cancel"), key="reset_cancel", on_click=_cancel_reset)
 
 
-def render_sidebar() -> None:
-    """Affiche les réglages : types, seuil, style des jetons, langue et remise à zéro."""
+def _group(title_key: str) -> None:
+    """Affiche le surtitre d'un groupe de réglages, en petites capitales."""
+    st.html(f'<p class="hc-overline">{html.escape(t(title_key))}</p>')
+
+
+def _render_detection_settings() -> None:
+    """Groupe Detection : types à rechercher et seuil de confiance."""
     # Les libellés restent ceux de cet affichage, même hors du contexte du script
     # lors de la sérialisation des composants par AppTest.
     type_labels = {kind: entity_label(kind) for kind in EntityType}
+    _group("sidebar.group.detection")
+    st.multiselect(
+        t("sidebar.types"),
+        options=list(EntityType),
+        format_func=type_labels.__getitem__,
+        key=KEY_ENABLED_TYPES,
+    )
+    st.slider(
+        t("sidebar.threshold"),
+        min_value=THRESHOLD_MIN,
+        max_value=THRESHOLD_MAX,
+        step=THRESHOLD_STEP,
+        format="%.2f",
+        help=t("sidebar.threshold.help"),
+        key=KEY_THRESHOLD,
+    )
+
+
+def _render_display_settings() -> None:
+    """Groupes Tokens et Interface : style des jetons et langue de l'interface."""
     token_labels = {style: t(f"sidebar.token_style.{style}") for style in TOKEN_STYLES}
     language_labels = {language: t(f"sidebar.language.{language}") for language in LANGUAGES}
+    _group("sidebar.group.tokens")
+    st.radio(
+        t("sidebar.token_style"),
+        options=TOKEN_STYLES,
+        format_func=token_labels.__getitem__,
+        key=KEY_TOKEN_STYLE,
+    )
+    _group("sidebar.group.interface")
+    st.selectbox(
+        t("sidebar.language"),
+        options=LANGUAGES,
+        format_func=language_labels.__getitem__,
+        key=KEY_LANGUAGE,
+        on_change=_keep_available_language,
+    )
+    if st.session_state.get(KEY_LANGUAGE_NOTICE):
+        st.caption(t("sidebar.language.notice"))
+        st.session_state[KEY_LANGUAGE_NOTICE] = False
+
+
+def render_sidebar() -> None:
+    """Affiche les réglages groupés, une aide courte et la remise à zéro de la session."""
     with st.sidebar:
         st.subheader(t("sidebar.settings"))
-        st.multiselect(
-            t("sidebar.types"),
-            options=list(EntityType),
-            format_func=type_labels.__getitem__,
-            key=KEY_ENABLED_TYPES,
-        )
-        st.slider(
-            t("sidebar.threshold"),
-            min_value=THRESHOLD_MIN,
-            max_value=THRESHOLD_MAX,
-            step=THRESHOLD_STEP,
-            format="%.2f",
-            help=t("sidebar.threshold.help"),
-            key=KEY_THRESHOLD,
-        )
-        st.radio(
-            t("sidebar.token_style"),
-            options=TOKEN_STYLES,
-            format_func=token_labels.__getitem__,
-            key=KEY_TOKEN_STYLE,
-        )
-        st.selectbox(
-            t("sidebar.language"),
-            options=LANGUAGES,
-            format_func=language_labels.__getitem__,
-            key=KEY_LANGUAGE,
-            on_change=_keep_available_language,
-        )
-        if st.session_state.get(KEY_LANGUAGE_NOTICE):
-            st.caption(t("sidebar.language.notice"))
-            st.session_state[KEY_LANGUAGE_NOTICE] = False
+        st.caption(t("sidebar.help"))
+        _render_detection_settings()
+        _render_display_settings()
+        st.divider()
         _render_reset()

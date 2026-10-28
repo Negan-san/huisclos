@@ -1,75 +1,343 @@
-/* Charte HuisClos : palette sobre, polices du système, espacements multiples de 8 px.
-   Aucun dégradé, aucune ressource externe. Les couleurs de surlignage par type sont
-   ajoutées par app/ui_common.py à partir de ENTITY_STYLES. */
+/* Charte HuisClos : système de design à jetons (couleurs, espacements multiples de 4 px,
+   rayons, ombres légères, échelle typographique). Polices du système, aucun dégradé,
+   aucune ressource externe. Les couleurs de surlignage par type sont ajoutées par
+   app/ui_common.py à partir de ENTITY_STYLES. Le thème de .streamlit/config.toml reprend
+   les mêmes valeurs pour les composants natifs. */
 :root {
+    /* Couleurs : un bleu marine principal, un neutre, un seul accent et trois états. */
     --hc-ink: #1B1F24;
-    --hc-primary: #1F3A5F;
-    --hc-surface: #F4F5F7;
-    --hc-success: #2E6B4F;
-    --hc-warning: #8C5A00;
-    --hc-error: #9B2C2C;
     --hc-muted: #596270;
-    --hc-border: #D5D9DF;
+    --hc-primary: #1F3A5F;
+    --hc-primary-hover: #162B47;
+    --hc-primary-soft: #E8EEF6;
+    --hc-accent: #0E7490;
+    --hc-accent-soft: #E3F2F5;
+    --hc-bg: #F6F7F9;
+    --hc-card: #FFFFFF;
+    --hc-surface: #F1F3F6;
+    --hc-border: #DDE1E6;
+    --hc-border-strong: #8A94A3;
+    --hc-success: #2E6B4F;
+    --hc-success-soft: #E6F2EC;
+    --hc-warning: #8C5A00;
+    --hc-warning-soft: #FBF1DE;
+    --hc-error: #9B2C2C;
+    --hc-error-soft: #FBE9E9;
+
+    /* Espacements : multiples de 4 px. */
+    --hc-space-1: 4px;
+    --hc-space-2: 8px;
+    --hc-space-3: 12px;
+    --hc-space-4: 16px;
+    --hc-space-6: 24px;
+    --hc-space-8: 32px;
+    --hc-space-10: 40px;
+
+    /* Rayons et ombres légères. */
+    --hc-radius-sm: 4px;
+    --hc-radius: 8px;
+    --hc-radius-lg: 12px;
+    --hc-radius-pill: 999px;
+    --hc-shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+    --hc-shadow: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04);
+
+    /* Échelle typographique. */
+    --hc-text-xs: 0.75rem;
+    --hc-text-sm: 0.875rem;
+    --hc-text-base: 1rem;
+    --hc-text-lg: 1.125rem;
+    --hc-text-xl: 1.375rem;
+    --hc-line: 1.6;
+    --hc-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+        sans-serif;
 }
 
 /* Les icônes de Streamlit ont leur propre police : on ne les touche pas. */
 html,
 body,
 [class*="st-"]:not([data-testid="stIconMaterial"]) {
-    font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: var(--hc-font);
 }
 
-.block-container {
-    max-width: 1100px;
-    padding-top: 40px;
-    padding-bottom: 48px;
+/* Les nombres s'alignent en colonnes : chiffres tabulaires partout où l'on compte. */
+[data-testid="stMetricValue"],
+[data-testid="stDataFrame"],
+.hc-stepper,
+.hc-tabular {
+    font-variant-numeric: tabular-nums;
 }
 
-/* Indicateur des trois étapes : l'étape courante se lit sans la couleur (gras, souligné,
-   mention écrite) ; une étape verrouillée est grisée et explique pourquoi. */
-.hc-steps {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 32px;
-    list-style: none;
-    margin: 16px 0 24px;
-    padding: 0 0 16px;
+/* Grille commune à toutes les pages : une largeur de lecture, des marges régulières. La
+   marge haute laisse la place à la barre de navigation fixe (60 px). */
+.block-container,
+[data-testid="stMainBlockContainer"] {
+    max-width: 1200px;
+    padding-top: calc(60px + var(--hc-space-6));
+    padding-bottom: var(--hc-space-10);
+}
+
+/* Focus toujours visible au clavier, de la couleur d'accent. */
+a:focus-visible,
+button:focus-visible,
+[role="tab"]:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid var(--hc-accent);
+    outline-offset: 2px;
+}
+
+/* En-tête de marque : mot-symbole, accroche, pastille de traitement local, mention RGPD. */
+.st-key-hc-header {
+    padding-bottom: var(--hc-space-4);
+    margin-bottom: var(--hc-space-2);
     border-bottom: 1px solid var(--hc-border);
 }
 
-.hc-step {
-    color: var(--hc-ink);
+.st-key-hc-header h1.hc-wordmark {
+    margin: 0;
+    padding: 0;
+    color: var(--hc-primary);
+    font-size: var(--hc-text-xl);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
 }
 
-.hc-step-current {
+.hc-tagline {
+    margin: var(--hc-space-1) 0 0;
+    color: var(--hc-muted);
+    font-size: var(--hc-text-sm);
+    line-height: 1.4;
+}
+
+.st-key-hc-trust [data-testid="stMarkdownContainer"] p {
+    margin: 0;
+}
+
+.st-key-hc-trust {
+    align-items: flex-end;
+}
+
+.st-key-hc-trust [data-testid="stCaptionContainer"] p {
+    color: var(--hc-muted);
+    font-size: var(--hc-text-xs);
+    text-align: right;
+}
+
+/* Titres de section : surtitre en petites capitales pour les groupes de réglages. */
+.hc-overline {
+    margin: var(--hc-space-4) 0 var(--hc-space-1);
+    color: var(--hc-muted);
+    font-size: var(--hc-text-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+/* Barre latérale : fond blanc, pastilles de types adoucies. */
+[data-testid="stMultiSelectTagsContainer"] [data-tag] {
+    background-color: var(--hc-primary-soft) !important;
+    color: var(--hc-primary) !important;
+}
+
+[data-testid="stMultiSelectTagsContainer"] [data-tag] span,
+[data-testid="stMultiSelectTagsContainer"] [data-tag] button {
+    color: var(--hc-primary) !important;
+}
+
+/* Indicateur d'étapes horizontal : pastille numérotée, nom, état écrit. La couleur n'est
+   jamais seule : chaque étape dit en toutes lettres si elle est faite, courante ou
+   verrouillée, et pourquoi. */
+/* Le sélecteur porte stHtml pour l'emporter sur le retrait de liste par défaut. */
+[data-testid="stHtml"] ol.hc-stepper {
+    display: flex;
+    gap: var(--hc-space-4);
+    list-style: none;
+    margin: var(--hc-space-4) 0 var(--hc-space-6);
+    padding: var(--hc-space-4) var(--hc-space-6);
+    background: var(--hc-card);
+    border: 1px solid var(--hc-border);
+    border-radius: var(--hc-radius-lg);
+    box-shadow: var(--hc-shadow-sm);
+}
+
+.hc-step {
+    display: flex;
+    flex: 1 1 0;
+    align-items: flex-start;
+    gap: var(--hc-space-3);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.hc-step:last-child {
+    flex: 0 1 auto;
+}
+
+/* Trait de liaison entre deux étapes, à la hauteur du centre des pastilles. */
+.hc-step:not(:last-child)::after {
+    content: "";
+    flex: 1 1 24px;
+    min-width: 24px;
+    height: 2px;
+    margin-top: 16px;
+    background: var(--hc-border);
+}
+
+.hc-step-done:not(:last-child)::after {
+    background: var(--hc-primary);
+}
+
+.hc-step-dot {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--hc-border-strong);
+    border-radius: var(--hc-radius-pill);
+    background: var(--hc-card);
+    color: var(--hc-muted);
+    font-size: var(--hc-text-sm);
+    font-weight: 700;
+    box-sizing: border-box;
+}
+
+.hc-step-current .hc-step-dot {
+    border-color: var(--hc-primary);
+    background: var(--hc-primary);
+    color: var(--hc-card);
+    box-shadow: 0 0 0 4px var(--hc-primary-soft);
+}
+
+.hc-step-available .hc-step-dot {
+    border-color: var(--hc-primary);
+    color: var(--hc-primary);
+}
+
+.hc-step-done .hc-step-dot {
+    border-color: var(--hc-primary);
+    background: var(--hc-primary-soft);
+}
+
+/* Coche dessinée en CSS : aucune police d'icônes ni caractère spécial. */
+.hc-step-done .hc-step-dot::after {
+    content: "";
+    width: 7px;
+    height: 12px;
+    border: solid var(--hc-primary);
+    border-width: 0 2px 2px 0;
+    transform: translateY(-2px) rotate(45deg);
+}
+
+.hc-step-locked .hc-step-dot {
+    border-style: dashed;
+    background: var(--hc-surface);
+}
+
+.hc-step-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    max-width: 240px;
+}
+
+.hc-step-name {
+    color: var(--hc-ink);
+    font-weight: 600;
+    line-height: 32px;
+}
+
+.hc-step-current .hc-step-name {
     color: var(--hc-primary);
     font-weight: 700;
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 8px;
 }
 
-.hc-step-locked {
+.hc-step-locked .hc-step-name {
     color: var(--hc-muted);
 }
 
 .hc-step-note {
-    display: inline-block;
-    font-size: 0.875rem;
-    font-weight: 400;
-    text-decoration: none;
+    color: var(--hc-muted);
+    font-size: var(--hc-text-xs);
+    line-height: 1.4;
 }
 
-/* Pastille de type d'entité : fond de couleur et libellé écrit. */
-.hc-badge {
-    display: inline-block;
-    margin: 0 8px 8px 0;
-    padding: 0 8px;
+.hc-step-current .hc-step-note {
+    color: var(--hc-primary);
+    font-weight: 600;
+}
+
+/* Cartes : fond blanc, bordure fine, ombre légère. Toute clé qui commence par hc-card
+   reçoit ce style. */
+[class*="st-key-hc-card"] {
+    padding: var(--hc-space-6);
+    background: var(--hc-card);
     border: 1px solid var(--hc-border);
-    border-radius: 4px;
+    border-radius: var(--hc-radius-lg);
+    box-shadow: var(--hc-shadow-sm);
+}
+
+/* Indicateurs chiffrés en cartes. */
+[data-testid="stMetric"] {
+    background: var(--hc-card);
+    border-color: var(--hc-border);
+    box-shadow: var(--hc-shadow-sm);
+}
+
+[data-testid="stMetricLabel"] p {
+    color: var(--hc-muted);
+    font-size: var(--hc-text-sm);
+    font-weight: 600;
+}
+
+[data-testid="stMetricValue"] {
     color: var(--hc-ink);
+    font-weight: 700;
+}
+
+/* Pastille de type d'entité : fond doux, pastille de la couleur franche, libellé écrit. */
+.hc-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--hc-space-2);
+    margin: 0 var(--hc-space-2) var(--hc-space-2) 0;
+    padding: 0 var(--hc-space-2);
+    border: 1px solid var(--hc-border);
+    border-radius: var(--hc-radius-pill);
+    color: var(--hc-ink);
+    font-size: var(--hc-text-sm);
+    line-height: 1.75;
+}
+
+.hc-swatch {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: var(--hc-radius-pill);
 }
 
 .hc-legend {
-    margin: 8px 0 24px;
+    margin: var(--hc-space-2) 0 var(--hc-space-4);
+}
+
+/* Écran étroit : les étapes s'empilent et l'en-tête passe sur deux lignes. */
+@media (max-width: 640px) {
+    [data-testid="stHtml"] ol.hc-stepper {
+        flex-direction: column;
+        gap: var(--hc-space-3);
+        padding: var(--hc-space-4);
+    }
+
+    .hc-step:not(:last-child)::after {
+        display: none;
+    }
+
+    .hc-step-text {
+        max-width: none;
+    }
 }

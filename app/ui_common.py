@@ -14,6 +14,7 @@ from pathlib import Path
 
 import streamlit as st
 
+from app.components.stepper import LOCKED, StepView, step_states, stepper_html
 from app.i18n import t
 from app.state import STEPS, is_step_available
 from huisclos.models import EntityType
@@ -102,38 +103,50 @@ def is_public_demo() -> bool:
 
 
 def render_header() -> None:
-    """Affiche le bandeau de démo éventuel, le nom, l'accroche et la mention juridique."""
-    if is_public_demo():
-        st.warning(t("demo.banner"))
-    st.title(t("app.title"))
-    st.markdown(t("app.tagline"))
-    st.caption(t("app.legal_note"))
+    """Affiche le bandeau de démo éventuel puis l'en-tête de marque compact.
 
-
-def _step_item(number: int, step: str, current: str) -> str:
-    """Construit l'élément de liste d'une étape selon qu'elle est courante, libre ou verrouillée."""
-    name = f"{number}. {html.escape(t(f'steps.{step}'))}"
-    if step == current:
-        note = html.escape(t("steps.current"))
-        return (
-            f'<li class="hc-step hc-step-current" aria-current="step">{name} '
-            f'<span class="hc-step-note">{note}</span></li>'
+    À gauche, le nom et l'accroche ; à droite, la pastille "Local processing" (icône de
+    cadenas) et la mention juridique. La pastille rappelle la garantie principale de l'outil
+    sur chaque page.
+    """
+    demo = is_public_demo()
+    if demo:
+        st.warning(t("demo.banner"), icon=":material/science:")
+    with st.container(key="hc-header", horizontal=True, vertical_alignment="center"):
+        # Un seul bloc HTML pour le nom et l'accroche : deux composants empilés dans une
+        # rangée se chevauchent, car Streamlit réserve à un titre moins que sa hauteur.
+        st.html(
+            f'<div class="hc-brand"><h1 class="hc-wordmark">{html.escape(t("app.title"))}</h1>'
+            f'<p class="hc-tagline">{html.escape(t("app.tagline"))}</p></div>'
         )
-    if is_step_available(step):
-        return f'<li class="hc-step">{name}</li>'
-    note = html.escape(t(f"steps.locked.{step}"))
-    return (
-        f'<li class="hc-step hc-step-locked">{name} <span class="hc-step-note">{note}</span></li>'
-    )
+        with st.container(key="hc-trust", width="content", horizontal_alignment="right"):
+            # Sur la démonstration publique, le texte est traité sur un serveur distant :
+            # la pastille ne doit pas promettre un traitement local.
+            if demo:
+                st.badge(t("app.demo_badge"), icon=":material/science:", color="orange")
+            else:
+                st.badge(t("app.local_badge"), icon=":material/lock:", color="primary")
+            st.caption(t("app.legal_note"))
 
 
 def render_steps(current: str) -> None:
     """Affiche l'indicateur des trois étapes.
 
-    L'étape courante est en gras, soulignée et suivie de "(current step)" pour les lecteurs
-    d'écran. Une étape pas encore accessible est grisée et dit pourquoi. L'information ne
+    Chaque étape dit son état en toutes lettres (faite, courante, accessible) ; une étape
+    verrouillée dit pourquoi. L'étape courante porte aria-current="step". L'information ne
     repose jamais sur la couleur seule.
     """
-    items = "".join(_step_item(number, step, current) for number, step in enumerate(STEPS, 1))
-    label = html.escape(t("steps.label"))
-    st.html(f'<ol class="hc-steps" aria-label="{label}">{items}</ol>')
+    available = {step: is_step_available(step) for step in STEPS}
+    states = step_states(STEPS, current, available)
+    views = [
+        StepView(number, t(f"steps.{step}"), state, _step_note(step, state))
+        for number, (step, state) in enumerate(zip(STEPS, states, strict=True), 1)
+    ]
+    st.html(stepper_html(views, t("steps.label")))
+
+
+def _step_note(step: str, state: str) -> str:
+    """Renvoie la mention écrite d'une étape : son état, ou la raison de son verrouillage."""
+    if state == LOCKED:
+        return t(f"steps.locked.{step}")
+    return t(f"steps.state.{state}")
